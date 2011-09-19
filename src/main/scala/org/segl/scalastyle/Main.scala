@@ -2,9 +2,7 @@ package org.segl.scalastyle
 
 import java.io.File;
 
-class Main {
-
-}
+class Main
 
 class MyListener extends Listener {
   override def start(): Unit = { println("start") }
@@ -18,9 +16,7 @@ class MyListener extends Listener {
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val prefix = "src/main/scala/org/segl/scalastyle/"
-    val files = Array(prefix + "Main.scala", prefix + "Checker.scala", prefix + "FileTabChecker.scala")
-    var errors = new ScalastyleChecker().checkFiles(new MyListener(), files)
+    var errors = new ScalastyleChecker().checkFiles(new MyListener(), Directory.getFiles(new File("src/main/scala")))
 
     errors.foreach(e => println("error=" + e))
   }

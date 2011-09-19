@@ -17,11 +17,11 @@ trait Listener {
 }
 
 class ScalastyleChecker {
-  val checkers: List[_ <: Checker] = List(new FileTabChecker(), new FileLineLengthChecker())
+  val checkers: List[_ <: Checker] = List(new FileTabChecker(), new FileLineLengthChecker(), new FileLengthChecker())
 
-  def checkFiles(listener: Listener, files: Array[String]): Array[Message] = {
+  def checkFiles(listener: Listener, files: List[String]): Iterator[Message] = {
     listener.start
-    val result = files.flatMap(file => checkFile(listener, file, parse(file)))
+    val result = files.par.flatMap(file => checkFile(listener, file, parse(file))).toIterator
     listener.end
 
     result
