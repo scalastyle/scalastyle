@@ -2,39 +2,12 @@ package org.segl.scalastyle
 
 case class AST(lines: List[String])
 
-case class Message(file: String, key: String, lineNumber: Int, column: Int)
-
-case class Error(filename: String, message: Message)
-
-trait Listener {
-  def start(): Unit = {}
-  def end(): Unit = {}
-
-  def fileStart(file: String): Unit = {}
-  def fileEnd(file: String): Unit = {}
-
-  def error(file: String, key: String, lineNumber: Int, column: Int) = {}
-}
-
 class ScalastyleChecker {
   val checkers: List[_ <: Checker] = List(new FileTabChecker(), new FileLineLengthChecker(), new FileLengthChecker())
 
-  def checkFiles(listener: Listener, files: List[String]): Iterator[Message] = {
-    listener.start
-    val result = files.par.flatMap(file => checkFile(listener, file, parse(file))).toIterator
-    listener.end
-
-    result
-  }
+  def checkFiles(files: List[String]) = StartWork() :: files.par.flatMap(file => checkFile(file, parse(file))).toList ::: List(EndWork()) 
 
   def parse(file: String): AST = AST(scala.io.Source.fromFile(file).getLines.toList)
 
-  def checkFile(listener: Listener, file: String, ast: AST): List[Message] = {
-    listener.fileStart(file)
-    val result = checkers.flatMap(_.verify(file, ast).toList)
-    listener.fileEnd(file)
-
-    result
-  }
-
+  def checkFile(file: String, ast: AST) = StartFile(file) :: checkers.flatMap(_.verify(file, ast).toList) ::: List(EndFile(file)) 
 }
