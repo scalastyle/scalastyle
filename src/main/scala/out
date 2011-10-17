@@ -1,0 +1,252 @@
+C:\developpement\utils\jdk1.6.0_22
+C:\code\scalastyle\scalastyle\src\main\scala\..
+[[syntax trees at end of parser]]// Scala source: Checker.scala
+package org.segl.scalastyle {
+  case class AST extends scala.ScalaObject with scala.Product with scala.Serializable {
+    <caseaccessor> <paramaccessor> val lines: List[String] = _;
+    def <init>(lines: List[String]) = {
+      super.<init>();
+      ()
+    }
+  };
+  object ScalastyleChecker extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    val checkers: List[_$1] forSome { 
+      <synthetic> type _$1 >: _root_.scala.Nothing <: Checker
+    } = List(new FileTabChecker(), new FileLineLengthChecker(), new FileLengthChecker())
+  };
+  class ScalastyleChecker extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    def checkFiles(files: List[String]) = {
+      <synthetic> val x$2 = StartWork();
+      {
+  <synthetic> val x$1 = files.par.flatMap(((file) => checkFile(file, parse(file)))).toList;
+  List(EndWork()).$colon$colon$colon(x$1)
+}.$colon$colon(x$2)
+    };
+    def parse(file: String): AST = AST(scala.io.Source.fromFile(file).getLines.toList);
+    def checkFile(file: String, ast: AST) = {
+      <synthetic> val x$5 = StartFile(file);
+      {
+  <synthetic> val x$4 = ScalastyleChecker.checkers.flatMap(((x$3) => x$3.verify(file, ast).toList));
+  List(EndFile(file)).$colon$colon$colon(x$4)
+}.$colon$colon(x$5)
+    }
+  }
+}
+
+// Scala source: Directory.scala
+package org.segl.scalastyle {
+  import java.io._;
+  class Directory extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    }
+  };
+  object Directory extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    val scalaFileFilter = {
+      final class $anon extends FileFilter {
+        def <init>() = {
+          super.<init>();
+          ()
+        };
+        def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
+      };
+      new $anon()
+    };
+    def getFiles(dir: File): List[String] = {
+      <synthetic> val x$4 = dir.listFiles(scalaFileFilter).map(((x$1) => x$1.getAbsolutePath())).toList;
+      dir.listFiles().filter(((x$2) => x$2.isDirectory)).flatMap(((x$3) => getFiles(x$3))).toList.$colon$colon$colon(x$4)
+    }
+  }
+}
+
+// Scala source: FileTabChecker.scala
+package org.segl.scalastyle {
+  import scala.tools.nsc;
+  import nsc.Global;
+  import nsc.plugins.Plugin;
+  import nsc.Phase;
+  import nsc.plugins.PluginComponent;
+  abstract class Checker extends scala.ScalaObject {
+    <paramaccessor> private[this] val global: Global = _;
+    def <init>(global: Global) = {
+      super.<init>();
+      ()
+    };
+    import global._;
+    def verify(file: String, ast: AST): List[Message] = List();
+    def verify(file: String, ast: Global#Tree): List[Message] = List()
+  };
+  abstract class FileChecker extends Checker with scala.ScalaObject {
+    def <init>() = {
+      super.<init>(null);
+      ()
+    };
+    def verify(file: String, ast: AST): List[Message];
+    override def verify(file: String, ast: Global#Tree): List[Message] = List()
+  };
+  abstract class PluginChecker extends Checker with scala.ScalaObject {
+    <paramaccessor> private[this] val global: Global = _;
+    def <init>(global: Global) = {
+      super.<init>(global);
+      ()
+    };
+    override def verify(file: String, ast: AST): List[Message] = List();
+    def verify(file: String, ast: Global#Tree): List[Message]
+  };
+  class FileTabChecker extends FileChecker with scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    override def verify(file: String, ast: AST): List[Message] = ast.lines.zipWithIndex.withFilter(((line) => line._1.contains(\'\\t\'))).map(((line) => StyleError(file, "line.contains.tab", Some(line._2.$plus(1)), Some(line._1.indexOf(\'\\t\')))))
+  };
+  class FileLineLengthChecker extends FileChecker with scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    override def verify(file: String, ast: AST): List[Message] = ast.lines.zipWithIndex.withFilter(((line) => line._1.length().$greater(80))).map(((line) => StyleError(file, "line.size.limit", Some(line._2.$plus(1)))))
+  };
+  class FileLengthChecker extends FileChecker with scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    override def verify(file: String, ast: AST): List[Message] = if (ast.lines.size.$greater(10))
+      List(StyleError(file, "file.size.limit"))
+    else
+      List()
+  };
+  class DivisionByZeroChecker extends PluginChecker with scala.ScalaObject {
+    <paramaccessor> private[this] val global: Global = _;
+    def <init>(global: Global) = {
+      super.<init>((global: Global));
+      ()
+    };
+    import global._;
+    override def verify(file: String, tree: Global#Tree): List[Message] = tree match {
+      case Apply(Select(_, nme.DIV), List(Literal(Constant(0)))) => List(StyleError(file, "div.by.zero", Some(tree.pos.line.$plus(1)), Some(tree.pos.column)))
+      case Apply(Select(_, nme.MOD), List(Literal(Constant(0)))) => List(StyleError(file, "div.by.zero", Some(tree.pos.line.$plus(1)), Some(tree.pos.column)))
+      case _ => List()
+    }
+  }
+}
+
+// Scala source: Main.scala
+package org.segl.scalastyle {
+  import java.io.File;
+  class Main extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    }
+  };
+  object Main extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    def main(args: Array[String]): Unit = {
+      var messages = new ScalastyleChecker().checkFiles(Directory.getFiles(new File("src/main/scala")));
+      new TextOutput().output(messages)
+    }
+  }
+}
+
+// Scala source: Message.scala
+package org.segl.scalastyle {
+  sealed abstract class Message extends scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    }
+  };
+  case class StartWork extends Message with scala.ScalaObject with scala.Product with scala.Serializable {
+    def <init>() = {
+      super.<init>();
+      ()
+    }
+  };
+  case class EndWork extends Message with scala.ScalaObject with scala.Product with scala.Serializable {
+    def <init>() = {
+      super.<init>();
+      ()
+    }
+  };
+  case class StartFile extends Message with scala.ScalaObject with scala.Product with scala.Serializable {
+    <caseaccessor> <paramaccessor> val name: String = _;
+    def <init>(name: String) = {
+      super.<init>();
+      ()
+    }
+  };
+  case class EndFile extends Message with scala.ScalaObject with scala.Product with scala.Serializable {
+    <caseaccessor> <paramaccessor> val name: String = _;
+    def <init>(name: String) = {
+      super.<init>();
+      ()
+    }
+  };
+  case class StyleError extends Message with scala.ScalaObject with scala.Product with scala.Serializable {
+    <caseaccessor> <paramaccessor> val file: String = _;
+    <caseaccessor> <paramaccessor> val key: String = _;
+    <caseaccessor> <paramaccessor> val lineNumber: Option[Int] = _;
+    <caseaccessor> <paramaccessor> val column: Option[Int] = _;
+    def <init>(file: String, key: String, lineNumber: Option[Int] = None, column: Option[Int] = None) = {
+      super.<init>();
+      ()
+    }
+  };
+  case class StyleException extends Message with scala.ScalaObject with scala.Product with scala.Serializable {
+    <caseaccessor> <paramaccessor> val file: String = _;
+    <caseaccessor> <paramaccessor> val message: String = _;
+    <caseaccessor> <paramaccessor> val stacktrace: String = _;
+    <caseaccessor> <paramaccessor> val lineNumber: Option[Int] = _;
+    <caseaccessor> <paramaccessor> val column: Option[Int] = _;
+    def <init>(file: String, message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) = {
+      super.<init>();
+      ()
+    }
+  }
+}
+
+// Scala source: Output.scala
+package org.segl.scalastyle {
+  abstract trait Output extends scala.AnyRef {
+    def output(messages: List[Message]): scala.Unit
+  };
+  class TextOutput extends Output with scala.ScalaObject {
+    def <init>() = {
+      super.<init>();
+      ()
+    };
+    override def output(messages: List[Message]) = messages.foreach(message);
+    private def message(m: Message) = m match {
+      case StartWork() => println("Starting scalastyle")
+      case EndWork() => println("Scalastyle done. Now go and fix your code.")
+      case StartFile((file @ _)) => println("start file ".$plus(file))
+      case EndFile((file @ _)) => println("end file ".$plus(file))
+      case StyleError((file @ _), (key @ _), (line @ _), (column @ _)) => println("error".$plus(print("file", file)).$plus(print("key", key)).$plus(printOption("line", line)).$plus(printOption("column", column)))
+      case StyleException((file @ _), (message @ _), (stacktrace @ _), (line @ _), (column @ _)) => println("error".$plus(print("file", file)).$plus(print("message", message)).$plus(printOption("line", line)).$plus(printOption("column", column)))
+    };
+    private def printOption(s: String, no: Option[Int]) = if (no.isDefined)
+      print(s, "".$plus(no.get))
+    else
+      "";
+    private def print(s: String, value: String) = " ".$plus(s).$plus("=").$plus(value)
+  }
+}
+

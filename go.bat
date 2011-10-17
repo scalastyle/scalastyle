@@ -1,0 +1,1 @@
+scalac -Xplugin:target/scalastyle-0.0.1.jar test/*.scala
