@@ -1,1 +1,1 @@
-scalac -Xplugin:target/scalastyle-0.0.1.jar test/*.scala
+scalac -Xprint:parser -Xplugin:target/scalastyle-0.0.1.jar -d test test/*.scala

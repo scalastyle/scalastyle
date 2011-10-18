@@ -15,18 +15,20 @@ C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala -> C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala
 -------
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent$ParserPhase.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent$ParserPhase$$anonfun$apply$1$$anonfun$1.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastylePlugin.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent$ParserPhase$$anonfun$1.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent$ParserPhase$$anonfun$apply$1.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent$ParserPhase$$anonfun$apply$1$$anonfun$2.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\plugin\ScalastylePlugin.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\plugin\ScalastyleComponent$ParserPhase$$anonfun$apply$1$$anonfun$apply$2.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anonfun$getFiles$1.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anonfun$getFiles$2.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anonfun$1.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anon$1.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Output.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Output.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Output.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\TextOutput$$anonfun$output$1.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Output.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\TextOutput.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\AST.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\AST$.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\ScalastyleChecker$.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\ScalastyleChecker.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\FileChecker.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\FileLineLengthChecker$$anonfun$verify$4.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\DivisionByZeroChecker.class
@@ -38,6 +40,10 @@ C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Checker.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\FileLengthChecker.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\FileTabChecker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\FileTabChecker$$anonfun$verify$1.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\SimpleAst$.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\ScalastyleChecker$.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\SimpleAst.class
+C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Checker.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\ScalastyleChecker.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\EndFile.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\StartFile$.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\StyleException$.class
@@ -53,9 +59,3 @@ C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala -
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Message.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\StyleError.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Main.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Main$.class
 C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Main.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Main.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anonfun$getFiles$1.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anonfun$getFiles$2.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anonfun$1.class
-C:\code\scalastyle\scalastyle\src\main\scala\org\segl\scalastyle\Directory.scala -> C:\code\scalastyle\scalastyle\target\classes\org\segl\scalastyle\Directory$$anon$1.class

@@ -7,6 +7,7 @@ import nsc.Phase
 import nsc.plugins.PluginComponent
 import org.segl.scalastyle._;
 import java.lang.reflect.Constructor
+import scala.collection.mutable.ListBuffer
 
 class ScalastylePlugin(val global: Global) extends Plugin {
   import global._
@@ -29,14 +30,19 @@ class ScalastyleComponent(val global: Global, checkers: List[Class[_ <: Checker]
 
     override def name = "scalastyle parser phase"
     override def apply(unit: CompilationUnit) {
+      val checkerInstances = checkers.map(constructor(_).newInstance(global))
+      val messages = ListBuffer[Message]()
+      
       for (tree <- unit.body) {
         try {
-          val bugs: List[Message] = checkers.map(constructor(_)) flatMap { checker => checker.newInstance(global).verify(unit.source.file.name, tree) }
-          println("bugs=" + bugs)
+          messages ++= checkerInstances.flatMap { _.verify(unit.source.file.file.getAbsolutePath(), tree) }
         } catch {
           case e => e.printStackTrace
         }
       }
+      
+      println("messages=" + messages.mkString("\n"))
+      
     }
     
     def constructor(clazz: Class[_ <: Checker]) = clazz.getConstructor(classOf[Global]).asInstanceOf[Constructor[Checker]]
