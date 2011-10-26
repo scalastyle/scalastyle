@@ -1,9 +1,9 @@
 package org.segl.scalastyle
 
-sealed abstract class Message
+sealed abstract class Message()
 
-case class StartWork extends Message
-case class EndWork extends Message
+case class StartWork() extends Message
+case class EndWork() extends Message
 
 case class StartFile(name: String) extends Message
 case class EndFile(name: String) extends Message
