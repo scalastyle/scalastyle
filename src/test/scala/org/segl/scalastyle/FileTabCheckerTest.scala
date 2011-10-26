@@ -11,7 +11,7 @@ import org.junit.Test;
 
 trait CheckerTest {
   def assertErrors[T <: Checker](list: List[Message], source: String)(implicit manifest: Manifest[T]) = {
-	assertEquals(list, Checker.verifySource(List(manifest.erasure.asInstanceOf[Class[T]]), null, source))
+	assertEquals(list, Checker.verifySource(List(ConfigCheck(manifest.erasure.getName(), Map())), null, source))
   }
 }
 

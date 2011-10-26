@@ -21,22 +21,35 @@ object Checker {
 
   private def parseLines(source: String): Lines = Lines(source.split("\n"));
 
-  def verifySource(classes: List[CheckerClass], file: String, source: String): List[Message] = {
+  
+  def verifySource(classes: List[ConfigCheck], file: String, source: String): List[Message] = {
     lazy val lines = parseLines(source)
     lazy val scalariformAst = parseScalariform(source)
 
-    classes.map(clazz => newInstance(clazz)).flatMap(c => c match {
+    classes.map(cc => newInstance(getClass(cc.className), cc.parameters)).flatMap(c => c match {
       case c: LinesChecker => c.verify(file, lines)
       case c: ScalariformChecker => c.verify(file, scalariformAst)
       case _ => List[Message]()
     })
   }
   
-  def verifyFile(classes: List[CheckerClass], file: String): List[Message] = verifySource(classes, file, Source.fromFile(file).mkString)
-  def newInstance[T](clazz: Class[T]) = clazz.getConstructor().newInstance().asInstanceOf[T]
+  def getClass(name: String) = Class.forName(name).asInstanceOf[Class[Checker]]
+
+  def verifyFile(classes: List[ConfigCheck], file: String): List[Message] = verifySource(classes, file, Source.fromFile(file).mkString)
+  def newInstance(clazz: Class[Checker], parameters: Map[String, String]) = {
+    val c: Checker = clazz.getConstructor().newInstance().asInstanceOf[Checker]
+    c.setParameters(parameters)
+    c
+  }
 }
 
-trait Checker
+trait Checker {
+  var parameters = Map[String, String]();
+  
+  def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
+  def getInt(parameter: String, defaultValue: Int) = Integer.parseInt(parameters.getOrElse("maxLineLength", "" + defaultValue))
+}
+
 trait LinesChecker extends Checker {
   def verify(file: String, lines: Lines): List[Message]
 }
@@ -59,10 +72,14 @@ class FileTabChecker extends LinesChecker {
 }
 
 class FileLineLengthChecker extends LinesChecker {
+  val DefaultMaxLineLength = 160
+  
   def verify(file: String, lines: Lines): List[Message] = {
+    val maxLineLength = getInt("maxLineLength", DefaultMaxLineLength)
+    
     val errors = for (
       line <- lines.lines.zipWithIndex;
-      if line._1.length() > 80
+      if line._1.length() > maxLineLength
     ) yield {
       StyleError(file, "line.size.limit", Some(line._2 + 1))
     }
@@ -72,8 +89,12 @@ class FileLineLengthChecker extends LinesChecker {
 }
 
 class FileLengthChecker extends LinesChecker {
-  override def verify(file: String, ast: Lines): List[Message] = {
-    if (ast.lines.size > 10) List(StyleError(file, "file.size.limit")) else List()
+  val DefaultMaxFileLength = 1000
+  
+  def verify(file: String, ast: Lines): List[Message] = {
+    val maxLineLength = getInt("maxFileLength", DefaultMaxFileLength)
+    
+    if (ast.lines.size > maxLineLength) List(StyleError(file, "file.size.limit")) else List()
   }
 }
 
