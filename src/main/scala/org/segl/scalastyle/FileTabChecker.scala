@@ -9,21 +9,21 @@ import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens._
 import scala.io.Source
 
-case class Lines(lines: List[String])
+case class Lines(lines: Array[String])
 
 object Checker {
   type CheckerClass = Class[_ <: Checker]
 
-  def parseScalariform(file: String) = {
-    val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(Source.fromFile(file).mkString)
+  def parseScalariform(source: String) = {
+    val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
     new ScalaParser(tokens.toArray).compilationUnitOrScript()
   }
 
-  private def parseLines(file: String): Lines = Lines(Source.fromFile(file).getLines.toList)
+  private def parseLines(source: String): Lines = Lines(source.split("\n"));
 
-  def verify(classes: List[CheckerClass], file: String): List[Message] = {
-    val lines = parseLines(file)
-    val scalariformAst = parseScalariform(file)
+  def verifySource(classes: List[CheckerClass], file: String, source: String): List[Message] = {
+    lazy val lines = parseLines(source)
+    lazy val scalariformAst = parseScalariform(source)
 
     classes.map(clazz => newInstance(clazz)).flatMap(c => c match {
       case c: LinesChecker => c.verify(file, lines)
@@ -31,7 +31,8 @@ object Checker {
       case _ => List[Message]()
     })
   }
-
+  
+  def verifyFile(classes: List[CheckerClass], file: String): List[Message] = verifySource(classes, file, Source.fromFile(file).mkString)
   def newInstance[T](clazz: Class[T]) = clazz.getConstructor().newInstance().asInstanceOf[T]
 }
 
@@ -46,23 +47,27 @@ trait ScalariformChecker extends Checker {
 
 class FileTabChecker extends LinesChecker {
   def verify(file: String, lines: Lines): List[Message] = {
-    for (
+    val errors = for (
       line <- lines.lines.zipWithIndex;
       if line._1.contains('\t')
     ) yield {
       StyleError(file, "line.contains.tab", Some(line._2 + 1), Some(line._1.indexOf('\t')))
     }
+    
+    return errors.toList
   }
 }
 
 class FileLineLengthChecker extends LinesChecker {
-  override def verify(file: String, lines: Lines): List[Message] = {
-    for (
+  def verify(file: String, lines: Lines): List[Message] = {
+    val errors = for (
       line <- lines.lines.zipWithIndex;
       if line._1.length() > 80
     ) yield {
       StyleError(file, "line.size.limit", Some(line._2 + 1))
     }
+    
+    return errors.toList
   }
 }
 

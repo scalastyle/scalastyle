@@ -8,5 +8,7 @@ object ScalastyleChecker {
 }
 
 class ScalastyleChecker {
-  def checkFiles(files: List[String]): List[Message] = StartWork() :: files.flatMap(file => Checker.verify(ScalastyleChecker.checkers, file)).toList ::: List(EndWork()) 
+  def checkFiles(files: List[String]): List[Message] = {
+    StartWork() :: files.flatMap(file => Checker.verifyFile(ScalastyleChecker.checkers, file)).toList ::: List(EndWork()) 
+  }
 }

@@ -8,21 +8,35 @@
 	<version>0.0.1</version>
 	<repositories>
 		<repository>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>repo1</id>
+			<name>repo1</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
 			<id>java.net</id>
 			<name>java.net</name>
 			<url>http://download.java.net/maven/2/</url>
 		</repository>
-	
-	    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>scala-tools</id>
-      <name>Scala Tools</name>
-      <url>http://scala-tools.org/repo-releases/</url>
-    </repository>
-  </repositories>
-	
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>scala-tools</id>
+			<name>Scala Tools</name>
+			<url>http://scala-tools.org/repo-releases/</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
@@ -30,15 +44,24 @@
 			<version>2.9.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-compiler</artifactId>
-			<version>2.9.1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.scalariform</groupId>
 			<artifactId>scalariform_2.9.1</artifactId>
 			<version>0.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_2.9.1</artifactId>
+			<version>1.6.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 	<build>
