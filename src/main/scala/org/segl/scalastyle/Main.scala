@@ -6,9 +6,9 @@ class Main
 
 object Main {
   def main(args: Array[String]): Unit = {
-//    var messages = new ScalastyleChecker().checkFiles(Directory.getFiles(new File("src/main/scala")))
+    val messages = new ScalastyleChecker().checkFiles(Directory.getFiles(new File("src/main/scala")))
 
 //    new XmlOutput().output(messages);	
-//    new TextOutput().output(messages);
+    new TextOutput().output(messages);
   }
 }

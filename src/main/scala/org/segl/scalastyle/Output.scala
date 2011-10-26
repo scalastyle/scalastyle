@@ -12,7 +12,7 @@ class TextOutput extends Output {
     case EndWork() => println("Scalastyle done. Now go and fix your code.")
     case StartFile(file) => println("start file " + file)
     case EndFile(file) => println("end file " + file)
-    case StyleError(file, key, line, column) => println("error" + print("file", file) + print("key", key) + printOption("line", line) + printOption("column", column))
+    case StyleError(file, key, line, column, position) => println("error" + print("file", file) + print("key", key) + printOption("line", line) + printOption("column", column) + printOption("position", position))
     case StyleException(file, message, stacktrace, line, column) => println("error" + print("file", file) + print("message", message) + printOption("line", line) + printOption("column", column))
   }
   

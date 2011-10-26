@@ -12,5 +12,4 @@ object Directory {
   def getFiles(dir: File): List[String] = {
     dir.listFiles(scalaFileFilter).map(_.getAbsolutePath()).toList ::: dir.listFiles().filter(_.isDirectory).flatMap(getFiles(_)).toList
   }
-
 }
