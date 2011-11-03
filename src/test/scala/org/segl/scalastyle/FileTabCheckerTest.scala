@@ -50,4 +50,4 @@ import foobar
 	  
 	  assertErrors[FileTabChecker](List(StyleError(null, "line.contains.tab", Some(4), Some(0), None), StyleError(null, "line.contains.tab", Some(6), Some(0), None)), source)
 	}
-}	   
+}
