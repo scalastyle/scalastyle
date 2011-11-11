@@ -7,6 +7,22 @@
 	<name>Scalastyle, Checkstyle for Scala</name>
 	<version>0.0.1</version>
 	<repositories>
+
+
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+			<id>scala-tools</id>
+			<name>scala-tools</name>
+			<url>http://scala-tools.org/repo-snapshots/</url>
+		</repository>
 		<repository>
 			<releases>
 				<enabled>false</enabled>
@@ -38,16 +54,11 @@
 	</repositories>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>${scala.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.scalariform</groupId>
-			<artifactId>scalariform_${scala.version}</artifactId>
-			<version>0.1.1</version>
-		</dependency>
+        <dependency>
+            <groupId>org.scalariform</groupId>
+            <artifactId>scalariform_${scala.version}</artifactId>
+            <version>0.1.1</version>
+        </dependency>
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_${scala.version}</artifactId>
@@ -168,5 +179,6 @@
 	</build>
 	<properties>
 		<scala.version>2.9.1</scala.version>
+		<scala.library.version>2.9.1</scala.library.version>
 	</properties>
 </project>
