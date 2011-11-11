@@ -13,16 +13,16 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-class FileTabCheckerTest extends AssertionsForJUnit with CheckerTest {
+class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
 	@Test def testZero() = {
 	  val source = """
 package foobar
 import foobar
-    object Foobar {
+	object Foobar {
 }
 """;
 	  
-	  assertErrors[FileTabChecker](List(), source)
+	  assertErrors[FileLineLengthChecker](List(), source, Map("maxLineLength" -> "20"))
 	}
 
 	@Test def testOne() = {
@@ -33,7 +33,7 @@ import foobar
 }
 """;
 	  
-	  assertErrors[FileTabChecker](List(StyleError(null, "line.contains.tab", Some(4), Some(0), None)), source)
+	  assertErrors[FileLineLengthChecker](List(StyleError(null, "line.size.limit", Some(4))), source, Map("maxLineLength" -> "15"))
 	}
 
 	@Test def testTwo() = {
@@ -46,6 +46,6 @@ import foobar
 }
 """;
 	  
-	  assertErrors[FileTabChecker](List(StyleError(null, "line.contains.tab", Some(4), Some(0), None), StyleError(null, "line.contains.tab", Some(6), Some(0), None)), source)
+	  assertErrors[FileLineLengthChecker](List(StyleError(null, "line.size.limit", Some(4)), StyleError(null, "line.size.limit", Some(6))), source, Map("maxLineLength" -> "15"))
 	}
 }

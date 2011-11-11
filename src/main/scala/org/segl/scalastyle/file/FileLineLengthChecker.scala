@@ -6,6 +6,7 @@ import org.segl.scalastyle.StyleError
 import org.segl.scalastyle.Message
 import org.segl.scalastyle.Lines
 
+// TODO add tab translation tab = 4 characters
 class FileLineLengthChecker extends FileChecker {
   val DefaultMaxLineLength = 160
   

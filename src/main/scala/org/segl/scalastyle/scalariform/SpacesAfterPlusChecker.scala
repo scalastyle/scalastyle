@@ -1,6 +1,5 @@
 package org.segl.scalastyle
 
-import _root_.org.segl.scalastyle.ScalariformChecker
 import java.lang.reflect.Constructor;
 import scalariform.parser.CompilationUnit
 import _root_.scalariform.lexer.Tokens._
