@@ -10,7 +10,6 @@ class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
   def verify(file: String, ast: CompilationUnit): List[Message] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
-      f = println("left=" + left + " right=" + right)
       if (right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
     ) yield {
       StyleError(file, "no.whitespace.before.left.bracket", position = Some(left.startIndex))
@@ -24,7 +23,6 @@ class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
   def verify(file: String, ast: CompilationUnit): List[Message] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
-      f = println("left=" + left + " right=" + right)
       if (left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
     ) yield {
       StyleError(file, "no.whitespace.after.left.bracket", position = Some(left.startIndex))
