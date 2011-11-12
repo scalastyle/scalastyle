@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 class WhitespaceEndOfLineCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "whitespace.end.of.line"
+    
 	@Test def testZero() = {
 	  val source = """
 package foobar
@@ -33,7 +35,7 @@ import foobar
 }
 """;
 	  
-	  assertErrors[WhitespaceEndOfLineChecker](List(StyleError(null, "whitespace.end.of.line", Some(2), Some(14))), source)
+	  assertErrors[WhitespaceEndOfLineChecker](List(columnError(2, 14)), source)
 	}
 
 	@Test def testTwo() = {
@@ -44,6 +46,6 @@ import foobar
 }
 """;
 	  
-	  assertErrors[WhitespaceEndOfLineChecker](List(StyleError(null, "whitespace.end.of.line", Some(2), Some(14)), StyleError(null, "whitespace.end.of.line", Some(3), Some(13))), source)
+	  assertErrors[WhitespaceEndOfLineChecker](List(columnError(2, 14), columnError(3, 13)), source)
 	}
 }
