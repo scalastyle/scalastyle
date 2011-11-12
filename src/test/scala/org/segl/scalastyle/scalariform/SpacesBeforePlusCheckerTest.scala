@@ -10,43 +10,31 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
-class SpacesAfterPlusCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "spaces.after.plus"
-  val classUnderTest = classOf[SpacesAfterPlusChecker]
+class SpacesBeforePlusCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "spaces.before.plus"
+  val classUnderTest = classOf[SpacesBeforePlusChecker]
 
 	@Test def testOK() = {
 	  val source = """
 package foobar
 	    
 object Foobar {
-  val foo = 1 + 2
+  val foo = 12 + 2
 }
 """;
 	  
 	  assertErrors(List(), source)
 	}
 	
-	@Test def testNoSpaces() = {
+	@Test def testOne() = {
 	  val source = """
 package foobar
 
 object Foobar {
-  val foo = 1 +2
+  val foo = 12+ 2
 }
 """;
 	  
 	  assertErrors(List(positionError(51)), source)
-	}
-	
-	@Test def testTwoSpaces() = {
-	  val source = """
-package foobar
-
-object Foobar {
-  val foo = 1 +  2
-}
-""";
-	  
-	  assertErrors(List(), source)
 	}
 }
