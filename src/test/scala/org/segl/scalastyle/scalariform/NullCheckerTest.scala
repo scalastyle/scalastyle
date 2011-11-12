@@ -12,7 +12,8 @@ import org.junit.Test
 
 class NullCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "null"
-    
+  val classUnderTest = classOf[NullChecker]
+
 	@Test def testZero() = {
 	  val source = """
 package foobar
@@ -22,7 +23,7 @@ object Foobar {
 }
 """;
 	  
-	  assertErrors[NullChecker](List(), source)
+	  assertErrors(List(), source)
 	}
 	
 	@Test def testOne() = {
@@ -35,6 +36,6 @@ object Foobar {
 }
 """;
 
-	  assertErrors[NullChecker](List(positionError(57), positionError(83)), source)
+	  assertErrors(List(positionError(57), positionError(83)), source)
 	}
 }

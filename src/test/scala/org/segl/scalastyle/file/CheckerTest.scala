@@ -10,9 +10,10 @@ import org.segl.scalastyle.ConfigCheck
 
 trait CheckerTest {
   protected val key: String
+  protected val classUnderTest: Class[_ <: Checker]
   
-  protected def assertErrors[T <: Checker](list: List[Message], source: String, params: Map[String, String] = Map())(implicit manifest: Manifest[T]) = {
-	assertEquals(list, Checker.verifySource(List(ConfigCheck(manifest.erasure.getName(), params)), null, source))
+  protected def assertErrors(list: List[Message], source: String, params: Map[String, String] = Map()) = {
+	assertEquals(list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), params)), null, source))
   }
   
   protected def positionError(position: Int) = StyleError(null, key, None, None, Some(position))

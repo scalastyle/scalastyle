@@ -12,7 +12,8 @@ import org.junit.Test
 
 class SpacesAfterPlusCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "spaces.after.plus"
-    
+  val classUnderTest = classOf[SpacesAfterPlusChecker]
+
 	@Test def testZero() = {
 	  val source = """
 package foobar
@@ -22,7 +23,7 @@ object Foobar {
 }
 """;
 	  
-	  assertErrors[SpacesAfterPlusChecker](List(), source)
+	  assertErrors(List(), source)
 	}
 	
 	@Test def testOne() = {
@@ -34,6 +35,6 @@ object Foobar {
 }
 """;
 	  
-	  assertErrors[SpacesAfterPlusChecker](List(positionError(51)), source)
+	  assertErrors(List(positionError(51)), source)
 	}
 }
