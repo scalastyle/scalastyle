@@ -51,6 +51,7 @@ trait Checker {
   
   def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
   def getInt(parameter: String, defaultValue: Int) = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
+  def getString(parameter: String, defaultValue: String) = parameters.getOrElse(parameter, defaultValue)
 }
 
 trait FileChecker extends Checker {

@@ -40,6 +40,6 @@ object Foobar {
 }
 """;
 
-	  assertErrors(List(positionError(64)), source)
+	  assertErrors(List(positionError(40), positionError(64)), source)
 	}
 }
