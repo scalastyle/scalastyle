@@ -59,7 +59,6 @@ class IllegalImportsChecker extends ScalariformChecker {
     var illegalImportsList = toMatchList(getString("illegalImports", DefaultillegalImports))
     val it = for (
       importedClass <- getImports(ast);
-      // TODO don't just check sun._
       if (illegalImportsList.exists(importedClass.importString.startsWith(_)))
     ) yield {
       StyleError(file, "illegal.imports", position = Some(importedClass.position))
