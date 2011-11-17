@@ -133,7 +133,7 @@
 										<artifactId>
 											maven-scala-plugin
                                     </artifactId>
-										<versionRange>[2.15.3-SNAPSHOT,)</versionRange>
+										<versionRange>[2.15.2,)</versionRange>
 										<goals>
 											<goal>add-source</goal>
 											<goal>compile</goal>
@@ -154,7 +154,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<version>2.15.3-SNAPSHOT</version>
+				<version>2.15.2</version>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>
