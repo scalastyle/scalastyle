@@ -19,8 +19,8 @@
 				<updatePolicy>never</updatePolicy>
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
-			<id>scala-tools</id>
-			<name>scala-tools</name>
+			<id>scala-tools-snapshots</id>
+			<name>scala-tools-snapshots</name>
 			<url>http://scala-tools.org/repo-snapshots/</url>
 		</repository>
 		<repository>
