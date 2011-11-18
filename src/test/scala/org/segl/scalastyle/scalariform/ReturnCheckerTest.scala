@@ -34,5 +34,4 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
          """.stripMargin
       assertErrors(List(positionError(65)), source)
    }
-
 }

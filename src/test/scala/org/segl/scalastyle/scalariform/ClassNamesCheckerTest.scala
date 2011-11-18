@@ -39,3 +39,33 @@ class foobar {
 	  assertErrors(List(positionError(20), positionError(38)), source)
 	}
 }
+
+class ObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "object.name"
+  val classUnderTest = classOf[ObjectNamesChecker]
+
+	@Test def testZero() = {
+	  val source = """
+package foobar
+	    
+class Foobar {
+  val foo = 1
+}
+""";
+	  
+	  assertErrors(List(), source)
+	}
+	
+	@Test def testOne() = {
+	  val source = """
+package foobar
+
+object foobar {
+  object barbar {
+  }
+}
+""";
+
+	  assertErrors(List(positionError(20), positionError(39)), source)
+	}
+}
