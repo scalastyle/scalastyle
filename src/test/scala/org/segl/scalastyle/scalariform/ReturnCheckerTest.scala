@@ -12,12 +12,11 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
 
    protected val classUnderTest = classOf[ReturnChecker]
 
-   protected val key = "line.contains.return"
+   protected val key = "return"
 
    @Test def testZeroErrors {
       val source = """
          |package foobar
-         |import foobar
          |object Foobar {
          |}
          """.stripMargin
@@ -27,14 +26,13 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
    @Test def testOneError {
       val source = """
          |package foobar
-         |import foobar
          |object Foobar {
          |   def boo: String = {
-         |      return ""
+         |      return " return here"
          |   }
          |}
          """.stripMargin
-      assertErrors(List(columnError(5, 6)), source)
+      assertErrors(List(positionError(65)), source)
    }
 
 }
