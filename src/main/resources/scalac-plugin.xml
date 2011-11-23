@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin>
-  <name>scalastyle</name>
-  <classname>org.segl.scalastyle.plugin.ScalastylePlugin</classname>
-</plugin>

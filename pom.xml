@@ -7,8 +7,6 @@
 	<name>Scalastyle, Checkstyle for Scala</name>
 	<version>0.0.1</version>
 	<repositories>
-
-
 		<repository>
 			<releases>
 				<enabled>false</enabled>
@@ -54,11 +52,11 @@
 	</repositories>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.scalariform</groupId>
-            <artifactId>scalariform_${scala.version}</artifactId>
-            <version>0.1.1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.scalariform</groupId>
+			<artifactId>scalariform_${scala.version}</artifactId>
+			<version>0.1.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_${scala.version}</artifactId>
@@ -173,9 +171,25 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>org.segl.scalastyle.Main</mainClass>
+					<arguments>
+						<argument>argument1</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
-
-
 	</build>
 	<properties>
 		<scala.version>2.9.1</scala.version>

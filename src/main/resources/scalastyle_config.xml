@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scalastyle>
 	<name>Scalastyle standard configuration</name>
-	<check class="org.segl.scalastyle.FileTabChecker" />
-	<check class="org.segl.scalastyle.FileLengthChecker">
+	<check class="org.segl.scalastyle.file.FileTabChecker" />
+	<check class="org.segl.scalastyle.file.FileLengthChecker">
         <parameters>
             <parameter name="maxFileLength" value="800" />
         </parameters>
     </check>
-	<check class="org.segl.scalastyle.SpacesAfterPlusChecker" />
-	<check class="org.segl.scalastyle.FileLineLengthChecker">
+    <check class="org.segl.scalastyle.scalariform.SpacesAfterPlusChecker" />
+    <check class="org.segl.scalastyle.file.WhitespaceEndOfLineChecker" />
+    <check class="org.segl.scalastyle.scalariform.SpacesBeforePlusChecker" />
+	<check class="org.segl.scalastyle.file.FileLineLengthChecker">
 		<parameters>
 			<parameter name="maxLineLength" value="80" />
 		</parameters>
 	</check>
+    <check class="org.segl.scalastyle.scalariform.ClassNamesChecker" />
+    <check class="org.segl.scalastyle.scalariform.ObjectNamesChecker" />
+    <check class="org.segl.scalastyle.scalariform.EqualsHashCodeChecker" />
+    <check class="org.segl.scalastyle.scalariform.IllegalImportsChecker" />
+    <check class="org.segl.scalastyle.scalariform.MagicNumberChecker" />
+    <check class="org.segl.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" />
+    <check class="org.segl.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" />
+    <check class="org.segl.scalastyle.scalariform.ReturnChecker" />
+    <check class="org.segl.scalastyle.scalariform.NullChecker" />
 </scalastyle>
