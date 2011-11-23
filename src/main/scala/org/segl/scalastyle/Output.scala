@@ -15,7 +15,7 @@ class TextOutput extends Output {
     case StyleError(file, key, line, column, position) => println("error" + print("file", file) + print("key", key) + printOption("line", line) + printOption("column", column) + printOption("position", position))
     case StyleException(file, message, stacktrace, line, column) => println("error" + print("file", file) + print("message", message) + printOption("line", line) + printOption("column", column))
   }
-  
+
   private def printOption(s: String, no: Option[Int]) = if (no.isDefined) print(s, "" + no.get) else "" 
   private def print(s: String, value: String) = " " + s + "=" + value 
 }
@@ -27,6 +27,6 @@ class TextOutput extends Output {
 //  }
 //  
 //  override def flush = {
-//    
+//
 //  }
 //}

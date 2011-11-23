@@ -1,7 +1,8 @@
-package org.segl.scalastyle.file
+package org.segl.scalastyle.scalariform
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
+import org.segl.scalastyle.file.CheckerTest
 
 /**
  * Test that checks that return keyword should not be used

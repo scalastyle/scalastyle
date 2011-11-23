@@ -15,6 +15,6 @@ class SpacesBeforePlusChecker extends ScalariformChecker {
       StyleError(file, "spaces.before.plus", position = Some(right.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 }

@@ -15,7 +15,7 @@ class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
       StyleError(file, "no.whitespace.before.left.bracket", position = Some(left.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 }
 
@@ -28,6 +28,6 @@ class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
       StyleError(file, "no.whitespace.after.left.bracket", position = Some(left.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 }

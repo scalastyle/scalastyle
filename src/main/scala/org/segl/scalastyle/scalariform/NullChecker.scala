@@ -15,6 +15,6 @@ class NullChecker extends ScalariformChecker {
       StyleError(file, "null", position = Some(left.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 }

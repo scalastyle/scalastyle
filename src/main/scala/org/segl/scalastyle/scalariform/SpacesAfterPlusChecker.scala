@@ -15,6 +15,6 @@ class SpacesAfterPlusChecker extends ScalariformChecker {
       StyleError(file, "spaces.after.plus", position = Some(left.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 }

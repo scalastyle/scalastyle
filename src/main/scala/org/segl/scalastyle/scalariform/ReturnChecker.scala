@@ -1,4 +1,4 @@
-package org.segl.scalastyle.file
+package org.segl.scalastyle.scalariform
 
 import java.lang.reflect.Constructor;
 import scalariform.parser.CompilationUnit
@@ -20,7 +20,7 @@ class ReturnChecker extends ScalariformChecker {
       StyleError(file, "return", position = Some(left.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 
 }
