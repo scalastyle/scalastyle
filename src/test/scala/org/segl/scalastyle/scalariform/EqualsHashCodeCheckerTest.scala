@@ -120,4 +120,20 @@ object Object {
 
     assertErrors(List(positionError(45)), source)
   }
+
+  @Test def testMultipleClasses() = {
+    val source = """
+package foobar
+
+class Class1 {
+  def hashCode(): Int = 45
+}
+
+class Class2 {
+  def hashCode(): Int = 45
+}
+""";
+
+    assertErrors(List(positionError(26), positionError(75)), source)
+  }
 }
