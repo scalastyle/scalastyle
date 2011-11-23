@@ -62,7 +62,4 @@ trait ScalariformChecker extends Checker {
   def verify(file: String, ast: CompilationUnit): List[Message]
 
   def charsBetweenTokens(left: Token, right: Token): Int = right.startIndex - (left.startIndex + left.length)
-
 }
-
-
