@@ -11,7 +11,7 @@ class MagicNumberChecker extends ScalariformChecker {
 
   def verify(file: String, ast: CompilationUnit): List[Message] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
-    
+
     val it = for (
       t <- ast.tokens;
       if (t.tokenType == INTEGER_LITERAL && !ignores.contains(t.getText))
@@ -19,6 +19,6 @@ class MagicNumberChecker extends ScalariformChecker {
       StyleError(file, "magic.number", position = Some(t.startIndex))
     }
 
-    return it.toList
+    it.toList
   }
 }

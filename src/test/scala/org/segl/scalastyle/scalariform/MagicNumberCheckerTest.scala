@@ -28,6 +28,6 @@ class Foobar {
 }
 """;
 	  
-	  assertErrors(List(positionError(119),positionError(135)), source)
+	  assertErrors(List(positionError(119), positionError(135)), source)
 	}
 }

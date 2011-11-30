@@ -9,13 +9,9 @@ import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 
 object VisitorHelper {
-  class Clazz[+T <: AstNode](val name: Option[String], val position: Option[Int], val subs: List[Clazz[_ <: AstNode]]) {
-    def isHashCode = false
-    def isEquals = false
-    override def toString(): String = "name=" + name + " position=" + position + " subs=" + subs
-  }
+  class Clazz[+T <: AstNode]()
 
-  protected[scalariform] def visit(ast: Any, visitfn: (Any) => List[Clazz[_ <: AstNode]]): List[Clazz[_ <: AstNode]] = ast match {
+  protected[scalariform] def visit[T](ast: Any, visitfn: (Any) => List[T]): List[T] = ast match {
     case a: AstNode                => visitfn(a.immediateChildren)
     case t: Token                  => List()
     case Some(x)                   => visitfn(x)
@@ -30,9 +26,17 @@ object VisitorHelper {
 
 class EqualsHashCodeChecker extends ScalariformChecker {
   import VisitorHelper._
-  
-  case class TmplClazz(_name: Option[String], _position: Option[Int], _subs: List[Clazz[_ <: AstNode]]) extends Clazz[TmplDef](_name, _position, _subs)
-  case class FunDefOrDclClazz(_name: Option[String], _position: Option[Int], _subs: List[Clazz[_ <: AstNode]]) extends Clazz[FunDefOrDcl](_name, _position, _subs) {
+
+  type ListType = List[BaseClazz[_ <: AstNode]]
+
+  class BaseClazz[+T <: AstNode](val name: Option[String], val position: Option[Int], val subs: ListType) extends Clazz[T] {
+    def isHashCode = false
+    def isEquals = false
+    override def toString(): String = "name=" + name + " position=" + position + " subs=" + subs
+  }
+
+  case class TmplClazz(_name: Option[String], _position: Option[Int], _subs: ListType) extends BaseClazz[TmplDef](_name, _position, _subs)
+  case class FunDefOrDclClazz(_name: Option[String], _position: Option[Int], _subs: ListType) extends BaseClazz[FunDefOrDcl](_name, _position, _subs) {
     override def isHashCode = Some("hashCode") == name
     override def isEquals = Some("equals") == name
   }
@@ -40,21 +44,21 @@ class EqualsHashCodeChecker extends ScalariformChecker {
   def verify(file: String, ast: CompilationUnit): List[Message] = {
     val it = for (
         t <- localvisit(ast.immediateChildren(0));
-        f <- traverse(t); 
+        f <- traverse(t);
         if (matches(f))
     ) yield {
       StyleError(file, "equalsHashCode", position = f.position)
     }
 
-    return it.toList
+    it.toList
   }
-  
-  private def traverse(t: Clazz[AstNode]): List[Clazz[AstNode]] = {
+
+  private def traverse(t: BaseClazz[AstNode]): ListType = {
     val l = t.subs.map(traverse(_)).flatten
-	if (matches(t)) t :: l else l
+    if (matches(t)) t :: l else l
   }
-  
-  private def matches(t: Clazz[AstNode]) = {
+
+  private def matches(t: BaseClazz[AstNode]) = {
     val hc = t.subs.exists(_.isHashCode)
     val eq = t.subs.exists(_.isEquals)
 
@@ -64,7 +68,7 @@ class EqualsHashCodeChecker extends ScalariformChecker {
   private def getParams(p: ParamClauses): List[Param] = {
     p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
   }
-  
+
   private def method(t: FunDefOrDcl): Option[String] = {
     if (t.nameToken.getText == "equals") {
       var paramTypes = getParams(t.paramClauses).map(p => typename(p.paramTypeOpt.get._2))
@@ -76,10 +80,10 @@ class EqualsHashCodeChecker extends ScalariformChecker {
       None
     }
   }
-  
+
   private def typename(t: Type): String = t.tokens.map(_.getText).mkString
 
-  private def localvisit(ast: Any): List[Clazz[_ <: AstNode]] = ast match {
+  private def localvisit(ast: Any): ListType = ast match {
     case t: TmplDef     => List(TmplClazz(Some(t.name.getText), Some(t.name.startIndex), localvisit(t.templateBodyOption)))
     case t: FunDefOrDcl => List(FunDefOrDclClazz(method(t), Some(t.nameToken.startIndex), localvisit(t.localDef)))
     case t: Any         => visit(t, localvisit)

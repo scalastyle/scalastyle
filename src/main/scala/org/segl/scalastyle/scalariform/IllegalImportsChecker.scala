@@ -12,23 +12,23 @@ import scala.collection.mutable.ListBuffer
 class IllegalImportsChecker extends ScalariformChecker {
   case class Import(position: Int, importString: String)
   case class State(state: String)
-  val ExpectingImport = State("expectingImport") 
+  val ExpectingImport = State("expectingImport")
   val InImport = State("inImport")
-  
+
   val DefaultillegalImports = "sun._,sun.com.foobar"
-  
+
   // sun._ => sun\.
   // sun.com.foobar => sun\.com\.foobar
   def toMatchList(s: String) = {
     s.split(",").map(s => s.replaceAll("_$", "")).toList
   }
-  
+
   def getImports(ast: CompilationUnit): List[Import] = {
     val list = ListBuffer[Import]()
     var position = 0;
     val current = new StringBuilder()
     var state = ExpectingImport
-    
+
     ast.tokens.foreach(token => {
       state match {
         case ExpectingImport => if (token.tokenType == IMPORT) {
@@ -47,14 +47,14 @@ class IllegalImportsChecker extends ScalariformChecker {
         }
       }
     })
-    
+
     if (state == InImport) {
       list += Import(position, current.toString)
     }
-    
-    return list.toList
+
+    list.toList
   }
-  
+
   def verify(file: String, ast: CompilationUnit): List[Message] = {
     var illegalImportsList = toMatchList(getString("illegalImports", DefaultillegalImports))
     val it = for (
@@ -64,6 +64,6 @@ class IllegalImportsChecker extends ScalariformChecker {
       StyleError(file, "illegal.imports", position = Some(importedClass.position))
     }
 
-    return it.toList
+    it.toList
   }
 }

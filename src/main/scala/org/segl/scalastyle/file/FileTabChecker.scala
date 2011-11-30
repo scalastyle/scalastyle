@@ -14,7 +14,7 @@ class FileTabChecker extends FileChecker {
     ) yield {
       StyleError(file, "line.contains.tab", Some(line._2 + 1), Some(line._1.indexOf('\t')))
     }
-    
-    return errors.toList
+
+    errors.toList
   }
 }

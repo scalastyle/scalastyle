@@ -13,8 +13,17 @@ trait CheckerTest {
   protected val classUnderTest: Class[_ <: Checker]
   
   protected def assertErrors(list: List[Message], source: String, params: Map[String, String] = Map()) = {
-	assertEquals(list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), params)), null, source))
+    
+    val description = list.map( message => {
+      message match {
+        case StyleError(x, y, _, _, Some(pos)) => "(" + pos + "):" + substring(source, pos);
+        case _ => "unknown"
+      }
+    }).mkString(",");
+	assertEquals(description, list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), params)), null, source))
   }
+  
+  private[this] def substring(s: String, pos: Int) = s.substring(pos, Math.min(s.length(), pos + 7))
   
   protected def positionError(position: Int) = StyleError(null, key, None, None, Some(position))
   protected def fileError() = StyleError(null, key, None, None, None)
