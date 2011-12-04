@@ -9,12 +9,14 @@ import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 
 class ParameterNumberChecker extends ScalariformChecker {
+  val errorKey = "parameterNumber"
+    
   import VisitorHelper._
   val DefaultMaximumParameters = 8
 
   case class FunDefOrDclClazz(paramClauses: ParamClauses, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
 
-  def verify(file: String, ast: CompilationUnit): List[Message] = {
+  def verify(ast: CompilationUnit): List[Position] = {
     val maximumParameters = getInt("maxParameters", DefaultMaximumParameters)
 
     val it = for (
@@ -22,7 +24,7 @@ class ParameterNumberChecker extends ScalariformChecker {
         f <- traverse(t);
         if (matches(f, maximumParameters))
     ) yield {
-      StyleError(file, "parameterNumber", position = t.position)
+      Position(position = t.position)
     }
 
     it.toList

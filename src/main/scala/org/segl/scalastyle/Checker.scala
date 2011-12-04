@@ -9,8 +9,8 @@ import scala.io.Source
 
 case class Lines(lines: Array[String])
 
-class ScalastyleChecker {
-  def checkFiles(configuration: ScalastyleConfiguration, files: List[String]): List[Message] = {
+class ScalastyleChecker[T <: FileSpec] {
+  def checkFiles(configuration: ScalastyleConfiguration, files: List[T]): List[Message[T]] = {
     StartWork() :: files.flatMap(file => Checker.verifyFile(configuration.checks, file)).toList ::: List(EndWork())
   }
 }
@@ -25,20 +25,21 @@ object Checker {
 
   private def parseLines(source: String): Lines = Lines(source.split("\n"));
 
-  def verifySource(classes: List[ConfigCheck], file: String, source: String): List[Message] = {
+  def verifySource[T <: FileSpec](classes: List[ConfigCheck], file: T, source: String): List[Message[T]] = {
     lazy val lines = parseLines(source)
     lazy val scalariformAst = parseScalariform(source)
 
     classes.map(cc => newInstance(getClass(cc.className), cc.parameters)).flatMap(c => c match {
       case c: FileChecker => c.verify(file, lines)
       case c: ScalariformChecker => c.verify(file, scalariformAst)
-      case _ => List[Message]()
+      case _ => List[Message[T]]()
     })
   }
 
   def getClass(name: String) = Class.forName(name).asInstanceOf[Class[Checker]]
 
-  def verifyFile(classes: List[ConfigCheck], file: String): List[Message] = verifySource(classes, file, Source.fromFile(file).mkString)
+  def verifyFile[T <: FileSpec](classes: List[ConfigCheck], file: T): List[Message[T]] = verifySource(classes, file, Source.fromFile(file.name).mkString)
+
   def newInstance(clazz: Class[Checker], parameters: Map[String, String]) = {
     val c: Checker = clazz.getConstructor().newInstance().asInstanceOf[Checker]
     c.setParameters(parameters)
@@ -47,6 +48,7 @@ object Checker {
 }
 
 trait Checker {
+  val errorKey: String;
   var parameters = Map[String, String]();
 
   def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
@@ -55,11 +57,19 @@ trait Checker {
 }
 
 trait FileChecker extends Checker {
-  def verify(file: String, lines: Lines): List[Message]
+  def verify[T <: FileSpec](file: T, lines: Lines): List[Message[T]] = {
+    verify(lines).map(p => new StyleError(file, errorKey, p.lineNumber, p.column, p.position))
+  }
+
+  def verify(lines: Lines): List[Position]
 }
 
 trait ScalariformChecker extends Checker {
-  def verify(file: String, ast: CompilationUnit): List[Message]
+  def verify(ast: CompilationUnit): List[Position]
+  
+  final def verify[T <: FileSpec](file: T, ast: CompilationUnit): List[Message[T]] = {
+    verify(ast).map(p => new StyleError(file, errorKey, p.lineNumber, p.column, p.position))
+  }
 
   def charsBetweenTokens(left: Token, right: Token): Int = right.startIndex - (left.startIndex + left.length)
 }

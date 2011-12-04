@@ -5,8 +5,11 @@ import org.segl.scalastyle.FileChecker
 import org.segl.scalastyle.StyleError
 import org.segl.scalastyle.Message
 import org.segl.scalastyle.Lines
+import org.segl.scalastyle._
 
 class WhitespaceEndOfLineChecker extends FileChecker {
+  val errorKey = "whitespace.end.of.line"
+    
   private val whitespaces = Set(' ', '\t')
   private val endOfLines = Set('\n', '\r')
 
@@ -26,13 +29,13 @@ class WhitespaceEndOfLineChecker extends FileChecker {
     (whitespaceIndex != endOfLinesIndex, s.length() - whitespaceIndex)
   }
 
-  def verify(file: String, lines: Lines): List[Message] = {
+  def verify(lines: Lines): List[Position] = {
     val errors = for (
       line <- lines.lines.zipWithIndex;
       whitespace = endsWithWhitespace(line._1)
       if (whitespace._1)
     ) yield {
-      StyleError(file, "whitespace.end.of.line", Some(line._2 + 1), Some(whitespace._2))
+      Position(Some(line._2 + 1), Some(whitespace._2))
     }
 
     errors.toList

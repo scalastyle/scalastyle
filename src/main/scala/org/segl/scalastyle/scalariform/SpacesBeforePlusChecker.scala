@@ -7,12 +7,14 @@ import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 
 class SpacesBeforePlusChecker extends ScalariformChecker {
-  def verify(file: String, ast: CompilationUnit): List[Message] = {
+  val errorKey = "spaces.before.plus"
+    
+  def verify(ast: CompilationUnit): List[Position] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (right.tokenType == PLUS && charsBetweenTokens(left, right) == 0)
     ) yield {
-      StyleError(file, "spaces.before.plus", position = Some(right.startIndex))
+      Position(position = Some(right.startIndex))
     }
 
     it.toList

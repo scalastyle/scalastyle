@@ -5,13 +5,16 @@ import scala.xml._
 
 class Directory
 
+class DirectoryFileSpec(val name: String, val file: java.io.File) extends FileSpec {
+}
+
 object Directory {
   val scalaFileFilter = new FileFilter() {
     def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
   }
 
-  def getFiles(dir: File): List[String] = {
-    dir.listFiles(scalaFileFilter).map(_.getAbsolutePath()).toList ::: dir.listFiles().filter(_.isDirectory).flatMap(getFiles(_)).toList
+  def getFiles(dir: File): List[FileSpec] = {
+    dir.listFiles(scalaFileFilter).map(f => new DirectoryFileSpec(f.getAbsolutePath(), f.getAbsoluteFile())).toList ::: dir.listFiles().filter(_.isDirectory).flatMap(getFiles(_)).toList
   }
 
   def main(args: Array[String]): Unit = {

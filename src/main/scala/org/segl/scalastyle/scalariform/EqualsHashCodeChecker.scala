@@ -26,6 +26,7 @@ object VisitorHelper {
 
 class EqualsHashCodeChecker extends ScalariformChecker {
   import VisitorHelper._
+  val errorKey = "equalsHashCode"
 
   type ListType = List[BaseClazz[_ <: AstNode]]
 
@@ -41,13 +42,13 @@ class EqualsHashCodeChecker extends ScalariformChecker {
     override def isEquals = Some("equals") == name
   }
 
-  def verify(file: String, ast: CompilationUnit): List[Message] = {
+  def verify(ast: CompilationUnit): List[Position] = {
     val it = for (
         t <- localvisit(ast.immediateChildren(0));
         f <- traverse(t);
         if (matches(f))
     ) yield {
-      StyleError(file, "equalsHashCode", position = f.position)
+      Position(position = f.position)
     }
 
     it.toList
@@ -72,6 +73,7 @@ class EqualsHashCodeChecker extends ScalariformChecker {
   private def method(t: FunDefOrDcl): Option[String] = {
     if (t.nameToken.getText == "equals") {
       var paramTypes = getParams(t.paramClauses).map(p => typename(p.paramTypeOpt.get._2))
+      // TODO should be Any as well.
       if (paramTypes.size == 1 && paramTypes(0) == "java.lang.Object") Some("equals") else None
     } else if (t.nameToken.getText == "hashCode") {
       var paramTypes = getParams(t.paramClauses).map(p => typename(p.paramTypeOpt.get._2))

@@ -8,15 +8,16 @@ import org.segl.scalastyle._
 
 class MagicNumberChecker extends ScalariformChecker {
   val DefaultIgnore = "-1,0,1,2"
+  val errorKey = "magic.number"
 
-  def verify(file: String, ast: CompilationUnit): List[Message] = {
+  def verify(ast: CompilationUnit): List[Position] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
 
     val it = for (
       t <- ast.tokens;
       if (t.tokenType == INTEGER_LITERAL && !ignores.contains(t.getText))
     ) yield {
-      StyleError(file, "magic.number", position = Some(t.startIndex))
+      Position(position = Some(t.startIndex))
     }
 
     it.toList

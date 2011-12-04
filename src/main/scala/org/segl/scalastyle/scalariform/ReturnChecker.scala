@@ -12,12 +12,14 @@ import org.segl.scalastyle._
  * @author Galder Zamarreño
  */
 class ReturnChecker extends ScalariformChecker {
-  def verify(file: String, ast: CompilationUnit): List[Message] = {
+  val errorKey = "return"
+    
+  def verify(ast: CompilationUnit): List[Position] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == RETURN)
     ) yield {
-      StyleError(file, "return", position = Some(left.startIndex))
+      Position(position = Some(left.startIndex))
     }
 
     it.toList

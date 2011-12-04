@@ -1,13 +1,19 @@
 package org.segl.scalastyle
 
-sealed abstract class Message()
+trait FileSpec {
+  def name: String
+  def file: java.io.File
+}
 
-case class StartWork() extends Message
-case class EndWork() extends Message
+sealed abstract class Message[+T <: FileSpec]()
 
-case class StartFile(name: String) extends Message
-case class EndFile(name: String) extends Message
+case class StartWork[+T <: FileSpec]() extends Message[T]
+case class EndWork[+T <: FileSpec]() extends Message[T]
 
-case class StyleError(file: String, key: String, lineNumber: Option[Int] = None, column: Option[Int] = None, position: Option[Int] = None) extends Message
-case class StyleException(file: String, message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message
+case class StartFile[+T <: FileSpec](fileSpec: T) extends Message[T]
+case class EndFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 
+case class StyleError[+T <: FileSpec](fileSpec: T, key: String, lineNumber: Option[Int] = None, column: Option[Int] = None, position: Option[Int] = None) extends Message[T]
+case class StyleException[+T <: FileSpec](fileSpec: T, message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
+
+case class Position(lineNumber: Option[Int] = None, column: Option[Int] = None, position: Option[Int] = None)

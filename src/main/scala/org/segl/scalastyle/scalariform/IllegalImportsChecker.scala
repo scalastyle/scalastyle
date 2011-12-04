@@ -7,9 +7,12 @@ import _root_.scalariform.lexer.Token
 import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 import scala.collection.mutable.ListBuffer
+import org.segl.scalastyle._
 
 // TODO deal with alias and multiple imports, i.e: import java.util.{List => JList} import java.util.{List, Map}
 class IllegalImportsChecker extends ScalariformChecker {
+  val errorKey = "illegal.imports"
+
   case class Import(position: Int, importString: String)
   case class State(state: String)
   val ExpectingImport = State("expectingImport")
@@ -55,13 +58,13 @@ class IllegalImportsChecker extends ScalariformChecker {
     list.toList
   }
 
-  def verify(file: String, ast: CompilationUnit): List[Message] = {
+  def verify(ast: CompilationUnit): List[Position] = {
     var illegalImportsList = toMatchList(getString("illegalImports", DefaultillegalImports))
     val it = for (
       importedClass <- getImports(ast);
       if (illegalImportsList.exists(importedClass.importString.startsWith(_)))
     ) yield {
-      StyleError(file, "illegal.imports", position = Some(importedClass.position))
+      Position(position = Some(importedClass.position))
     }
 
     it.toList
