@@ -35,6 +35,6 @@ object Foobar {
 }
 """;
 	  
-	  assertErrors(List(positionError(51)), source)
+	  assertErrors(List(columnError(5, 14)), source)
 	}
 }

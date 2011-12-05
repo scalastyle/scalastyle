@@ -36,7 +36,7 @@ class HashCodeOnlyKO {
 }
 """;
 
-    assertErrors(List(positionError(31)), source)
+    assertErrors(List(columnError(4, 6)), source)
   }
 
   @Test def testEqualsOnlyKO() = {
@@ -48,7 +48,7 @@ class EqualsOnlyKO {
 }
 """;
 
-    assertErrors(List(positionError(31)), source)
+    assertErrors(List(columnError(4, 6)), source)
   }
 
   @Test def testEqualsWrongSignatureOK() = {
@@ -88,7 +88,7 @@ class OuterKO {
 }    
 """;
 
-    assertErrors(List(positionError(26), positionError(73)), source)
+    assertErrors(List(columnError(4, 6), columnError(6, 8)), source)
   }
 
   @Test def testOuterOKInnerKO() = {
@@ -104,7 +104,7 @@ class OuterOK {
 }
 """;
 
-    assertErrors(List(positionError(73)), source)
+    assertErrors(List(columnError(6, 8)), source)
   }
 
   @Test def testObjectInnerKO() = {
@@ -118,7 +118,7 @@ object Object {
 }
 """;
 
-    assertErrors(List(positionError(45)), source)
+    assertErrors(List(columnError(5, 8)), source)
   }
 
   @Test def testMultipleClasses() = {
@@ -134,6 +134,6 @@ class Class2 {
 }
 """;
 
-    assertErrors(List(positionError(26), positionError(75)), source)
+    assertErrors(List(columnError(4, 6), columnError(8, 6)), source)
   }
 }

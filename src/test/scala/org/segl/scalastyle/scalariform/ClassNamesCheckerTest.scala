@@ -36,7 +36,7 @@ class foobar {
 }
 """;
 
-	  assertErrors(List(positionError(20), positionError(38)), source)
+	  assertErrors(List(columnError(4, 6), columnError(5, 8)), source)
 	}
 }
 
@@ -66,6 +66,6 @@ object foobar {
 }
 """;
 
-	  assertErrors(List(positionError(20), positionError(39)), source)
+	  assertErrors(List(columnError(4, 7), columnError(5, 9)), source)
 	}
 }

@@ -9,12 +9,12 @@ import org.segl.scalastyle._
 class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
   val errorKey = "no.whitespace.before.left.bracket"
     
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
     ) yield {
-      Position(position = Some(left.startIndex))
+      PositionError(left.startIndex)
     }
 
     it.toList
@@ -24,12 +24,12 @@ class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
 class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
   val errorKey = "no.whitespace.after.left.bracket"
     
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
     ) yield {
-      Position(position = Some(left.startIndex))
+      PositionError(left.startIndex)
     }
 
     it.toList

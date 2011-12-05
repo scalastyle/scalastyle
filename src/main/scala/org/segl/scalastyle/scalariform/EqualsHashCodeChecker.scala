@@ -42,13 +42,13 @@ class EqualsHashCodeChecker extends ScalariformChecker {
     override def isEquals = Some("equals") == name
   }
 
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
         t <- localvisit(ast.immediateChildren(0));
         f <- traverse(t);
         if (matches(f))
     ) yield {
-      Position(position = f.position)
+      PositionError(f.position.get)
     }
 
     it.toList

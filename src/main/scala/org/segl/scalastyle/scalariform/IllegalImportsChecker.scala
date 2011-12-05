@@ -58,13 +58,13 @@ class IllegalImportsChecker extends ScalariformChecker {
     list.toList
   }
 
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     var illegalImportsList = toMatchList(getString("illegalImports", DefaultillegalImports))
     val it = for (
       importedClass <- getImports(ast);
       if (illegalImportsList.exists(importedClass.importString.startsWith(_)))
     ) yield {
-      Position(position = Some(importedClass.position))
+      PositionError(importedClass.position)
     }
 
     it.toList

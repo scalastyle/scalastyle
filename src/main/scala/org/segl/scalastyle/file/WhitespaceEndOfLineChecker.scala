@@ -29,13 +29,13 @@ class WhitespaceEndOfLineChecker extends FileChecker {
     (whitespaceIndex != endOfLinesIndex, s.length() - whitespaceIndex)
   }
 
-  def verify(lines: Lines): List[Position] = {
+  def verify(lines: Lines): List[ScalastyleError] = {
     val errors = for (
       line <- lines.lines.zipWithIndex;
-      whitespace = endsWithWhitespace(line._1)
+      whitespace = endsWithWhitespace(line._1.text)
       if (whitespace._1)
     ) yield {
-      Position(Some(line._2 + 1), Some(whitespace._2))
+      ColumnError(line._2 + 1, whitespace._2)
     }
 
     errors.toList

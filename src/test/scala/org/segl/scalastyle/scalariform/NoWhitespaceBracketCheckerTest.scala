@@ -32,8 +32,8 @@ package foobar
 class Foobar [T] {
 }
 """;
-	  
-	  assertErrors(List(positionError(26)), source)
+      // TODO fix this test
+	  assertErrors(List(columnError(4, 6)), source)
 	}
 	
 	@Test def testTwoSpaces() = {
@@ -44,7 +44,8 @@ class Foobar [ Barbar [T]] {
 }
 """;
 	  
-	  assertErrors(List(positionError(26), positionError(35)), source)
+	  // TODO fix this test
+	  assertErrors(List(columnError(4, 6), columnError(4, 15)), source)
 	}
 }
 
@@ -71,7 +72,7 @@ class Foobar[ T] {
 }
 """;
 	  
-	  assertErrors(List(positionError(32)), source)
+	  assertErrors(List(columnError(4, 12)), source)
 	}
 	
 	@Test def testTwoSpaces() = {
@@ -82,6 +83,6 @@ class Foobar[ Barbar[ T]] {
 }
 """;
 	  
-	  assertErrors(List(positionError(32), positionError(40)), source)
+	  assertErrors(List(columnError(4, 12), columnError(4, 20)), source)
 	}
 }

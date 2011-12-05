@@ -40,6 +40,7 @@ object Foobar {
 }
 """;
 
-	  assertErrors(List(positionError(40), positionError(64)), source)
+	  // TODO fix this test
+	  assertErrors(List(columnError(4, 20), columnError(5, 24)), source)
 	}
 }

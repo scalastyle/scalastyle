@@ -11,9 +11,9 @@ class FileLengthChecker extends FileChecker {
   val errorKey = "file.size.limit"
   val DefaultMaxFileLength = 1000
 
-  def verify(ast: Lines): List[Position] = {
+  def verify(ast: Lines): List[ScalastyleError] = {
     val maxLineLength = getInt("maxFileLength", DefaultMaxFileLength)
 
-    if (ast.lines.size > maxLineLength) List(Position()) else List()
+    if (ast.lines.size > maxLineLength) List(FileError()) else List()
   }
 }

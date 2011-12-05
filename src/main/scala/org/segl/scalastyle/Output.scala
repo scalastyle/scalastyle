@@ -12,8 +12,8 @@ class TextOutput[T <: FileSpec] extends Output[T] {
     case EndWork() => println("Scalastyle done. Now go and fix your code.")
     case StartFile(file) => println("start file " + file)
     case EndFile(file) => println("end file " + file)
-    case StyleError(file, key, line, column, position) => {
-      println("error" + print("file", file.name) + print("key", key) + print("line", line) + print("column", column) + print("position", position))
+    case StyleError(file, key, line, column) => {
+      println("error" + print("file", file.name) + print("key", key) + print("line", line) + print("column", column))
     }
     case StyleException(file, message, stacktrace, line, column) => {
       println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))

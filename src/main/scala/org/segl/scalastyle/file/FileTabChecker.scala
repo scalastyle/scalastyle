@@ -10,12 +10,12 @@ import org.segl.scalastyle._
 class FileTabChecker extends FileChecker {
   val errorKey = "line.contains.tab"
     
-  def verify(lines: Lines): List[Position] = {
+  def verify(lines: Lines): List[ScalastyleError] = {
     val errors = for (
       line <- lines.lines.zipWithIndex;
-      if line._1.contains('\t')
+      if line._1.text.contains('\t')
     ) yield {
-      Position(Some(line._2 + 1), Some(line._1.indexOf('\t')))
+      ColumnError(line._2 + 1, line._1.text.indexOf('\t'))
     }
 
     errors.toList

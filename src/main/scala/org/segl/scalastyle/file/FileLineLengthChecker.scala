@@ -12,14 +12,14 @@ class FileLineLengthChecker extends FileChecker {
   val DefaultMaxLineLength = 160
   val errorKey = "line.size.limit"
 
-  def verify(lines: Lines): List[Position] = {
+  def verify(lines: Lines): List[ScalastyleError] = {
     val maxLineLength = getInt("maxLineLength", DefaultMaxLineLength)
 
     val errors = for (
       line <- lines.lines.zipWithIndex;
-      if line._1.length() > maxLineLength
+      if line._1.text.length() > maxLineLength
     ) yield {
-      Position(Some(line._2 + 1))
+      LineError(line._2 + 1)
     }
 
     errors.toList

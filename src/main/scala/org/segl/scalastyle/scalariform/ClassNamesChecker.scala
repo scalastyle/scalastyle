@@ -11,14 +11,14 @@ class ClassNamesChecker extends ScalariformChecker {
   val DefaultRegex = "[A-Z][A-Za-z]*"
   val errorKey = "class.name"
 
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val regex = getString("regex", DefaultRegex).r
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == CLASS && (regex findAllIn (right.getText)).size == 0)
     ) yield {
-      Position(position = Some(left.startIndex))
+      PositionError(right.startIndex)
     }
 
     it.toList
@@ -29,14 +29,14 @@ class ObjectNamesChecker extends ScalariformChecker {
   val DefaultRegex = "[A-Z][A-Za-z]*"
   val errorKey = "object.name"
 
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[PositionError] = {
     val regex = getString("regex", DefaultRegex).r
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
     ) yield {
-      Position(position = Some(left.startIndex))
+      PositionError(right.startIndex)
     }
 
     it.toList

@@ -36,7 +36,7 @@ class OK {
 }
 """;
 
-    assertErrors(List(positionError(38)), source)
+    assertErrors(List(columnError(5, 6)), source)
   }
 
   @Test def testOuterKOInnerKO() = {
@@ -54,6 +54,6 @@ class Outer {
 }    
 """;
 
-    assertErrors(List(positionError(61), positionError(192)), source)
+    assertErrors(List(columnError(6, 8), columnError(10, 8)), source)
   }
 }

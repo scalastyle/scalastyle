@@ -10,14 +10,14 @@ class MagicNumberChecker extends ScalariformChecker {
   val DefaultIgnore = "-1,0,1,2"
   val errorKey = "magic.number"
 
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
 
     val it = for (
       t <- ast.tokens;
       if (t.tokenType == INTEGER_LITERAL && !ignores.contains(t.getText))
     ) yield {
-      Position(position = Some(t.startIndex))
+      PositionError(t.startIndex)
     }
 
     it.toList

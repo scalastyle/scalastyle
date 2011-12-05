@@ -16,7 +16,7 @@ class ParameterNumberChecker extends ScalariformChecker {
 
   case class FunDefOrDclClazz(paramClauses: ParamClauses, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
 
-  def verify(ast: CompilationUnit): List[Position] = {
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val maximumParameters = getInt("maxParameters", DefaultMaximumParameters)
 
     val it = for (
@@ -24,7 +24,7 @@ class ParameterNumberChecker extends ScalariformChecker {
         f <- traverse(t);
         if (matches(f, maximumParameters))
     ) yield {
-      Position(position = t.position)
+      PositionError(t.position.get)
     }
 
     it.toList

@@ -28,6 +28,6 @@ class Foobar {
 }
 """;
 	  
-	  assertErrors(List(positionError(119), positionError(135)), source)
+	  assertErrors(List(columnError(9, 13), columnError(10, 13)), source)
 	}
 }
