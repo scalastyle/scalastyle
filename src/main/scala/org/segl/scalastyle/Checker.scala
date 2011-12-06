@@ -27,7 +27,7 @@ case class Lines(lines: Array[Line]) {
 class ScalastyleChecker[T <: FileSpec] {
   
   def checkFiles(configuration: ScalastyleConfiguration, files: List[T]): List[Message[T]] = {
-    StartWork() :: files.flatMap(file => Checker.verifyFile(configuration.checks, file)).toList ::: List(EndWork())
+    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration.checks, file) ::: List(EndFile(file)) ).toList ::: List(EndWork())
   }
 }
 
