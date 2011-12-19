@@ -51,6 +51,18 @@ class EqualsOnlyKO {
     assertErrors(List(columnError(4, 6)), source)
   }
 
+  @Test def testEqualsOnlyAnyKO() = {
+    val source = """
+package foobar
+	    
+class EqualsOnlyKO {
+  def equals(o: Any): Boolean = false
+}
+""";
+
+    assertErrors(List(columnError(4, 6)), source)
+  }
+
   @Test def testEqualsWrongSignatureOK() = {
     val source = """
 package foobar

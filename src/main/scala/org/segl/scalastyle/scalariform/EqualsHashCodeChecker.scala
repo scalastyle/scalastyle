@@ -73,8 +73,7 @@ class EqualsHashCodeChecker extends ScalariformChecker {
   private def method(t: FunDefOrDcl): Option[String] = {
     if (t.nameToken.getText == "equals") {
       var paramTypes = getParams(t.paramClauses).map(p => typename(p.paramTypeOpt.get._2))
-      // TODO should be Any as well.
-      if (paramTypes.size == 1 && paramTypes(0) == "java.lang.Object") Some("equals") else None
+      if (paramTypes.size == 1 && (paramTypes(0) == "java.lang.Object" || paramTypes(0) == "Any")) Some("equals") else None
     } else if (t.nameToken.getText == "hashCode") {
       var paramTypes = getParams(t.paramClauses).map(p => typename(p.paramTypeOpt.get._2))
       if (paramTypes.size == 0) Some("hashCode") else None
