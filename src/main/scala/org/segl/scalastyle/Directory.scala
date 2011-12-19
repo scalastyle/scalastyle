@@ -6,6 +6,7 @@ import scala.xml._
 class Directory
 
 class DirectoryFileSpec(val name: String, val file: java.io.File) extends FileSpec {
+  override def toString = file.getAbsolutePath()
 }
 
 object Directory {
