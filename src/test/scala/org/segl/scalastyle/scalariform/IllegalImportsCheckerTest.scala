@@ -29,18 +29,16 @@ object Foobar {
 	}
 	
 	@Test def testOne() = {
-	  val source = """
-package foobar
+	  val source = """|package foobar
+                      |
+                      |import java.util._
+                      |import sun.com.foobar;
+                      |import sun._
+                      |
+                      |object Foobar {
+                      |}
+""".stripMargin;
 
-import java.util._
-import sun.com.foobar;
-import sun._
-
-object Foobar {
-}
-""";
-
-	  // TODO fix this test
-	  assertErrors(List(columnError(4, 20), columnError(5, 24)), source)
+	  assertErrors(List(columnError(4, 0), columnError(5, 0)), source)
 	}
 }

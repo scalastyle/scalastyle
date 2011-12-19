@@ -32,7 +32,6 @@ package foobar
 class Foobar [T] {
 }
 """;
-      // TODO fix this test
 	  assertErrors(List(columnError(4, 6)), source)
 	}
 	
@@ -44,7 +43,6 @@ class Foobar [ Barbar [T]] {
 }
 """;
 	  
-	  // TODO fix this test
 	  assertErrors(List(columnError(4, 6), columnError(4, 15)), source)
 	}
 }

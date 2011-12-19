@@ -15,7 +15,7 @@ case class Lines(lines: Array[Line]) {
     
     lines.foreach(l => {
       i = i + 1
-      if (position >= l.start && position <= l.end) {
+      if (position >= l.start && position < l.end) {
         return ColumnError(i, position - l.start)
       }
     })

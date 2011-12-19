@@ -22,11 +22,11 @@ class IllegalImportsChecker extends ScalariformChecker {
 
   // sun._ => sun\.
   // sun.com.foobar => sun\.com\.foobar
-  def toMatchList(s: String) = {
+  private def toMatchList(s: String) = {
     s.split(",").map(s => s.replaceAll("_$", "")).toList
   }
 
-  def getImports(ast: CompilationUnit): List[Import] = {
+  private def getImports(ast: CompilationUnit): List[Import] = {
     val list = ListBuffer[Import]()
     var position = 0;
     val current = new StringBuilder()
