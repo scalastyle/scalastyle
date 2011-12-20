@@ -12,20 +12,19 @@ case class Line(text: String, start: Int, end: Int)
 case class Lines(lines: Array[Line]) {
   def translate(position: Int): ScalastyleError = {
     var i = 0
-    
+
     lines.foreach(l => {
       i = i + 1
       if (position >= l.start && position < l.end) {
         return ColumnError(i, position - l.start)
       }
     })
-    
+
     FileError()
   }
 }
 
 class ScalastyleChecker[T <: FileSpec] {
-  
   def checkFiles(configuration: ScalastyleConfiguration, files: List[T]): List[Message[T]] = {
     StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration.checks, file) ::: List(EndFile(file)) ).toList ::: List(EndWork())
   }
@@ -34,9 +33,14 @@ class ScalastyleChecker[T <: FileSpec] {
 object Checker {
   type CheckerClass = Class[_ <: Checker[_]]
 
-  def parseScalariform(source: String) = {
-    val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
-    new ScalaParser(tokens.toArray).compilationUnitOrScript()
+  def parseScalariform(source: String): Option[CompilationUnit] = {
+    try {
+        val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
+        Some(new ScalaParser(tokens.toArray).compilationUnitOrScript())
+    } catch {
+      // TODO improve error logging here
+      case e: Exception => None
+    }
   }
 
   private def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)){ case (pl, t) => Line(t, pl.end, pl.end + t.length + 1) }.tail)
@@ -47,7 +51,10 @@ object Checker {
 
     classes.map(cc => newInstance(getClass(cc.className), cc.parameters)).flatMap(c => c match {
       case c: FileChecker => c.verify(file, lines, lines)
-      case c: ScalariformChecker => c.verify(file, scalariformAst, lines)
+      case c: ScalariformChecker => scalariformAst match {
+        case Some(x) => c.verify(file, scalariformAst.get, lines)
+        case None => List[Message[T]]()
+      }
       case _ => List[Message[T]]()
     })
   }
@@ -76,7 +83,7 @@ trait Checker[A] {
       case PositionError(position) => lines.translate(position)
       case _ => p
     }
-    
+
     p2 match {
       case PositionError(position) => StyleError(file, errorKey)
       case FileError() => StyleError(file, errorKey, None, None)
