@@ -8,7 +8,7 @@ import org.segl.scalastyle._
 
 class SpacesAfterPlusChecker extends ScalariformChecker {
   val errorKey = "spaces.after.plus"
-    
+
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);

@@ -1,6 +1,5 @@
 package org.segl.scalastyle.file
 
-
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -16,29 +15,29 @@ import org.junit.Test;
 
 class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "file.size.limit"
-    val classUnderTest = classOf[FileLengthChecker]
-    
-	@Test def testZero() = {
-	  val source = """
-package foobar
-import foobar
-	object Foobar {
-}
-""";
-	  
-	  assertErrors(List(), source, Map("maxFileLength" -> "5"))
-	}
+  val classUnderTest = classOf[FileLengthChecker]
 
-	@Test def testOne() = {
-	  val source = """
+  @Test def testZero() = {
+    val source = """
 package foobar
 import foobar
-	object Foobar {
-}
-	object Barbar {
+  object Foobar {
 }
 """;
-	  
-	  assertErrors(List(fileError()), source, Map("maxFileLength" -> "5"))
-	}
+
+    assertErrors(List(), source, Map("maxFileLength" -> "5"))
+  }
+
+  @Test def testOne() = {
+    val source = """
+package foobar
+import foobar
+  object Foobar {
+}
+  object Barbar {
+}
+""";
+
+    assertErrors(List(fileError()), source, Map("maxFileLength" -> "5"))
+  }
 }

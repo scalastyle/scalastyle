@@ -14,20 +14,20 @@ class ClassNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "class.name"
   val classUnderTest = classOf[ClassNamesChecker]
 
-	@Test def testZero() = {
-	  val source = """
+  @Test def testZero() = {
+    val source = """
 package foobar
-	    
+
 class Foobar {
   val foo = 1
 }
 """;
-	  
-	  assertErrors(List(), source)
-	}
-	
-	@Test def testOne() = {
-	  val source = """
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOne() = {
+    val source = """
 package foobar
 
 class foobar {
@@ -36,28 +36,28 @@ class foobar {
 }
 """;
 
-	  assertErrors(List(columnError(4, 6), columnError(5, 8)), source)
-	}
+    assertErrors(List(columnError(4, 6), columnError(5, 8)), source)
+  }
 }
 
 class ObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "object.name"
   val classUnderTest = classOf[ObjectNamesChecker]
 
-	@Test def testZero() = {
-	  val source = """
+  @Test def testZero() = {
+    val source = """
 package foobar
-	    
+
 class Foobar {
   val foo = 1
 }
 """;
-	  
-	  assertErrors(List(), source)
-	}
-	
-	@Test def testOne() = {
-	  val source = """
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOne() = {
+    val source = """
 package foobar
 
 object foobar {
@@ -66,6 +66,6 @@ object foobar {
 }
 """;
 
-	  assertErrors(List(columnError(4, 7), columnError(5, 9)), source)
-	}
+    assertErrors(List(columnError(4, 7), columnError(5, 9)), source)
+  }
 }

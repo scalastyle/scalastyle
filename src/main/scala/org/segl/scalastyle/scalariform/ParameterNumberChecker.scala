@@ -10,7 +10,7 @@ import org.segl.scalastyle._
 
 class ParameterNumberChecker extends ScalariformChecker {
   val errorKey = "parameterNumber"
-    
+
   import VisitorHelper._
   val DefaultMaximumParameters = 8
 

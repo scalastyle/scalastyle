@@ -17,7 +17,7 @@ class EqualsHashCodeCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testOK() = {
     val source = """
 package foobar
-	    
+
 class OK {
   def hashCode(): Int = 45
   def equals(o: java.lang.Object): Boolean = false
@@ -30,7 +30,7 @@ class OK {
   @Test def testHashCodeOnlyKO() = {
     val source = """
 package foobar
-	    
+
 class HashCodeOnlyKO {
   def hashCode(): Int = 45
 }
@@ -42,7 +42,7 @@ class HashCodeOnlyKO {
   @Test def testEqualsOnlyKO() = {
     val source = """
 package foobar
-	    
+
 class EqualsOnlyKO {
   def equals(o: java.lang.Object): Boolean = false
 }
@@ -54,7 +54,7 @@ class EqualsOnlyKO {
   @Test def testEqualsOnlyAnyKO() = {
     val source = """
 package foobar
-	    
+
 class EqualsOnlyKO {
   def equals(o: Any): Boolean = false
 }
@@ -97,7 +97,7 @@ class OuterKO {
   class InnerKO {
     def equals(o: java.lang.Object): Boolean = false
   }
-}    
+}
 """;
 
     assertErrors(List(columnError(4, 6), columnError(6, 8)), source)

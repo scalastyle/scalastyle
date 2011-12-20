@@ -11,21 +11,21 @@ import org.segl.scalastyle.file.CheckerTest
  */
 class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
 
-   protected val classUnderTest = classOf[ReturnChecker]
+  protected val classUnderTest = classOf[ReturnChecker]
 
-   protected val key = "return"
+  protected val key = "return"
 
-   @Test def testZeroErrors {
-      val source = """
+  @Test def testZeroErrors {
+    val source = """
          |package foobar
          |object Foobar {
          |}
          """.stripMargin
-      assertErrors(List(), source)
-   }
+    assertErrors(List(), source)
+  }
 
-   @Test def testOneError {
-      val source = """
+  @Test def testOneError {
+    val source = """
          |package foobar
          |object Foobar {
          |   def boo: String = {
@@ -33,6 +33,6 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
          |   }
          |}
          """.stripMargin
-      assertErrors(List(columnError(5, 6)), source)
-   }
+    assertErrors(List(columnError(5, 6)), source)
+  }
 }

@@ -12,9 +12,9 @@ import org.segl.scalastyle.FileSpec
 trait CheckerTest {
   protected val key: String
   protected val classUnderTest: Class[_ <: Checker[_]]
-  
+
   protected def assertErrors[T <: FileSpec](list: List[Message[T]], source: String, params: Map[String, String] = Map()) = {
-	assertEquals(list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), params)), null, source))
+    assertEquals(list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), params)), null, source))
   }
   
   protected def fileError() = StyleError(null, key, None, None)

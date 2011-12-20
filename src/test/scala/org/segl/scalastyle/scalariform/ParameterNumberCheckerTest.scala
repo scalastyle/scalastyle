@@ -26,7 +26,6 @@ class OK {
     assertErrors(List(), source)
   }
 
-
   @Test def testKO() = {
     val source = """
 package foobar

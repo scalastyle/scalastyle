@@ -14,27 +14,27 @@ class SpacesBeforePlusCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "spaces.before.plus"
   val classUnderTest = classOf[SpacesBeforePlusChecker]
 
-	@Test def testOK() = {
-	  val source = """
+  @Test def testOK() = {
+    val source = """
 package foobar
-	    
+
 object Foobar {
   val foo = 12 + 2
 }
 """;
-	  
-	  assertErrors(List(), source)
-	}
-	
-	@Test def testOne() = {
-	  val source = """
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOne() = {
+    val source = """
 package foobar
 
 object Foobar {
   val foo = 12+ 2
 }
 """;
-	  
-	  assertErrors(List(columnError(5, 14)), source)
-	}
+
+    assertErrors(List(columnError(5, 14)), source)
+  }
 }

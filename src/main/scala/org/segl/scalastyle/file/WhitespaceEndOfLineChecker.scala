@@ -9,7 +9,7 @@ import org.segl.scalastyle._
 
 class WhitespaceEndOfLineChecker extends FileChecker {
   val errorKey = "whitespace.end.of.line"
-    
+
   private val whitespaces = Set(' ', '\t')
   private val endOfLines = Set('\n', '\r')
 

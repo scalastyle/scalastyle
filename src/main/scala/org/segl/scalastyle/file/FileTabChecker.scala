@@ -9,7 +9,7 @@ import org.segl.scalastyle._
 
 class FileTabChecker extends FileChecker {
   val errorKey = "line.contains.tab"
-    
+
   def verify(lines: Lines): List[ScalastyleError] = {
     val errors = for (
       line <- lines.lines.zipWithIndex;

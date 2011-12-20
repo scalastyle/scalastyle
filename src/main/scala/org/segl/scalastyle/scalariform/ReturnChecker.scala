@@ -13,7 +13,7 @@ import org.segl.scalastyle._
  */
 class ReturnChecker extends ScalariformChecker {
   val errorKey = "return"
-    
+
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
