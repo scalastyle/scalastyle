@@ -8,7 +8,7 @@ import org.segl.scalastyle._
 
 class NullChecker extends ScalariformChecker {
   val errorKey = "null"
-    
+
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
