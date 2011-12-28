@@ -17,38 +17,50 @@ class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "line.size.limit"
   val classUnderTest = classOf[FileLineLengthChecker]
 
-  @Test def testZero() = {
+  @Test def testNoMax() = {
     val source = """
 package foobar
 import foobar
-	object Foobar {
+    object Foobar {
 }
 """;
 
     assertErrors(List(), source, Map("maxLineLength" -> "20"))
   }
 
-  @Test def testOne() = {
+  @Test def testWithOneMax() = {
     val source = """
 package foobar
 import foobar
-	object Foobar {
+    object Foobar {
 }
 """;
 
     assertErrors(List(lineError(4)), source, Map("maxLineLength" -> "15"))
   }
 
-  @Test def testTwo() = {
+  @Test def testWithTwoMax() = {
     val source = """
 package foobar
 import foobar
-	object Foobar {
+    object Foobar {
 }
-	object Barbar {
+    object Barbar {
 }
 """;
 
     assertErrors(List(lineError(4), lineError(6)), source, Map("maxLineLength" -> "15"))
+  }
+
+  @Test def testWithSpacesTabs() = {
+    val source = """
+package foobar
+
+import	 	foo
+object Barbar {
+}
+""";
+
+    assertErrors(List(lineError(4), lineError(5)), source, Map("maxLineLength" -> "15"))
   }
 }
