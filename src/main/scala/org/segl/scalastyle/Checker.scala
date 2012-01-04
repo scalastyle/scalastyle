@@ -99,6 +99,8 @@ trait Checker[A] {
   }
 
   def verify(ast: A): List[ScalastyleError]
+  
+  def isObject(s: String) = (s == "java.lang.Object" || s == "Any")
 }
 
 trait FileChecker extends Checker[Lines]
