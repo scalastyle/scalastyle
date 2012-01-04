@@ -8,22 +8,20 @@ import _root_.scalariform.parser._
 import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 
-class CovariantEqualsChecker extends ScalariformChecker {
+class NoFinalizeChecker extends ScalariformChecker {
   import VisitorHelper._
-  val errorKey = "covariant.equals"
+  val errorKey = "no.finalize"
 
   type ListType = List[BaseClazz[_ <: AstNode]]
 
   class BaseClazz[+T <: AstNode](val name: Option[String], val position: Option[Int], val subs: ListType) extends Clazz[T] {
-    def isEqualsObject = false
-    def isEqualsOther = false
+    def isFinalize = false
     override def toString(): String = "name=" + name + " position=" + position + " subs=" + subs
   }
 
   case class TmplClazz(_name: Option[String], _position: Option[Int], _subs: ListType) extends BaseClazz[TmplDef](_name, _position, _subs)
   case class FunDefOrDclClazz(_name: Option[String], _position: Option[Int], _subs: ListType) extends BaseClazz[FunDefOrDcl](_name, _position, _subs) {
-    override def isEqualsObject = Some("equalsObject") == name
-    override def isEqualsOther = Some("equalsOther") == name
+    override def isFinalize = Some("finalize") == name
   }
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -44,10 +42,7 @@ class CovariantEqualsChecker extends ScalariformChecker {
   }
 
   private def matches(t: BaseClazz[AstNode]) = {
-    val hc = t.subs.exists(_.isEqualsObject)
-    val eq = t.subs.exists(_.isEqualsOther)
-
-    (hc && !eq) || (!hc && eq)
+    t.subs.exists(_.isFinalize)
   }
 
   private def getParams(p: ParamClauses): List[Param] = {
@@ -55,10 +50,10 @@ class CovariantEqualsChecker extends ScalariformChecker {
   }
 
   private def method(t: FunDefOrDcl): Option[String] = {
-    if (t.nameToken.getText == "equals") {
+    if (t.nameToken.getText == "finalize") {
       var paramTypes = getParams(t.paramClauses).map(p => typename(p.paramTypeOpt.get._2))
-      if (paramTypes.size == 1) {
-        if (isObject(paramTypes(0))) Some("equalsObject") else Some("equalsOther")
+      if (paramTypes.size == 0) {
+        Some("finalize")
       } else {
         None
       }

@@ -10,17 +10,16 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
-class CovariantEqualsCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "covariant.equals"
-  val classUnderTest = classOf[CovariantEqualsChecker]
+class NoFinalizeCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "no.finalize"
+  val classUnderTest = classOf[NoFinalizeChecker]
 
   @Test def testClassOK() = {
     val source = """
 package foobar
 
 class OK {
-  def equals(o: java.lang.Object): Boolean = false
-  def equals(o: java.lang.Integer): Boolean = false
+  def finalize(o: java.lang.Integer): Unit = {}
 }
 """;
 
@@ -31,8 +30,8 @@ class OK {
     val source = """
 package foobar
 
-class CovariantEqualsNoObjectKO {
-  def equals(o: java.lang.Integer): Boolean = false
+class CloneKO {
+  def finalize(): Unit = {}
 }
 """;
 
@@ -44,8 +43,7 @@ class CovariantEqualsNoObjectKO {
 package foobar
 
 object OK {
-  def equals(o: java.lang.Object): Boolean = false
-  def equals(o: java.lang.Integer): Boolean = false
+  def finalize(o: java.lang.Integer): Unit = {}
 }
 """;
 
@@ -56,8 +54,8 @@ object OK {
     val source = """
 package foobar
 
-object CovariantEqualsNoObjectKO {
-  def equals(o: java.lang.Integer): Boolean = false
+object CloneKO {
+  def finalize(): Unit = {}
 }
 """;
 
