@@ -12,7 +12,8 @@
     <check class="org.segl.scalastyle.scalariform.SpacesBeforePlusChecker" />
 	<check class="org.segl.scalastyle.file.FileLineLengthChecker">
 		<parameters>
-			<parameter name="maxLineLength" value="160" />
+            <parameter name="maxLineLength" value="160" />
+            <parameter name="tabSize" value="4" />
 		</parameters>
 	</check>
     <check class="org.segl.scalastyle.scalariform.ClassNamesChecker" />
@@ -24,4 +25,7 @@
     <check class="org.segl.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" />
     <check class="org.segl.scalastyle.scalariform.ReturnChecker" />
     <check class="org.segl.scalastyle.scalariform.NullChecker" />
+    <check class="org.segl.scalastyle.scalariform.NoCloneChecker" />
+    <check class="org.segl.scalastyle.scalariform.NoFinalizeChecker" />
+    <check class="org.segl.scalastyle.scalariform.CovariantEqualsChecker" />
 </scalastyle>
