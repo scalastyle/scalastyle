@@ -38,6 +38,6 @@ import foobar
 }
 """;
 
-    assertErrors(List(fileError()), source, Map("maxFileLength" -> "5"))
+    assertErrors(List(fileError(List("5"))), source, Map("maxFileLength" -> "5"))
   }
 }

@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 class ParameterNumberCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "parameterNumber"
+  val key = "parameter.number"
   val classUnderTest = classOf[ParameterNumberChecker]
 
   @Test def testOK() = {
@@ -35,7 +35,7 @@ class OK {
 }
 """;
 
-    assertErrors(List(columnError(5, 6)), source)
+    assertErrors(List(columnError(5, 6, List("8"))), source)
   }
 
   @Test def testOuterKOInnerKO() = {
@@ -53,6 +53,6 @@ class Outer {
 }    
 """;
 
-    assertErrors(List(columnError(6, 8), columnError(10, 8)), source)
+    assertErrors(List(columnError(6, 8, List("8")), columnError(10, 8, List("8"))), source)
   }
 }

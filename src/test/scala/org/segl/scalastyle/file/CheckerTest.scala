@@ -16,10 +16,10 @@ trait CheckerTest {
   protected def assertErrors[T <: FileSpec](list: List[Message[T]], source: String, params: Map[String, String] = Map()) = {
     assertEquals(list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), params)), null, source))
   }
-  
-  protected def fileError() = StyleError(null, key, None, None)
-  protected def lineError(line: Int) = StyleError(null, key, Some(line), None)
-  protected def columnError(line: Int, column: Int) = StyleError(null, key, Some(line), Some(column))
+
+  protected def fileError(args: List[String] = List()) = StyleError(null, classUnderTest, key, args, None, None)
+  protected def lineError(line: Int, args: List[String] = List()) = StyleError(null, classUnderTest, key, args, Some(line), None)
+  protected def columnError(line: Int, column: Int, args: List[String] = List()) = StyleError(null, classUnderTest, key, args, Some(line), Some(column))
 //  protected def positionError(position: Int) = StyleError(null, key, Some(position), Some(position))
 }
 

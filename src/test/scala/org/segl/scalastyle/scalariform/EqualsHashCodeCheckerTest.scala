@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 
 class EqualsHashCodeCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "equalsHashCode"
+  val key = "equals.hash.code"
   val classUnderTest = classOf[EqualsHashCodeChecker]
 
   @Test def testOK() = {

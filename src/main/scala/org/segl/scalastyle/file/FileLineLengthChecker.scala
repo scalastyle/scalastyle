@@ -7,7 +7,6 @@ import org.segl.scalastyle.Message
 import org.segl.scalastyle.Lines
 import org.segl.scalastyle._
 
-// TODO add tab translation tab = 4 characters
 class FileLineLengthChecker extends FileChecker {
   val DefaultMaxLineLength = 160
   val DefaultTabSize = 4
@@ -47,7 +46,7 @@ class FileLineLengthChecker extends FileChecker {
       line <- lines.lines.zipWithIndex;
       if replaceTabs(line._1.text, tabSize).length() > maxLineLength
     ) yield {
-      LineError(line._2 + 1)
+      LineError(line._2 + 1, List("" + maxLineLength))
     }
 
     errors.toList

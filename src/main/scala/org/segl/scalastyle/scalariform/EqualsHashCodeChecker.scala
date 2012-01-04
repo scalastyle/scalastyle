@@ -26,7 +26,7 @@ object VisitorHelper {
 
 class EqualsHashCodeChecker extends ScalariformChecker {
   import VisitorHelper._
-  val errorKey = "equalsHashCode"
+  val errorKey = "equals.hash.code"
 
   type ListType = List[BaseClazz[_ <: AstNode]]
 

@@ -36,7 +36,7 @@ class foobar {
 }
 """;
 
-    assertErrors(List(columnError(4, 6), columnError(5, 8)), source)
+    assertErrors(List(columnError(4, 6, List("[A-Z][A-Za-z]*")), columnError(5, 8, List("[A-Z][A-Za-z]*"))), source)
   }
 }
 
@@ -66,6 +66,6 @@ object foobar {
 }
 """;
 
-    assertErrors(List(columnError(4, 7), columnError(5, 9)), source)
+    assertErrors(List(columnError(4, 7, List("[A-Z][A-Za-z]*")), columnError(5, 9, List("[A-Z][A-Za-z]*"))), source)
   }
 }

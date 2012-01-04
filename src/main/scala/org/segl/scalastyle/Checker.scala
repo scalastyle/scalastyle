@@ -10,13 +10,13 @@ import scala.io.Source
 case class Line(text: String, start: Int, end: Int)
 
 case class Lines(lines: Array[Line]) {
-  def translate(position: Int): ScalastyleError = {
+  def translate(position: Int, args: List[String]): ScalastyleError = {
     var i = 0
 
     lines.foreach(l => {
       i = i + 1
       if (position >= l.start && position < l.end) {
-        return ColumnError(i, position - l.start)
+        return ColumnError(i, position - l.start, args)
       }
     })
 
@@ -80,15 +80,15 @@ trait Checker[A] {
 
   protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, lines: Lines): Message[T] = {
     val p2 = p match {
-      case PositionError(position) => lines.translate(position)
+      case PositionError(position, args) => lines.translate(position, args)
       case _ => p
     }
 
     p2 match {
-      case PositionError(position) => StyleError(file, errorKey)
-      case FileError() => StyleError(file, errorKey, None, None)
-      case LineError(line) => StyleError(file, errorKey, Some(line), None)
-      case ColumnError(line, column) => StyleError(file, errorKey, Some(line), Some(column))
+      case PositionError(position, args) => StyleError(file, this.getClass(), errorKey, args)
+      case FileError(args) => StyleError(file, this.getClass(), errorKey, args, None, None)
+      case LineError(line, args) => StyleError(file, this.getClass(), errorKey, args, Some(line), None)
+      case ColumnError(line, column, args) => StyleError(file, this.getClass(), errorKey, args, Some(line), Some(column))
     }
   }
 

@@ -36,7 +36,7 @@ import foobar
 }
 """;
 
-    assertErrors(List(lineError(4)), source, Map("maxLineLength" -> "15"))
+    assertErrors(List(lineError(4, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
   @Test def testWithTwoMax() = {
@@ -49,7 +49,7 @@ import foobar
 }
 """;
 
-    assertErrors(List(lineError(4), lineError(6)), source, Map("maxLineLength" -> "15"))
+    assertErrors(List(lineError(4, List("15")), lineError(6, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
   @Test def testWithSpacesTabs() = {
@@ -61,6 +61,6 @@ object Barbar {
 }
 """;
 
-    assertErrors(List(lineError(4), lineError(5)), source, Map("maxLineLength" -> "15"))
+    assertErrors(List(lineError(4, List("15")), lineError(5, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 }

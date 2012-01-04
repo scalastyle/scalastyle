@@ -12,13 +12,14 @@ class ClassNamesChecker extends ScalariformChecker {
   val errorKey = "class.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val regex = getString("regex", DefaultRegex).r
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == CLASS && (regex findAllIn (right.getText)).size == 0)
     ) yield {
-      PositionError(right.startIndex)
+      PositionError(right.startIndex, List(regexString))
     }
 
     it.toList
@@ -30,13 +31,14 @@ class ObjectNamesChecker extends ScalariformChecker {
   val errorKey = "object.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
-    val regex = getString("regex", DefaultRegex).r
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
     ) yield {
-      PositionError(right.startIndex)
+      PositionError(right.startIndex, List(regexString))
     }
 
     it.toList
