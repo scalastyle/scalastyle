@@ -30,9 +30,7 @@ class ParameterNumberChecker extends ScalariformChecker {
     it.toList
   }
 
-  private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = {
-    t :: t.subs.map(traverse(_)).flatten
-  }
+  private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.map(traverse(_)).flatten
 
   private def matches(t: FunDefOrDclClazz, maximumParameters: Int) = getParams(t.paramClauses).size > maximumParameters
 
