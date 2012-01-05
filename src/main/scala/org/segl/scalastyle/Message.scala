@@ -37,7 +37,9 @@ case class EndWork[+T <: FileSpec]() extends Message[T]
 case class StartFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 case class EndFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 
-case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], key: String, args: List[String], lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
+case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], key: String, args: List[String], lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T] {
+  override def toString() = "key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column 
+}
 case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
 
 sealed abstract class ScalastyleError

@@ -21,6 +21,7 @@ package foobar
 object Foobar {
   val foo = 12 + 2
 }
+class Clazz[+T <: AstNode]() // ignore + within type specification
 """;
 
     assertErrors(List(), source)

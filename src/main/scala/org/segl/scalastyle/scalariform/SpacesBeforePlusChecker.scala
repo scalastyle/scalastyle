@@ -11,10 +11,10 @@ class SpacesBeforePlusChecker extends ScalariformChecker {
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
-      List(left, right) <- ast.tokens.sliding(2);
-      if (right.tokenType == PLUS && charsBetweenTokens(left, right) == 0)
+      List(left, middle, right) <- ast.tokens.sliding(3);
+      if (middle.tokenType == PLUS && left.tokenType != LBRACKET && charsBetweenTokens(left, middle) == 0)
     ) yield {
-      PositionError(right.startIndex)
+      PositionError(middle.startIndex)
     }
 
     it.toList

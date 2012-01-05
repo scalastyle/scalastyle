@@ -33,6 +33,8 @@ package foobar
 object Foobar {
   val foo = 1 +2
 }
+
+class Clazz[+T <: AstNode]() // ignore + within type specification
 """;
 
     assertErrors(List(columnError(5, 14)), source)
