@@ -26,7 +26,7 @@ case class Lines(lines: Array[Line]) {
 
 class ScalastyleChecker[T <: FileSpec] {
   def checkFiles(configuration: ScalastyleConfiguration, files: List[T]): List[Message[T]] = {
-    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration.checks, file) ::: List(EndFile(file)) ).toList ::: List(EndWork())
+    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration.checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
   }
 }
 
@@ -35,38 +35,44 @@ object Checker {
 
   def parseScalariform(source: String): Option[CompilationUnit] = {
     try {
-        val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
-        Some(new ScalaParser(tokens.toArray).compilationUnitOrScript())
+      val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
+      Some(new ScalaParser(tokens.toArray).compilationUnitOrScript())
     } catch {
       // TODO improve error logging here
       case e: Exception => None
     }
   }
 
-  private def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)){ case (pl, t) => Line(t, pl.end, pl.end + t.length + 1) }.tail)
+  private def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) { case (pl, t) => Line(t, pl.end, pl.end + t.length + 1) }.tail)
 
   def verifySource[T <: FileSpec](classes: List[ConfigCheck], file: T, source: String): List[Message[T]] = {
     lazy val lines = parseLines(source)
     lazy val scalariformAst = parseScalariform(source)
 
-    classes.map(cc => newInstance(getClass(cc.className), cc.parameters)).flatMap(c => c match {
+    classes.flatMap(cc => newInstance(cc.className, cc.parameters)).map(c => c match {
       case c: FileChecker => c.verify(file, lines, lines)
       case c: ScalariformChecker => scalariformAst match {
         case Some(x) => c.verify(file, scalariformAst.get, lines)
         case None => List[Message[T]]()
       }
       case _ => List[Message[T]]()
-    })
+    }).flatten
   }
-
-  def getClass(name: String) = Class.forName(name).asInstanceOf[Class[Checker[_]]]
 
   def verifyFile[T <: FileSpec](classes: List[ConfigCheck], file: T): List[Message[T]] = verifySource(classes, file, Source.fromFile(file.name).mkString)
 
-  def newInstance(clazz: Class[Checker[_]], parameters: Map[String, String]) = {
-    val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
-    c.setParameters(parameters)
-    c
+  def newInstance(name: String, parameters: Map[String, String]): Option[Checker[_]] = {
+    try {
+      val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
+      val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
+      c.setParameters(parameters)
+      Some(c)
+    } catch {
+      case e: Exception => {
+        // TODO log something here
+        None
+      }
+    }
   }
 }
 
