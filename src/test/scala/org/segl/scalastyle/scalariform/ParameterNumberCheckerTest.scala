@@ -50,7 +50,7 @@ class Outer {
   class Inner {
     def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
   }
-}    
+}
 """;
 
     assertErrors(List(columnError(6, 8, List("8")), columnError(10, 8, List("8"))), source)

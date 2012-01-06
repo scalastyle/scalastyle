@@ -11,7 +11,6 @@ object ScalastyleConfiguration {
     val elem = XML.loadFile(file)
 
     val name = (elem \\ "name").text
-    println("name=" + name)
 
     ScalastyleConfiguration(name, (elem \\ "check").map(toCheck).toList)
   }

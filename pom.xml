@@ -193,7 +193,8 @@
 				<configuration>
 					<mainClass>org.segl.scalastyle.Main</mainClass>
 					<arguments>
-						<argument>argument1</argument>
+                        <argument>lib/scalastyle_config.xml</argument>
+                        <argument>src/main/scala</argument>
 					</arguments>
 				</configuration>
 			</plugin>

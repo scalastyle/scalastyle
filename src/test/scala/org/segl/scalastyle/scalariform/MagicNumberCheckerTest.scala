@@ -17,7 +17,7 @@ class MagicNumberCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testZero() = {
     val source = """
 package foobar
-	    
+
 class Foobar {
   val foo1 = -1
   val foo2 = 0

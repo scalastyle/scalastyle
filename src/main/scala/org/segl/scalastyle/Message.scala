@@ -14,13 +14,10 @@ class MessageHelper {
 
   def getMessage(clazz: Class[_ <: Checker[_]], key: String, args: List[String]) = {
     try {
-      val packageName = clazz.getPackage().getName()
-      val bundle = bundles.synchronized(bundles.getOrElseUpdate(packageName, {
-        ResourceBundle.getBundle(packageName + ".messages", Locale.getDefault(), clazz.getClassLoader())
-      }))
+      val bundle = ResourceBundle.getBundle("scalastyle_messages", Locale.getDefault(), clazz.getClassLoader())
 
       // Use ClassLoader of the class from which the message came
-      val pattern = bundle.getString(key);
+      val pattern = bundle.getString(key + ".message");
       MessageFormat.format(pattern, args.map(_.asInstanceOf[AnyRef]): _*);
     } catch {
       // If there is no message, just use the key
@@ -38,7 +35,7 @@ case class StartFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 case class EndFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 
 case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], key: String, args: List[String], lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T] {
-  override def toString() = "key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column 
+  override def toString() = "key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column
 }
 case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
 

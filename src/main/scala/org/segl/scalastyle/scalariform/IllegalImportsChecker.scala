@@ -18,7 +18,7 @@ class IllegalImportsChecker extends ScalariformChecker {
   val ExpectingImport = State("expectingImport")
   val InImport = State("inImport")
 
-  val DefaultillegalImports = "sun._,sun.com.foobar"
+  val DefaultIllegalImports = "sun._"
 
   // sun._ => sun\.
   // sun.com.foobar => sun\.com\.foobar
@@ -59,7 +59,7 @@ class IllegalImportsChecker extends ScalariformChecker {
   }
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    var illegalImportsList = toMatchList(getString("illegalImports", DefaultillegalImports))
+    var illegalImportsList = toMatchList(getString("illegalImports", DefaultIllegalImports))
     val it = for (
       importedClass <- getImports(ast);
       if (illegalImportsList.exists(importedClass.importString.startsWith(_)))

@@ -28,4 +28,5 @@
     <check class="org.segl.scalastyle.scalariform.NoCloneChecker" />
     <check class="org.segl.scalastyle.scalariform.NoFinalizeChecker" />
     <check class="org.segl.scalastyle.scalariform.CovariantEqualsChecker" />
+    <check class="org.segl.scalastyle.scalariform.ParameterNumberChecker" />
 </scalastyle>
