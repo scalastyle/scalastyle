@@ -25,9 +25,10 @@ Contributing
 
 Want to contribute? Great! Look at the wiki for potential rules to implement, or do one of your own, and implement it.
 
-1. Fork the repo.
-2. Create a branch (`git checkout -b my_new_rule`)
-3. Commit your changes (`git commit -am "Added NoFooAllowed"`)
-4. Push to the branch (`git push origin my_new_rule`)
-5. Create an [Issue](https://github.com/scalastyle/scalastyle/issues) with a link to your branch
-6. Enjoy a coffee and wait
+1. Read the [developer guide](https://github.com/scalastyle/scalastyle/wiki/developer-guide)
+2. Fork the repo.
+3. Create a branch (`git checkout -b my_new_rule`)
+4. Commit your changes (`git commit -am "Added NoFooAllowed"`)
+5. Push to the branch (`git push origin my_new_rule`)
+6. Create an [Issue](https://github.com/scalastyle/scalastyle/issues) with a link to your branch
+7. Enjoy a coffee and wait
