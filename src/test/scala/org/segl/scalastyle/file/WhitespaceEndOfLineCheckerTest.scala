@@ -42,10 +42,10 @@ object Foobar {
   @Test def testTwo() = {
     val source = """
 package foobar  
-import foobar	
+import foobar#
 object Foobar {
 }
-""";
+""".replaceAll("#", "\t");
 
     assertErrors(List(columnError(2, 14), columnError(3, 13)), source)
   }

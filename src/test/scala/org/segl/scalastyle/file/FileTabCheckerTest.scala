@@ -32,9 +32,9 @@ import foobar
     val source = """
 package foobar
 import foobar
-	object Foobar {
+#object Foobar {
 }
-""";
+""".replaceAll("#", "\t");
 
     assertErrors(List(columnError(4, 0)), source)
   }
@@ -43,11 +43,11 @@ import foobar
     val source = """
 package foobar
 import foobar
-	object Foobar {
+#object Foobar {
 }
-	object Barbar {
+#object Barbar {
 }
-""";
+""".replaceAll("#", "\t");
 
     assertErrors(List(columnError(4, 0), columnError(6, 0)), source)
   }

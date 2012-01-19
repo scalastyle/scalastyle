@@ -60,7 +60,6 @@ import# #foo
 object Barbar {
 }
 """.replaceAll("#","\t");
-    println(source)
 
     assertErrors(List(lineError(4, List("14")), lineError(5, List("14"))), source, Map("maxLineLength" -> "14"))
   }
