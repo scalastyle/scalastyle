@@ -35,6 +35,10 @@ class FileLineLengthChecker extends FileChecker {
       i += 1
     }
 
+    if (sb.endsWith("\r")) {
+      sb.setLength(sb.length-1);
+    }
+
     sb.toString
   }
 
