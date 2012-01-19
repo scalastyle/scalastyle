@@ -17,8 +17,8 @@
 				<updatePolicy>never</updatePolicy>
 				<checksumPolicy>fail</checksumPolicy>
 			</snapshots>
-			<id>scala-tools-snapshots</id>
-			<name>scala-tools-snapshots</name>
+			<id>scala-tools-segl</id>
+			<name>scala-tools</name>
 			<url>http://scala-tools.org/repo-snapshots/</url>
 		</repository>
 		<repository>
@@ -63,6 +63,18 @@
 			<version>1.6.1</version>
 			<scope>test</scope>
 		</dependency>
+
+
+         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
