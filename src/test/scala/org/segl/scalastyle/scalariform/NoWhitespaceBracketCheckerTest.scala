@@ -14,74 +14,73 @@ class NoWhitespaceBeforeLeftBracketCheckerTest extends AssertionsForJUnit with C
   val key = "no.whitespace.before.left.bracket"
   val classUnderTest = classOf[NoWhitespaceBeforeLeftBracketChecker]
 
-	@Test def testOK() = {
-	  val source = """
+  @Test def testOK() = {
+    val source = """
 package foobar
-	    
+
 class Foobar[T] {
 }
 """;
-	  
-	  assertErrors(List(), source)
-	}
-	
-	@Test def testOneSpace() = {
-	  val source = """
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOneSpace() = {
+    val source = """
 package foobar
 
 class Foobar [T] {
 }
 """;
-	  
-	  assertErrors(List(positionError(26)), source)
-	}
-	
-	@Test def testTwoSpaces() = {
-	  val source = """
+    assertErrors(List(columnError(4, 6)), source)
+  }
+
+  @Test def testTwoSpaces() = {
+    val source = """
 package foobar
 
 class Foobar [ Barbar [T]] {
 }
 """;
-	  
-	  assertErrors(List(positionError(26), positionError(35)), source)
-	}
+
+    assertErrors(List(columnError(4, 6), columnError(4, 15)), source)
+  }
 }
 
 class NoWhitespaceAfterLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "no.whitespace.after.left.bracket"
   val classUnderTest = classOf[NoWhitespaceAfterLeftBracketChecker]
 
-	@Test def testOK() = {
-	  val source = """
+  @Test def testOK() = {
+    val source = """
 package foobar
-	    
+
 class Foobar[T] {
 }
 """;
-	  
-	  assertErrors(List(), source)
-	}
-	
-	@Test def testOneSpace() = {
-	  val source = """
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOneSpace() = {
+    val source = """
 package foobar
 
 class Foobar[ T] {
 }
 """;
-	  
-	  assertErrors(List(positionError(32)), source)
-	}
-	
-	@Test def testTwoSpaces() = {
-	  val source = """
+
+    assertErrors(List(columnError(4, 12)), source)
+  }
+
+  @Test def testTwoSpaces() = {
+    val source = """
 package foobar
 
 class Foobar[ Barbar[ T]] {
 }
 """;
-	  
-	  assertErrors(List(positionError(32), positionError(40)), source)
-	}
+
+    assertErrors(List(columnError(4, 12), columnError(4, 20)), source)
+  }
 }

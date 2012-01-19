@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  scalastyle definition file. This contains the list of checkers and the parameters & types available -->
+<scalastyle-definition>
+	<checker class="org.segl.scalastyle.file.FileTabChecker" id="line.contains.tab" />
+	<checker class="org.segl.scalastyle.file.FileLengthChecker" id="file.size.limit">
+        <parameters>
+            <parameter name="maxFileLength" type="integer" default="1500"/>
+        </parameters>
+    </checker>
+    <checker class="org.segl.scalastyle.scalariform.SpacesAfterPlusChecker" id="spaces.after.plus" />
+    <checker class="org.segl.scalastyle.file.WhitespaceEndOfLineChecker" id="whitespace.end.of.line" />
+    <checker class="org.segl.scalastyle.scalariform.SpacesBeforePlusChecker" id="spaces.before.plus" />
+	<checker class="org.segl.scalastyle.file.FileLineLengthChecker" id="line.size.limit" >
+		<parameters>
+            <parameter name="maxLineLength" type="integer" default="160" />
+            <parameter name="tabSize"  type="integer" value="4" />
+		</parameters>
+	</checker>
+    <checker class="org.segl.scalastyle.scalariform.ClassNamesChecker" id="class.name" />
+    <checker class="org.segl.scalastyle.scalariform.ObjectNamesChecker" id="object.name" />
+    <checker class="org.segl.scalastyle.scalariform.EqualsHashCodeChecker" id="equals.hash.code" />
+    <checker class="org.segl.scalastyle.scalariform.IllegalImportsChecker" id="illegal.imports" >
+        <parameters>
+            <parameter name="illegalImports" type="string" default="sun._,java.awt._" />
+        </parameters>
+    </checker>
+    <checker class="org.segl.scalastyle.scalariform.ParameterNumberChecker" id="parameter.number" >
+        <parameters>
+            <parameter name="maxParameters" type="integer" default="8" />
+        </parameters>
+    </checker>
+    <checker class="org.segl.scalastyle.scalariform.MagicNumberChecker" id="magic.number" >
+        <parameters>
+            <parameter name="ignore" type="string" default="-1,0,1,2" />
+        </parameters>
+    </checker>
+    <checker class="org.segl.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" id="no.whitespace.before.left.bracket" />
+    <checker class="org.segl.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" id="no.whitespace.after.left.bracket" />
+    <checker class="org.segl.scalastyle.scalariform.ReturnChecker" id="return" />
+    <checker class="org.segl.scalastyle.scalariform.NullChecker" id="null" />
+    <checker class="org.segl.scalastyle.scalariform.NoCloneChecker" id="no.clone" />
+    <checker class="org.segl.scalastyle.scalariform.NoFinalizeChecker" id="no.finalizer" />
+    <checker class="org.segl.scalastyle.scalariform.CovariantEqualsChecker" id="covariant.equals" />
+</scalastyle-definition>

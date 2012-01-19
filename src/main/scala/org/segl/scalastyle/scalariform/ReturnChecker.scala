@@ -6,17 +6,23 @@ import _root_.scalariform.lexer.Tokens._
 import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 
-class NullChecker extends ScalariformChecker {
-  val errorKey = "null"
+/**
+ * Checks that no return codes are present
+ *
+ * @author Galder Zamarreño
+ */
+class ReturnChecker extends ScalariformChecker {
+  val errorKey = "return"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == NULL)
+      if (left.tokenType == RETURN)
     ) yield {
       PositionError(left.startIndex)
     }
 
     it.toList
   }
+
 }

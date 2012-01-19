@@ -6,15 +6,18 @@ import _root_.scalariform.lexer.Tokens._
 import org.segl.scalastyle.ScalariformChecker
 import org.segl.scalastyle._
 
-class NullChecker extends ScalariformChecker {
-  val errorKey = "null"
+class MagicNumberChecker extends ScalariformChecker {
+  val DefaultIgnore = "-1,0,1,2"
+  val errorKey = "magic.number"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
+    val ignores = getString("ignore", DefaultIgnore).split(",").toSet
+
     val it = for (
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == NULL)
+      t <- ast.tokens;
+      if (t.tokenType == INTEGER_LITERAL && !ignores.contains(t.getText))
     ) yield {
-      PositionError(left.startIndex)
+      PositionError(t.startIndex)
     }
 
     it.toList

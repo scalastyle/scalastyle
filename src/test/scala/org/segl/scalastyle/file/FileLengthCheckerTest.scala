@@ -13,42 +13,31 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "line.size.limit"
-    val classUnderTest = classOf[FileLineLengthChecker]
-    
-	@Test def testZero() = {
-	  val source = """
-package foobar
-import foobar
-	object Foobar {
-}
-""";
-	  
-	  assertErrors(List(), source, Map("maxLineLength" -> "20"))
-	}
+class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "file.size.limit"
+  val classUnderTest = classOf[FileLengthChecker]
 
-	@Test def testOne() = {
-	  val source = """
+  @Test def testZero() = {
+    val source = """
 package foobar
 import foobar
-	object Foobar {
+  object Foobar {
 }
 """;
-	  
-	  assertErrors(List(lineError(4)), source, Map("maxLineLength" -> "15"))
-	}
 
-	@Test def testTwo() = {
-	  val source = """
+    assertErrors(List(), source, Map("maxFileLength" -> "5"))
+  }
+
+  @Test def testOne() = {
+    val source = """
 package foobar
 import foobar
-	object Foobar {
+  object Foobar {
 }
-	object Barbar {
+  object Barbar {
 }
 """;
-	  
-	  assertErrors(List(lineError(4), lineError(6)), source, Map("maxLineLength" -> "15"))
-	}
+
+    assertErrors(List(fileError(List("5"))), source, Map("maxFileLength" -> "5"))
+  }
 }

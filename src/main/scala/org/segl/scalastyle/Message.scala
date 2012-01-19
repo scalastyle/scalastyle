@@ -1,13 +1,47 @@
 package org.segl.scalastyle
 
-sealed abstract class Message()
+import java.text.MessageFormat
+import java.util.ResourceBundle
+import java.util.Locale
+import scala.collection.mutable.HashMap
 
-case class StartWork() extends Message
-case class EndWork() extends Message
+trait FileSpec {
+  def name: String
+}
 
-case class StartFile(name: String) extends Message
-case class EndFile(name: String) extends Message
+class MessageHelper {
+  val bundles = HashMap[String, ResourceBundle]()
 
-case class StyleError(file: String, key: String, lineNumber: Option[Int] = None, column: Option[Int] = None, position: Option[Int] = None) extends Message
-case class StyleException(file: String, message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message
+  def getMessage(clazz: Class[_ <: Checker[_]], key: String, args: List[String]) = {
+    try {
+      val bundle = ResourceBundle.getBundle("scalastyle_messages", Locale.getDefault(), clazz.getClassLoader())
+
+      // Use ClassLoader of the class from which the message came
+      val pattern = bundle.getString(key + ".message");
+      MessageFormat.format(pattern, args.map(_.asInstanceOf[AnyRef]): _*);
+    } catch {
+      // If there is no message, just use the key
+      case _ => MessageFormat.format(key, args.map(_.asInstanceOf[AnyRef]): _*)
+    }
+  }
+}
+
+sealed abstract class Message[+T <: FileSpec]()
+
+case class StartWork[+T <: FileSpec]() extends Message[T]
+case class EndWork[+T <: FileSpec]() extends Message[T]
+
+case class StartFile[+T <: FileSpec](fileSpec: T) extends Message[T]
+case class EndFile[+T <: FileSpec](fileSpec: T) extends Message[T]
+
+case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], key: String, args: List[String], lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T] {
+  override def toString() = "key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column
+}
+case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], message: String, stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
+
+sealed abstract class ScalastyleError
+case class PositionError(position: Int, args: List[String] = List[String]()) extends ScalastyleError
+case class FileError(args: List[String] = List[String]()) extends ScalastyleError
+case class LineError(line: Int, args: List[String] = List[String]()) extends ScalastyleError
+case class ColumnError(line: Int, column: Int, args: List[String] = List[String]()) extends ScalastyleError
 

@@ -7,8 +7,6 @@
 	<name>Scalastyle, Checkstyle for Scala</name>
 	<version>0.0.1</version>
 	<repositories>
-
-
 		<repository>
 			<releases>
 				<enabled>false</enabled>
@@ -54,11 +52,11 @@
 	</repositories>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.scalariform</groupId>
-            <artifactId>scalariform_${scala.version}</artifactId>
-            <version>0.1.1</version>
-        </dependency>
+		<dependency>
+			<groupId>org.scalariform</groupId>
+			<artifactId>scalariform_${scala.version}</artifactId>
+			<version>0.1.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_${scala.version}</artifactId>
@@ -89,10 +87,18 @@
 	</dependencies>
 	<build>
 		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/scala</directory>
+                <includes>
+                <include> **/*.properties
+                </include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
 		</resources>
 		<pluginManagement>
 			<plugins>
@@ -145,7 +151,7 @@
 										<artifactId>
 											maven-scala-plugin
                                     </artifactId>
-										<versionRange>[2.15.3-SNAPSHOT,)</versionRange>
+										<versionRange>[2.15.2,)</versionRange>
 										<goals>
 											<goal>add-source</goal>
 											<goal>compile</goal>
@@ -166,7 +172,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<version>2.15.3-SNAPSHOT</version>
+				<version>2.15.2</version>
 				<executions>
 					<execution>
 						<id>scala-compile-first</id>
@@ -185,9 +191,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>org.segl.scalastyle.Main</mainClass>
+					<arguments>
+                        <argument>lib/scalastyle_config.xml</argument>
+                        <argument>src/main/scala</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
-
-
 	</build>
 	<properties>
 		<scala.version>2.9.1</scala.version>

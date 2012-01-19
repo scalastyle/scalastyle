@@ -13,31 +13,54 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "file.size.limit"
-    val classUnderTest = classOf[FileLengthChecker]
-    
-	@Test def testZero() = {
-	  val source = """
-package foobar
-import foobar
-	object Foobar {
-}
-""";
-	  
-	  assertErrors(List(), source, Map("maxFileLength" -> "5"))
-	}
+class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "line.size.limit"
+  val classUnderTest = classOf[FileLineLengthChecker]
 
-	@Test def testOne() = {
-	  val source = """
+  @Test def testNoMax() = {
+    val source = """
 package foobar
 import foobar
-	object Foobar {
-}
-	object Barbar {
+    object Foobar {
 }
 """;
-	  
-	  assertErrors(List(fileError()), source, Map("maxFileLength" -> "5"))
-	}
+
+    assertErrors(List(), source, Map("maxLineLength" -> "20"))
+  }
+
+  @Test def testWithOneMax() = {
+    val source = """
+package foobar
+import foobar
+    object Foobar {
+}
+""";
+
+    assertErrors(List(lineError(4, List("15"))), source, Map("maxLineLength" -> "15"))
+  }
+
+  @Test def testWithTwoMax() = {
+    val source = """
+package foobar
+import foobar
+    object Foobar {
+}
+    object Barbar {
+}
+""";
+
+    assertErrors(List(lineError(4, List("15")), lineError(6, List("15"))), source, Map("maxLineLength" -> "15"))
+  }
+
+  @Test def testWithSpacesTabs() = {
+    val source = """
+package foobar
+
+import	 	foo
+object Barbar {
+}
+""";
+
+    assertErrors(List(lineError(4, List("15")), lineError(5, List("15"))), source, Map("maxLineLength" -> "15"))
+  }
 }

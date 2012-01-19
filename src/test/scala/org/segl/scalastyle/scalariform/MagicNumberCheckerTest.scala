@@ -10,32 +10,24 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
-class NullCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "null"
-  val classUnderTest = classOf[NullChecker]
+class MagicNumberCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "magic.number"
+  val classUnderTest = classOf[MagicNumberChecker]
 
   @Test def testZero() = {
     val source = """
 package foobar
 
-object Foobar {
-  val foo = 1
+class Foobar {
+  val foo1 = -1
+  val foo2 = 0
+  val foo3 = 1
+  val foo4 = 2
+  val foo5 = 3
+  val foo6 = 4
 }
 """;
 
-    assertErrors(List(), source)
-  }
-
-  @Test def testOne() = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo: String = null
-  val bar: String = null
-}
-""";
-
-    assertErrors(List(columnError(5, 20), columnError(6, 20)), source)
+    assertErrors(List(columnError(9, 13), columnError(10, 13)), source)
   }
 }

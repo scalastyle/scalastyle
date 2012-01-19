@@ -14,32 +14,31 @@ class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "illegal.imports"
   val classUnderTest = classOf[IllegalImportsChecker]
 
-	@Test def testZero() = {
-	  val source = """
+  @Test def testZero() = {
+    val source = """
 package foobar
 
 import java.util._
-	    
+
 object Foobar {
   val foo = 1
 }
 """;
-	  
-	  assertErrors(List(), source)
-	}
-	
-	@Test def testOne() = {
-	  val source = """
-package foobar
 
-import java.util._
-import sun.com.foobar;
-import sun._
+    assertErrors(List(), source)
+  }
 
-object Foobar {
-}
-""";
+  @Test def testOne() = {
+    val source = """|package foobar
+                      |
+                      |import java.util._
+                      |import sun.com.foobar;
+                      |import sun._
+                      |
+                      |object Foobar {
+                      |}
+""".stripMargin;
 
-	  assertErrors(List(positionError(40), positionError(64)), source)
-	}
+    assertErrors(List(columnError(4, 0), columnError(5, 0)), source)
+  }
 }
