@@ -30,22 +30,22 @@ object Foobar {
 
   @Test def testOne() = {
     val source = """
-package foobar  
+package foobar##
 import foobar
 object Foobar {
 }
-""";
+""".replaceAll("#", " ");
 
     assertErrors(List(columnError(2, 14)), source)
   }
 
   @Test def testTwo() = {
     val source = """
-package foobar  
+package foobar~
 import foobar#
 object Foobar {
 }
-""".replaceAll("#", "\t");
+""".replaceAll("~", " ").replaceAll("#", "\t");
 
     assertErrors(List(columnError(2, 14), columnError(3, 13)), source)
   }
