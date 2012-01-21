@@ -43,16 +43,18 @@ object Checker {
     }
   }
 
-  private def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) { case (pl, t) => Line(t, pl.end, pl.end + t.length + 1) }.tail)
+  private def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
+          case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
+        }.tail)
 
   def verifySource[T <: FileSpec](classes: List[ConfigCheck], file: T, source: String): List[Message[T]] = {
     lazy val lines = parseLines(source)
     lazy val scalariformAst = parseScalariform(source)
 
-    classes.flatMap(cc => newInstance(cc.className, cc.parameters)).map(c => c match {
-      case c: FileChecker => c.verify(file, lines, lines)
+    classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters)).map(c => c match {
+      case c: FileChecker => c.verify(file, c.level, lines, lines)
       case c: ScalariformChecker => scalariformAst match {
-        case Some(x) => c.verify(file, scalariformAst.get, lines)
+        case Some(x) => c.verify(file, c.level, scalariformAst.get, lines)
         case None => List[Message[T]]()
       }
       case _ => List[Message[T]]()
@@ -61,11 +63,12 @@ object Checker {
 
   def verifyFile[T <: FileSpec](classes: List[ConfigCheck], file: T): List[Message[T]] = verifySource(classes, file, Source.fromFile(file.name).mkString)
 
-  def newInstance(name: String, parameters: Map[String, String]): Option[Checker[_]] = {
+  def newInstance(name: String, level: Level, parameters: Map[String, String]): Option[Checker[_]] = {
     try {
       val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
       val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
       c.setParameters(parameters)
+      c.setLevel(level)
       Some(c)
     } catch {
       case e: Exception => {
@@ -79,29 +82,31 @@ object Checker {
 trait Checker[A] {
   val errorKey: String;
   var parameters = Map[String, String]();
+  var level: Level = WarningLevel;
 
   def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
+  def setLevel(level: Level) = this.level = level;
   def getInt(parameter: String, defaultValue: Int) = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
   def getString(parameter: String, defaultValue: String) = parameters.getOrElse(parameter, defaultValue)
 
-  protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, lines: Lines): Message[T] = {
+  protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, level: Level, lines: Lines): Message[T] = {
     val p2 = p match {
       case PositionError(position, args) => lines.translate(position, args)
       case _ => p
     }
 
     p2 match {
-      case PositionError(position, args) => StyleError(file, this.getClass(), errorKey, args)
-      case FileError(args) => StyleError(file, this.getClass(), errorKey, args, None, None)
-      case LineError(line, args) => StyleError(file, this.getClass(), errorKey, args, Some(line), None)
-      case ColumnError(line, column, args) => StyleError(file, this.getClass(), errorKey, args, Some(line), Some(column))
+      case PositionError(position, args) => StyleError(file, this.getClass(), errorKey, level, args)
+      case FileError(args) => StyleError(file, this.getClass(), errorKey, level, args, None, None)
+      case LineError(line, args) => StyleError(file, this.getClass(), errorKey, level, args, Some(line), None)
+      case ColumnError(line, column, args) => StyleError(file, this.getClass(), errorKey, level, args, Some(line), Some(column))
     }
   }
 
   def charsBetweenTokens(left: Token, right: Token): Int = right.startIndex - (left.startIndex + left.length)
 
-  def verify[T <: FileSpec](file: T, ast: A, lines: Lines): List[Message[T]] = {
-    verify(ast).map(p => toStyleError(file, p, lines))
+  def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] = {
+    verify(ast).map(p => toStyleError(file, p, level, lines))
   }
 
   def verify(ast: A): List[ScalastyleError]

@@ -4,7 +4,11 @@ import scala.xml.XML
 import scala.xml.Elem;
 import scala.xml.Node;
 
-case class ConfigCheck(className: String, parameters: Map[String, String])
+sealed abstract class Level(val name: String)
+case object ErrorLevel extends Level("error")
+case object WarningLevel extends Level("warning")
+
+case class ConfigCheck(className: String, level: Level, parameters: Map[String, String])
 
 object ScalastyleConfiguration {
   def readFromXml(file: String): ScalastyleConfiguration = {
@@ -17,8 +21,13 @@ object ScalastyleConfiguration {
 
   def toCheck(node: Node): ConfigCheck = {
     val className = node.attribute("class").head.text
+    val level = node.attribute("level").head.text match {
+      case "warning" => WarningLevel
+      case "error" => ErrorLevel
+      case _ => WarningLevel
+    }
 
-    ConfigCheck(className, (node \\ "parameters" \\ "parameter").map(e => (e.attribute("name").head.text -> e.attribute("value").head.text)).toMap)
+    ConfigCheck(className, level, (node \\ "parameters" \\ "parameter").map(e => (e.attribute("name").head.text -> e.attribute("value").head.text)).toMap)
   }
 }
 

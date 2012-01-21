@@ -20,9 +20,9 @@ class ParameterNumberChecker extends ScalariformChecker {
     val maxParameters = getInt("maxParameters", DefaultMaximumParameters)
 
     val it = for (
-        t <- localvisit(ast.immediateChildren(0));
-        f <- traverse(t);
-        if (matches(f, maxParameters))
+      t <- localvisit(ast.immediateChildren(0));
+      f <- traverse(t);
+      if (matches(f, maxParameters))
     ) yield {
       PositionError(t.position.get, List("" + maxParameters))
     }
@@ -42,6 +42,6 @@ class ParameterNumberChecker extends ScalariformChecker {
 
   private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
     case t: FunDefOrDcl => List(FunDefOrDclClazz(t.paramClauses, Some(t.nameToken.startIndex), localvisit(t.localDef)))
-    case t: Any         => visit(t, localvisit)
+    case t: Any => visit(t, localvisit)
   }
 }

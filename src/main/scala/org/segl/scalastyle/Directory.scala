@@ -15,7 +15,8 @@ object Directory {
   }
 
   def getFiles(dir: File): List[FileSpec] = {
-    dir.listFiles(scalaFileFilter).map(f => new DirectoryFileSpec(f.getAbsolutePath(), f.getAbsoluteFile())).toList ::: dir.listFiles().filter(_.isDirectory).flatMap(getFiles(_)).toList
+    dir.listFiles(scalaFileFilter).map(f => new DirectoryFileSpec(f.getAbsolutePath(), f.getAbsoluteFile())).toList :::
+                                          dir.listFiles().filter(_.isDirectory).flatMap(getFiles(_)).toList
   }
 
   def main(args: Array[String]): Unit = {
