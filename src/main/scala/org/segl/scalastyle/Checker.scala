@@ -47,7 +47,7 @@ object Checker {
           case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
         }.tail)
 
-  def verifySource[T <: FileSpec](classes: List[ConfigCheck], file: T, source: String): List[Message[T]] = {
+  def verifySource[T <: FileSpec](classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
     lazy val lines = parseLines(source)
     lazy val scalariformAst = parseScalariform(source)
 
@@ -61,7 +61,8 @@ object Checker {
     }).flatten
   }
 
-  def verifyFile[T <: FileSpec](classes: List[ConfigCheck], file: T): List[Message[T]] = verifySource(classes, file, Source.fromFile(file.name).mkString)
+  def verifyFile[T <: FileSpec](classes: List[ConfigurationChecker], file: T): List[Message[T]] =
+                                verifySource(classes, file, Source.fromFile(file.name).mkString)
 
   def newInstance(name: String, level: Level, parameters: Map[String, String]): Option[Checker[_]] = {
     try {

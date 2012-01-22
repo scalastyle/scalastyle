@@ -6,8 +6,6 @@ import org.junit.Assert.assertTrue
 import org.segl.scalastyle.Checker
 import org.segl.scalastyle.StyleError
 import org.segl.scalastyle.Message
-import org.segl.scalastyle.ConfigCheck
-
 import java.util.Set;
 
 import org.junit.Before;

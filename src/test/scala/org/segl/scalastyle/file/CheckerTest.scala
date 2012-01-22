@@ -7,7 +7,7 @@ import org.segl.scalastyle.Checker
 import org.segl.scalastyle.StyleError
 import org.segl.scalastyle.Message
 import org.segl.scalastyle.WarningLevel
-import org.segl.scalastyle.ConfigCheck
+import org.segl.scalastyle.ConfigurationChecker
 import org.segl.scalastyle.FileSpec
 
 trait CheckerTest {
@@ -15,7 +15,7 @@ trait CheckerTest {
   protected val classUnderTest: Class[_ <: Checker[_]]
 
   protected def assertErrors[T <: FileSpec](list: List[Message[T]], source: String, params: Map[String, String] = Map()) = {
-    assertEquals(list, Checker.verifySource(List(ConfigCheck(classUnderTest.getName(), WarningLevel, params)), null, source))
+    assertEquals(list, Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, params)), null, source))
   }
 
   protected def fileError(args: List[String] = List()) = StyleError(null, classUnderTest, key, WarningLevel, args, None, None)
