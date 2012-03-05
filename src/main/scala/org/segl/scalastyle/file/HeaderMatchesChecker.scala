@@ -14,7 +14,7 @@ class HeaderMatchesChecker extends FileChecker {
   def verify(ast: Lines): List[ScalastyleError] = {
     val header = Checker.parseLines(getString("header", DefaultHeader))
 
-    val found = (0 to Math.min(ast.lines.size-1, header.lines.size-1)).find(i => !ast.lines(i).text.trim.equals(header.lines(i).text.trim))
+    val found = (0 to scala.math.min(ast.lines.size-1, header.lines.size-1)).find(i => !ast.lines(i).text.trim.equals(header.lines(i).text.trim))
 
     found match {
       case Some(x) => List(LineError(x + 1))

@@ -55,7 +55,7 @@ import foobar
 
     assertErrors(List(lineError(13)), source, Map("header" -> licence))
   }
-  
+
   @Test def testTooShort() = {
     val source = """/**
  * Copyright (C) 2009-2010 the original author or authors.
