@@ -43,7 +43,7 @@ object Checker {
     }
   }
 
-  private def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
+  def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
           case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
         }.tail)
 
