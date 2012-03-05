@@ -34,6 +34,20 @@ object ScalastyleConfiguration {
       (e.attribute("name").head.text -> e.attribute("value").head.text)
     }).toMap)
   }
+
+  def toXml(scalastyleConfiguration: ScalastyleConfiguration): scala.xml.Elem = {
+    val elements = scalastyleConfiguration.checks.map(c => {
+      val parameters = if (c.parameters.size > 0) {
+        val ps = c.parameters.map( p => <parameter name={p._1} value={p._2} />)
+        <parameters>{ps}</parameters>
+      } else {
+        scala.xml.Null
+      }
+      <check class={c.className} level={c.level.name}>{parameters}</check>
+    })
+
+    <scalastyle><name>{scalastyleConfiguration.name}</name>{elements}</scalastyle>
+  }
 }
 
 case class ScalastyleConfiguration(name: String, checks: List[ConfigurationChecker])
@@ -65,4 +79,3 @@ object ScalastyleDefinition {
 }
 
 case class ScalastyleDefinition(checkers: List[DefinitionChecker])
-
