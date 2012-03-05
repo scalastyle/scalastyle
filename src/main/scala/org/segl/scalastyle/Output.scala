@@ -7,16 +7,26 @@ trait Output[T <: FileSpec] {
 class TextOutput[T <: FileSpec] extends Output[T] {
   private val messageHelper = new MessageHelper(getClass().getClassLoader())
   override def output(messages: List[Message[T]]) = messages.foreach(message)
+  private var errors = 0
+  private var warnings = 0
 
   private def message(m: Message[T]) = m match {
     case StartWork() => println("Starting scalastyle")
-    case EndWork() => println("Scalastyle done. Now go and fix your code.")
+    case EndWork() => {
+      println("Found " + errors + " errors")
+      println("Found " + warnings + " warnings")
+      println("Scalastyle done. Now go and fix your code.")
+    }
     case StartFile(file) => println("start file " + file)
     case EndFile(file) => println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column) => {
       println(messageHelper.text(level.name) + print("file", file.name) +
           print("message", messageHelper.message(clazz, key, args)) +
           print("line", line) + print("column", column))
+      level match {
+        case WarningLevel => warnings += 1
+        case _ => errors += 1
+      }
     }
     case StyleException(file, clazz, message, stacktrace, line, column) => {
       println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))
