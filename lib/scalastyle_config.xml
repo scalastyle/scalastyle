@@ -9,7 +9,7 @@
  <check level="warning" class="org.segl.scalastyle.file.HeaderMatchesChecker">
   <parameters>
    <parameter name="header">// Copyright (C) 2011-2012 the original author or authors.
-// See the LICENCE.md file distributed with this work for additional
+// See the LICENCE.txt file distributed with this work for additional
 // information regarding copyright ownership.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
