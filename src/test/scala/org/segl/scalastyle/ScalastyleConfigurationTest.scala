@@ -22,9 +22,26 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import file.HeaderMatchesChecker
 
+object ScalastyleConfigurationTest {
+  val filename = "src/test/resources/config/scalastyle_config.xml"
+  val width = 1000
+  val step = 1
+}
+
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
+  import ScalastyleConfigurationTest._
+
   // just check we can read it
   @Test def readXml(): Unit = {
-    val config = ScalastyleConfiguration.readFromXml("lib/scalastyle_config.xml")
+    val config = ScalastyleConfiguration.readFromXml(filename)
   }
+
+  @Test def writeXml(): Unit = {
+    val config = ScalastyleConfiguration.readFromXml(filename)
+    val contents = scala.io.Source.fromFile(filename).mkString
+
+    assertEquals(clean(contents), clean(ScalastyleConfiguration.toXmlString(config, width, step)))
+  }
+
+  def clean(s: String): String = s.replace("\015", "")
 }

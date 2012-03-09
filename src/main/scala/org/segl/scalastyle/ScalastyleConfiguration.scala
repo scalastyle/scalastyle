@@ -56,7 +56,11 @@ object ScalastyleConfiguration {
   def toXml(scalastyleConfiguration: ScalastyleConfiguration): scala.xml.Elem = {
     val elements = scalastyleConfiguration.checks.map(c => {
       val parameters = if (c.parameters.size > 0) {
-        val ps = c.parameters.map( p => <parameter name={p._1} value={p._2} />)
+        val ps = c.parameters.map( p => {
+          val text = scala.xml.Unparsed("<![CDATA[" + p._2 + "]]>")
+          println("text=" + text)
+          <parameter name={p._1}>{text}</parameter>
+        })
         <parameters>{ps}</parameters>
       } else {
         scala.xml.Null
@@ -66,6 +70,9 @@ object ScalastyleConfiguration {
 
     <scalastyle><name>{scalastyleConfiguration.name}</name>{elements}</scalastyle>
   }
+
+  def toXmlString(scalastyleConfiguration: ScalastyleConfiguration, width: Int, step: Int): String =
+               new MyPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
 }
 
 case class ScalastyleConfiguration(name: String, checks: List[ConfigurationChecker])
@@ -97,3 +104,67 @@ object ScalastyleDefinition {
 }
 
 case class ScalastyleDefinition(checkers: List[DefinitionChecker])
+
+import scala.xml._
+
+// it's unfortunate that we have to do this, but the scala xml PrettyPrinter converts CDATA sections to
+// Text, which means that multiple lines get wrapped into one. So we extend PrettyPrinter
+// so that they don't get eaten
+private class MyPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step) {
+
+  // this is the method which has changed.
+  private def doPreserve(node: Node) = true
+
+  // This is just a copy of what's in scala.xml.PrettyPrinter
+    /** @param tail: what we'd like to squeeze in */
+  protected override def traverse(node: Node, pscope: NamespaceBinding, ind: Int): Unit =  node match {
+
+      case Text(s) if s.trim() == "" =>
+        ;
+      case _:Atom[_] | _:Comment | _:EntityRef | _:ProcInstr =>
+        makeBox( ind, node.toString().trim() )
+      case g @ Group(xs) =>
+        traverse(xs.iterator, pscope, ind)
+      case _ =>
+        val test = {
+          val sb = new StringBuilder()
+          Utility.toXML(node, pscope, sb, false)
+          if (doPreserve(node)) sb.toString
+          else TextBuffer.fromString(sb.toString()).toText(0).data
+        }
+        if (childrenAreLeaves(node) && fits(test)) {
+          makeBox(ind, test)
+        } else {
+          val (stg, len2) = startTag(node, pscope)
+          val etg = endTag(node)
+          if (stg.length < width - cur) { // start tag fits
+            makeBox(ind, stg)
+            makeBreak()
+            traverse(node.child.iterator, node.scope, ind + step)
+            makeBox(ind, etg)
+          } else if (len2 < width - cur) {
+            // <start label + attrs + tag + content + end tag
+            makeBox(ind, stg.substring(0, len2))
+            makeBreak() // todo: break the rest in pieces
+            /*{ //@todo
+             val sq:Seq[String] = stg.split(" ");
+             val it = sq.iterator;
+             it.next;
+             for (c <- it) {
+               makeBox(ind+len2-2, c)
+               makeBreak()
+             }
+             }*/
+            makeBox(ind, stg.substring(len2, stg.length))
+            makeBreak()
+            traverse(node.child.iterator, node.scope, ind + step)
+            makeBox(cur, etg)
+            makeBreak()
+          } else { // give up
+            makeBox(ind, test)
+            makeBreak()
+          }
+        }
+  }
+
+}
