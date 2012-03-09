@@ -110,6 +110,7 @@ import scala.xml._
 // it's unfortunate that we have to do this, but the scala xml PrettyPrinter converts CDATA sections to
 // Text, which means that multiple lines get wrapped into one. So we extend PrettyPrinter
 // so that they don't get eaten
+// see also https://issues.scala-lang.org/browse/SI-3368
 private class MyPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step) {
 
   // this is the method which has changed.
