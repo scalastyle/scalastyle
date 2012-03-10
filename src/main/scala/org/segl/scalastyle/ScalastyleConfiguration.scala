@@ -31,7 +31,7 @@ sealed abstract class Level(val name: String)
 case object ErrorLevel extends Level("error")
 case object WarningLevel extends Level("warning")
 
-case class ConfigurationChecker(className: String, level: Level, parameters: Map[String, String])
+case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String])
 
 object ScalastyleConfiguration {
   def readFromXml(file: String): ScalastyleConfiguration = {
@@ -45,8 +45,9 @@ object ScalastyleConfiguration {
   def toCheck(node: Node): ConfigurationChecker = {
     val className = node.attribute("class").get.text
     val level = Level(node.attribute("level").get.text)
+    val enabled = node.attribute("enabled").getOrElse(scala.xml.Text("false")).text.toLowerCase() == "true"
 
-    ConfigurationChecker(className, level, (node \\ "parameters" \\ "parameter").map(e => {
+    ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
       val attributeValue = e.attribute("value")
       val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
       (e.attribute("name").head.text -> value)
@@ -65,7 +66,7 @@ object ScalastyleConfiguration {
       } else {
         scala.xml.Null
       }
-      <check class={c.className} level={c.level.name}>{parameters}</check>
+      <check class={c.className} level={c.level.name} enabled={if (c.enabled) "true" else "false"}>{parameters}</check>
     })
 
     <scalastyle><name>{scalastyleConfiguration.name}</name>{elements}</scalastyle>
