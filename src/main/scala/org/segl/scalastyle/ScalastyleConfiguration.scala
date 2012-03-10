@@ -59,7 +59,6 @@ object ScalastyleConfiguration {
       val parameters = if (c.parameters.size > 0) {
         val ps = c.parameters.map( p => {
           val text = scala.xml.Unparsed("<![CDATA[" + p._2 + "]]>")
-          println("text=" + text)
           <parameter name={p._1}>{text}</parameter>
         })
         <parameters>{ps}</parameters>
