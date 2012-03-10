@@ -44,6 +44,6 @@
     <checker class="org.segl.scalastyle.scalariform.ReturnChecker" id="return" defaultLevel="warning" />
     <checker class="org.segl.scalastyle.scalariform.NullChecker" id="null" defaultLevel="warning" />
     <checker class="org.segl.scalastyle.scalariform.NoCloneChecker" id="no.clone" defaultLevel="warning" />
-    <checker class="org.segl.scalastyle.scalariform.NoFinalizeChecker" id="no.finalizer" defaultLevel="warning" />
+    <checker class="org.segl.scalastyle.scalariform.NoFinalizeChecker" id="no.finalize" defaultLevel="warning" />
     <checker class="org.segl.scalastyle.scalariform.CovariantEqualsChecker" id="covariant.equals" defaultLevel="warning" />
 </scalastyle-definition>

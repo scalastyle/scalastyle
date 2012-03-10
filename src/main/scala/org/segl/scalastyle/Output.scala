@@ -37,7 +37,7 @@ class TextOutput[T <: FileSpec] extends Output[T] {
     case EndFile(file) => println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column) => {
       println(messageHelper.text(level.name) + print("file", file.name) +
-          print("message", messageHelper.message(clazz, key, args)) +
+          print("message", messageHelper.message(clazz.getClassLoader(), key, args)) +
           print("line", line) + print("column", column))
       level match {
         case WarningLevel => warnings += 1

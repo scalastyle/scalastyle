@@ -25,11 +25,15 @@ trait FileSpec {
   def name: String
 }
 
+// for the methods in this class, if a key does not exist
+// we return the key so something always appears
 class MessageHelper(classLoader: ClassLoader) {
   val bundles = HashMap[String, ResourceBundle]()
 
-  def name(key: String) = getMessage(classLoader, key + ".name", List())
   def text(key: String) = getMessage(classLoader, key + ".text", List())
+
+  def label(key: String) = getMessage(classLoader, key + ".label", List())
+  def description(key: String) = getMessage(classLoader, key + ".description", List())
 
   private[this] def getMessage(classLoader: ClassLoader, key: String, args: List[String]) = {
     try {
@@ -44,9 +48,9 @@ class MessageHelper(classLoader: ClassLoader) {
     }
   }
 
-  def message(clazz: Class[_ <: Checker[_]], key: String, args: List[String]) = {
+  def message(classLoader: ClassLoader, key: String, args: List[String]) = {
     // Use ClassLoader of the class from which the message came
-    getMessage(clazz.getClassLoader(), key + ".message", args)
+    getMessage(classLoader, key + ".message", args)
   }
 }
 
