@@ -72,7 +72,7 @@ object ScalastyleConfiguration {
   }
 
   def toXmlString(scalastyleConfiguration: ScalastyleConfiguration, width: Int, step: Int): String =
-               new MyPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
+               new XmlPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
 }
 
 case class ScalastyleConfiguration(name: String, checks: List[ConfigurationChecker])
@@ -111,7 +111,7 @@ import scala.xml._
 // Text, which means that multiple lines get wrapped into one. So we extend PrettyPrinter
 // so that they don't get eaten
 // see also https://issues.scala-lang.org/browse/SI-3368
-private class MyPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step) {
+class XmlPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step) {
 
   // this is the method which has changed.
   private def doPreserve(node: Node) = true
