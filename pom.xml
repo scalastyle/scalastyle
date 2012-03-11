@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.segl.scalastyle</groupId>
+	<groupId>org.scalastyle</groupId>
 	<artifactId>scalastyle</artifactId>
 	<name>Scalastyle, Checkstyle for Scala</name>
 	<version>0.0.1</version>
@@ -191,7 +191,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>org.segl.scalastyle.Main</mainClass>
+					<mainClass>org.scalastyle.Main</mainClass>
 					<arguments>
                         <argument>lib/scalastyle_config.xml</argument>
                         <argument>src/main/scala</argument>
