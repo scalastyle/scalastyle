@@ -113,23 +113,23 @@ object ScalastyleDefinition {
       (parameterName -> DefinitionParameter(parameterName, parameterType, multiple, defaultValue))
     }).toMap)
   }
-  
+
   def stringAttr(node: Node, id: String, defaultValue: String = ""): String = {
     attr(node, id, defaultValue, {s => s})
   }
-  
+
   def levelAttr(node: Node, id: String, defaultValue: String = "warning"): Level = {
     attr(node, id, defaultValue, {s => Level(s)})
   }
-  
+
   def typeAttr(node: Node, id: String, defaultValue: String = "string"): ParameterType = {
     attr(node, id, defaultValue, {s => ParameterType(s)})
   }
-  
+
   def booleanAttr(node: Node, id: String, defaultValue: String = "false"): Boolean = {
     attr(node, id, defaultValue, {s => "true" == s.toLowerCase()})
   }
-  
+
   def attr[T](node: Node, id: String, defaultValue: String, fn: (String) => T): T = {
     node.attribute(id) match {
       case Some(x) => fn(x.text)
