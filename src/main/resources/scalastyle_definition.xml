@@ -9,7 +9,7 @@
     </checker>
     <checker class="org.scalastyle.file.HeaderMatchesChecker" id="header.matches" defaultLevel="warning">
         <parameters>
-            <parameter name="header" type="multistring" default=""/>
+            <parameter name="header" type="string" multiple="true" default=""/>
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.SpacesAfterPlusChecker" id="spaces.after.plus" defaultLevel="warning" />

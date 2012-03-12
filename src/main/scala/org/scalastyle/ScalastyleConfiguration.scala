@@ -31,6 +31,17 @@ sealed abstract class Level(val name: String)
 case object ErrorLevel extends Level("error")
 case object WarningLevel extends Level("warning")
 
+object ParameterType {
+  def apply(s: String) = s match {
+    case "integer" => IntegerType
+    case "string" => StringType
+    case _ => StringType
+  }
+}
+sealed abstract class ParameterType(val name: String)
+case object IntegerType extends ParameterType("integer")
+case object StringType extends ParameterType("string")
+
 case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String])
 
 object ScalastyleConfiguration {
@@ -79,7 +90,7 @@ case class ScalastyleConfiguration(name: String, checks: List[ConfigurationCheck
 
 // definition
 
-case class DefinitionParameter(name: String, typeName: String, defaultValue: String)
+case class DefinitionParameter(name: String, typeName: ParameterType, multiple: Boolean, defaultValue: String)
 case class DefinitionChecker(className: String, id: String, level: Level, parameters: Map[String, DefinitionParameter])
 
 object ScalastyleDefinition {
@@ -90,16 +101,40 @@ object ScalastyleDefinition {
   }
 
   def toCheck(node: Node): DefinitionChecker = {
-    val className = node.attribute("class").head.text
-    val id = node.attribute("id").head.text
-    val defaultLevel = Level(node.attribute("defaultLevel").head.text)
+    val className = stringAttr(node, "class")
+    val id = stringAttr(node, "id")
+    val defaultLevel = levelAttr(node, "defaultLevel")
 
     DefinitionChecker(className, id, defaultLevel, (node \\ "parameters" \\ "parameter").map(e => {
-      val parameterName = e.attribute("name").head.text
-      val typeName = e.attribute("type").head.text
-      val defaultValue = e.attribute("default").head.text
-      (e.attribute("name").head.text -> DefinitionParameter(parameterName, typeName, defaultValue))
+      val parameterName = stringAttr(e, "name")
+      val parameterType = typeAttr(e, "type")
+      val multiple = booleanAttr(e, "multiple")
+      val defaultValue = stringAttr(e, "default")
+      (parameterName -> DefinitionParameter(parameterName, parameterType, multiple, defaultValue))
     }).toMap)
+  }
+  
+  def stringAttr(node: Node, id: String, defaultValue: String = ""): String = {
+    attr(node, id, defaultValue, {s => s})
+  }
+  
+  def levelAttr(node: Node, id: String, defaultValue: String = "warning"): Level = {
+    attr(node, id, defaultValue, {s => Level(s)})
+  }
+  
+  def typeAttr(node: Node, id: String, defaultValue: String = "string"): ParameterType = {
+    attr(node, id, defaultValue, {s => ParameterType(s)})
+  }
+  
+  def booleanAttr(node: Node, id: String, defaultValue: String = "false"): Boolean = {
+    attr(node, id, defaultValue, {s => "true" == s.toLowerCase()})
+  }
+  
+  def attr[T](node: Node, id: String, defaultValue: String, fn: (String) => T): T = {
+    node.attribute(id) match {
+      case Some(x) => fn(x.text)
+      case _ => fn(defaultValue)
+    }
   }
 }
 
