@@ -21,8 +21,16 @@
             <parameter name="tabSize"  type="integer" default="4" />
 		</parameters>
 	</checker>
-    <checker class="org.scalastyle.scalariform.ClassNamesChecker" id="class.name" defaultLevel="warning" />
-    <checker class="org.scalastyle.scalariform.ObjectNamesChecker" id="object.name" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.ClassNamesChecker" id="class.name" defaultLevel="warning">
+        <parameters>
+            <parameter name="regex" type="string" default="[A-Z][A-Za-z]*" />
+        </parameters>
+    </checker>
+    <checker class="org.scalastyle.scalariform.ObjectNamesChecker" id="object.name" defaultLevel="warning">
+        <parameters>
+            <parameter name="regex" type="string" default="[A-Z][A-Za-z]*" />
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.scalariform.EqualsHashCodeChecker" id="equals.hash.code"  defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.IllegalImportsChecker" id="illegal.imports" defaultLevel="warning" >
         <parameters>
