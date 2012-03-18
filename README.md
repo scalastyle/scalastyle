@@ -7,6 +7,7 @@ Rules
 -----
 
 For a list of (planned) rules, see the [Scalastyle WIKI](https://github.com/scalastyle/scalastyle/wiki)
+For a list of actual rules, see the Implemented Rules section below
 
 Usage
 -----
@@ -33,8 +34,8 @@ Want to contribute? Great! Look at the wiki for potential rules to implement, or
 6. Create an [Issue](https://github.com/scalastyle/scalastyle/issues) with a link to your branch
 7. Enjoy a coffee and wait
 
-Rules
------
+Implemented Rules
+-----------------
 
 These are the rules which are currently implemented:
 
