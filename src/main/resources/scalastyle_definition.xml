@@ -54,4 +54,5 @@
     <checker class="org.scalastyle.scalariform.NoCloneChecker" id="no.clone" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.NoFinalizeChecker" id="no.finalize" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.CovariantEqualsChecker" id="covariant.equals" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.StructuralTypeChecker" id="structural.type" defaultLevel="warning" />
 </scalastyle-definition>

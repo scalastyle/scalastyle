@@ -210,4 +210,14 @@ No Parameters
 
 No Parameters
 
+## Class org.scalastyle.scalariform.StructuralTypeChecker - Check that structural types are not used
+
+ * id - structural.type
+ * default level - WarningLevel
+
+### Parameters
+
+No Parameters
+
+
 
