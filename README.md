@@ -6,7 +6,7 @@ Scalastyle examines your code and indicates potential problems with it.
 Rules
 -----
 
-For a list of (planned) rules, see the [Scalastyle WIKI](https://github.com/scalastyle/scalastyle/wiki)
+For a list of (planned) rules, see the [Scalastyle WIKI](https://github.com/scalastyle/scalastyle/wiki).
 For a list of actual rules, see the Implemented Rules section below
 
 Usage
