@@ -17,6 +17,7 @@
 package org.scalastyle
 
 import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.lexer.HiddenTokenInfo
 import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
@@ -25,18 +26,20 @@ import scala.io.Source
 
 case class Line(text: String, start: Int, end: Int)
 
+case class LineColumn(line: Int, column: Int)
+
 case class Lines(lines: Array[Line]) {
-  def translate(position: Int, args: List[String]): ScalastyleError = {
+  def toLineColumn(position: Int): Option[LineColumn] = {
     var i = 0
 
     lines.foreach(l => {
       i = i + 1
       if (position >= l.start && position < l.end) {
-        return ColumnError(i, position - l.start, args)
+        return Some(LineColumn(i, position - l.start))
       }
     })
 
-    FileError()
+    None
   }
 }
 
@@ -47,13 +50,16 @@ class ScalastyleChecker[T <: FileSpec] {
   }
 }
 
+case class ScalariformAst(ast: CompilationUnit, hiddenTokenInfo: HiddenTokenInfo)
+
 object Checker {
   type CheckerClass = Class[_ <: Checker[_]]
 
-  def parseScalariform(source: String): Option[CompilationUnit] = {
+  def parseScalariform(source: String): Option[ScalariformAst] = {
     try {
       val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
-      Some(new ScalaParser(tokens.toArray).compilationUnitOrScript())
+
+      Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), hiddenTokenInfo))
     } catch {
       // TODO improve error logging here
       case e: Exception => None
@@ -65,17 +71,22 @@ object Checker {
         }.tail)
 
   def verifySource[T <: FileSpec](classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
-    lazy val lines = parseLines(source)
-    lazy val scalariformAst = parseScalariform(source)
+    val lines = parseLines(source)
+    val scalariformAst = parseScalariform(source)
+
+    val commentFilters = scalariformAst match {
+      case Some(ast) => CommentFilter.findCommentFilters(ast.hiddenTokenInfo, lines)
+      case None => List[CommentFilter]()
+    }
 
     classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters)).map(c => c match {
       case c: FileChecker => c.verify(file, c.level, lines, lines)
       case c: ScalariformChecker => scalariformAst match {
-        case Some(x) => c.verify(file, c.level, scalariformAst.get, lines)
+        case Some(ast) => c.verify(file, c.level, ast.ast, lines)
         case None => List[Message[T]]()
       }
       case _ => List[Message[T]]()
-    }).flatten
+    }).flatten.filter(m => CommentFilter.filterApplies(m, commentFilters))
   }
 
   def verifyFile[T <: FileSpec](classes: List[ConfigurationChecker], file: T): List[Message[T]] =
@@ -109,7 +120,12 @@ trait Checker[A] {
 
   protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, level: Level, lines: Lines): Message[T] = {
     val p2 = p match {
-      case PositionError(position, args) => lines.translate(position, args)
+      case PositionError(position, args) => {
+        lines.toLineColumn(position) match {
+          case Some(LineColumn(line, column)) => ColumnError(line, column, args)
+          case None => FileError
+        }
+      }
       case _ => p
     }
 

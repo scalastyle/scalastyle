@@ -64,7 +64,7 @@ case class EndFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 
 case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], key: String,
                                       level: Level, args: List[String], lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T] {
-  override def toString() = "key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column
+  override def toString() = "StyleError key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column
 }
 case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], message: String,
                                           stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
