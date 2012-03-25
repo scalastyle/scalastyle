@@ -20,6 +20,8 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
 
+// scalastyle:off magic.number
+
 /**
  * Test that checks that return keyword should not be used
  *

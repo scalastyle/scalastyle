@@ -26,6 +26,8 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
+// scalastyle:off magic.number
+
 class SpacesBeforePlusCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "spaces.before.plus"
   val classUnderTest = classOf[SpacesBeforePlusChecker]

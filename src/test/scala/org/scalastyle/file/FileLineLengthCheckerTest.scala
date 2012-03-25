@@ -28,6 +28,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+// scalastyle:off magic.number
+
 class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "line.size.limit"
   val classUnderTest = classOf[FileLineLengthChecker]

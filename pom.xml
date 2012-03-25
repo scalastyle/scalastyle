@@ -186,6 +186,7 @@
           <arguments>
             <argument>lib/scalastyle_config.xml</argument>
             <argument>src/main/scala</argument>
+            <argument>src/test/scala</argument>
           </arguments>
         </configuration>
       </plugin>

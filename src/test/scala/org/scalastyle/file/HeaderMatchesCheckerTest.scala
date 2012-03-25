@@ -28,6 +28,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+// scalastyle:off magic.number
+
 class HeaderMatchesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "header.matches"
   val classUnderTest = classOf[HeaderMatchesChecker]

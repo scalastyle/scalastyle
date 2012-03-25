@@ -26,6 +26,8 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
+// scalastyle:off magic.number
+
 class NoWhitespaceBeforeLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "no.whitespace.before.left.bracket"
   val classUnderTest = classOf[NoWhitespaceBeforeLeftBracketChecker]

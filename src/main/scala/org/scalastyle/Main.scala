@@ -24,7 +24,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val configuration = ScalastyleConfiguration.readFromXml(args(0))
 
-    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(new File(args(1))))
+    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(args.tail.map(s => new File(s)): _*))
 
     new TextOutput().output(messages);
   }

@@ -26,6 +26,8 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
+// scalastyle:off magic.number
+
 class StructuralTypeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "structural.type"
   val classUnderTest = classOf[StructuralTypeChecker]

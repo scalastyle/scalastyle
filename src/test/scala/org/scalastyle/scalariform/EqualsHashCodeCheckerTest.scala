@@ -26,6 +26,8 @@ import java.util.Set
 import org.junit.Before
 import org.junit.Test
 
+// scalastyle:off magic.number
+
 class EqualsHashCodeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "equals.hash.code"
   val classUnderTest = classOf[EqualsHashCodeChecker]

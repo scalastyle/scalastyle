@@ -28,6 +28,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+// scalastyle:off magic.number
+
 class FileTabCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "line.contains.tab"
   val classUnderTest = classOf[FileTabChecker]
