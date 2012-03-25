@@ -80,7 +80,7 @@ object CommentFilter {
 
   def filterApplies[T <: FileSpec](m: Message[T], commentFilters: List[CommentFilter]): Boolean = {
     m match {
-      case m: StyleError[T] => {
+      case m: StyleError[_] => {
         val filters = commentFilters.filter(cf => !cf.id.isDefined || cf.id.get == m.key)
         filters.find(cf => gte(m.lineNumber, cf.start) && lte(m.lineNumber, cf.end)).isEmpty
       }
