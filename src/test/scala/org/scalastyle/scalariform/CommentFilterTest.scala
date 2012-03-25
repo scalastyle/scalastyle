@@ -38,13 +38,16 @@ class foobar {
   // scalastyle:off
   class barbar { }
   // scalastyle:on
+  // scalastyle:off class.name
   class bazbaz {}
+  // scalastyle:on class.name
 
+  // scalastyle:off object.name
   val s = " // scalastyle:off "
   class g { }
 }
 """;
 
-    assertErrors(List(columnError(4, 6, List("[A-Z][A-Za-z]*")), columnError(8, 8, List("[A-Z][A-Za-z]*")), columnError(11, 8, List("[A-Z][A-Za-z]*"))), source)
+    assertErrors(List(columnError(4, 6, List("[A-Z][A-Za-z]*")), columnError(14, 8, List("[A-Z][A-Za-z]*"))), source)
   }
 }
