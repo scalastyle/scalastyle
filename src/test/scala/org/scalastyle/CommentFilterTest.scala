@@ -24,10 +24,16 @@ import _root_.scalariform.lexer.HiddenTokenInfo
 import _root_.scalariform.lexer.Tokens._
 
 class CommentHelperTest extends AssertionsForJUnit {
-  @Test def testOK(): Unit = {
+  @Test def testOffOn(): Unit = {
     assertCommentFilter(List(CommentFilter(Some(LineColumn(2, 0)),Some(LineColumn(3, 0)))), """
 // scalastyle:off
 // scalastyle:on""")
+  }
+
+  @Test def testOffOnVariousWhitespace(): Unit = {
+    assertCommentFilter(List(CommentFilter(Some(LineColumn(2, 0)),Some(LineColumn(3, 1)))), """
+//  scalastyle:off
+ //  scalastyle:on """)
   }
 
   private[this] def assertCommentFilter(expected: List[CommentFilter], text: String) = {

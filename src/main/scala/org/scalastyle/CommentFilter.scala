@@ -25,13 +25,17 @@ case class CommentFilter(start: Option[LineColumn], end: Option[LineColumn])
 object CommentFilter {
   private case class CommentInter(position: Int, off: Boolean)
 
-  private[this] def isOff(s: String) = s.contains("// scalastyle:off")
+  private[this] val onRegex = """//\s*scalastyle:on""".r
+  private[this] val offRegex = """//\s*scalastyle:off""".r
+
+  private[this] def isOn(s: String) = onRegex.findFirstIn(s).isDefined
+  private[this] def isOff(s: String) = offRegex.findFirstIn(s).isDefined
 
   def findCommentFilters(hiddenTokenInfo: HiddenTokenInfo, lines: Lines): List[CommentFilter] = {
     val it = for (
       hiddenTokens <- hiddenTokenInfo.allHiddenTokens;
       t <- hiddenTokens.rawTokens;
-      if ((t.tokenType == LINE_COMMENT || t.tokenType == MULTILINE_COMMENT) && t.text.contains("// scalastyle:"))
+      if ((t.tokenType == LINE_COMMENT || t.tokenType == MULTILINE_COMMENT) && (isOn(t.text) || isOff(t.text)))
     ) yield {
       CommentInter(t.startIndex, isOff(t.text))
     }
