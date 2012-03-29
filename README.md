@@ -34,6 +34,21 @@ Want to contribute? Great! Look at the wiki for potential rules to implement, or
 6. Create an [Issue](https://github.com/scalastyle/scalastyle/issues) with a link to your branch
 7. Enjoy a coffee and wait
 
+
+Comment filters
+---------------
+
+If you wish to ignore a particular scalastyle rule, you can put a comment before and after the line, with the following syntax:
+
+    // scalastyle:off
+    // scalastyle:on
+
+You can also switch off checking for a particular rule by specifying the id of the rule to ignore:
+
+    // scalastyle:off magic.number
+	var foobar = 134
+	// scalastyle:on magic.number
+
 Implemented Rules
 -----------------
 
