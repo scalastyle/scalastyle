@@ -16,7 +16,7 @@
 
 package org.scalastyle
 
-// scalastyle:off
+// scalastyle:off magic.number
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals

@@ -11,12 +11,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.scalastyle.scalastyleplugin.ScalastyleBuilder</name>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<name>org.scalastyle.scalastyleplugin.core.ScalastyleBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -26,6 +26,6 @@
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.scalastyle.scalastyleplugin.ScalastyleNature</nature>
+		<nature>org.scalastyle.scalastyleplugin.core.ScalastyleNature</nature>
 	</natures>
 </projectDescription>
