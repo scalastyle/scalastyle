@@ -17,24 +17,28 @@
 package org.scalastyle
 
 trait Output[T <: FileSpec] {
-  def output(messages: List[Message[T]])
+  def output(messages: List[Message[T]]): OutputResult
 }
 
-class TextOutput[T <: FileSpec] extends Output[T] {
+case class OutputResult(errors: Int, warnings: Int)
+
+class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(getClass().getClassLoader())
-  override def output(messages: List[Message[T]]) = messages.foreach(message)
+  override def output(messages: List[Message[T]]): OutputResult = {
+    messages.foreach(message)
+    OutputResult(errors, warnings)
+  }
   private var errors = 0
   private var warnings = 0
 
   private def message(m: Message[T]) = m match {
-    case StartWork() => println("Starting scalastyle")
+    case StartWork() => if (verbose) println("Starting scalastyle")
     case EndWork() => {
-      println("Found " + errors + " errors")
-      println("Found " + warnings + " warnings")
-      println("Scalastyle done. Now go and fix your code.")
+      if (!quiet) println("Found " + errors + " errors")
+      if (!quiet) println("Found " + warnings + " warnings")
     }
-    case StartFile(file) => println("start file " + file)
-    case EndFile(file) => println("end file " + file)
+    case StartFile(file) => if (verbose) println("start file " + file)
+    case EndFile(file) => if (verbose) println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column) => {
       println(messageHelper.text(level.name) + print("file", file.name) +
           print("message", messageHelper.message(clazz.getClassLoader(), key, args)) +

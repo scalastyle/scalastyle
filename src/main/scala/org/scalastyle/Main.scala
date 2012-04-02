@@ -19,13 +19,37 @@ package org.scalastyle
 import java.io.File;
 
 class Main
+case class MainConfig(config: Option[String], directories: List[String],
+                        verbose: Boolean = false, quiet: Boolean = false,
+                        warningsaserrors: Boolean = false)
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val configuration = ScalastyleConfiguration.readFromXml(args(0))
+    val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", "0.1.0") {
+      def options = Seq(
+        opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },
+        booleanOpt("v", "verbose", "verbose") { (v: Boolean, c: MainConfig) => c.copy(verbose = v) },
+        booleanOpt("q", "quiet", "quiet") { (v: Boolean, c: MainConfig) => c.copy(quiet = v) },
+        booleanOpt("w", "warnings", "fail if there are warnings") { (v: Boolean, c: MainConfig) => c.copy(warningsaserrors = v) },
+        arglist("<directory>", "directories / files") { (v: String, c: MainConfig) => c.copy(directories = v :: c.directories) })
+    }
 
-    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(args.tail.map(s => new File(s)): _*))
+    // parser.parse returns Option[C]
+    val exitVal = parser.parse(args, MainConfig(None, List())) map { config =>
+      if (!config.config.isDefined || config.directories.size == 0) {
+        parser.showUsage
+        1
+      } else {
+        val configuration = ScalastyleConfiguration.readFromXml(config.config.get)
+        val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.directories.map(s => new File(s)): _*))
+        val outputResult = new TextOutput().output(messages)
+        if (outputResult.errors > 0 || (config.warningsaserrors && outputResult.warnings > 0)) 1 else 0
+      }
+    } getOrElse {
+      // arguments are bad, usage message will have been displayed
+      1
+    }
 
-    new TextOutput().output(messages);
+    System.exit(exitVal)
   }
 }

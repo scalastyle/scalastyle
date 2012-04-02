@@ -13,6 +13,7 @@
     <scalariform.version>0.1.1</scalariform.version>
     <scalatest.version>1.6.1</scalatest.version>
     <junit.version>4.10</junit.version>
+    <scopt.version>2.0.0</scopt.version>
   </properties>
   <repositories>
     <repository>
@@ -75,6 +76,11 @@
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.scopt</groupId>
+      <artifactId>scopt_${scala.version}</artifactId>
+      <version>${scopt.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -184,6 +190,7 @@
         <configuration>
           <mainClass>org.scalastyle.Main</mainClass>
           <arguments>
+            <argument>--config</argument>
             <argument>lib/scalastyle_config.xml</argument>
             <argument>src/main/scala</argument>
             <argument>src/test/scala</argument>
