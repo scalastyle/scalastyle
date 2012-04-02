@@ -17,6 +17,7 @@
 package org.scalastyle
 
 import java.io.File;
+import java.util.Date;
 
 class Main
 case class MainConfig(config: Option[String], directories: List[String],
@@ -40,10 +41,7 @@ object Main {
         parser.showUsage
         1
       } else {
-        val configuration = ScalastyleConfiguration.readFromXml(config.config.get)
-        val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.directories.map(s => new File(s)): _*))
-        val outputResult = new TextOutput().output(messages)
-        if (outputResult.errors > 0 || (config.warningsaserrors && outputResult.warnings > 0)) 1 else 0
+        if (execute(config)) 1 else 0
       }
     } getOrElse {
       // arguments are bad, usage message will have been displayed
@@ -51,5 +49,18 @@ object Main {
     }
 
     System.exit(exitVal)
+  }
+
+  private[this] def now(): Long = new Date().getTime()
+
+  private[this] def execute(config: MainConfig): Boolean = {
+    val start = now()
+    val configuration = ScalastyleConfiguration.readFromXml(config.config.get)
+    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.directories.map(s => new File(s)): _*))
+    val outputResult = new TextOutput().output(messages)
+
+    if (!config.quiet) println("Finished in " + (now - start) + " ms")
+
+    outputResult.errors > 0 || (config.warningsaserrors && outputResult.warnings > 0)
   }
 }

@@ -66,7 +66,7 @@ case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]]
                                       level: Level, args: List[String], lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T] {
   override def toString() = "StyleError key=" + key + " args=" + args + " lineNumber=" + lineNumber + " column=" + column
 }
-case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], message: String,
+case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Option[Class[_ <: Checker[_]]], message: String,
                                           stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
 
 sealed abstract class ScalastyleError

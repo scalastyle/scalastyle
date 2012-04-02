@@ -89,8 +89,14 @@ object Checker {
     }).flatten.filter(m => CommentFilter.filterApplies(m, commentFilters))
   }
 
-  def verifyFile[T <: FileSpec](classes: List[ConfigurationChecker], file: T): List[Message[T]] =
-                                verifySource(classes, file, Source.fromFile(file.name).mkString)
+  def verifyFile[T <: FileSpec](classes: List[ConfigurationChecker], file: T): List[Message[T]] = {
+    try {
+      val s = Source.fromFile(file.name).mkString
+      verifySource(classes, file, s)
+    } catch {
+      case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTraceString))
+    }
+  }
 
   def newInstance(name: String, level: Level, parameters: Map[String, String]): Option[Checker[_]] = {
     try {
