@@ -56,14 +56,9 @@ object Checker {
   type CheckerClass = Class[_ <: Checker[_]]
 
   def parseScalariform(source: String): Option[ScalariformAst] = {
-    try {
-      val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
+    val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
 
-      Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), hiddenTokenInfo))
-    } catch {
-      // TODO improve error logging here
-      case e: Exception => None
-    }
+    Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), hiddenTokenInfo))
   }
 
   def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {

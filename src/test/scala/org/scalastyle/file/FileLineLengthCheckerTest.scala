@@ -37,7 +37,7 @@ class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testNoMax() = {
     val source = """
 package foobar
-import foobar
+
     object Foobar {
 }
 """;
@@ -48,7 +48,7 @@ import foobar
   @Test def testWithOneMax() = {
     val source = """
 package foobar
-import foobar
+
     object Foobar {
 }
 """;
@@ -59,7 +59,7 @@ import foobar
   @Test def testWithTwoMax() = {
     val source = """
 package foobar
-import foobar
+
     object Foobar {
 }
     object Barbar {
@@ -73,7 +73,7 @@ import foobar
     val source = """
 package foobar
 
-import# #foo
+import# #java.lang._
 object Barbar {
 }
 """.replaceAll("#","\t");

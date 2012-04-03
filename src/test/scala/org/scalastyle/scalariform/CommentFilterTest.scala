@@ -50,6 +50,6 @@ class foobar {
 }
 """;
 
-    assertErrors(List(columnError(4, 6, List("[A-Z][A-Za-z]*")), columnError(14, 8, List("[A-Z][A-Za-z]*"))), source)
+    assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(14, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
 }

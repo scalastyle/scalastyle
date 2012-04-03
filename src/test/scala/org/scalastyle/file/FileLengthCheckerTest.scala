@@ -35,7 +35,7 @@ class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testZero() = {
     val source = """
 package foobar
-import foobar
+
   object Foobar {
 }
 """;
@@ -46,7 +46,7 @@ import foobar
   @Test def testOne() = {
     val source = """
 package foobar
-import foobar
+
   object Foobar {
 }
   object Barbar {
