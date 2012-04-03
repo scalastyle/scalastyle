@@ -69,4 +69,17 @@ object Foobar {
 
     assertErrors(List(), source)
   }
+
+  @Test def testPlusAtEndOfLine() = {
+    val source = """
+package foobar
+
+object Foobar {
+  val someText = "f012345678901234567890123456789" +
+  " some more text"
+}
+""";
+
+    assertErrors(List(), source)
+  }
 }
