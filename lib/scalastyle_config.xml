@@ -34,8 +34,16 @@
    <parameter name="tabSize"><![CDATA[4]]></parameter>
   </parameters>
  </check>
- <check level="warning" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
+  </parameters>
+ </check>
+ <check level="warning" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
+  </parameters>
+ </check>
  <check level="warning" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="true">
   <parameters>
@@ -59,4 +67,5 @@
  <check level="warning" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.scalariform.StructuralTypeChecker" enabled="true"></check>
 </scalastyle>
