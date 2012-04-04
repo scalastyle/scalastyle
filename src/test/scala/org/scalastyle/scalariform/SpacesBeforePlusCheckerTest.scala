@@ -56,4 +56,17 @@ object Foobar {
 
     assertErrors(List(columnError(5, 14)), source)
   }
+
+  @Test def testPlusAtBeginningOfLine() = {
+    val source = """
+package foobar
+
+object Foobar {
+  val foo = 12
++ 2
+}
+""";
+
+    assertErrors(List(), source)
+  }
 }

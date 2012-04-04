@@ -36,7 +36,7 @@ class WhitespaceEndOfLineCheckerTest extends AssertionsForJUnit with CheckerTest
   @Test def testZero() = {
     val source = """
 package foobar
-import foobar
+
 object Foobar {
 }
 """;
@@ -47,7 +47,7 @@ object Foobar {
   @Test def testOne() = {
     val source = """
 package foobar##
-import foobar
+
 object Foobar {
 }
 """.replaceAll("#", " ");
@@ -58,7 +58,7 @@ object Foobar {
   @Test def testTwo() = {
     val source = """
 package foobar~
-import foobar#
+class  foobar#
 object Foobar {
 }
 """.replaceAll("~", " ").replaceAll("#", "\t");

@@ -55,7 +55,7 @@ class HeaderMatchesCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testOK() = {
     val source = licence + """
 package foobar
-import foobar
+
   object Foobar {
 }
 """;
@@ -66,7 +66,7 @@ import foobar
   @Test def testKO() = {
     val source = licence.replaceAll("BASIS,", "XXX") + """
 package foobar
-import foobar
+
   object Foobar {
 }
 """;

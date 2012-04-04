@@ -24,7 +24,7 @@ import org.scalastyle._
 import org.scalastyle.FileSpec
 
 class ClassNamesChecker extends ScalariformChecker {
-  val DefaultRegex = "[A-Z][A-Za-z]*"
+  val DefaultRegex = "^[A-Z][A-Za-z]*$"
   val errorKey = "class.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -43,7 +43,7 @@ class ClassNamesChecker extends ScalariformChecker {
 }
 
 class ObjectNamesChecker extends ScalariformChecker {
-  val DefaultRegex = "[A-Z][A-Za-z]*"
+  val DefaultRegex = "^[A-Z][A-Za-z]*$"
   val errorKey = "object.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
@@ -51,8 +51,28 @@ class ObjectNamesChecker extends ScalariformChecker {
     val regex = regexString.r
 
     val it = for (
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
+      List(left, middle, right) <- ast.tokens.sliding(3);
+      if (left.tokenType != PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
+    ) yield {
+      PositionError(right.startIndex, List(regexString))
+    }
+
+    it.toList
+  }
+}
+
+
+class PackageObjectNamesChecker extends ScalariformChecker {
+  val DefaultRegex = "^[a-z][A-Za-z]*$"
+  val errorKey = "package.object.name"
+
+  def verify(ast: CompilationUnit): List[PositionError] = {
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
+
+    val it = for (
+      List(left, middle, right) <- ast.tokens.sliding(3);
+      if (left.tokenType == PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
     ) yield {
       PositionError(right.startIndex, List(regexString))
     }
