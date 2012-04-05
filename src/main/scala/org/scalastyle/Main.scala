@@ -57,8 +57,11 @@ object Main {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(config.config.get)
     val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.directories.map(s => new File(s)): _*))
-    val outputResult = new TextOutput().output(messages)
 
+    val outputResult = new TextOutput().output(messages)
+    if (!config.quiet) println("Processed " + outputResult.files + " file(s)")
+    if (!config.quiet) println("Found " + outputResult.errors + " errors")
+    if (!config.quiet) println("Found " + outputResult.warnings + " warnings")
     if (!config.quiet) println("Finished in " + (now - start) + " ms")
 
     outputResult.errors > 0 || (config.warningsaserrors && outputResult.warnings > 0)

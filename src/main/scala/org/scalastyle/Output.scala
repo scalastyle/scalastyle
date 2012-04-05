@@ -17,36 +17,43 @@
 package org.scalastyle
 
 trait Output[T <: FileSpec] {
-  def output(messages: List[Message[T]]): OutputResult
+  private var errors = 0
+  private var warnings = 0
+  private var files = 0
+
+  def output(messages: List[Message[T]]): OutputResult = {
+    messages.foreach(m => { eachMessage(m); message(m) })
+    OutputResult(files, errors, warnings)
+  }
+
+  def eachMessage(m: Message[T]): Unit = m match {
+    case StartWork() =>
+    case EndWork() =>
+    case StartFile(file) => files += 1
+    case EndFile(file) =>
+    case StyleError(file, clazz, key, level, args, line, column) => level match {
+      case WarningLevel => warnings += 1
+      case _ => errors += 1
+    }
+    case StyleException(file, clazz, message, stacktrace, line, column) => errors += 1
+  }
+
+  def message(m: Message[T]): Unit
 }
 
-case class OutputResult(errors: Int, warnings: Int)
+case class OutputResult(files: Int, errors: Int, warnings: Int)
 
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(getClass().getClassLoader())
-  override def output(messages: List[Message[T]]): OutputResult = {
-    messages.foreach(message)
-    OutputResult(errors, warnings)
-  }
-  private var errors = 0
-  private var warnings = 0
-
-  private def message(m: Message[T]) = m match {
+  override def message(m: Message[T]) = m match {
     case StartWork() => if (verbose) println("Starting scalastyle")
-    case EndWork() => {
-      if (!quiet) println("Found " + errors + " errors")
-      if (!quiet) println("Found " + warnings + " warnings")
-    }
+    case EndWork() =>
     case StartFile(file) => if (verbose) println("start file " + file)
     case EndFile(file) => if (verbose) println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column) => {
       println(messageHelper.text(level.name) + print("file", file.name) +
           print("message", messageHelper.message(clazz.getClassLoader(), key, args)) +
           print("line", line) + print("column", column))
-      level match {
-        case WarningLevel => warnings += 1
-        case _ => errors += 1
-      }
     }
     case StyleException(file, clazz, message, stacktrace, line, column) => {
       println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))
