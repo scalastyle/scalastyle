@@ -20,7 +20,7 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 
 class FileRegexCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "multi.line.regex"
+  val key = "fileRegex"
   val classUnderTest = classOf[FileRegexChecker]
 
   val source = """
@@ -39,21 +39,23 @@ class foobar {
 
   @Test
   def testMultiLineCheck() {
-    assertErrors(List(fileError()), source, Map("regex" -> "(?m)^\\s*\\}\\n^\\s*\\n^}"))
+    assertErrors(List(fileError(List("no blank line"))), source,
+      Map("regex" -> "(?m)^\\s*\\}\\n^\\s*\\n^}", "comment" -> "no blank line"))
   }
 
   @Test
   def testMultipleMatchesReportsOneFileError() {
-    assertErrors(List(fileError()), source, Map("regex" -> "\\}"))
+    assertErrors(List(fileError(List("no closing"))), source, Map("regex" -> "\\}", "comment" -> "no closing"))
   }
 
   @Test
   def testDoubleBlankLinesCheck() {
-    assertErrors(List(fileError()), source, Map("regex" -> "(?m)^\\s*\\n^\\s*\\n"))
+    assertErrors(List(fileError(List("no double blank line"))), source,
+      Map("regex" -> "(?m)^\\s*\\n^\\s*\\n", "comment" -> "no double blank line"))
   }
 
   @Test
   def testCannotFindMatch() {
-    assertErrors(List(), source, Map("regex" -> "^SHOULD$"))
+    assertErrors(List(), source, Map("regex" -> "^SHOULD$", "comment" -> "no should"))
   }
 }

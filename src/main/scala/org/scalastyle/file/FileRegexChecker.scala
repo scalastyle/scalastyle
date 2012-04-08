@@ -20,15 +20,17 @@ import util.matching.Regex
 import org.scalastyle.{FileError, ScalastyleError, Lines, FileChecker}
 
 class FileRegexChecker extends FileChecker {
-  val errorKey = "multi.line.regex"
+  val errorKey = "fileRegex"
+  private val DefaultComment = ""
   private val DefaultRegEx = ""
 
   def verify(lines: Lines): List[ScalastyleError] = {
+    val comment = getString("comment", DefaultComment)
     val file = (for (line <- lines.lines) yield line.text).mkString("\n")
     val regExpStr = getString("regex", DefaultRegEx)
     val regExp = new Regex(regExpStr)
     val matched = regExp.findFirstIn(file)
 
-    if (matched.isEmpty) Nil else List(FileError())
+    if (matched.isEmpty) Nil else List(FileError(List(comment)))
   }
 }

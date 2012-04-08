@@ -22,7 +22,7 @@ import org.junit.Test
 // scalastyle:off magic.number
 
 class LineRegexCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "regex"
+  val key = "lineRegex"
   val classUnderTest = classOf[LineRegexChecker]
 
   val source = """
@@ -40,21 +40,24 @@ class foobar {
 
   @Test
   def testSingleMatchCheck() {
-    assertErrors(List(lineError(7)), source, Map("regex" -> "println"))
+    assertErrors(List(lineError(7, List("no println"))), source,
+      Map("regex" -> "println", "comment" -> "no println"))
   }
 
   @Test
   def testSingleMatchWithBoundsCheck() {
-    assertErrors(List(lineError(11)), source, Map("regex" -> "^\\}$"))
+    assertErrors(List(lineError(11, List("no closing at eol"))), source,
+      Map("regex" -> "^\\}$", "comment" -> "no closing at eol"))
   }
 
   @Test
   def testMultipleMatchCheck() {
-    assertErrors(List(lineError(9), lineError(11)), source, Map("regex" -> "\\}"))
+    assertErrors(List(lineError(9, List("no closing")), lineError(11, List("no closing"))),
+      source, Map("regex" -> "\\}", "comment" -> "no closing"))
   }
 
   @Test
   def testCannotFindMatch() {
-    assertErrors(List(), source, Map("regex" -> "^SHOULD$"))
+    assertErrors(List(), source, Map("regex" -> "^SHOULD$", "comment" -> "no should"))
   }
 }

@@ -20,10 +20,12 @@ import util.matching.Regex
 import org.scalastyle.{LineError, ScalastyleError, Lines, FileChecker}
 
 class LineRegexChecker extends FileChecker {
-  val errorKey = "regex"
+  val errorKey = "lineRegex"
+  private val DefaultComment = ""
   private val DefaultRegEx = ""
 
   def verify(lines: Lines): List[ScalastyleError] = {
+    val comment = getString("comment", DefaultComment)
     val regExStr = getString("regex", DefaultRegEx)
     val regEx = new Regex(regExStr)
 
@@ -31,7 +33,7 @@ class LineRegexChecker extends FileChecker {
       line <- lines.lines.zipWithIndex;
       if regEx.findFirstIn(line._1.text).isDefined
     ) yield {
-      LineError(line._2 + 1, Nil)
+      LineError(line._2 + 1, List(comment))
     }
 
     errors.toList

@@ -237,23 +237,24 @@ No Parameters
 ## Class org.scalastyle.file.LineRegexChecker - Checks for a matching regex, reports all lines that match the regex.
 This class should not be used for multiple line regular expressions.
 
- * id - regex
+ * id - lineRegex
  * default level - WarningLevel
 
 ### Parameters
 
  * Regex - the pattern to be matched, checker looks for a match on each line
+ * Comment - the comment to be stated upon a match
 
 ## Class org.scalastyle.file.FileRegexChecker - Checks for a matching regex within a file. Will only report if
  a match is made, it does not report match counts or lines numbers. This checker can be used to check for
  multiple line conditions.
 As example, (?m)^\s*\n^\s*\n can be used to look for double blank lines in a file.
 
- * id - regex
+ * id - fileRegex
  * default level - WarningLevel
 
 ### Parameters
 
  * Regex - the pattern to be matched, checker looks for a match within file
-
+ * Comment - the comment to be stated upon a match
 
