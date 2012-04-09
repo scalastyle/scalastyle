@@ -19,6 +19,7 @@ package org.scalastyle
 import scala.xml.XML
 import scala.xml.Elem;
 import scala.xml.Node;
+import scala.xml.NodeSeq;
 
 object Level {
   def apply(s: String) = s match {
@@ -42,7 +43,7 @@ sealed abstract class ParameterType(val name: String)
 case object IntegerType extends ParameterType("integer")
 case object StringType extends ParameterType("string")
 
-case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String])
+case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
 
 object ScalastyleConfiguration {
   def readFromXml(file: String): ScalastyleConfiguration = {
@@ -57,26 +58,37 @@ object ScalastyleConfiguration {
     val className = node.attribute("class").get.text
     val level = Level(node.attribute("level").get.text)
     val enabled = node.attribute("enabled").getOrElse(scala.xml.Text("false")).text.toLowerCase() == "true"
+    val ns = (node \\ "customMessage")
+    val customMessage = if (ns.size == 0) None else (Some(ns(0).text))
 
     ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
       val attributeValue = e.attribute("value")
       val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
       (e.attribute("name").head.text -> value)
-    }).toMap)
+    }).toMap, customMessage)
   }
+
+  private[this] def toCDATA(s: String) = scala.xml.Unparsed("<![CDATA[" + s + "]]>")
 
   def toXml(scalastyleConfiguration: ScalastyleConfiguration): scala.xml.Elem = {
     val elements = scalastyleConfiguration.checks.map(c => {
       val parameters = if (c.parameters.size > 0) {
         val ps = c.parameters.map( p => {
-          val text = scala.xml.Unparsed("<![CDATA[" + p._2 + "]]>")
+          val text = toCDATA(p._2)
           <parameter name={p._1}>{text}</parameter>
         })
         <parameters>{ps}</parameters>
       } else {
         scala.xml.Null
       }
-      <check class={c.className} level={c.level.name} enabled={if (c.enabled) "true" else "false"}>{parameters}</check>
+      val customMessage = c.customMessage match {
+        case Some(s) => {
+          val text = toCDATA(s)
+          <customMessage>{text}</customMessage>
+        }
+        case None => scala.xml.Null
+      }
+      <check class={c.className} level={c.level.name} enabled={if (c.enabled) "true" else "false"}>{customMessage}{parameters}</check>
     })
 
     <scalastyle><name>{scalastyleConfiguration.name}</name>{elements}</scalastyle>

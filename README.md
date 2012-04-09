@@ -34,7 +34,6 @@ Want to contribute? Great! Look at the wiki for potential rules to implement, or
 6. Create an [Issue](https://github.com/scalastyle/scalastyle/issues) with a link to your branch
 7. Enjoy a coffee and wait
 
-
 Comment filters
 ---------------
 
@@ -48,6 +47,16 @@ You can also switch off checking for a particular rule by specifying the id of t
     // scalastyle:off magic.number
 	var foobar = 134
 	// scalastyle:on magic.number
+
+Custom messages
+---------------
+
+Messages are defined within the scalastyle_messages.properties. If however, you wish to have a custom error message for a particular rule, then
+you can do so by defining a customMessage element in the configuration, such as:
+
+    <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
+     <customMessage>Please don't use magic numbers</customMessage>
+    </check>
 
 Implemented Rules
 -----------------

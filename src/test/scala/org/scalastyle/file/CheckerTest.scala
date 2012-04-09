@@ -34,11 +34,14 @@ trait CheckerTest {
     def name() = ""
   }
 
-  protected def assertErrors[T <: FileSpec](list: List[Message[T]], source: String, params: Map[String, String] = Map()) = {
-    assertEquals(list, Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params)), NullFileSpec, source))
+  protected def assertErrors[T <: FileSpec](list: List[Message[T]], source: String, params: Map[String, String] = Map(),
+                                            customMessage: Option[String] = None) = {
+    assertEquals(list, Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel,
+                                            true, params, customMessage)), NullFileSpec, source))
   }
 
-  protected def fileError(args: List[String] = List()) = StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, None, None)
+  protected def fileError(args: List[String] = List(), customMessage: Option[String] = None) =
+          StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, None, None, customMessage)
   protected def lineError(line: Int, args: List[String] = List()) = StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, Some(line), None)
   protected def columnError(line: Int, column: Int, args: List[String] = List()) =
                 StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, Some(line), Some(column))
