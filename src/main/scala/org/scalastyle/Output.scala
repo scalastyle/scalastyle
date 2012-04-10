@@ -17,7 +17,6 @@
 package org.scalastyle
 
 trait Output[T <: FileSpec] {
-  protected[this] val messageHelper = new MessageHelper(this.getClass().getClassLoader())
   private var errors = 0
   private var warnings = 0
   private var files = 0
@@ -39,7 +38,8 @@ trait Output[T <: FileSpec] {
     case StyleException(file, clazz, message, stacktrace, line, column) => errors += 1
   }
 
-  def findMessage(clazz: Class[_], key: String, args: List[String], customMessage: Option[String]): String = {
+  // messageHelper passed in here to work around a scala compiler bug?
+  def findMessage(messageHelper: MessageHelper, clazz: Class[_], key: String, args: List[String], customMessage: Option[String]): String = {
     customMessage match {
       case Some(s) => s
       case None => messageHelper.message(clazz.getClassLoader(), key, args)
@@ -52,14 +52,16 @@ trait Output[T <: FileSpec] {
 case class OutputResult(files: Int, errors: Int, warnings: Int)
 
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
-  override def message(m: Message[T]) = m match {
+  private val messageHelper = new MessageHelper(this.getClass().getClassLoader())
+
+  override def message(m: Message[T]): Unit = m match {
     case StartWork() => if (verbose) println("Starting scalastyle")
     case EndWork() =>
     case StartFile(file) => if (verbose) println("start file " + file)
     case EndFile(file) => if (verbose) println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column, customMessage) => {
       println(messageHelper.text(level.name) + print("file", file.name) +
-          print("message", findMessage(clazz, key, args, customMessage)) +
+          print("message", findMessage(messageHelper, clazz, key, args, customMessage)) +
           print("line", line) + print("column", column))
     }
     case StyleException(file, clazz, message, stacktrace, line, column) => {
