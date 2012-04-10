@@ -1,7 +1,7 @@
-Scalastyle - Checkstyle for Scala
-=================================
+Scalastyle - Scala style checker
+================================
 
-Scalastyle examines your code and indicates potential problems with it.
+Scalastyle examines your Scala code and indicates potential problems with it.
 
 Rules
 -----
