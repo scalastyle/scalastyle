@@ -243,5 +243,24 @@ No Parameters
 
 No Parameters
 
+## Class org.scalastyle.file.RegexChecker - Check that a regular expression cannot be matched
+
+ * id - regex
+ * default level - WarningLevel
+
+### Parameters
+
+ * Expression the regular expression to use
+
+### Example
+
+<check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
+  <parameters>
+    <parameter name="expression"><![CDATA[(?m)^\s*$(\r|)\n^\s*$(\r|)\n]]></parameter>
+  </parameters>
+  <customMessage>No double blank lines</customMessage>
+</check>
+
+  The above example would check for double blank lines in a file and report with a custom error.
 
 
