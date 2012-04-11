@@ -250,13 +250,13 @@ No Parameters
 
 ### Parameters
 
- * Expression the regular expression to use
+ * Regular expression the regular expression to use
 
 ### Example
 
 <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
   <parameters>
-    <parameter name="expression"><![CDATA[(?m)^\s*$(\r|)\n^\s*$(\r|)\n]]></parameter>
+    <parameter name="regex"><![CDATA[(?m)^\s*$(\r|)\n^\s*$(\r|)\n]]></parameter>
   </parameters>
   <customMessage>No double blank lines</customMessage>
 </check>
