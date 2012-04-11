@@ -54,6 +54,7 @@ case class OutputResult(files: Int, errors: Int, warnings: Int)
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(this.getClass().getClassLoader())
 
+  // scalastyle:off regex
   override def message(m: Message[T]): Unit = m match {
     case StartWork() => if (verbose) println("Starting scalastyle")
     case EndWork() =>
@@ -68,6 +69,7 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
       println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))
     }
   }
+  // scalastyle:on regex
 
   private def print(s: String, no: Option[Int]): String = if (no.isDefined) print(s, "" + no.get) else ""
   private def print(s: String, value: String): String = " " + s + "=" + value

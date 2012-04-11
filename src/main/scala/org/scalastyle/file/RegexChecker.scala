@@ -25,7 +25,7 @@ class RegexChecker extends FileChecker {
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val file = (for (line <- lines.lines) yield line.text).mkString("\n")
-    val regExpStr = getString("expression", DefaultRegEx)
+    val regExpStr = getString("regex", DefaultRegEx)
     val regExp = new Regex(regExpStr)
     val allMatches = regExp.findAllIn(file)
     var errorList: List[ColumnError] = Nil
@@ -41,7 +41,7 @@ class RegexChecker extends FileChecker {
     errorList.reverse
   }
 
-  def findCorrespondingLine(location: Int, data: String, lines: Lines): Int = {
+  private[this] def findCorrespondingLine(location: Int, data: String, lines: Lines): Int = {
     var line = 0
     var found = false
 
@@ -57,7 +57,7 @@ class RegexChecker extends FileChecker {
     line
   }
 
-  def findColumnPosition(location: Int, lines: Lines, matchedLine: Int): Int = {
+  private[this] def findColumnPosition(location: Int, lines: Lines, matchedLine: Int): Int = {
     location - (lines.lines(matchedLine).start)
   }
 }

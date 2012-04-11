@@ -62,7 +62,7 @@
     <checker class="org.scalastyle.scalariform.StructuralTypeChecker" id="structural.type" defaultLevel="warning" />
     <checker class="org.scalastyle.file.RegexChecker" id="regex" defaultLevel="warning" >
         <parameters>
-            <parameter name="expression" type="string" default="" />
+            <parameter name="regex" type="string" default="" />
         </parameters>
     </checker>
 </scalastyle-definition>

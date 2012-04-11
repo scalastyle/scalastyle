@@ -19,6 +19,8 @@ package org.scalastyle.file
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
+// scalastyle:off magic.number
+
 class RegexCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "regex"
   val classUnderTest = classOf[RegexChecker]
@@ -30,73 +32,60 @@ package foobar
 class foobar {
 
   def aMethod: String = {
-    println("SHOULD NOT BE HERE")
+    ("SHOULD NOT BE HERE")
     "TEST STRING";
   }
 
 }
 """
 
-  // scalastyle:off magic.number
-  private val LineOne = 1
-  private val LineThree = 3
-  private val LineFive = 5
-  private val LineSeven = 7
-  private val LineNine = 9
-  private val LineTen = 10
-  private val LineTwelve = 12
-  private val ColumnZero: Int = 0
-  private val ColumnTwo: Int = 2
-  private val ColumnSeventeen: Int = 17
-  // scalastyle:on magic.number
-
   @Test
   def testSimpleCheck() {
-    assertErrors(List(columnError(LineSeven, ColumnTwo, List("def"))), source,
-      Map("expression" -> "def"))
+    assertErrors(List(columnError(7, 2, List("def"))), source,
+      Map("regex" -> "def"))
   }
 
   @Test
   def testNoSemiColon() {
-    assertErrors(List(columnError(LineNine, ColumnSeventeen, List(";"))), source,
-      Map("expression" -> ";"))
+    assertErrors(List(columnError(9, 17, List(";"))), source,
+      Map("regex" -> ";"))
   }
 
   @Test
   def testStartOfLineIsZeroColumn() {
-    assertErrors(List(columnError(LineFive, ColumnZero, List("class"))), source,
-      Map("expression" -> "class"))
+    assertErrors(List(columnError(5, 0, List("class"))), source,
+      Map("regex" -> "class"))
   }
 
   @Test
   def testCanMatchLastCharInFile() {
-    assertErrors(List(columnError(LineTwelve, ColumnZero, List("(?m)^}$"))), source, Map("expression" -> "(?m)^}$"))
+    assertErrors(List(columnError(12, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
   }
 
   @Test
   def testCanMatchFirstCharInFile() {
-    assertErrors(List(columnError(LineOne, ColumnZero, List("(?m)^//$"))), source, Map("expression" -> "(?m)^//$"))
+    assertErrors(List(columnError(1, 0, List("(?m)^//$"))), source, Map("regex" -> "(?m)^//$"))
   }
 
   @Test
   def testNoDoubleBlankLines() {
-    assertErrors(List(columnError(LineThree, ColumnZero, List("(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))), source,
-      Map("expression" -> "(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))
+    assertErrors(List(columnError(3, 0, List("(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))), source,
+      Map("regex" -> "(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))
   }
 
   @Test
   def testMultipleMatchesReportMultipleErrors() {
-    assertErrors(List(columnError(LineTen, ColumnTwo, List("}")), columnError(LineTwelve, ColumnZero, List("}"))), source,
-      Map("expression" -> "}"))
+    assertErrors(List(columnError(10, 2, List("}")), columnError(12, 0, List("}"))), source,
+      Map("regex" -> "}"))
   }
 
   @Test
   def testCannotFindMatch() {
-    assertErrors(List(), source, Map("expression" -> "^SHOULD$"))
+    assertErrors(List(), source, Map("regex" -> "^SHOULD$"))
   }
 
   @Test
   def testSingleMatchWithBoundsCheck() {
-    assertErrors(List(columnError(LineTwelve, ColumnZero, List("(?m)^}$"))), source, Map("expression" -> "(?m)^}$"))
+    assertErrors(List(columnError(12, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
   }
 }
