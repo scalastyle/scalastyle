@@ -256,7 +256,7 @@ No Parameters
 
 <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
   <parameters>
-    <parameter name="regex"><![CDATA[(?m)^\s*$(\r|)\n^\s*$(\r|)\n]]></parameter>
+    <parameter name="regex"><![CDATA[(?m)^\s\*$(\r|)\n^\s*$(\r|)\n]]></parameter>
   </parameters>
   <customMessage>No double blank lines</customMessage>
 </check>
