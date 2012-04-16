@@ -27,25 +27,6 @@ import _root_.scalariform.parser.Refinement
 
 class StructuralTypeChecker extends ScalariformChecker {
   val errorKey = "structural.type"
-
-//  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-//    val it = for (
-//      t <- ast.tokens;
-//      if (isRefinement(t))
-//    ) yield {
-//      PositionError(t.startIndex)
-//    }
-//
-//    it.toList
-//  }
-
-//  private[this] def isRefinement(t: Token) = {
-//    t match {
-//        case Refinement(a, b, c) => true
-//        case _ => false
-//      }
-//  }
-//
   import VisitorHelper._
 
   case class Position(position: Option[Int])
@@ -64,16 +45,4 @@ class StructuralTypeChecker extends ScalariformChecker {
     case t: Refinement => List(Position(Some(t.lbrace.startIndex)))
     case t: Any => visit(t, localvisit)
   }
-//
-//  protected def getParamTypes(pc: ParamClauses) = getParams(pc).map(p => typename(p.paramTypeOpt.get._2))
-//
-//  def matchFunDefOrDcl(t: BaseClazz[AstNode], fn: FunDefOrDcl => Boolean) = t match { case f: FunDefOrDclClazz => fn(f.t); case _ => false }
-//
-//  protected def methodMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: FunDefOrDcl) =
-//    t.nameToken.getText == name && paramTypesMatch(getParamTypes(t.paramClauses))
-//
-//  protected def singleParameter(fn: String => Boolean)(params: List[String]) = params.size == 1 && fn(params(0))
-//  protected def noParameter()(params: List[String]) = params.size == 0
-//  protected def isEqualsObject(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(isObject) _)(t)
-//}
 }
