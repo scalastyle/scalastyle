@@ -14,6 +14,30 @@ Usage
 
     mvn exec:java
 
+
+Running scalastyle from the command line
+----------------------------------------
+
+This process will be improved in time, but for now, you need to build scalastyle and then build scalastyle-batch
+
+1. Install scalastyle in your local maven repo
+
+    $ git clone git://github.com/scalastyle/scalastyle.git
+    $ cd scalastyle
+    $ mvn install
+
+2. Then get and build scalastyle-batch
+
+    $ git clone git@github.com:scalastyle/scalastyle-batch.git
+    $ cd scalastyle-batch
+    $ mvn package # or mvn install
+
+This will create in scalastyle-batch/target a zip file which contains an executable jar along with the dependencies in lib/. Copy these files somewhere, and run the jar as such:
+
+    $ java -jar scalastyle-batch_2.9.1.jar --config lib/scalastyle_config.xml src/main/scala
+
+or similar. You can copy your initial configuration from lib/scalastyle_config.xml in the scalastyle project, and change it from there.
+
 Testing
 -------
 
