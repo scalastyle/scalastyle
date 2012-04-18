@@ -30,7 +30,7 @@ Then get and build scalastyle-batch
     $ cd scalastyle-batch
     $ mvn package # or mvn install
 
-This will create in scalastyle-batch/target a zip file which contains an executable jar along with the dependencies in lib/. Copy these files somewhere, and run the jar as such:
+This will create in scalastyle-batch/target a zip file which contains an executable jar along with the dependencies in lib/. Unzip this file somewhere, and run the jar as such:
 
     $ java -jar scalastyle-batch_2.9.1.jar --config lib/scalastyle_config.xml src/main/scala
 
