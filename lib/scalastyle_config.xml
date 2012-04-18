@@ -78,4 +78,9 @@
    <parameter name="regex">println</parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.scalariform.NumberOfTypesChecker" enabled="true">
+  <parameters>
+   <parameter name="maxTypes">30</parameter>
+  </parameters>
+ </check>
 </scalastyle>

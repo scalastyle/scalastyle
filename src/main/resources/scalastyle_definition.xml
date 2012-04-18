@@ -65,4 +65,9 @@
             <parameter name="regex" type="string" default="" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.NumberOfTypesChecker" id="number.of.types" defaultLevel="warning" >
+        <parameters>
+            <parameter name="maxTypes" type="integer" default="20" />
+        </parameters>
+    </checker>
 </scalastyle-definition>
