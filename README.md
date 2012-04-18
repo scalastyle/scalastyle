@@ -12,21 +12,19 @@ For a list of actual rules, see the Implemented Rules section below
 Usage
 -----
 
-    mvn exec:java
+    $ mvn exec:java
 
 
 Running scalastyle from the command line
 ----------------------------------------
 
-This process will be improved in time, but for now, you need to build scalastyle and then build scalastyle-batch
-
-1. Install scalastyle in your local maven repo
+This process will be improved in time, but for now, you need to build scalastyle and then build scalastyle-batch. First install scalastyle in your local maven repo
 
     $ git clone git://github.com/scalastyle/scalastyle.git
     $ cd scalastyle
     $ mvn install
 
-2. Then get and build scalastyle-batch
+Then get and build scalastyle-batch
 
     $ git clone git@github.com:scalastyle/scalastyle-batch.git
     $ cd scalastyle-batch
@@ -69,8 +67,8 @@ If you wish to ignore a particular scalastyle rule, you can put a comment before
 You can also switch off checking for a particular rule by specifying the id of the rule to ignore:
 
     // scalastyle:off magic.number
-	var foobar = 134
-	// scalastyle:on magic.number
+    var foobar = 134
+    // scalastyle:on magic.number
 
 Custom messages
 ---------------
@@ -278,13 +276,11 @@ No Parameters
 
 ### Example
 
-<check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
-  <parameters>
-    <parameter name="regex"><![CDATA[(?m)^\s\*$(\r|)\n^\s*$(\r|)\n]]></parameter>
-  </parameters>
-  <customMessage>No double blank lines</customMessage>
-</check>
+    <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
+      <parameters>
+        <parameter name="regex"><![CDATA[(?m)^\s\*$(\r|)\n^\s*$(\r|)\n]]></parameter>
+      </parameters>
+      <customMessage>No double blank lines</customMessage>
+    </check>
 
   The above example would check for double blank lines in a file and report with a custom error.
-
-
