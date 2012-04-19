@@ -284,3 +284,21 @@ No Parameters
     </check>
 
   The above example would check for double blank lines in a file and report with a custom error.
+
+
+## Class org.scalastyle.scalariform.NumberOfTypesChecker - Check that a file doesn't contain too many types
+
+ * id - number.of.types
+ * default level - WarningLevel
+
+### Parameters
+
+ * maxTypes: The maximum number of types (outer & inner classes) to allow per file
+
+### Example
+
+<check level="warning" class="org.scalastyle.scalariform.NumberOfTypesChecker" enabled="true">
+  <parameters>
+    <parameter name="maxTypes">20</parameter>
+  </parameters>
+</check>
