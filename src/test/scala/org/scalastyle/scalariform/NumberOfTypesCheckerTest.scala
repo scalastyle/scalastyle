@@ -59,7 +59,7 @@ case class F5()
 case class F6()
 """;
 
-    assertErrors(List(fileError()), source, Map("maxTypes" -> "5"))
+    assertErrors(List(fileError(List("5"))), source, Map("maxTypes" -> "5"))
   }
 
   @Test def testInnerClasses() = {
@@ -77,6 +77,6 @@ class F5() {
 case class F6()
 """;
 
-    assertErrors(List(fileError()), source, Map("maxTypes" -> "6"))
+    assertErrors(List(fileError(List("6"))), source, Map("maxTypes" -> "6"))
   }
 }
