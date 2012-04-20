@@ -26,7 +26,7 @@ This process will be improved in time, but for now, you need to build scalastyle
 
 Then get and build scalastyle-batch
 
-    $ git clone git@github.com:scalastyle/scalastyle-batch.git
+    $ git clone git://github.com/scalastyle/scalastyle-batch.git
     $ cd scalastyle-batch
     $ mvn package # or mvn install
 
