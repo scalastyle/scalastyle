@@ -83,4 +83,9 @@
    <parameter name="maxTypes">30</parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
+  <parameters>
+   <parameter name="maximum">10</parameter>
+  </parameters>
+ </check>
 </scalastyle>

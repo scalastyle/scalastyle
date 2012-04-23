@@ -43,6 +43,7 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
   import VisitorHelper._
 
   type ListType = List[BaseClazz[_ <: AstNode]]
+  protected def params(): List[String] = List()
 
   class BaseClazz[+T <: AstNode](val t: T, val position: Option[Int], val subs: ListType) extends Clazz[T] {
     def is(fn: T => Boolean) = false
@@ -54,12 +55,14 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
   }
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+    val pList = params()
+
     val it = for (
       t <- localvisit(ast.immediateChildren(0));
       f <- traverse(t);
       if (matches(f))
     ) yield {
-      PositionError(f.position.get)
+      PositionError(f.position.get, pList)
     }
 
     it.toList
