@@ -285,7 +285,6 @@ No Parameters
 
   The above example would check for double blank lines in a file and report with a custom error.
 
-
 ## Class org.scalastyle.scalariform.NumberOfTypesChecker - Check that a file doesn't contain too many types
 
  * id - number.of.types
@@ -297,8 +296,25 @@ No Parameters
 
 ### Example
 
-<check level="warning" class="org.scalastyle.scalariform.NumberOfTypesChecker" enabled="true">
-  <parameters>
-    <parameter name="maxTypes">20</parameter>
-  </parameters>
-</check>
+    <check level="warning" class="org.scalastyle.scalariform.NumberOfTypesChecker" enabled="true">
+      <parameters>
+        <parameter name="maxTypes">20</parameter>
+      </parameters>
+    </check>
+
+## Class org.scalastyle.scalariform.CyclomaticComplexityChecker - Check the cyclomatic complexity of methods
+
+ * id - cyclomatic.complexity
+ * default level - WarningLevel
+
+### Parameters
+
+ * maximum: The maximum allowed cyclomatic complexity of a method
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
+      <parameters>
+        <parameter name="maximum">10</parameter>
+      </parameters>
+    </check>
