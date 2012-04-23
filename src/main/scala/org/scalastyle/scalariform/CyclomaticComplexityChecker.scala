@@ -29,7 +29,7 @@ class CyclomaticComplexityChecker extends AbstractMethodChecker {
   val errorKey = "cyclomatic.complexity"
   val DefaultMaximum = 10
   private lazy val maximum = getInt("maximum", DefaultMaximum)
-  private val tokens = Set(IF, CASE, WHILE, DO, FOR, CATCH)
+  private val tokens = Set(IF, CASE, WHILE, DO, FOR)
 
   override def params() = List[String]("" + maximum)
 
