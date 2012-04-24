@@ -59,6 +59,16 @@
     </repository>
   </repositories>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Nexus Staging Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <layout>default</layout>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.scalariform</groupId>
@@ -215,9 +225,40 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <url>http://scalastyle.github.com</url>
   <organization>
     <name>Scalastyle Organization</name>
+    <url>https://github.com/scalastyle</url>
   </organization>
   <scm>
     <url>https://github.com/scalastyle/scalastyle</url>
@@ -226,4 +267,18 @@
     <system>Github</system>
     <url>https://github.com/scalastyle/scalastyle/issues</url>
   </issueManagement>
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>matthewfarwell</id>
+      <name>Matthew Farwell</name>
+      <url>http://www.farwell.co.uk</url>
+    </developer>
+  </developers>
 </project>
