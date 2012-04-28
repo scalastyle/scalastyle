@@ -36,6 +36,29 @@ This will create in scalastyle-batch/target a zip file which contains an executa
 
 or similar. You can copy your initial configuration from lib/scalastyle_config.xml in the scalastyle project, and change it from there.
 
+Maven repo
+----------
+
+Snapshots are available from the Sonatype nexus repository: https://oss.sonatype.org/content/repositories/snapshots/.
+To use, add something like the following to your settings.xml:
+
+    <repository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype OSS</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+
+There are only snapshots available at the minute.
+
 Testing
 -------
 
