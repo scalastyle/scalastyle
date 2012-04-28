@@ -30,10 +30,15 @@ object Directory {
     def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
   }
 
-  def getFiles(dirs: File*): List[FileSpec] = {
-    dirs.map(dir => {
-        dir.listFiles(scalaFileFilter).map(f => new DirectoryFileSpec(f.getAbsolutePath(), f.getAbsoluteFile())).toList :::
-                                              dir.listFiles().filter(_.isDirectory).flatMap(getFiles(_)).toList
+  def getFiles(files: File*): List[FileSpec] = {
+    files.map(f => {
+      if (f.isDirectory) {
+        getFiles(f.listFiles: _*)
+      } else if (scalaFileFilter.accept(f)) {
+        List(new DirectoryFileSpec(f.getAbsolutePath(), f.getAbsoluteFile()))
+      } else {
+        List()
+      }
     }).flatten.toList
   }
 
