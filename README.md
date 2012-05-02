@@ -341,3 +341,17 @@ No Parameters
         <parameter name="maximum">10</parameter>
       </parameters>
     </check>
+
+	
+## Class org.scalastyle.scalariform.UppercaseLChecker - Check that long literals use an uppercase L
+
+ * id - uppercase.l
+ * default level - WarningLevel
+
+### Parameters
+
+No Parameters
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.UppercaseLChecker" enabled="true"/>

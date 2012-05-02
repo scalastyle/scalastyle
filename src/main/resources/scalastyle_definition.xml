@@ -75,4 +75,5 @@
             <parameter name="maximum" type="integer" default="10" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.UppercaseLChecker" id="uppercase.l" defaultLevel="warning" />
 </scalastyle-definition>
