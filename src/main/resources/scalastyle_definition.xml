@@ -76,4 +76,5 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.UppercaseLChecker" id="uppercase.l" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.SimplifyBooleanExpressionChecker" id="simplify.boolean.expression" defaultLevel="warning" />
 </scalastyle-definition>
