@@ -134,6 +134,28 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.scalastyle</groupId>
+        <artifactId>scalastyle-maven-plugin</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <configuration>
+          <verbose>false</verbose>
+          <failOnViolation>true</failOnViolation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <failOnWarning>false</failOnWarning>
+          <sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
+          <testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
+          <failOnWarning>true</failOnWarning>
+          <configLocation>${basedir}/lib/scalastyle_config.xml</configLocation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.2.1</version>
@@ -149,10 +171,9 @@
           <arguments>
             <argument>--config</argument>
             <argument>lib/scalastyle_config.xml</argument>
-            <!--argument>lib/scalastyle_scala_config.xml</argument-->
             <argument>src/main/scala</argument>
             <argument>src/test/scala</argument>
-            <!--argument>../../scala/scala/src</argument-->
+            <!-- argument>../../scala/scala/src</argument -->
           </arguments>
         </configuration>
       </plugin>
