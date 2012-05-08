@@ -151,7 +151,7 @@ trait Checker[A] {
   def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] = {
     verify(ast).map(p => toStyleError(file, p, level, lines))
   }
-  
+
   def verify(ast: A): List[ScalastyleError]
 
   def isObject(s: String) = (s == "java.lang.Object" || s == "Any")

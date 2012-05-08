@@ -36,12 +36,14 @@ object ParameterType {
   def apply(s: String) = s match {
     case "integer" => IntegerType
     case "string" => StringType
+    case "boolean" => BooleanType
     case _ => StringType
   }
 }
 sealed abstract class ParameterType(val name: String)
 case object IntegerType extends ParameterType("integer")
 case object StringType extends ParameterType("string")
+case object BooleanType extends ParameterType("boolean")
 
 case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
 
