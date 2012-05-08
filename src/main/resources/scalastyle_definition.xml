@@ -77,4 +77,10 @@
     </checker>
     <checker class="org.scalastyle.scalariform.UppercaseLChecker" id="uppercase.l" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.SimplifyBooleanExpressionChecker" id="simplify.boolean.expression" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.IfBraceChecker" id="if.brace" defaultLevel="warning" >
+        <parameters>
+            <parameter name="singleLineAllowed" type="boolean" default="true" />
+            <parameter name="doubleLineAllowed" type="boolean" default="false" />
+        </parameters>
+    </checker>
 </scalastyle-definition>

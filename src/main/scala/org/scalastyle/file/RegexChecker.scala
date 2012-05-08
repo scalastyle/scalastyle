@@ -48,10 +48,11 @@ class RegexChecker extends FileChecker {
     while (!found){
       val currentLine = lines.lines(line)
 
-      if (location >= currentLine.start && location < currentLine.end)
+      if (location >= currentLine.start && location < currentLine.end) {
         found = true
-      else
+      } else {
         line += 1
+      }
     }
 
     line

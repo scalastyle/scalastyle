@@ -342,7 +342,6 @@ No Parameters
       </parameters>
     </check>
 
-	
 ## Class org.scalastyle.scalariform.UppercaseLChecker - Check that long literals use an uppercase L
 
  * id - uppercase.l
@@ -355,3 +354,23 @@ No Parameters
 ### Example
 
     <check level="warning" class="org.scalastyle.scalariform.UppercaseLChecker" enabled="true"/>
+
+## Class org.scalastyle.scalariform.IfBraceChecker - Check that `if` blocks have braces
+
+ * id - if.brace
+ * default level - WarningLevel
+
+### Parameters
+
+ * singleLineAllowed: The lack of braces is allowed if everything is on one line
+ * doubleLineAllowed: The lack of braces is allowed if the `if` and the `else` are on different lines.
+   The expressions associated with the if and the else still need to be on the same lines though.
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.IfBraceChecker" enabled="true">
+      <parameters>
+        <parameter name="singleLineAllowed">true</parameter>
+        <parameter name="doubleLineAllowed">false</parameter>
+      </parameters>
+    </check>

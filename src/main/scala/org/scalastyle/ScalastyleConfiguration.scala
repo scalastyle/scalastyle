@@ -177,8 +177,7 @@ class XmlPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step)
         val test = {
           val sb = new StringBuilder()
           Utility.toXML(node, pscope, sb, false)
-          if (doPreserve(node)) sb.toString
-          else TextBuffer.fromString(sb.toString()).toText(0).data
+          if (doPreserve(node)) sb.toString else TextBuffer.fromString(sb.toString()).toText(0).data
         }
         if (childrenAreLeaves(node) && fits(test)) {
           makeBox(ind, test)

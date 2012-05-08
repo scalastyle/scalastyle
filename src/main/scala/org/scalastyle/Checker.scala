@@ -80,6 +80,10 @@ object Checker {
         case Some(ast) => c.verify(file, c.level, ast.ast, lines)
         case None => List[Message[T]]()
       }
+      case c: CombinedChecker => scalariformAst match {
+        case Some(ast) => c.verify(file, c.level, CombinedAst(ast.ast, lines), lines)
+        case None => List[Message[T]]()
+      }
       case _ => List[Message[T]]()
     }).flatten.filter(m => CommentFilter.filterApplies(m, commentFilters))
   }
@@ -114,13 +118,14 @@ trait Checker[A] {
   val errorKey: String;
   var parameters = Map[String, String]();
   var level: Level = WarningLevel;
-  var customMessage: Option[String] = None;
+  var customMessage: Option[String] = None
 
   def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
   def setLevel(level: Level) = this.level = level;
   def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
   def getInt(parameter: String, defaultValue: Int) = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
   def getString(parameter: String, defaultValue: String) = parameters.getOrElse(parameter, defaultValue)
+  def getBoolean(parameter: String, defaultValue: Boolean) = parameters.getOrElse(parameter, "" + defaultValue) == "true"
 
   protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, level: Level, lines: Lines): Message[T] = {
     val p2 = p match {
@@ -146,7 +151,7 @@ trait Checker[A] {
   def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] = {
     verify(ast).map(p => toStyleError(file, p, level, lines))
   }
-
+  
   def verify(ast: A): List[ScalastyleError]
 
   def isObject(s: String) = (s == "java.lang.Object" || s == "Any")
@@ -156,3 +161,7 @@ trait Checker[A] {
 trait FileChecker extends Checker[Lines]
 
 trait ScalariformChecker extends Checker[CompilationUnit]
+
+case class CombinedAst(compilationUnit: CompilationUnit, lines: Lines)
+
+trait CombinedChecker extends Checker[CombinedAst]
