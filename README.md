@@ -391,3 +391,20 @@ No Parameters
         <parameter name="maxLength">50</parameter>
       </parameters>
     </check>
+
+## Class org.scalastyle.scalariform.MethodNamesChecker - Check method names match a regular expression
+
+ * id - method.name
+ * default level - WarningLevel
+
+### Parameters
+
+ * regex: Regular expression to match, default `^[A-Za-z]*$`
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.MethodNamesChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[A-Za-z]*$</parameter>
+      </parameters>
+    </check>

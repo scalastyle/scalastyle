@@ -144,3 +144,36 @@ object foobar {
     assertErrors(List(), source)
   }
 }
+
+class MethodNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "method.name"
+  val classUnderTest = classOf[MethodNamesChecker]
+
+  @Test def testDefault() = {
+    val source = """
+package foobar
+
+class Foobar {
+  def foo() = 1
+  def +() = 1
+//  def foo+() = 1
+}
+""";
+
+    assertErrors(List(columnError(6, 6, List("^[a-z][A-Za-z0-9]*$"))), source)
+  }
+
+  @Test def testNonDefault() = {
+    val source = """
+package foobar
+
+class Foobar {
+  def Foo() = 1
+  def +() = 1
+//  def Foo+() = 1
+}
+""";
+
+    assertErrors(List(columnError(6, 6, List("^F[o*]*$"))), source, Map("regex" -> "^F[o*]*$"))
+  }
+}

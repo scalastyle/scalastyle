@@ -88,4 +88,9 @@
             <parameter name="maxLength" type="integer" default="50" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.MethodNamesChecker" id="method.name" defaultLevel="warning" >
+        <parameters>
+            <parameter name="regex" type="string" default="^[a-z][A-Za-z0-9]*$" />
+        </parameters>
+    </checker>
 </scalastyle-definition>

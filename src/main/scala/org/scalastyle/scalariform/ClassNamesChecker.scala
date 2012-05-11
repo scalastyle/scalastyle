@@ -80,3 +80,22 @@ class PackageObjectNamesChecker extends ScalariformChecker {
     it.toList
   }
 }
+
+class MethodNamesChecker extends ScalariformChecker {
+  val DefaultRegex = "^[a-z][A-Za-z0-9]*$"
+  val errorKey = "method.name"
+
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
+
+    val it = for (
+      List(left, right) <- ast.tokens.sliding(2);
+      if (left.tokenType == DEF && (regex findAllIn (right.getText)).size == 0)
+    ) yield {
+      PositionError(right.startIndex, List(regexString))
+    }
+
+    it.toList
+  }
+}
