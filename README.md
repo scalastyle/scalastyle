@@ -374,3 +374,20 @@ No Parameters
         <parameter name="doubleLineAllowed">false</parameter>
       </parameters>
     </check>
+
+## Class org.scalastyle.scalariform.MethodLengthChecker - Check length of methods
+
+ * id - method.length
+ * default level - WarningLevel
+
+### Parameters
+
+ * maxLength: Maximum length allowed
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="true">
+      <parameters>
+        <parameter name="maxLength">50</parameter>
+      </parameters>
+    </check>

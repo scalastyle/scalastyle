@@ -83,4 +83,9 @@
             <parameter name="doubleLineAllowed" type="boolean" default="false" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.MethodLengthChecker" id="method.length" defaultLevel="warning" >
+        <parameters>
+            <parameter name="maxLength" type="integer" default="50" />
+        </parameters>
+    </checker>
 </scalastyle-definition>
