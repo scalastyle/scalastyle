@@ -98,17 +98,17 @@
  </check>
  <check level="warning" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="true">
   <parameters>
-   <parameter name="maxLength">50</parameter>
+   <parameter name="maxLength"><![CDATA[50]]></parameter>
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.MethodNamesChecker" enabled="true">
   <parameters>
-   <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
+   <parameter name="regex"><![CDATA[^[a-z][A-Za-z0-9]*$]]></parameter>
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.NumberOfMethodsInTypeChecker" enabled="true">
   <parameters>
-   <parameter name="maxMethods">30</parameter>
+   <parameter name="maxMethods"><![CDATA[30]]></parameter>
   </parameters>
  </check>
 </scalastyle>
