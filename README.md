@@ -408,3 +408,20 @@ No Parameters
         <parameter name="regex">^[A-Za-z]*$</parameter>
       </parameters>
     </check>
+
+## Class org.scalastyle.scalariform.NumberOfMethodsInTypeChecker - Check that there are not too many methods declared in a type
+
+ * id - number.of.methods
+ * default level - WarningLevel
+
+### Parameters
+
+ * maxMethods: number of methods per type
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.NumberOfMethodsInTypeChecker" enabled="true">
+      <parameters>
+        <parameter name="maxMethods">30</parameter>
+      </parameters>
+    </check>
