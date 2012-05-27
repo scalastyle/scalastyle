@@ -98,4 +98,5 @@
             <parameter name="maxMethods" type="integer" default="30" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" id="public.methods.have.type" defaultLevel="warning"/>
 </scalastyle-definition>

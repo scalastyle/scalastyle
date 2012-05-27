@@ -19,14 +19,19 @@ package org.scalastyle.scalariform
 import _root_.scalariform.parser._
 import org.scalastyle._
 
-class ParameterNumberChecker extends AbstractSingleMethodChecker[Int] {
-  val errorKey = "parameter.number"
-  val DefaultMaximumParameters = 8
+class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[Unit] {
+  val errorKey = "public.methods.have.type"
 
-  protected def matchParameters() = getInt("maxParameters", DefaultMaximumParameters)
+  protected def matchParameters() = Unit
 
-  protected def matches(t: FullDefOrDclVisit, maxParameters: Int) = getParams(t.funDefOrDcl.paramClauses).size > maxParameters
-  protected override def describeParameters(maxParameters: Int) = List("" + maxParameters)
+  protected def matches(t: FullDefOrDclVisit, p: Unit) = {
+    t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers)
+  }
+
+  private def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists( _ match {
+      case am: AccessModifier => true
+      case _ => false
+    })
 
   private def getParams(p: ParamClauses): List[Param] = {
     p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten

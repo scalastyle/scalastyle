@@ -425,3 +425,16 @@ No Parameters
         <parameter name="maxMethods">30</parameter>
       </parameters>
     </check>
+
+## Class org.scalastyle.scalariform.PublicMethodsHaveTypeChecker - Check that public methods declare an explicit type
+
+ * id - public.methods.have.type
+ * default level - WarningLevel
+
+### Parameters
+
+No Parameters
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"/>
