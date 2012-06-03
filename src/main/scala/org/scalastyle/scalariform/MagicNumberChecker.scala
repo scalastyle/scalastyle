@@ -16,26 +16,75 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
+import java.lang.reflect.Constructor
+import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.lexer.Tokens._
 import org.scalastyle.ScalariformChecker
 import org.scalastyle._
+import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.ExprElement
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.PrefixExprElement
+import _root_.scalariform.lexer.Token
 
 class MagicNumberChecker extends ScalariformChecker {
+  import VisitorHelper._
   val DefaultIgnore = "-1,0,1,2"
   val errorKey = "magic.number"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
 
+//    println("ast=" + ast)
+
     val it = for (
-      t <- ast.tokens;
-      if (t.tokenType == INTEGER_LITERAL && !ignores.contains(t.getText))
+      t <- localvisit(ast.immediateChildren(0));
+      f <- traverse(t);
+      if (matches(f, ignores))
     ) yield {
-      PositionError(t.startIndex)
+      PositionError(f.position)
     }
 
     it.toList
+  }
+
+  case class ExprVisit(t: Expr, position: Int, contents: List[ExprVisit]) extends Clazz[Expr]()
+
+  private def traverse(t: ExprVisit): List[ExprVisit] = t :: t.contents.map(traverse(_)).flatten
+
+  private def matches(t: ExprVisit, ignores: Set[String]) = {
+    toIntegerLiteralExprElement(t.t.contents) match {
+      case Some(x) => !ignores.contains(x)
+      case None => false
+    }
+  }
+
+  private def toIntegerLiteralExprElement(list: List[ExprElement]): Option[String] = {
+    list match {
+      case List(PrefixExprElement(t), GeneralTokens(gtList)) => toIntegerLiteral(t, toIntegerLiteralToken(gtList))
+      case List(GeneralTokens(gtList)) => toIntegerLiteralToken(gtList)
+      case _ => None
+    }
+  }
+
+  private def toIntegerLiteral(prefixExpr: Token, intLiteral: Option[String]): Option[String] = {
+    (prefixExpr.text, intLiteral) match {
+      case ("+", Some(i)) => Some(i)
+      case ("-", Some(i)) => Some("-" + i)
+      case _ => None
+    }
+  }
+
+  private def toIntegerLiteralToken(list: List[Token]): Option[String] = {
+    list match {
+      case List(Token(tokenType, text, start, end)) if (tokenType == INTEGER_LITERAL) => Some(text)
+      case _ => None
+    }
+  }
+
+  private def localvisit(ast: Any): List[ExprVisit] = ast match {
+    case t: Expr => List(ExprVisit(t, t.firstToken.startIndex, localvisit(t.contents)))
+    case t: Any => visit(t, localvisit)
   }
 }

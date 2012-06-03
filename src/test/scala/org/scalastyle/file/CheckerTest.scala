@@ -31,12 +31,12 @@ trait CheckerTest {
   protected val classUnderTest: Class[_ <: Checker[_]]
 
   object NullFileSpec extends FileSpec {
-    def name() = ""
+    def name(): String = ""
   }
 
-  protected def assertErrors[T <: FileSpec](list: List[Message[T]], source: String, params: Map[String, String] = Map(),
+  protected def assertErrors[T <: FileSpec](expected: List[Message[T]], source: String, params: Map[String, String] = Map(),
                                             customMessage: Option[String] = None) = {
-    assertEquals(list, Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel,
+    assertEquals(expected, Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel,
                                             true, params, customMessage)), NullFileSpec, source))
   }
 

@@ -32,20 +32,57 @@ class MagicNumberCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "magic.number"
   val classUnderTest = classOf[MagicNumberChecker]
 
-  @Test def testZero() = {
+//  @Test def testVal() = {
+//    val source = """
+//package foobar
+//
+//class Foobar {
+//  val foo0 = -2
+//  val foo1 = -1
+//  val foo2 = 0
+//  val foo3 = 1
+//  val foo4 = 2
+//  val foo5 = 3
+//  val foo6 = 4
+//}
+//""";
+//
+//    assertErrors(List(), source)
+//  }
+
+  @Test def testVar() {
     val source = """
 package foobar
 
 class Foobar {
-  val foo1 = -1
-  val foo2 = 0
-  val foo3 = 1
-  val foo4 = 2
-  val foo5 = 3
-  val foo6 = 4
+  var foo0 = -2
+  var foo1 = -1
+  var foo2 = 0
+  var foo3 = 1
+  var foo4 = 2
+  var foo5 = 3
+  var foo6 = 4
 }
 """;
 
-    assertErrors(List(columnError(9, 13), columnError(10, 13)), source)
+    assertErrors(List(columnError(5, 13), columnError(10, 13), columnError(11, 13)), source)
+  }
+
+  @Test def testVar2() {
+    val source = """
+package foobar
+
+class Foobar {
+  var foo6 = 4
+  var foo7 = +4
+  var foo8 = -4
+  var bar1 = fn(7, -5)
+  var bar2 = fn(1, -5)
+
+  def fn(i: Int, j: Int) = i + j
+}
+""";
+
+    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 19), columnError(9, 19)), source)
   }
 }
