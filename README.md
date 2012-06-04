@@ -189,12 +189,30 @@ No Parameters
 
 ## Class org.scalastyle.scalariform.MagicNumberChecker - Checks for use of magic numbers
 
+A simple assignment to a val is not considered to be a magic number, for example:
+
+    val foo = 4
+
+is not a magic number, but
+
+    var foo = 4
+	
+is considered to be a magic number.
+
  * id - magic.number
  * default level - WarningLevel
 
 ### Parameters
 
  * Ignore (list of numbers to ignore)
+
+### Example
+
+    <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
+      <parameters>
+        <parameter name="ignore">-1,0,1,2</parameter>
+      </parameters>
+    </check>
 
 ## Class org.scalastyle.scalariform.NoCloneChecker - Check that classes and objects do not define the clone() method
 

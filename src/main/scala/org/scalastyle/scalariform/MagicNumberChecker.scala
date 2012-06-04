@@ -36,17 +36,23 @@ class MagicNumberChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
 
-//    println("ast=" + ast)
-
-    val it = for (
+    val intList = for (
       t <- localvisit(ast.immediateChildren(0));
       f <- traverse(t);
       if (matches(f, ignores))
     ) yield {
-      PositionError(f.position)
+      f
     }
 
-    it.toList
+    val valList = for (
+      t <- localvisitVal(ast.immediateChildren(0));
+      f <- traverseVal(t);
+      g <- toOption(f)
+    ) yield {
+      g
+    }
+
+    intList.filter(t => !valList.contains(t.t)).map(t => PositionError(t.position)).toList
   }
 
   case class ExprVisit(t: Expr, position: Int, contents: List[ExprVisit]) extends Clazz[Expr]()
@@ -86,5 +92,23 @@ class MagicNumberChecker extends ScalariformChecker {
   private def localvisit(ast: Any): List[ExprVisit] = ast match {
     case t: Expr => List(ExprVisit(t, t.firstToken.startIndex, localvisit(t.contents)))
     case t: Any => visit(t, localvisit)
+  }
+
+  case class PatDefOrDclVisit(t: PatDefOrDcl, valOrVarToken: Token, pattern: List[PatDefOrDclVisit], otherPatterns: List[PatDefOrDclVisit],
+                              equalsClauseOption: List[PatDefOrDclVisit]) extends Clazz[Expr]()
+
+  private def localvisitVal(ast: Any): List[PatDefOrDclVisit] = ast match {
+    case t: PatDefOrDcl => List(PatDefOrDclVisit(t, t.valOrVarToken, localvisitVal(t.pattern),
+                                    localvisitVal(t.otherPatterns), localvisitVal(t.equalsClauseOption)))
+    case t: Any => visit(t, localvisitVal)
+  }
+
+  private def traverseVal(t: PatDefOrDclVisit): List[PatDefOrDclVisit] = t :: t.equalsClauseOption.map(traverseVal(_)).flatten
+
+  private def toOption(t: PatDefOrDclVisit): Option[Expr] = {
+    t.t.equalsClauseOption match {
+      case Some((equals: Token, expr: Expr)) if (t.t.valOrVarToken.tokenType == VAL && toIntegerLiteralExprElement(expr.contents).isDefined) => Some(expr)
+      case _ => None
+    }
   }
 }
