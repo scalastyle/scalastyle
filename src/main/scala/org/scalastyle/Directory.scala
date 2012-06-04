@@ -22,7 +22,7 @@ import scala.xml._
 class Directory
 
 class DirectoryFileSpec(val name: String, val file: java.io.File) extends FileSpec {
-  override def toString = file.getAbsolutePath()
+  override def toString: String = file.getAbsolutePath()
 }
 
 object Directory {
@@ -49,7 +49,7 @@ object Directory {
     toXml(new Foo("string", "string").getClass)
   }
 
-  def toXml(c: Class[_]) = {
+  def toXml(c: Class[_]) {
     for (field <- this.getClass.getDeclaredFields)
       "field name=" + field.getName + " tpe=" + field.getType.toString() + this.getClass.getMethods.find(_.getName() == field.getName).get.invoke(this)
 

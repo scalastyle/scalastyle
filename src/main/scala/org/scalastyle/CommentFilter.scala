@@ -31,7 +31,7 @@ object CommentFilter {
 
   def isComment(s: String): Boolean = MatchRegex.pattern.matcher(s.trim).matches
 
-  def findScalastyleComments(hiddenTokenInfo: HiddenTokenInfo) = {
+  def findScalastyleComments(hiddenTokenInfo: HiddenTokenInfo): Iterable[Comment] = {
     hiddenTokenInfo.allHiddenTokens.map(hiddenTokens => hiddenTokens.comments).flatten.filter(c => isComment(c.getText))
   }
 
@@ -88,7 +88,7 @@ object CommentFilter {
     }
   }
 
-  def gte(line1: Option[Int], lineColumn: Option[LineColumn]) = line1.isEmpty || lineColumn.isEmpty || line1.get >= lineColumn.get.line
+  protected def gte(line1: Option[Int], lineColumn: Option[LineColumn]) = line1.isEmpty || lineColumn.isEmpty || line1.get >= lineColumn.get.line
 
-  def lte(line1: Option[Int], lineColumn: Option[LineColumn]) = line1.isEmpty || lineColumn.isEmpty || line1.get <= lineColumn.get.line
+  protected def lte(line1: Option[Int], lineColumn: Option[LineColumn]) = line1.isEmpty || lineColumn.isEmpty || line1.get <= lineColumn.get.line
 }

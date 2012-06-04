@@ -31,7 +31,7 @@ class CyclomaticComplexityChecker extends AbstractMethodChecker {
   private lazy val maximum = getInt("maximum", DefaultMaximum)
   private val tokens = Set(IF, CASE, WHILE, DO, FOR)
 
-  override def params() = List[String]("" + maximum)
+  override def params(): List[String] = List("" + maximum)
 
   def matches(t: BaseClazz[AstNode]): Boolean = {
     matchFunDefOrDcl(t, cyclomaticComplexity(maximum) _)

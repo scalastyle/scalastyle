@@ -120,12 +120,12 @@ trait Checker[A] {
   var level: Level = WarningLevel;
   var customMessage: Option[String] = None
 
-  def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
-  def setLevel(level: Level) = this.level = level;
-  def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
-  def getInt(parameter: String, defaultValue: Int) = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
-  def getString(parameter: String, defaultValue: String) = parameters.getOrElse(parameter, defaultValue)
-  def getBoolean(parameter: String, defaultValue: Boolean) = parameters.getOrElse(parameter, "" + defaultValue) == "true"
+  protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
+  protected def setLevel(level: Level) = this.level = level;
+  protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
+  protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
+  protected def getString(parameter: String, defaultValue: String): String = parameters.getOrElse(parameter, defaultValue)
+  protected def getBoolean(parameter: String, defaultValue: Boolean): Boolean = parameters.getOrElse(parameter, "" + defaultValue) == "true"
 
   protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, level: Level, lines: Lines): Message[T] = {
     val p2 = p match {
@@ -154,8 +154,8 @@ trait Checker[A] {
 
   def verify(ast: A): List[ScalastyleError]
 
-  def isObject(s: String) = (s == "java.lang.Object" || s == "Any")
-  def isNotObject(s: String) = !isObject(s)
+  protected def isObject(s: String) = (s == "java.lang.Object" || s == "Any")
+  protected def isNotObject(s: String) = !isObject(s)
 }
 
 trait FileChecker extends Checker[Lines]

@@ -46,12 +46,12 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
   protected def params(): List[String] = List()
 
   class BaseClazz[+T <: AstNode](val t: T, val position: Option[Int], val subs: ListType) extends Clazz[T] {
-    def is(fn: T => Boolean) = false
+    def is(fn: T => Boolean): Boolean = false
   }
 
   case class TmplClazz(_t: TmplDef, _position: Option[Int], _subs: ListType) extends BaseClazz[TmplDef](_t, _position, _subs)
   case class FunDefOrDclClazz(_t: FunDefOrDcl, _position: Option[Int], _subs: ListType) extends BaseClazz[FunDefOrDcl](_t, _position, _subs) {
-    override def is(fn: FunDefOrDcl => Boolean) = fn(this.t)
+    override def is(fn: FunDefOrDcl => Boolean): Boolean = fn(this.t)
   }
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -89,7 +89,7 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
 
   protected def getParamTypes(pc: ParamClauses) = getParams(pc).map(p => typename(p.paramTypeOpt.get._2))
 
-  def matchFunDefOrDcl(t: BaseClazz[AstNode], fn: FunDefOrDcl => Boolean) = t match { case f: FunDefOrDclClazz => fn(f.t); case _ => false }
+  protected def matchFunDefOrDcl(t: BaseClazz[AstNode], fn: FunDefOrDcl => Boolean) = t match { case f: FunDefOrDclClazz => fn(f.t); case _ => false }
 
   protected def methodMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: FunDefOrDcl) =
     t.nameToken.getText == name && paramTypesMatch(getParamTypes(t.paramClauses))
