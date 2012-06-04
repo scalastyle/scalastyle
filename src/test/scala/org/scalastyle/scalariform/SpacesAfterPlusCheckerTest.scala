@@ -58,7 +58,7 @@ class Clazz[+T <: AstNode]() // ignore + within type specification
     assertErrors(List(columnError(5, 14)), source)
   }
 
-  @Test def testTwoSpaces() = {
+  @Test def testTwoSpaces() {
     val source = """
 package foobar
 

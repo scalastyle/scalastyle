@@ -32,7 +32,7 @@ class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "illegal.imports"
   val classUnderTest = classOf[IllegalImportsChecker]
 
-  @Test def testZero() = {
+  @Test def testZero() {
     val source = """
 package foobar
 
@@ -46,7 +46,7 @@ object Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testOne() = {
+  @Test def testOne() {
     val source = """|package foobar
                       |
                       |import java.util._

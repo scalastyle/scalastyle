@@ -32,7 +32,7 @@ class CustomMessageTest extends CheckerTest {
   val classUnderTest = classOf[FileLengthChecker]
   val message = Some("custom")
 
-  @Test def testOne() = {
+  @Test def testOne() {
     val source = """
 package foobar
 

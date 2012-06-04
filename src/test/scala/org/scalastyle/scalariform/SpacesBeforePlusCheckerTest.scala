@@ -32,7 +32,7 @@ class SpacesBeforePlusCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "spaces.before.plus"
   val classUnderTest = classOf[SpacesBeforePlusChecker]
 
-  @Test def testOK() = {
+  @Test def testOK() {
     val source = """
 package foobar
 
@@ -45,7 +45,7 @@ class Clazz[+T <: AstNode]() // ignore + within type specification
     assertErrors(List(), source)
   }
 
-  @Test def testOne() = {
+  @Test def testOne() {
     val source = """
 package foobar
 
@@ -57,7 +57,7 @@ object Foobar {
     assertErrors(List(columnError(5, 14)), source)
   }
 
-  @Test def testPlusAtBeginningOfLine() = {
+  @Test def testPlusAtBeginningOfLine() {
     val source = """
 package foobar
 

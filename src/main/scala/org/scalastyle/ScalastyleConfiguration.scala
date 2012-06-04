@@ -22,7 +22,7 @@ import scala.xml.Node;
 import scala.xml.NodeSeq;
 
 object Level {
-  def apply(s: String) = s match {
+  def apply(s: String): Level = s match {
     case "warning" => WarningLevel
     case "error" => ErrorLevel
     case _ => WarningLevel
@@ -33,7 +33,7 @@ case object ErrorLevel extends Level("error")
 case object WarningLevel extends Level("warning")
 
 object ParameterType {
-  def apply(s: String) = s match {
+  def apply(s: String): ParameterType = s match {
     case "integer" => IntegerType
     case "string" => StringType
     case "boolean" => BooleanType

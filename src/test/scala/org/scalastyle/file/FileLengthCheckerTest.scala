@@ -32,7 +32,7 @@ class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "file.size.limit"
   val classUnderTest = classOf[FileLengthChecker]
 
-  @Test def testZero() = {
+  @Test def testZero() {
     val source = """
 package foobar
 
@@ -43,7 +43,7 @@ package foobar
     assertErrors(List(), source, Map("maxFileLength" -> "5"))
   }
 
-  @Test def testOne() = {
+  @Test def testOne() {
     val source = """
 package foobar
 

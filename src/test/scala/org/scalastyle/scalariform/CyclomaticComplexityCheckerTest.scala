@@ -32,7 +32,7 @@ class CyclomaticComplexityCheckerTest extends AssertionsForJUnit with CheckerTes
   val key = "cyclomatic.complexity"
   val classUnderTest = classOf[CyclomaticComplexityChecker]
 
-  @Test def testKO() = {
+  @Test def testKO() {
     val source = """
 package foobar
 

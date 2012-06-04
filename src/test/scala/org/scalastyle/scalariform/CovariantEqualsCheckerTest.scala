@@ -32,7 +32,7 @@ class CovariantEqualsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "covariant.equals"
   val classUnderTest = classOf[CovariantEqualsChecker]
 
-  @Test def testClassOK() = {
+  @Test def testClassOK() {
     val source = """
 package foobar
 
@@ -45,7 +45,7 @@ class OK {
     assertErrors(List(), source)
   }
 
-  @Test def testClassCovariantEqualsNoObjectKO() = {
+  @Test def testClassCovariantEqualsNoObjectKO() {
     val source = """
 package foobar
 
@@ -57,7 +57,7 @@ class CovariantEqualsNoObjectKO {
     assertErrors(List(columnError(4, 6)), source)
   }
 
-  @Test def testObjectOK() = {
+  @Test def testObjectOK() {
     val source = """
 package foobar
 
@@ -70,7 +70,7 @@ object OK {
     assertErrors(List(), source)
   }
 
-  @Test def testObjectCovariantEqualsNoObjectKO() = {
+  @Test def testObjectCovariantEqualsNoObjectKO() {
     val source = """
 package foobar
 

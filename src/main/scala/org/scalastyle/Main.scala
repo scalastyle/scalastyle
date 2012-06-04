@@ -25,7 +25,7 @@ case class MainConfig(config: Option[String], directories: List[String],
                         warningsaserrors: Boolean = false)
 
 object Main {
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]) {
     val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", "0.1.0") {
       def options = Seq(
         opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },

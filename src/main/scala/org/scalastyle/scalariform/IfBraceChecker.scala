@@ -49,7 +49,7 @@ class IfBraceChecker extends CombinedChecker {
   }
 
   case class IfExprClazz(t: IfExpr, position: Option[Int], body: List[IfExprClazz], elseClause: List[IfExprClazz]) extends ExprTree[IfExprClazz] {
-    def subs = body ::: elseClause
+    def subs: List[IfExprClazz] = body ::: elseClause
   }
 
   private def traverse(t: IfExprClazz, lines: Lines, singleLineAllowed: Boolean, doubleLineAllowed: Boolean): List[IfExprClazz] = {

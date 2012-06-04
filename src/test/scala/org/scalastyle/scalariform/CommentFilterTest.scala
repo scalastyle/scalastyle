@@ -32,7 +32,7 @@ class CommentFilterTest extends AssertionsForJUnit with CheckerTest {
   val key = "class.name"
   val classUnderTest = classOf[ClassNamesChecker]
 
-  @Test def testOne() = {
+  @Test def testOne() {
     val source = """
 package foobar
 

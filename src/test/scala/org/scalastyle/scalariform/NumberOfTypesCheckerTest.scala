@@ -32,7 +32,7 @@ class NumberOfTypesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "number.of.types"
   val classUnderTest = classOf[NumberOfTypesChecker]
 
-  @Test def testOK() = {
+  @Test def testOK() {
     val source = """
 package foobar
 
@@ -47,7 +47,7 @@ case class F6()
     assertErrors(List(), source, Map("maxTypes" -> "6"))
   }
 
-  @Test def testKO() = {
+  @Test def testKO() {
     val source = """
 package foobar
 
@@ -62,7 +62,7 @@ case class F6()
     assertErrors(List(fileError(List("5"))), source, Map("maxTypes" -> "5"))
   }
 
-  @Test def testInnerClasses() = {
+  @Test def testInnerClasses() {
     val source = """
 package foobar
 

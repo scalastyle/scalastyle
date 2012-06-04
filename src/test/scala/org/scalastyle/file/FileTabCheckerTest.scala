@@ -34,7 +34,7 @@ class FileTabCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "line.contains.tab"
   val classUnderTest = classOf[FileTabChecker]
 
-  @Test def testZero() = {
+  @Test def testZero() {
     val source = """
 package foobar
 
@@ -45,7 +45,7 @@ package foobar
     assertErrors(List(), source)
   }
 
-  @Test def testOne() = {
+  @Test def testOne() {
     val source = """
 package foobar
 
@@ -56,7 +56,7 @@ package foobar
     assertErrors(List(columnError(4, 0)), source)
   }
 
-  @Test def testTwo() = {
+  @Test def testTwo() {
     val source = """
 package foobar
 

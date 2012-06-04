@@ -32,7 +32,7 @@ class EqualsHashCodeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "equals.hash.code"
   val classUnderTest = classOf[EqualsHashCodeChecker]
 
-  @Test def testOK() = {
+  @Test def testOK() {
     val source = """
 package foobar
 
@@ -45,7 +45,7 @@ class OK {
     assertErrors(List(), source)
   }
 
-  @Test def testHashCodeOnlyKO() = {
+  @Test def testHashCodeOnlyKO() {
     val source = """
 package foobar
 
@@ -57,7 +57,7 @@ class HashCodeOnlyKO {
     assertErrors(List(columnError(4, 6)), source)
   }
 
-  @Test def testEqualsOnlyKO() = {
+  @Test def testEqualsOnlyKO() {
     val source = """
 package foobar
 
@@ -69,7 +69,7 @@ class EqualsOnlyKO {
     assertErrors(List(columnError(4, 6)), source)
   }
 
-  @Test def testEqualsOnlyAnyKO() = {
+  @Test def testEqualsOnlyAnyKO() {
     val source = """
 package foobar
 
@@ -81,7 +81,7 @@ class EqualsOnlyKO {
     assertErrors(List(columnError(4, 6)), source)
   }
 
-  @Test def testEqualsWrongSignatureOK() = {
+  @Test def testEqualsWrongSignatureOK() {
     val source = """
 package foobar
 
@@ -94,7 +94,7 @@ class EqualsWrongSignatureOK {
     assertErrors(List(), source)
   }
 
-  @Test def testHashCodeWrongSignatureOK() = {
+  @Test def testHashCodeWrongSignatureOK() {
     val source = """
 package foobar
 
@@ -106,7 +106,7 @@ class HashCodeWrongSignatureOK {
     assertErrors(List(), source)
   }
 
-  @Test def testOuterKOInnerKO() = {
+  @Test def testOuterKOInnerKO() {
     val source = """
 package foobar
 
@@ -121,7 +121,7 @@ class OuterKO {
     assertErrors(List(columnError(4, 6), columnError(6, 8)), source)
   }
 
-  @Test def testOuterOKInnerKO() = {
+  @Test def testOuterOKInnerKO() {
     val source = """
 package foobar
 
@@ -137,7 +137,7 @@ class OuterOK {
     assertErrors(List(columnError(6, 8)), source)
   }
 
-  @Test def testObjectInnerKO() = {
+  @Test def testObjectInnerKO() {
     val source = """
 package foobar
 
@@ -151,7 +151,7 @@ object Object {
     assertErrors(List(columnError(5, 8)), source)
   }
 
-  @Test def testMultipleClasses() = {
+  @Test def testMultipleClasses() {
     val source = """
 package foobar
 

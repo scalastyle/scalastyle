@@ -32,7 +32,7 @@ class MethodLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "method.length"
   val classUnderTest = classOf[MethodLengthChecker]
 
-  @Test def testOK() = {
+  @Test def testOK() {
     val source = """
 package foobar
 
