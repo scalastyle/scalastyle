@@ -32,7 +32,7 @@ class PublicMethodsHaveTypeCheckerTest extends AssertionsForJUnit with CheckerTe
   val key = "public.methods.have.type"
   val classUnderTest = classOf[PublicMethodsHaveTypeChecker]
 
-  @Test def testClassOK() = {
+  @Test def testClassOK() {
     val source = """
 package foobar
 
@@ -45,9 +45,11 @@ class OK {
   private[this] def c6() = 5
   private val foo1 = 1
   val foo2 = 2
+  def unit = {}
+  def unit {}
 }
 """;
 
-    assertErrors(List(columnError(5, 6), columnError(7, 6)), source)
+    assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6)), source)
   }
 }

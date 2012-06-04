@@ -25,7 +25,10 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[Unit] {
   protected def matchParameters() = Unit
 
   protected def matches(t: FullDefOrDclVisit, p: Unit) = {
-    t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers)
+    t.funDefOrDcl.funBodyOpt match {
+      case Some(ProcFunBody(newlineOpt, bodyBlock)) => false
+      case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers)
+    }
   }
 
   private def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists( _ match {
