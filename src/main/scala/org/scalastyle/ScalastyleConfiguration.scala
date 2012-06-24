@@ -215,5 +215,4 @@ class XmlPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step)
           }
         }
   }
-
 }
