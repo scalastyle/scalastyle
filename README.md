@@ -456,3 +456,29 @@ No Parameters
 ### Example
 
     <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"/>
+
+## Class org.scalastyle.file.NewlineAtEofChecker - Check that files end with a newline character
+
+ * id - newline.at.eof
+ * default level - WarningLevel
+
+### Parameters
+
+No Parameters
+
+### Example
+
+    <check level="warning" class="org.scalastyle.file.NewlineAtEofChecker" enabled="true"/>
+
+## Class org.scalastyle.file.NoNewlineAtEofChecker - Check that files do not end with a newline character
+
+ * id - no.newline.at.eof
+ * default level - WarningLevel
+
+### Parameters
+
+No Parameters
+
+### Example
+
+    <check level="warning" class="org.scalastyle.file.NoNewlineAtEofChecker" enabled="true"/>

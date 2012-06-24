@@ -112,4 +112,5 @@
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"/>
+ <check level="warning" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"/>
 </scalastyle>

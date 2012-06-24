@@ -28,7 +28,7 @@ case class Line(text: String, start: Int, end: Int)
 
 case class LineColumn(line: Int, column: Int)
 
-case class Lines(lines: Array[Line]) {
+case class Lines(lines: Array[Line], lastChar: Char) {
   def toLineColumn(position: Int): Option[LineColumn] = {
     var i = 0
 
@@ -63,7 +63,7 @@ object Checker {
 
   def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
           case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
-        }.tail)
+        }.tail, source.charAt(source.length()-1))
 
   def verifySource[T <: FileSpec](classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
     val lines = parseLines(source)
