@@ -46,10 +46,14 @@ class OK {
   private val foo1 = 1
   val foo2 = 2
   def unit = {}
-  def unit {}
+  def unit2 {}
+  val foo = new scala.collection.mutable.HashMap {def foobar() = {}}
+  def bar() = { new scala.collection.mutable.HashMap {def foobar() = {}} }
+  def bar2() = new scala.collection.mutable.HashMap {def foobar2() = {}}
 }
 """;
 
-    assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6)), source)
+    assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6), columnError(15, 54),
+                        columnError(16, 6), columnError(16, 58), columnError(17, 6), columnError(17, 57)), source)
   }
 }

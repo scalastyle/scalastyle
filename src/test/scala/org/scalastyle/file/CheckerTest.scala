@@ -36,8 +36,8 @@ trait CheckerTest {
 
   protected def assertErrors[T <: FileSpec](expected: List[Message[T]], source: String, params: Map[String, String] = Map(),
                                             customMessage: Option[String] = None) = {
-    assertEquals(expected, Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel,
-                                            true, params, customMessage)), NullFileSpec, source))
+    assertEquals(expected.mkString("\n"), Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel,
+                                            true, params, customMessage)), NullFileSpec, source).mkString("\n"))
   }
 
   protected def fileError(args: List[String] = List(), customMessage: Option[String] = None) =
