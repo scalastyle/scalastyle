@@ -48,9 +48,16 @@ case object BooleanType extends ParameterType("boolean")
 case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
 
 object ScalastyleConfiguration {
-  def readFromXml(file: String): ScalastyleConfiguration = {
-    val elem = XML.loadFile(file)
+  val DefaultConfiguration: String = "/default_config.xml"
 
+  def getDefaultConfiguration(): ScalastyleConfiguration = {
+    val is = this.getClass().getClassLoader().getResourceAsStream(DefaultConfiguration)
+    fromXml(XML.load(is))
+  }
+
+  def readFromXml(file: String): ScalastyleConfiguration = fromXml(XML.loadFile(file))
+
+  private[this] def fromXml(elem: Elem) = {
     val name = (elem \\ "name").text
 
     ScalastyleConfiguration(name, (elem \\ "check").map(toCheck).toList)
