@@ -1,0 +1,188 @@
+<scalastyle-documentation>
+ <check id="file.size.limit">
+ <justification>
+ Files which are too long can be hard to read and understand.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+ <check level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
+  <parameters>
+   <parameter name="maxFileLength">800</parameter>
+  </parameters>
+ </check>
+ ]]>
+ </example-configuration>
+ </check>
+ <check id="magic.number">
+ <justification>
+ Replacing a magic number with a named constant can make code easier to read and understand, and can avoid some subtle bugs.
+ </justification>
+ <extra-description>
+ A simple assignment to a val is not considered to be a magic number, for example:
+
+    val foo = 4
+
+is not a magic number, but
+
+    var foo = 4
+	
+is considered to be a magic number.
+ </extra-description>
+ <example-configuration>
+ <![CDATA[
+ <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
+  <parameters>
+   <parameter name="ignore">-1,0,1,2,3</parameter>
+  </parameters>
+ </check>
+ ]]>
+ </example-configuration>
+ </check>
+ <check id="regex">
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">(?m)^\s\*$(\r|)\n^\s*$(\r|)\n</parameter>
+      </parameters>
+      <customMessage>No double blank lines</customMessage>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="number.of.types">
+ <justification>
+ If there are too many classes/objects defined in a single file, this can cause the code to be difficult to understand.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NumberOfTypesChecker" enabled="true">
+      <parameters>
+        <parameter name="maxTypes">20</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="cyclomatic.complexity">
+ <justification>
+ If there are too many classes/objects defined in a single file, this can cause the code to be difficult to understand.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
+      <parameters>
+        <parameter name="maximum">10</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+ 
+ <check id="uppercase.l">
+ <justification>
+ A lowercase L (l) can look similar to a number 1 with some fonts.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.UppercaseLChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="if.brace">
+ <justification>
+ A lowercase L (l) can look similar to a number 1 with some fonts.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.IfBraceChecker" enabled="true">
+      <parameters>
+        <parameter name="singleLineAllowed">true</parameter>
+        <parameter name="doubleLineAllowed">false</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="method.length">
+ <justification>
+ Long methods can be hard to read and understand.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="true">
+      <parameters>
+        <parameter name="maxLength">50</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="method.name">
+ <justification>
+ The Scala style guide recommends that method names conform to certain standards.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.MethodNamesChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[A-Za-z]*$</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="number.of.methods">
+ <justification>
+ If a type declares too many methods, this can be an indication of bad design.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NumberOfMethodsInTypeChecker" enabled="true">
+      <parameters>
+        <parameter name="maxMethods">30</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="public.methods.have.type">
+ <justification>
+ A public method declared on a type is effectively an API declaration. Explicitly declaring a return type means that other code which depends on that type won't break unexpectedly.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="newline.at.eof">
+ <justification>
+ Some version control systems don't cope well with files which don't end with a newline character.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.NewlineAtEofChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="no.newline.at.eof">
+ <justification>
+ Because Mirco Dotta wanted it.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.NoNewlineAtEofChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+</scalastyle-documentation>
