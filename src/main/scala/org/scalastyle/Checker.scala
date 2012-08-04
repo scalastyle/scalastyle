@@ -46,7 +46,7 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 class ScalastyleChecker[T <: FileSpec] {
   def checkFiles(configuration: ScalastyleConfiguration, files: List[T]): List[Message[T]] = {
     val checks = configuration.checks.filter(_.enabled)
-    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
+    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration, checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
   }
 }
 
@@ -65,13 +65,13 @@ object Checker {
           case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
         }.tail, source.charAt(source.length()-1))
 
-  def verifySource[T <: FileSpec](classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
+  def verifySource[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
     val lines = parseLines(source)
     val scalariformAst = parseScalariform(source)
 
     val commentFilters = scalariformAst match {
-      case Some(ast) => CommentFilter.findCommentFilters(ast.hiddenTokenInfo, lines)
-      case None => List[CommentFilter]()
+      case Some(ast) if configuration.commentFilter => CommentFilter.findCommentFilters(ast.hiddenTokenInfo, lines)
+      case _ => List[CommentFilter]()
     }
 
     classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters, cc.customMessage)).map(c => c match {
@@ -88,10 +88,10 @@ object Checker {
     }).flatten.filter(m => CommentFilter.filterApplies(m, commentFilters))
   }
 
-  def verifyFile[T <: FileSpec](classes: List[ConfigurationChecker], file: T): List[Message[T]] = {
+  def verifyFile[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T): List[Message[T]] = {
     try {
       val s = Source.fromFile(file.name).mkString
-      verifySource(classes, file, s)
+      verifySource(configuration, classes, file, s)
     } catch {
       case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTraceString))
     }
