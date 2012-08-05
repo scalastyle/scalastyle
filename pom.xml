@@ -206,9 +206,9 @@
   <distributionManagement>
     <snapshotRepository>
       <uniqueVersion>true</uniqueVersion>
-      <id>gh-pages</id>
-      <name>namin.github.com/maven-repository</name>
-      <url>file:///${basedir}/../maven-repository/</url>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Nexus Staging Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
       <layout>default</layout>
     </snapshotRepository>
   </distributionManagement>
