@@ -2,10 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.scalastyle</groupId>
+   <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+ <groupId>org.scalastyle</groupId>
   <artifactId>scalastyle_2.9.1</artifactId>
   <name>Scalastyle style checker for Scala</name>
   <version>0.1.0</version>
+  <packaging>jar</packaging>
+  <description>Scalastyle style checker for Scala</description>
   <properties>
     <scala.version>2.9.1</scala.version>
     <scala.library.version>2.9.1</scala.library.version>
@@ -203,23 +210,15 @@
     </profile>
   </profiles>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <uniqueVersion>true</uniqueVersion>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Nexus Staging Repository</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-      <layout>default</layout>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <url>http://scalastyle.github.com</url>
+  <url>http://www.scalastyle.org</url>
   <organization>
     <name>Scalastyle Organization</name>
     <url>https://github.com/scalastyle</url>
   </organization>
   <scm>
-    <url>https://github.com/scalastyle/scalastyle</url>
+	<connection>scm:git:git@github.com:scalastyle/scalastyle.git</connection>
+	<url>scm:git:git@github.com:scalastyle/scalastyle.git</url>
+	<developerConnection>scm:git:git@github.com:scalastyle/scalastyle.git</developerConnection>
   </scm>
   <issueManagement>
     <system>Github</system>
