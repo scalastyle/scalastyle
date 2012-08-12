@@ -1,4 +1,4 @@
-<scalastyle>
+<scalastyle commentFilter="enabled">
  <name>Scalastyle standard configuration</name>
  <check level="warning" class="org.scalastyle.file.FileTabChecker" enabled="false"></check>
  <check level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">

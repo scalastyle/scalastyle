@@ -58,9 +58,10 @@ object ScalastyleConfiguration {
   def readFromXml(file: String): ScalastyleConfiguration = fromXml(XML.loadFile(file))
 
   private[this] def fromXml(elem: Elem) = {
+    val commentFilter = elem.attribute("commentFilter").getOrElse(scala.xml.Text("enabled")).text.toLowerCase() != "disabled"
     val name = (elem \\ "name").text
 
-    ScalastyleConfiguration(name, (elem \\ "check").map(toCheck).toList)
+    ScalastyleConfiguration(name, commentFilter, (elem \\ "check").map(toCheck).toList)
   }
 
   def toCheck(node: Node): ConfigurationChecker = {
@@ -100,14 +101,17 @@ object ScalastyleConfiguration {
       <check class={c.className} level={c.level.name} enabled={if (c.enabled) "true" else "false"}>{customMessage}{parameters}</check>
     })
 
-    <scalastyle><name>{scalastyleConfiguration.name}</name>{elements}</scalastyle>
+    <scalastyle commentFilter={if (scalastyleConfiguration.commentFilter) "enabled" else "disabled"}>
+      <name>{scalastyleConfiguration.name}</name>
+      {elements}
+    </scalastyle>
   }
 
   def toXmlString(scalastyleConfiguration: ScalastyleConfiguration, width: Int, step: Int): String =
                new XmlPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
 }
 
-case class ScalastyleConfiguration(name: String, checks: List[ConfigurationChecker])
+case class ScalastyleConfiguration(name: String, commentFilter: Boolean, checks: List[ConfigurationChecker])
 
 // definition
 

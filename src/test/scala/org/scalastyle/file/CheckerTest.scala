@@ -25,6 +25,7 @@ import org.scalastyle.Message
 import org.scalastyle.WarningLevel
 import org.scalastyle.ConfigurationChecker
 import org.scalastyle.FileSpec
+import org.scalastyle.ScalastyleConfiguration
 
 trait CheckerTest {
   protected val key: String
@@ -35,9 +36,10 @@ trait CheckerTest {
   }
 
   protected def assertErrors[T <: FileSpec](expected: List[Message[T]], source: String, params: Map[String, String] = Map(),
-                                            customMessage: Option[String] = None) = {
-    assertEquals(expected.mkString("\n"), Checker.verifySource(List(ConfigurationChecker(classUnderTest.getName(), WarningLevel,
-                                            true, params, customMessage)), NullFileSpec, source).mkString("\n"))
+                                            customMessage: Option[String] = None, commentFilter: Boolean = true) = {
+    val classes =  List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params, customMessage))
+    val configuration = ScalastyleConfiguration("", commentFilter, classes)
+    assertEquals(expected.mkString("\n"), Checker.verifySource(configuration, classes, NullFileSpec, source).mkString("\n"))
   }
 
   protected def fileError(args: List[String] = List(), customMessage: Option[String] = None) =
