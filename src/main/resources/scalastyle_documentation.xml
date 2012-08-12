@@ -185,4 +185,37 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
+ 
+ <check id="while">
+ <justification>
+ while loops are deprecated if you're using a strict functional style
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.WhileChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+ 
+ <check id="var.field">
+ <justification>
+ var (mutable fields) are deprecated if you're using a strict functional style
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.VarFieldChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+ 
+ <check id="var.local">
+ <justification>
+ vars (mutable local variables) loops are deprecated if you're using a strict functional style
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.VarLocalChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
 </scalastyle-documentation>

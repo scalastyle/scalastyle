@@ -101,4 +101,7 @@
     <checker class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" id="public.methods.have.type" defaultLevel="warning"/>
     <checker class="org.scalastyle.file.NewLineAtEofChecker" id="newline.at.eof" defaultLevel="warning"/>
     <checker class="org.scalastyle.file.NoNewLineAtEofChecker" id="no.newline.at.eof" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.WhileChecker" id="while" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.VarFieldChecker" id="var.field" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.VarLocalChecker" id="var.local" defaultLevel="warning"/>
 </scalastyle-definition>
