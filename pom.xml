@@ -5,7 +5,7 @@
   <groupId>org.scalastyle</groupId>
   <artifactId>scalastyle_2.9.1</artifactId>
   <name>Scalastyle style checker for Scala</name>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <properties>
     <scala.version>2.9.1</scala.version>
     <scala.library.version>2.9.1</scala.library.version>
