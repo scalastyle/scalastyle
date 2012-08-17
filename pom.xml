@@ -97,13 +97,15 @@
                 </pluginExecution>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId>org.scala-tools</groupId>
-                    <artifactId>maven-scala-plugin</artifactId>
-                    <versionRange>[2.15.2,)</versionRange>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <versionRange>[3.1.0,)</versionRange>
                     <goals>
                       <goal>add-source</goal>
                       <goal>compile</goal>
                       <goal>testCompile</goal>
+                      <goal>doc</goal>
+                      <goal>doc-jar</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
