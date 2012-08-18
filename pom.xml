@@ -9,7 +9,7 @@
  <groupId>org.scalastyle</groupId>
   <artifactId>scalastyle_2.9.1</artifactId>
   <name>Scalastyle style checker for Scala</name>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Scalastyle style checker for Scala</description>
   <properties>
@@ -123,6 +123,9 @@
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
         <version>3.1.0</version>
+		<configuration>
+		  <recompileMode>incremental</recompileMode>
+		</configuration>
         <executions>
           <execution>
             <id>scala-compile-first</id>
