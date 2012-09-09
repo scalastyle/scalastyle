@@ -32,7 +32,7 @@ class SimplifyBooleanExpressionChecker extends ScalariformChecker {
       List(left, right) <- ast.tokens.sliding(2);
       if (left.text == "!" && isBoolean(right))
     ) yield {
-      PositionError(left.startIndex)
+      PositionError(left.offset)
     }
 
     val it2 = for (
@@ -61,8 +61,8 @@ class SimplifyBooleanExpressionChecker extends ScalariformChecker {
   case class GeneralTokensClazz(_position: Option[Int], bool: Boolean) extends BaseClazz[GeneralTokens](_position)
 
   private def localvisit(ast: Any): List[BaseClazz[AstNode]] = ast match {
-    case t: InfixExpr => List(InfixExprClazz(Some(t.firstToken.startIndex), t.infixId, localvisit(t.left), localvisit(t.right)))
-    case t: GeneralTokens => List(GeneralTokensClazz(Some(t.firstToken.startIndex), isBoolean(t)))
+    case t: InfixExpr => List(InfixExprClazz(Some(t.firstToken.offset), t.infixId, localvisit(t.left), localvisit(t.right)))
+    case t: GeneralTokens => List(GeneralTokensClazz(Some(t.firstToken.offset), isBoolean(t)))
     case t: Any => visit(t, localvisit)
   }
 

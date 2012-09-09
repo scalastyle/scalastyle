@@ -79,11 +79,11 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
     p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
   }
 
-  protected def typename(t: Type): String = t.tokens.map(_.getText).mkString
+  protected def typename(t: Type): String = t.tokens.map(_.text).mkString
 
   private def localvisit(ast: Any): ListType = ast match {
-    case t: TmplDef => List(TmplClazz(t, Some(t.name.startIndex), localvisit(t.templateBodyOption)))
-    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.startIndex), localvisit(t.localDef)))
+    case t: TmplDef => List(TmplClazz(t, Some(t.name.offset), localvisit(t.templateBodyOption)))
+    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), localvisit(t.localDef)))
     case t: Any => visit(t, localvisit)
   }
 
@@ -92,7 +92,7 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
   protected def matchFunDefOrDcl(t: BaseClazz[AstNode], fn: FunDefOrDcl => Boolean) = t match { case f: FunDefOrDclClazz => fn(f.t); case _ => false }
 
   protected def methodMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: FunDefOrDcl) =
-    t.nameToken.getText == name && paramTypesMatch(getParamTypes(t.paramClauses))
+    t.nameToken.text == name && paramTypesMatch(getParamTypes(t.paramClauses))
 
   protected def singleParameter(fn: String => Boolean)(params: List[String]) = params.size == 1 && fn(params(0))
   protected def noParameter()(params: List[String]) = params.size == 0

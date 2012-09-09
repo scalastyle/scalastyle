@@ -17,14 +17,17 @@
 package org.scalastyle
 
 import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.HiddenTokenInfo
+import _root_.scalariform.lexer.HiddenToken
 import _root_.scalariform.lexer.ScalaLexer
+import _root_.scalariform.lexer.Comment
 import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens._
 import scala.io.Source
 
 case class Line(text: String, start: Int, end: Int)
+
+case class HiddenTokenInfo(tokens: Seq[HiddenToken])
 
 case class LineColumn(line: Int, column: Int)
 
@@ -50,15 +53,19 @@ class ScalastyleChecker[T <: FileSpec] {
   }
 }
 
-case class ScalariformAst(ast: CompilationUnit, hiddenTokenInfo: HiddenTokenInfo)
+case class ScalariformAst(ast: CompilationUnit, comments: List[Comment])
 
 object Checker {
   type CheckerClass = Class[_ <: Checker[_]]
 
+  private def comments(tokens: List[Token]): List[Comment] = tokens.map(t => {
+    if (t.associatedWhitespaceAndComments == null) List() else t.associatedWhitespaceAndComments.comments
+  }).flatten
+
   def parseScalariform(source: String): Option[ScalariformAst] = {
     val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
 
-    Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), hiddenTokenInfo))
+    Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), comments(tokens)))
   }
 
   def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
@@ -70,7 +77,7 @@ object Checker {
     val scalariformAst = parseScalariform(source)
 
     val commentFilters = scalariformAst match {
-      case Some(ast) if configuration.commentFilter => CommentFilter.findCommentFilters(ast.hiddenTokenInfo, lines)
+      case Some(ast) if configuration.commentFilter => CommentFilter.findCommentFilters(ast.comments, lines)
       case _ => List[CommentFilter]()
     }
 
@@ -146,7 +153,7 @@ trait Checker[A] {
     }
   }
 
-  def charsBetweenTokens(left: Token, right: Token): Int = right.startIndex - (left.startIndex + left.length)
+  def charsBetweenTokens(left: Token, right: Token): Int = right.offset - (left.offset + left.length)
 
   def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] = {
     verify(ast).map(p => toStyleError(file, p, level, lines))

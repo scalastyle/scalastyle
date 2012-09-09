@@ -44,13 +44,16 @@ class MagicNumberChecker extends ScalariformChecker {
       f
     }
 
-    val valList = for (
+    val valList = (for (
       t <- localvisitVal(ast.immediateChildren(0));
       f <- traverseVal(t);
       g <- toOption(f)
     ) yield {
       g
-    }
+    }).map( d => d match {
+      case Expr(List(t: Expr)) => t
+      case _ => d
+    })
 
     intList.filter(t => !valList.contains(t.t)).map(t => PositionError(t.position)).toList
   }
@@ -68,6 +71,7 @@ class MagicNumberChecker extends ScalariformChecker {
 
   private def toIntegerLiteralExprElement(list: List[ExprElement]): Option[String] = {
     list match {
+      case List(Expr(List(PrefixExprElement(t), GeneralTokens(gtList)))) => toIntegerLiteral(t, toIntegerLiteralToken(gtList))
       case List(PrefixExprElement(t), GeneralTokens(gtList)) => toIntegerLiteral(t, toIntegerLiteralToken(gtList))
       case List(GeneralTokens(gtList)) => toIntegerLiteralToken(gtList)
       case _ => None
@@ -90,7 +94,8 @@ class MagicNumberChecker extends ScalariformChecker {
   }
 
   private def localvisit(ast: Any): List[ExprVisit] = ast match {
-    case t: Expr => List(ExprVisit(t, t.firstToken.startIndex, localvisit(t.contents)))
+    case Expr(List(t: Expr)) => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
+    case t: Expr => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
     case t: Any => visit(t, localvisit)
   }
 

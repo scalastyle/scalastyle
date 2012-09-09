@@ -22,7 +22,6 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import _root_.scalariform.lexer.HiddenTokenInfo
 import _root_.scalariform.lexer.Tokens._
 
 class CommentFilterTest extends AssertionsForJUnit {
@@ -31,9 +30,9 @@ class CommentFilterTest extends AssertionsForJUnit {
 // scalastyle:off
       // another comment
 // scalastyle:on"""
-    val hiddenTokenInfo = Checker.parseScalariform(text).get.hiddenTokenInfo
+    val comments = Checker.parseScalariform(text).get.comments
 
-    val tokens = CommentFilter.findScalastyleComments(hiddenTokenInfo)
+    val tokens = CommentFilter.findScalastyleComments(comments)
 
     assertEquals(2, tokens.size)
   }
@@ -81,7 +80,7 @@ class CommentFilterTest extends AssertionsForJUnit {
   }
 
   private[this] def assertCommentFilter(expected: List[CommentFilter], text: String) = {
-    val hiddenTokenInfo = Checker.parseScalariform(text).get.hiddenTokenInfo
+    val hiddenTokenInfo = Checker.parseScalariform(text).get.comments
     val lines = Checker.parseLines(text)
     assertEquals(expected, CommentFilter.findCommentFilters(hiddenTokenInfo, lines))
   }

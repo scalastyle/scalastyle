@@ -29,7 +29,7 @@ abstract class VarChecker extends ScalariformChecker {
     val it = for (
       f <- localvisit(false)(ast.immediateChildren(0))
     ) yield {
-      PositionError(f.firstToken.startIndex)
+      PositionError(f.firstToken.offset)
     }
 
     it.toList

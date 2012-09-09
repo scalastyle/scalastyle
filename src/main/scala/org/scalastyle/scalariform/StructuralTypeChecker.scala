@@ -42,7 +42,7 @@ class StructuralTypeChecker extends ScalariformChecker {
   }
 
   private def localvisit(ast: Any): List[Position] = ast match {
-    case t: Refinement => List(Position(Some(t.lbrace.startIndex)))
+    case t: Refinement => List(Position(Some(t.lbrace.offset)))
     case t: Any => visit(t, localvisit)
   }
 }

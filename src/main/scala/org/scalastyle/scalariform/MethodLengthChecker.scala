@@ -50,13 +50,13 @@ class MethodLengthChecker extends CombinedChecker {
   private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.map(traverse(_)).flatten
 
   private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int) = {
-    val head = lines.toLineColumn(t.t.defToken.startIndex)
-    val tail = lines.toLineColumn(t.t.tokens.last.startIndex)
+    val head = lines.toLineColumn(t.t.defToken.offset)
+    val tail = lines.toLineColumn(t.t.tokens.last.offset)
     tail.get.line - head.get.line > maxLines
   }
 
   private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
-    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.startIndex), localvisit(t.localDef)))
+    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), localvisit(t.localDef)))
     case t: Any => visit(t, localvisit)
   }
 }

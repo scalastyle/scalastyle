@@ -16,8 +16,8 @@
 
 package org.scalastyle
 
-import _root_.scalariform.lexer.HiddenTokenInfo
 import _root_.scalariform.lexer.Tokens._
+import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Comment
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.HashMap
@@ -29,21 +29,19 @@ object CommentFilter {
 
   private[this] val MatchRegex = """//\s*scalastyle:(on|off)(.*)""".r
 
-  def isComment(s: String): Boolean = MatchRegex.pattern.matcher(s.trim).matches
+  private[this] def isComment(s: String): Boolean = MatchRegex.pattern.matcher(s.trim).matches
 
-  def findScalastyleComments(hiddenTokenInfo: HiddenTokenInfo): Iterable[Comment] = {
-    hiddenTokenInfo.allHiddenTokens.map(hiddenTokens => hiddenTokens.comments).flatten.filter(c => isComment(c.getText))
+  def findScalastyleComments(tokens: List[Comment]): Iterable[Comment] = {
+    tokens.filter(c => isComment(c.text))
   }
 
-  def findCommentFilters(hiddenTokenInfo: HiddenTokenInfo, lines: Lines): List[CommentFilter] = {
-    val comments = findScalastyleComments(hiddenTokenInfo)
-
+  def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
     val it = comments.map(c => {
-      c.getText.trim match {
+      c.text.trim match {
         case MatchRegex(onoff, idString) => {
           val ids = idString.trim.split("\\s+")
           val off = onoff == "off"
-          ids.map(id => CommentInter(if (id != "") Some(id) else None, c.token.startIndex, off)).toList
+          ids.map(id => CommentInter(if (id != "") Some(id) else None, c.token.offset, off)).toList
         }
         case _ => List() // shouldn't get here
       }

@@ -37,7 +37,7 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
       f <- traverse(t);
       if (matches(f, p))
     ) yield {
-      PositionError(f.funDefOrDcl.nameToken.startIndex, describeParameters(p))
+      PositionError(f.funDefOrDcl.nameToken.offset, describeParameters(p))
     }
 
     it.toList

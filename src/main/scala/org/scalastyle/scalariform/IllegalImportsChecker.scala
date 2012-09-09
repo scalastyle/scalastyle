@@ -52,7 +52,7 @@ class IllegalImportsChecker extends ScalariformChecker {
       state match {
         case ExpectingImport => if (token.tokenType == IMPORT) {
           state = InImport
-          position = token.startIndex
+          position = token.offset
         }
         case InImport => {
           if (token.tokenType == NEWLINE || token.tokenType == NEWLINES || token.tokenType == SEMI) {

@@ -29,7 +29,7 @@ class WhileChecker extends ScalariformChecker {
       t <- ast.tokens
       if (t.tokenType == WHILE)
     ) yield {
-      PositionError(t.startIndex)
+      PositionError(t.offset)
     }
 
     it.toList

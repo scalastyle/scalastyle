@@ -30,7 +30,7 @@ class SpacesAfterPlusChecker extends ScalariformChecker {
       List(left, middle, right) <- ast.tokens.sliding(3);
       if (middle.tokenType == PLUS && left.tokenType != LBRACKET && right.tokenType != NEWLINE && charsBetweenTokens(middle, right) == 0)
     ) yield {
-      PositionError(middle.startIndex)
+      PositionError(middle.offset)
     }
 
     it.toList

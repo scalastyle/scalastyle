@@ -7,19 +7,20 @@
     <version>7</version>
   </parent>
  <groupId>org.scalastyle</groupId>
-  <artifactId>scalastyle_2.9.1</artifactId>
+  <artifactId>scalastyle_2.9.2</artifactId>
   <name>Scalastyle style checker for Scala</name>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Scalastyle style checker for Scala</description>
   <properties>
-    <scala.version>2.9.1</scala.version>
-    <scala.library.version>2.9.1</scala.library.version>
+    <scala.version>2.9.2</scala.version>
+    <scala.library.version>2.9.2</scala.library.version>
+    <scopt.id>2.9.2</scopt.id>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <scalariform.version>0.1.1</scalariform.version>
+    <scalariform.version>0.1.2</scalariform.version>
     <scalatest.version>1.6.1</scalatest.version>
     <junit.version>4.10</junit.version>
-    <scopt.version>2.0.0</scopt.version>
+    <scopt.version>2.1.0</scopt.version>
   </properties>
 
   <dependencies>
@@ -42,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>com.github.scopt</groupId>
-      <artifactId>scopt_${scala.version}</artifactId>
+      <artifactId>scopt_${scopt.id}</artifactId>
       <version>${scopt.version}</version>
     </dependency>
   </dependencies>
@@ -89,6 +90,19 @@
                     <versionRange>[2.0,)</versionRange>
                     <goals>
                       <goal>copy-dependencies</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <versionRange>[1.0,)</versionRange>
+                    <goals>
+                      <goal>enforce</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>

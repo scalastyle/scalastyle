@@ -30,7 +30,7 @@ class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
       List(left, right) <- ast.tokens.sliding(2);
       if (right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
     ) yield {
-      PositionError(left.startIndex)
+      PositionError(left.offset)
     }
 
     it.toList
@@ -45,7 +45,7 @@ class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
     ) yield {
-      PositionError(left.startIndex)
+      PositionError(left.offset)
     }
 
     it.toList

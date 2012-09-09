@@ -30,7 +30,7 @@ class NullChecker extends ScalariformChecker {
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == NULL)
     ) yield {
-      PositionError(left.startIndex)
+      PositionError(left.offset)
     }
 
     it.toList

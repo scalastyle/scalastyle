@@ -30,7 +30,7 @@ class UppercaseLChecker extends ScalariformChecker {
       t <- ast.tokens;
       if (t.tokenType == INTEGER_LITERAL && t.text.endsWith("l"))
     ) yield {
-      PositionError(t.startIndex)
+      PositionError(t.offset)
     }
 
     it.toList

@@ -33,9 +33,9 @@ class ClassNamesChecker extends ScalariformChecker {
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == CLASS && (regex findAllIn (right.getText)).size == 0)
+      if (left.tokenType == CLASS && (regex findAllIn (right.text)).size == 0)
     ) yield {
-      PositionError(right.startIndex, List(regexString))
+      PositionError(right.offset, List(regexString))
     }
 
     it.toList
@@ -52,9 +52,9 @@ class ObjectNamesChecker extends ScalariformChecker {
 
     val it = for (
       List(left, middle, right) <- ast.tokens.sliding(3);
-      if (left.tokenType != PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
+      if (left.tokenType != PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.text)).size == 0)
     ) yield {
-      PositionError(right.startIndex, List(regexString))
+      PositionError(right.offset, List(regexString))
     }
 
     it.toList
@@ -72,9 +72,9 @@ class PackageObjectNamesChecker extends ScalariformChecker {
 
     val it = for (
       List(left, middle, right) <- ast.tokens.sliding(3);
-      if (left.tokenType == PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.getText)).size == 0)
+      if (left.tokenType == PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.text)).size == 0)
     ) yield {
-      PositionError(right.startIndex, List(regexString))
+      PositionError(right.offset, List(regexString))
     }
 
     it.toList
@@ -91,9 +91,9 @@ class MethodNamesChecker extends ScalariformChecker {
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == DEF && (regex findAllIn (right.getText)).size == 0)
+      if (left.tokenType == DEF && (regex findAllIn (right.text)).size == 0)
     ) yield {
-      PositionError(right.startIndex, List(regexString))
+      PositionError(right.offset, List(regexString))
     }
 
     it.toList
