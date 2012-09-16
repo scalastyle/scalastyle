@@ -16,12 +16,25 @@
 
 package org.scalastyle
 
+import scala.xml.XML
+import scala.xml.Elem
+
+object Output {
+  // messageHelper passed in here to work around a scala compiler bug?
+  def findMessage(messageHelper: MessageHelper, clazz: Class[_], key: String, args: List[String], customMessage: Option[String]): String = {
+    customMessage match {
+      case Some(s) => s
+      case None => messageHelper.message(clazz.getClassLoader(), key, args)
+    }
+  }
+}
+
 trait Output[T <: FileSpec] {
   private var errors = 0
   private var warnings = 0
   private var files = 0
 
-  def output(messages: List[Message[T]]): OutputResult = {
+  def output(messages: Seq[Message[T]]): OutputResult = {
     messages.foreach(m => { eachMessage(m); message(m) })
     OutputResult(files, errors, warnings)
   }
@@ -37,15 +50,6 @@ trait Output[T <: FileSpec] {
     }
     case StyleException(file, clazz, message, stacktrace, line, column) => errors += 1
   }
-
-  // messageHelper passed in here to work around a scala compiler bug?
-  def findMessage(messageHelper: MessageHelper, clazz: Class[_], key: String, args: List[String], customMessage: Option[String]): String = {
-    customMessage match {
-      case Some(s) => s
-      case None => messageHelper.message(clazz.getClassLoader(), key, args)
-    }
-  }
-
   def message(m: Message[T]): Unit
 }
 
@@ -62,7 +66,7 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
     case EndFile(file) => if (verbose) println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column, customMessage) => {
       println(messageHelper.text(level.name) + print("file", file.name) +
-          print("message", findMessage(messageHelper, clazz, key, args, customMessage)) +
+          print("message", Output.findMessage(messageHelper, clazz, key, args, customMessage)) +
           print("line", line) + print("column", column))
     }
     case StyleException(file, clazz, message, stacktrace, line, column) => {
@@ -73,4 +77,48 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
 
   private def print(s: String, no: Option[Int]): String = if (no.isDefined) print(s, "" + no.get) else ""
   private def print(s: String, value: String): String = " " + s + "=" + value
+}
+
+object XmlOutput {
+  def save[T <: FileSpec](target: String, messages: Seq[Message[T]]) {
+    val width = 1000;
+    val step = 1;
+    val messageHelper = new MessageHelper(this.getClass().getClassLoader())
+
+    val s = new XmlPrettyPrinter(width, step).format(toCheckstyleFormat(messageHelper, messages))
+    // scalastyle:off regex
+    printToFile(new java.io.File(target)){ _.println(s) }
+    // scalastyle:on regex
+  }
+
+  def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
+    val p = new java.io.PrintWriter(f)
+    try { op(p) } finally { p.close() }
+  }
+  case class Alert(filename: String, severity: String, message: String, source: Option[Class[_]], line: Option[Int], column: Option[Int])
+
+  private[this] def toCheckstyleFormat[T <: FileSpec](messageHelper: MessageHelper, messages: Seq[Message[T]]): Elem = {
+    <checkstyle version="5.0">{
+      messages.collect {
+        case StyleError(file, clazz, key, level, args, line, column, customMessage) =>
+          Alert(file.name, messageHelper.text(level.name), Output.findMessage(messageHelper, clazz, key, args, customMessage), Some(clazz), line, column)
+        case StyleException(file, clazz, message, stacktrace, line, column) =>
+          Alert(file.name, "error", message, clazz, line, column)
+      }.groupBy{_.filename}.map { case (filename, alerts) =>
+        <file name={filename}>{
+          alerts.map {
+            case Alert(filename, severity, message, source, line, column) => {
+              val s = source.collect { case x: Class[_] => x.getName() }
+              <error severity={severity} message={message}/> % attr("source", s) % attr("line", line) % attr("column", column)
+            }
+          }
+        }</file>
+      }
+    }</checkstyle>
+  }
+
+  private[this] def attr(name: String, value: Option[Any]): xml.MetaData = value match {
+    case Some(x) => xml.Attribute("", name, x.toString, xml.Null)
+    case None => xml.Null
+  }
 }

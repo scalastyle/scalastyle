@@ -22,15 +22,16 @@ import java.util.Date;
 class Main
 case class MainConfig(config: Option[String], directories: List[String],
                         verbose: Boolean = false, quiet: Boolean = false,
-                        warningsaserrors: Boolean = false)
+                        warningsaserrors: Boolean = false, xmlFile: Option[String] = None)
 
 object Main {
   def main(args: Array[String]) {
-    val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", "0.1.0") {
+    val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", "0.2.0") {
       def options = Seq(
         opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },
         booleanOpt("v", "verbose", "verbose") { (v: Boolean, c: MainConfig) => c.copy(verbose = v) },
         booleanOpt("q", "quiet", "quiet") { (v: Boolean, c: MainConfig) => c.copy(quiet = v) },
+        opt("x", "xml", "XML output (optional)") { (v: String, c: MainConfig) => c.copy(xmlFile = Some(v)) },
         booleanOpt("w", "warnings", "fail if there are warnings") { (v: Boolean, c: MainConfig) => c.copy(warningsaserrors = v) },
         arglist("<directory>", "directories / files") { (v: String, c: MainConfig) => c.copy(directories = v :: c.directories) })
     }
@@ -61,6 +62,11 @@ object Main {
     // scalastyle:off regex
 
     val outputResult = new TextOutput().output(messages)
+    config.xmlFile match {
+      case Some(x) => XmlOutput.save(x, messages)
+      case None =>
+    }
+
     if (!config.quiet) println("Processed " + outputResult.files + " file(s)")
     if (!config.quiet) println("Found " + outputResult.errors + " errors")
     if (!config.quiet) println("Found " + outputResult.warnings + " warnings")
