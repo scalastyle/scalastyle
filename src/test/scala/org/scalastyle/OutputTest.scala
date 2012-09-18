@@ -43,7 +43,8 @@ class OutputTest extends AssertionsForJUnit {
 
     XmlOutput.save("target/test/OutputTest.xml", messages);
 
-    val lines = scala.io.Source.fromFile(new java.io.File("target/test/OutputTest.xml")).getLines().mkString("\r\n")
+    val lineSep = System.getProperty("line.separator");
+    val lines = scala.io.Source.fromFile(new java.io.File("target/test/OutputTest.xml")).getLines().mkString(lineSep)
 
     val expected = """<checkstyle version="5.0">
  <file name="bar">
