@@ -18,7 +18,7 @@
     <scopt.id>2.9.2</scopt.id>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scalariform.version>0.1.2</scalariform.version>
-    <scalatest.version>1.6.1</scalatest.version>
+    <scalatest.version>2.0.M4</scalatest.version>
     <junit.version>4.10</junit.version>
     <scopt.version>2.1.0</scopt.version>
   </properties>
