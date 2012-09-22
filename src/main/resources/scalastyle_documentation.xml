@@ -218,4 +218,16 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
+
+ <check id="if.redundant">
+ <justification>
+ If expressions with boolean constants in both branches can be eliminated without affecting readability. Prefer simply `cond` to `if (cond) true else false` and `!cond` to `if (cond) false else true`. 
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.RedundantIfChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>

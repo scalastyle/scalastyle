@@ -104,4 +104,5 @@
     <checker class="org.scalastyle.scalariform.WhileChecker" id="while" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.VarFieldChecker" id="var.field" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.VarLocalChecker" id="var.local" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.RedundantIfChecker" id="if.redundant" defaultLevel="warning"/>
 </scalastyle-definition>
