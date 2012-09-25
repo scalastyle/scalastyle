@@ -105,4 +105,9 @@
     <checker class="org.scalastyle.scalariform.VarFieldChecker" id="var.field" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.VarLocalChecker" id="var.local" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.RedundantIfChecker" id="if.redundant" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.TokenChecker" id="token" defaultLevel="warning" >
+        <parameters>
+            <parameter name="regex" type="string" default="^$" />
+        </parameters>
+    </checker>
 </scalastyle-definition>
