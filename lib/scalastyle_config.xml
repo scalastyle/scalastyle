@@ -118,4 +118,9 @@
  <check level="warning" class="org.scalastyle.scalariform.VarFieldChecker" enabled="false"></check>
  <check level="warning" class="org.scalastyle.scalariform.VarLocalChecker" enabled="false"></check>
  <check level="warning" class="org.scalastyle.scalariform.RedundantIfChecker" enabled="false"></check>
+ <check level="warning" class="org.scalastyle.scalariform.TokenChecker" enabled="false">
+  <parameters>
+   <parameter name="regex"><![CDATA[println]]></parameter>
+  </parameters>
+ </check>
 </scalastyle>
