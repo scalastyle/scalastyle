@@ -230,4 +230,17 @@ is considered to be a magic number.
  </example-configuration>
  </check>
 
+ <check id="token">
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[ai]sInstanceOf$</parameter>
+      </parameters>
+      <customMessage>Avoid casting.</customMessage>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>
