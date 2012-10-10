@@ -80,21 +80,30 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
 }
 
 object XmlOutput {
-  def save[T <: FileSpec](target: String, messages: Seq[Message[T]]) {
+  def save[T <: FileSpec](target: String, messages: Seq[Message[T]]): Unit = save(new java.io.File(target), messages)
+
+  def save[T <: FileSpec](target: java.io.File, messages: Seq[Message[T]]) {
     val width = 1000;
     val step = 1;
     val messageHelper = new MessageHelper(this.getClass().getClassLoader())
 
     val s = new XmlPrettyPrinter(width, step).format(toCheckstyleFormat(messageHelper, messages))
     // scalastyle:off regex
-    printToFile(new java.io.File(target)){ _.println(s) }
+    printToFile(target){ _.println(s) }
     // scalastyle:on regex
   }
 
-  def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
+  private def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
     val p = new java.io.PrintWriter(f)
-    try { op(p) } finally { p.close() }
+    try {
+      op(p)
+    } catch {
+      case e: Throwable => throw e
+    } finally {
+      p.close()
+    }
   }
+
   case class Alert(filename: String, severity: String, message: String, source: Option[Class[_]], line: Option[Int], column: Option[Int])
 
   private[this] def toCheckstyleFormat[T <: FileSpec](messageHelper: MessageHelper, messages: Seq[Message[T]]): Elem = {

@@ -60,4 +60,27 @@ class OutputTest extends AssertionsForJUnit {
 
     assertEquals(expected, lines);
   }
+
+  @Test def testXmlOutputCannotCreateFile(): Unit = {
+    val fooSpec = new FileSpec { def name: String = "foo" }
+    val barSpec = new FileSpec { def name: String = "bar" }
+
+    val messages = List(
+        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
+        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
+        StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
+        StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
+        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
+    )
+
+    new java.io.File("target").mkdir();
+
+    try {
+        XmlOutput.save("target/does.not.exist/OutputTest.xml", messages);
+    } catch {
+      case e: java.io.FileNotFoundException => // OK
+      case _ => fail("expected FileNotFoundException")
+    }
+
+  }
 }
