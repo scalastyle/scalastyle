@@ -243,4 +243,15 @@ is considered to be a magic number.
  </example-configuration>
  </check>
 
+ <check id="deprecated.java">
+ <justification>
+ You should be using the Scala @deprecated instead.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>

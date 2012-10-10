@@ -110,4 +110,5 @@
             <parameter name="regex" type="string" default="^$" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.DeprecatedJavaChecker" id="deprecated.java" defaultLevel="warning"/>
 </scalastyle-definition>
