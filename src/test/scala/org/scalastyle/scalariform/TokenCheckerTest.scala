@@ -20,6 +20,8 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
 
+// scalastyle:off magic.number
+
 class TokenCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val classUnderTest = classOf[TokenChecker]
   protected val key = "token"

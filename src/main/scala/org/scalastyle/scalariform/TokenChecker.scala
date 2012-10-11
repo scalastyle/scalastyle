@@ -30,7 +30,7 @@ class TokenChecker extends CombinedChecker {
   import VisitorHelper._
   val errorKey = "token"
   private val DefaultRegEx = "^$"
-    
+
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val regExpStr = getString("regex", DefaultRegEx)
     val regExp = new Regex(regExpStr)
