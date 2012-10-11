@@ -27,13 +27,18 @@ import java.io.FileOutputStream;
 class FileEncodingTest extends AssertionsForJUnit {
   val TestString = "foobaré¨à$éèè¨è¨"
 
+  // The default encoding within Eclipse is UTF-8
+  // however, the default encoding within maven varies depending upon operating system (windows => windows-1252)
+  // so all of the files get read correctly, but the UTF16 file doesn't return the correct characters.
+  // so this test MUST BE RUN with a -Dfile.encoding=UTF-8.
+  // so we can't test that the strings are returned correctly
   @Test def testFileEncodings() {
     assertEquals(TestString, Checker.readFile(createFile("UTF16")))
     assertEquals(TestString, Checker.readFile(createFile("UTF8")))
-    Checker.readFile(createFile("ISO-8859-1")) // can't tell the difference between UTF-8 and ISO-8859-1
-    Checker.readFile(createFile("windows-1252")) // can't tell the difference between UTF-8 and windows-1252
+    Checker.readFile(createFile("ISO-8859-1")) // can't tell difference between UTF-8 & ISO-8859-1
+    Checker.readFile(createFile("windows-1252")) // can't tell difference between UTF-8 & windows-1252
     assertEquals(TestString, Checker.readFile(createFile("UTF-16BE")))
-    Checker.readFile(createFile("UTF-16LE")) // can't tell the difference between UTF-16 and UTF-16LE
+    Checker.readFile(createFile("UTF-16LE")) // can't tell difference between LE & BE
     Checker.readFile(createFile("GBK")) // gets read by ISO-8859-1
   }
 

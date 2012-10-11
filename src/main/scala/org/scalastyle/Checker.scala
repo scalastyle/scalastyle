@@ -25,6 +25,7 @@ import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens._
 import scala.io.Source
 import java.nio.charset.MalformedInputException
+import scala.io.Codec
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -106,7 +107,7 @@ object Checker {
   }
 
   def readFile(file: String): String = {
-    def readFileWithEncoding(file: String, encodings: List[Option[String]]): Option[String] = {
+    def readFileWithEncoding(file: String, encodings: List[Option[String]])(implicit codec: Codec): Option[String] = {
       if (encodings.size == 0) {
         None
       } else {
@@ -119,7 +120,7 @@ object Checker {
           Some(source)
         } catch {
           case e: MalformedInputException => {
-//            printxxln("caught MalFormedInputException with " + (if (encoding.isDefined) encoding.get else "default") + " encoding")
+            // printxxln("caught MalFormedInputException with " + (if (encoding.isDefined) encoding.get else "default (" + codec.charSet + ")") + " encoding")
             readFileWithEncoding(file, encodings.tail)
           }
         }
@@ -128,7 +129,7 @@ object Checker {
 
     // as far as I can tell, most files should be readable with ISO-8859-1 (though obviously it won't
     // return the correct characters), so I don't know under what circumstances we can get
-    // the RuntimeException here.
+    // the MalformedInputException (and therefore) RuntimeException here.
     readFileWithEncoding(file, List(None, Some("UTF8"), Some("UTF16"), Some("ISO-8859-1"))) match {
       case None => throw new RuntimeException("Could not read encoded file")
       case Some(source) => source
