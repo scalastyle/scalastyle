@@ -123,4 +123,5 @@
    <parameter name="regex"><![CDATA[println]]></parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="true"></check>
 </scalastyle>
