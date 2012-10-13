@@ -21,7 +21,6 @@ import scalariform.parser.CompilationUnit
 import _root_.scalariform.lexer.Tokens._
 import org.scalastyle.ScalariformChecker
 import org.scalastyle._
-import org.scalastyle.FileSpec
 
 class ClassNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"

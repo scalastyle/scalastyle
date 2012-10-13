@@ -99,25 +99,28 @@ object Checker {
 
   def verifyFile[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T): List[Message[T]] = {
     try {
-      val s = readFile(file.name)
+      val s = file match {
+        case fs: RealFileSpec => readFile(fs.name, fs.encoding)
+        case ss: SourceSpec => ss.contents
+      }
       verifySource(configuration, classes, file, s)
     } catch {
       case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTraceString))
     }
   }
 
-  def readFile(file: String): String = {
-    def readFileWithEncoding(file: String, encodings: List[Option[String]])(implicit codec: Codec): Option[String] = {
+  /**
+   * if we pass an encoding in, then we only try that encoding.
+   * If there is no encoding passed, we try the default, then UTF-8, then UTF-16, then ISO-8859-1
+   */
+  def readFile(file: String, encoding: Option[String])(implicit codec: Codec): String = {
+    def readFileWithEncoding(file: String, encodings: List[String]): Option[String] = {
       if (encodings.size == 0) {
         None
       } else {
         val encoding = encodings(0)
         try {
-          val source = encoding match {
-            case None => Source.fromFile(file).mkString
-            case Some(enc) => Source.fromFile(file)(enc).mkString
-          }
-          Some(source)
+          Some(Source.fromFile(file)(encoding).mkString)
         } catch {
           case e: MalformedInputException => {
             // printxxln("caught MalFormedInputException with " + (if (encoding.isDefined) encoding.get else "default (" + codec.charSet + ")") + " encoding")
@@ -127,11 +130,16 @@ object Checker {
       }
     }
 
+    val encodings = encoding match {
+      case Some(x) => List(x)
+      case None => List(codec.charSet.toString(), "UTF-8", "UTF-16", "ISO-8859-1")
+    }
+
     // as far as I can tell, most files should be readable with ISO-8859-1 (though obviously it won't
     // return the correct characters), so I don't know under what circumstances we can get
     // the MalformedInputException (and therefore) RuntimeException here.
-    readFileWithEncoding(file, List(None, Some("UTF8"), Some("UTF16"), Some("ISO-8859-1"))) match {
-      case None => throw new RuntimeException("Could not read encoded file")
+    readFileWithEncoding(file, encodings) match {
+      case None => throw new RuntimeException("Could not read file, caught MalformedInputException")
       case Some(source) => source
     }
   }

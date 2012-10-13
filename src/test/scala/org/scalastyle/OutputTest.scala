@@ -41,12 +41,13 @@ class OutputTest extends AssertionsForJUnit {
     new java.io.File("target").mkdir();
     new java.io.File("target/test").mkdir();
 
-    XmlOutput.save("target/test/OutputTest.xml", messages);
+    XmlOutput.save("target/test/OutputTest.xml", "UTF-8", messages);
 
     val lineSep = System.getProperty("line.separator");
     val lines = scala.io.Source.fromFile(new java.io.File("target/test/OutputTest.xml")).getLines().mkString(lineSep)
 
-    val expected = """<checkstyle version="5.0">
+    val expected = """<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
  <file name="bar">
   <error severity="warning" message="barbar.message" source="org.scalastyle.file.FileLengthChecker"></error>
   <error line="5" severity="error" message="bazbaz" source="org.scalastyle.file.FileLengthChecker" column="6"></error>
@@ -76,7 +77,7 @@ class OutputTest extends AssertionsForJUnit {
     new java.io.File("target").mkdir();
 
     try {
-        XmlOutput.save("target/does.not.exist/OutputTest.xml", messages);
+        XmlOutput.save("target/does.not.exist/OutputTest.xml", "UTF-8", messages);
     } catch {
       case e: java.io.FileNotFoundException => // OK
       case _ => fail("expected FileNotFoundException")

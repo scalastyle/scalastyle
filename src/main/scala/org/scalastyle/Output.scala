@@ -80,21 +80,22 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
 }
 
 object XmlOutput {
-  def save[T <: FileSpec](target: String, messages: Seq[Message[T]]): Unit = save(new java.io.File(target), messages)
+  def save[T <: FileSpec](target: String, encoding: String, messages: Seq[Message[T]]): Unit = save(new java.io.File(target), encoding, messages)
 
-  def save[T <: FileSpec](target: java.io.File, messages: Seq[Message[T]]) {
+  def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Seq[Message[T]]) {
     val width = 1000;
     val step = 1;
     val messageHelper = new MessageHelper(this.getClass().getClassLoader())
 
+    val decl = """<?xml version="1.0" encoding="""" + encoding + """"?>"""
     val s = new XmlPrettyPrinter(width, step).format(toCheckstyleFormat(messageHelper, messages))
     // scalastyle:off regex
-    printToFile(target){ _.println(s) }
+    printToFile(target, encoding){ pw => pw.println(decl); pw.println(s) }
     // scalastyle:on regex
   }
 
-  private def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
-    val p = new java.io.PrintWriter(f)
+  private def printToFile(f: java.io.File, encoding: String)(op: java.io.PrintWriter => Unit) {
+    val p = new java.io.PrintWriter(f, encoding)
     try {
       op(p)
     } catch {

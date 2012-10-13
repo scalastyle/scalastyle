@@ -21,7 +21,7 @@ import scala.xml._
 
 class Directory
 
-class DirectoryFileSpec(val name: String, val file: java.io.File) extends FileSpec {
+class DirectoryFileSpec(name: String, encoding: Option[String], val file: java.io.File) extends RealFileSpec(name, encoding) {
   override def toString: String = file.getAbsolutePath()
 }
 
@@ -30,29 +30,16 @@ object Directory {
     def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
   }
 
-  def getFiles(files: File*): List[FileSpec] = {
+  def getFiles(encoding: Option[String], files: File*): List[FileSpec] = {
     files.map(f => {
       if (f.isDirectory) {
-        getFiles(f.listFiles: _*)
+        getFiles(encoding, f.listFiles: _*)
       } else if (scalaFileFilter.accept(f)) {
-        List(new DirectoryFileSpec(f.getAbsolutePath(), f.getAbsoluteFile()))
+        List(new DirectoryFileSpec(f.getAbsolutePath(), encoding, f.getAbsoluteFile()))
       } else {
         List()
       }
     }).flatten.toList
-  }
-
-  def main(args: Array[String]): Unit = {
-    class Foo(bar: String, bar2: Object) {
-    }
-
-    toXml(new Foo("string", "string").getClass)
-  }
-
-  def toXml(c: Class[_]) {
-    for (field <- this.getClass.getDeclaredFields)
-      "field name=" + field.getName + " tpe=" + field.getType.toString() + this.getClass.getMethods.find(_.getName() == field.getName).get.invoke(this)
-
   }
 }
 

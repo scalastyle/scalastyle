@@ -25,6 +25,10 @@ trait FileSpec {
   def name: String
 }
 
+class RealFileSpec(val name: String, val encoding: Option[String]) extends FileSpec
+
+class SourceSpec(val name: String, val contents: String) extends FileSpec
+
 // for the methods in this class, if a key does not exist
 // we return the key so something always appears
 class MessageHelper(classLoader: ClassLoader) {

@@ -33,13 +33,13 @@ class FileEncodingTest extends AssertionsForJUnit {
   // so this test MUST BE RUN with a -Dfile.encoding=UTF-8.
   // so we can't test that the strings are returned correctly
   @Test def testFileEncodings() {
-    assertEquals(TestString, Checker.readFile(createFile("UTF16")))
-    assertEquals(TestString, Checker.readFile(createFile("UTF8")))
-    Checker.readFile(createFile("ISO-8859-1")) // can't tell difference between UTF-8 & ISO-8859-1
-    Checker.readFile(createFile("windows-1252")) // can't tell difference between UTF-8 & windows-1252
-    assertEquals(TestString, Checker.readFile(createFile("UTF-16BE")))
-    Checker.readFile(createFile("UTF-16LE")) // can't tell difference between LE & BE
-    Checker.readFile(createFile("GBK")) // gets read by ISO-8859-1
+    assertEquals(TestString, Checker.readFile(createFile("UTF16"), None))
+    assertEquals(TestString, Checker.readFile(createFile("UTF8"), None))
+    Checker.readFile(createFile("ISO-8859-1"), None) // can't tell difference between UTF-8 & ISO-8859-1
+    Checker.readFile(createFile("windows-1252"), None) // can't tell difference between UTF-8 & windows-1252
+    assertEquals(TestString, Checker.readFile(createFile("UTF-16BE"), None))
+    Checker.readFile(createFile("UTF-16LE"), None) // can't tell difference between LE & BE
+    Checker.readFile(createFile("GBK"), None) // gets read by ISO-8859-1
   }
 
   private def createFile(encoding: String) = {

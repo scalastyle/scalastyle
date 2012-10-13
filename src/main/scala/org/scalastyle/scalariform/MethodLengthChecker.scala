@@ -21,7 +21,6 @@ import scalariform.parser.CompilationUnit
 import _root_.scalariform.lexer.Tokens._
 import org.scalastyle.ScalariformChecker
 import org.scalastyle._
-import org.scalastyle.FileSpec
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.parser.FunDefOrDcl
 

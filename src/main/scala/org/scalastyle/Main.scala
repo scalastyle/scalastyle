@@ -18,11 +18,13 @@ package org.scalastyle
 
 import java.io.File;
 import java.util.Date;
+import scala.io.Codec;
 
 class Main
 case class MainConfig(config: Option[String], directories: List[String],
                         verbose: Boolean = false, quiet: Boolean = false,
-                        warningsaserrors: Boolean = false, xmlFile: Option[String] = None)
+                        warningsaserrors: Boolean = false, xmlFile: Option[String] = None,
+                        xmlEncoding: Option[String] = None, inputEncoding: Option[String] = None)
 
 object Main {
   def main(args: Array[String]) {
@@ -31,7 +33,9 @@ object Main {
         opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },
         booleanOpt("v", "verbose", "verbose") { (v: Boolean, c: MainConfig) => c.copy(verbose = v) },
         booleanOpt("q", "quiet", "quiet") { (v: Boolean, c: MainConfig) => c.copy(quiet = v) },
-        opt("x", "xml", "XML output (optional)") { (v: String, c: MainConfig) => c.copy(xmlFile = Some(v)) },
+        opt("xmlOutput", "XML output (optional)") { (v: String, c: MainConfig) => c.copy(xmlFile = Some(v)) },
+        opt("xmlEncoding", "XML output encoding (optional)") { (v: String, c: MainConfig) => c.copy(xmlEncoding = Some(v)) },
+        opt("inputEncoding", "Source file encoding (input) (optional)") { (v: String, c: MainConfig) => c.copy(inputEncoding = Some(v)) },
         booleanOpt("w", "warnings", "fail if there are warnings") { (v: Boolean, c: MainConfig) => c.copy(warningsaserrors = v) },
         arglist("<directory>", "directories / files") { (v: String, c: MainConfig) => c.copy(directories = v :: c.directories) })
     }
@@ -54,16 +58,19 @@ object Main {
 
   private[this] def now(): Long = new Date().getTime()
 
-  private[this] def execute(config: MainConfig): Boolean = {
+  private[this] def execute(config: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(config.config.get)
-    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.directories.map(s => new File(s)): _*))
+    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.inputEncoding, config.directories.map(new File(_)): _*))
 
     // scalastyle:off regex
 
     val outputResult = new TextOutput().output(messages)
     config.xmlFile match {
-      case Some(x) => XmlOutput.save(x, messages)
+      case Some(x) => {
+        val encoding = config.xmlEncoding.getOrElse(codec.charSet).toString
+        XmlOutput.save(x, encoding, messages)
+      }
       case None =>
     }
 

@@ -190,6 +190,12 @@
           <arguments>
             <argument>--config</argument>
             <argument>lib/scalastyle_config.xml</argument>
+            <argument>--xmlOutput</argument>
+            <argument>target/scalastyle-output.xml</argument>
+            <argument>--xmlEncoding</argument>
+            <argument>UTF-8</argument>
+            <argument>--inputEncoding</argument>
+            <argument>UTF-8</argument>
             <!--argument>lib/scalastyle_scala_config.xml</argument-->
             <argument>src/main/scala</argument>
             <argument>src/test/scala</argument>
