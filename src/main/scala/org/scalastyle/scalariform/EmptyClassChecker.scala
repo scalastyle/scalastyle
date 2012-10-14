@@ -16,14 +16,16 @@
 
 package org.scalastyle.scalariform;
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.TmplDef
-import _root_.scalariform.parser.AstNode
+import org.scalastyle.ScalastyleError
+
+import VisitorHelper.visit
+import scalariform.lexer.Tokens.LBRACE
+import scalariform.lexer.Tokens.RBRACE
+import scalariform.parser.AstNode
+import scalariform.parser.CompilationUnit
+import scalariform.parser.TmplDef
 
 class EmptyClassChecker extends ScalariformChecker {
   val errorKey = "empty.class"

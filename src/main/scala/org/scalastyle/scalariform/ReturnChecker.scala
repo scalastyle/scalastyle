@@ -32,10 +32,10 @@ class ReturnChecker extends ScalariformChecker {
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == RETURN)
+      t <- ast.tokens;
+      if (t.tokenType == RETURN)
     ) yield {
-      PositionError(left.offset)
+      PositionError(t.offset)
     }
 
     it.toList
