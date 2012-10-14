@@ -111,4 +111,5 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.DeprecatedJavaChecker" id="deprecated.java" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.EmptyClassChecker" id="empty.class" defaultLevel="warning"/>
 </scalastyle-definition>

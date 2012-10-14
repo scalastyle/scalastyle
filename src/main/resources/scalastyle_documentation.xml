@@ -254,4 +254,16 @@ is considered to be a magic number.
  </example-configuration>
  </check>
 
+
+ <check id="empty.class">
+ <justification>
+ If a class / trait has no members, then braces are unnecessary, and can be removed.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.EmptyClassChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>
