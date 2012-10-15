@@ -32,7 +32,7 @@ class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "illegal.imports"
   val classUnderTest = classOf[IllegalImportsChecker]
 
-  @Test def testZero() {
+  @Test def testNone() {
     val source = """
 package foobar
 
@@ -46,17 +46,51 @@ object Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testOne() {
-    val source = """|package foobar
-                      |
-                      |import java.util._
-                      |import sun.com.foobar;
-                      |import sun._
-                      |
-                      |object Foobar {
-                      |}
+  @Test def testDefault() {
+    val source = """package foobar
+
+import java.util._
+import sun.com.foobar;
+import sun._
+
+object Foobar {
+}
 """.stripMargin;
 
     assertErrors(List(columnError(4, 0), columnError(5, 0)), source)
+  }
+
+  @Test def testRenamingWildcard() {
+    val source = """package foobar
+
+import java.util.{List => JList}
+import java.lang.{Object => JObject}
+import java.util.{List,Map}
+import java.util.{_}
+import java.util._
+
+object Foobar {
+}
+""".stripMargin;
+
+    assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0), columnError(7, 0)), source, Map("illegalImports" -> "java.util._"))
+  }
+
+  @Test def testRenamingSpecific() {
+    val source = """package foobar
+
+import java.util.{List => JList}
+import java.lang.{Object => JObject}
+import java.util.{Iterator => JIterator, List => JList, Collection => JCollection}
+import java.util.{List, Map}
+import java.util.{_}
+import java.util._
+
+object Foobar {
+}
+""".stripMargin;
+
+    assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0)), source,
+        Map("illegalImports" -> "java.util.List, java.util.Map"))
   }
 }

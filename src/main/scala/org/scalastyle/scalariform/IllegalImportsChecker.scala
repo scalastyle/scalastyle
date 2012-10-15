@@ -16,17 +16,21 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
 import scalariform.parser.CompilationUnit
+import scalariform.parser.ImportExpr
+import scalariform.parser.BlockImportExpr
+import scalariform.parser.ImportSelectors
+import scalariform.parser.ImportClause
 import _root_.scalariform.lexer.Tokens._
 import _root_.scalariform.lexer.Token
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
 import scala.collection.mutable.ListBuffer
-import org.scalastyle._
 
-// TODO deal with alias and multiple imports, i.e: import java.util.{List => JList} import java.util.{List, Map}
 class IllegalImportsChecker extends ScalariformChecker {
+  import VisitorHelper._
+
   val errorKey = "illegal.imports"
 
   case class Import(position: Int, importString: String)
@@ -39,50 +43,52 @@ class IllegalImportsChecker extends ScalariformChecker {
   // sun._ => sun\.
   // sun.com.foobar => sun\.com\.foobar
   private def toMatchList(s: String) = {
-    s.split(",").map(s => s.replaceAll("_$", "")).toList
+    s.trim().split(" *, *").map(s => s.replaceAll("_$", "")).toList
   }
 
-  private def getImports(ast: CompilationUnit): List[Import] = {
-    val list = ListBuffer[Import]()
-    var position = 0;
-    val current = new StringBuilder()
-    var state = ExpectingImport
-
-    ast.tokens.foreach(token => {
-      state match {
-        case ExpectingImport => if (token.tokenType == IMPORT) {
-          state = InImport
-          position = token.offset
-        }
-        case InImport => {
-          if (token.tokenType == NEWLINE || token.tokenType == NEWLINES || token.tokenType == SEMI) {
-            state = ExpectingImport
-            list += Import(position, current.toString)
-            position = 0;
-            current.clear()
-          } else {
-            current.append(token.text)
-          }
-        }
-      }
-    })
-
-    if (state == InImport) {
-      list += Import(position, current.toString)
-    }
-
-    list.toList
-  }
+  case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit]);
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     var illegalImportsList = toMatchList(getString("illegalImports", DefaultIllegalImports))
+
     val it = for (
-      importedClass <- getImports(ast);
-      if (illegalImportsList.exists(importedClass.importString.startsWith(_)))
+      t <- localvisit(ast.immediateChildren);
+      f <- traverse(t, illegalImportsList)
     ) yield {
-      PositionError(importedClass.position)
+      PositionError(t.t.firstToken.offset)
     }
 
     it.toList
+  }
+
+  private def traverse(t: ImportClauseVisit, illegalImportsList: List[String]): List[ImportClauseVisit] = {
+    val l = t.importExpr.map(traverse(_, illegalImportsList)).flatten ::: t.otherImportExprs.map(traverse(_, illegalImportsList)).flatten
+    if (matches(t, illegalImportsList)) t :: l else l
+  }
+
+  private[this] def imports(tokens: List[Token]): String = {
+    tokens.foldLeft("")((a, b) => a + b.text)
+  }
+
+  private[this] def imports(t: BlockImportExpr): List[String] = {
+    val is = t.importSelectors
+
+    val firsts = is.firstImportSelector.firstToken.text ::
+            is.otherImportSelectors.map(_._2).map(is => is.firstToken.text)
+    firsts.map(f => imports(t.prefixExpr.tokens) + f)
+  }
+
+  private[this] def matches(t: ImportClauseVisit, illegalImportsList: List[String]): Boolean = {
+    val list = t.t.importExpr match {
+      case t: BlockImportExpr => imports(t)
+      case _ => List(imports(t.t.importExpr.tokens))
+    }
+
+    illegalImportsList.exists(ill => list.exists(s => s.startsWith(ill)))
+  }
+
+  private[this] def localvisit(ast: Any): List[ImportClauseVisit] = ast match {
+    case t: ImportClause => List(ImportClauseVisit(t, localvisit(t.importExpr), localvisit(t.otherImportExprs)))
+    case t: Any => visit(t, localvisit)
   }
 }
