@@ -89,9 +89,12 @@ class Foobar6[T <: Any]
 class Foobar7[List[T], List[Foo], List[T]]
 class Foobar8[List[T], List[T], List[Foo]]
 class Foobar9[Foo <: Any]
+class Foobar0[+Foo]
 """
-    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6)), source, Map("regex" -> "^[A-Z]$"))
+    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
   }
+
+  @Test def testTrait() {
     val source = """
 package foobar
 
@@ -108,6 +111,8 @@ trait Foobar6[T <: Any]
 trait Foobar7[List[T], List[Foo], List[T]]
 trait Foobar8[List[T], List[T], List[Foo]]
 trait Foobar9[Foo <: Any]
+trait Foobar0[+Foo]
 """
-    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6)), source, Map("regex" -> "^[A-Z]$"))
+    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
+  }
 }

@@ -29,6 +29,7 @@ import scalariform.parser.TmplDef
 import scalariform.parser.TypeParamClause
 import scalariform.parser.TypeParam
 import scalariform.parser.GeneralTokens
+import scalariform.parser.VarianceTypeElement
 import scala.util.matching.Regex
 
 class EmptyClassChecker extends AbstractClassChecker {
@@ -65,7 +66,9 @@ class ClassTypeParameterChecker extends AbstractClassChecker {
         typeParam.contents match {
           case List(GeneralTokens(list)) => Some(list(0).text)
           case List(GeneralTokens(list), TypeParamClause(x)) => innermostName(x(1))
+          case VarianceTypeElement(_) :: GeneralTokens(list) :: Nil => Some(list(0).text)
           case GeneralTokens(list) :: tail => Some(list(0).text)
+          case VarianceTypeElement(_) :: GeneralTokens(list) :: tail => Some(list(0).text)
           case _ => None
         }
       }
