@@ -26,28 +26,13 @@ import scalariform.lexer.Tokens.RBRACE
 import scalariform.parser.AstNode
 import scalariform.parser.CompilationUnit
 import scalariform.parser.TmplDef
+import scalariform.parser.TypeParamClause
+import scalariform.parser.TypeParam
+import scalariform.parser.GeneralTokens
+import scala.util.matching.Regex
 
-class EmptyClassChecker extends ScalariformChecker {
+class EmptyClassChecker extends AbstractClassChecker {
   val errorKey = "empty.class"
-  import VisitorHelper._
-
-  case class TmplClazz(t: TmplDef, position: Option[Int], subs: List[TmplClazz])
-
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
-      f <- localvisit(ast.immediateChildren(0));
-      t <- traverse(f)
-    ) yield {
-      PositionError(t.position.get)
-    }
-
-    it.toList
-  }
-
-  private def traverse(t: TmplClazz): List[TmplClazz] = {
-    val l = t.subs.map(traverse(_)).flatten
-    if (matches(t)) t :: l else l
-  }
 
   private def isEmptyBlock(ast: AstNode): Boolean = {
     ast.tokens.size == 2 && ast.tokens(0).tokenType == LBRACE && ast.tokens(1).tokenType == RBRACE
@@ -59,9 +44,39 @@ class EmptyClassChecker extends ScalariformChecker {
       case Some(tbo) => isEmptyBlock(tbo)
     }
   }
+}
 
-  private def localvisit(ast: Any): List[TmplClazz] = ast match {
-    case t: TmplDef => List(TmplClazz(t, Some(t.name.offset), localvisit(t.templateBodyOption)))
-    case t: Any => visit(t, localvisit)
+class ClassTypeParameterChecker extends AbstractClassChecker {
+  val DefaultRegex = "^[A-Z_]$"
+  val errorKey = "class.type.parameter.name"
+
+  private[this] def matches(t: TypeParamClause): Boolean = {
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
+
+    t.contents.map(c => innermostName(c)).flatten.exists(s => !matchesRegex(regex, s))
+  }
+
+  private[this] def matchesRegex(regex: Regex, s: String) = (regex findAllIn (s)).size == 1
+
+  private[this] def innermostName(ast: Any): Option[String] = {
+    ast match {
+      case typeParam: TypeParam => {
+        typeParam.contents match {
+          case List(GeneralTokens(list)) => Some(list(0).text)
+          case List(GeneralTokens(list), TypeParamClause(x)) => innermostName(x(1))
+          case GeneralTokens(list) :: tail => Some(list(0).text)
+          case _ => None
+        }
+      }
+      case _ => None
+    }
+  }
+
+  def matches(t: TmplClazz): Boolean = {
+    t.t.typeParamClauseOpt match {
+      case None => false
+      case Some(tbo) => matches(tbo)
+    }
   }
 }

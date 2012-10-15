@@ -112,4 +112,9 @@
     </checker>
     <checker class="org.scalastyle.scalariform.DeprecatedJavaChecker" id="deprecated.java" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.EmptyClassChecker" id="empty.class" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.ClassTypeParameterChecker" id="class.type.parameter.name" defaultLevel="warning" >
+        <parameters>
+            <parameter name="regex" type="string" default="^[A-Z_]$" />
+        </parameters>
+    </checker>
 </scalastyle-definition>

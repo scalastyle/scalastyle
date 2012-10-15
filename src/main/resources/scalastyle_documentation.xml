@@ -254,7 +254,6 @@ is considered to be a magic number.
  </example-configuration>
  </check>
 
-
  <check id="empty.class">
  <justification>
  If a class / trait has no members, then braces are unnecessary, and can be removed.
@@ -262,6 +261,25 @@ is considered to be a magic number.
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.EmptyClassChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="class.type.parameter.name">
+ <justification>
+ Scala generic type names are generally single upper case letters. This check checks for classes and traits.
+ 
+ Note that this check only checks the innermost type parameter, to allow for List[T].
+ </justification>
+ <example-configuration>
+ <![CDATA[
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ClassTypeParameterChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[A-Z_]$</parameter>
+      </parameters>
+    </check>
+ ]]>
  ]]>
  </example-configuration>
  </check>

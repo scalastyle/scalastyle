@@ -67,3 +67,47 @@ class Outer {
     assertErrors(List(columnError(6, 8), columnError(7, 8)), source)
   }
 }
+
+class ClassTypeParameterCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "class.type.parameter.name"
+  val classUnderTest = classOf[ClassTypeParameterChecker]
+
+  @Test def testClass() {
+    val source = """
+package foobar
+
+class Foobar1
+class Foobar2[T]
+class Foobar3[Foo] {
+  def foo = 4
+}
+class Foobar4[Foo[T]] {
+  def foo = 4
+}
+class Foobar5[+T]
+class Foobar6[T <: Any]
+class Foobar7[List[T], List[Foo], List[T]]
+class Foobar8[List[T], List[T], List[Foo]]
+class Foobar9[Foo <: Any]
+"""
+    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6)), source, Map("regex" -> "^[A-Z]$"))
+  }
+    val source = """
+package foobar
+
+trait Foobar1
+trait Foobar2[T]
+trait Foobar3[Foo] {
+  def foo = 4
+}
+trait Foobar4[Foo[T]] {
+  def foo = 4
+}
+trait Foobar5[+T]
+trait Foobar6[T <: Any]
+trait Foobar7[List[T], List[Foo], List[T]]
+trait Foobar8[List[T], List[T], List[Foo]]
+trait Foobar9[Foo <: Any]
+"""
+    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6)), source, Map("regex" -> "^[A-Z]$"))
+}
