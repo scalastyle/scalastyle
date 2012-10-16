@@ -117,4 +117,5 @@
             <parameter name="regex" type="string" default="^[A-Z_]$" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.UnderscoreImportChecker" id="underscore.import" defaultLevel="warning"/>
 </scalastyle-definition>

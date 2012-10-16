@@ -282,4 +282,15 @@ is considered to be a magic number.
  </example-configuration>
  </check>
 
+ <check id="underscore.import">
+ <justification>
+  Importing all classes from a package or static members from a class leads to tight coupling between packages or classes and might lead to problems when a new version of a library introduces name clashes.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.UnderscoreImportChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>

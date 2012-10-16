@@ -94,3 +94,25 @@ object Foobar {
         Map("illegalImports" -> "java.util.List, java.util.Map"))
   }
 }
+
+class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "underscore.import"
+  val classUnderTest = classOf[UnderscoreImportChecker]
+
+  @Test def testNone() {
+    val source = """
+package foobar
+
+import java.util.List
+import java.util._
+import java.util.{_}
+import java.util.{Foo => Bar, _}
+
+object Foobar {
+  import scala._
+}
+""";
+
+    assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(10, 2)), source)
+  }
+}

@@ -28,32 +28,17 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 import scala.collection.mutable.ListBuffer
 
-class IllegalImportsChecker extends ScalariformChecker {
+abstract class AbstractImportChecker extends ScalariformChecker {
   import VisitorHelper._
-
-  val errorKey = "illegal.imports"
-
-  case class Import(position: Int, importString: String)
-  case class State(state: String)
-  val ExpectingImport = State("expectingImport")
-  val InImport = State("inImport")
-
-  val DefaultIllegalImports = "sun._"
-
-  // sun._ => sun\.
-  // sun.com.foobar => sun\.com\.foobar
-  private def toMatchList(s: String) = {
-    s.trim().split(" *, *").map(s => s.replaceAll("_$", "")).toList
-  }
 
   case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit]);
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    var illegalImportsList = toMatchList(getString("illegalImports", DefaultIllegalImports))
+    init()
 
     val it = for (
       t <- localvisit(ast.immediateChildren);
-      f <- traverse(t, illegalImportsList)
+      f <- traverse(t)
     ) yield {
       PositionError(t.t.firstToken.offset)
     }
@@ -61,9 +46,11 @@ class IllegalImportsChecker extends ScalariformChecker {
     it.toList
   }
 
-  private def traverse(t: ImportClauseVisit, illegalImportsList: List[String]): List[ImportClauseVisit] = {
-    val l = t.importExpr.map(traverse(_, illegalImportsList)).flatten ::: t.otherImportExprs.map(traverse(_, illegalImportsList)).flatten
-    if (matches(t, illegalImportsList)) t :: l else l
+  protected def init(): Unit = {}
+
+  private[this] def traverse(t: ImportClauseVisit): List[ImportClauseVisit] = {
+    val l = t.importExpr.map(traverse(_)).flatten ::: t.otherImportExprs.map(traverse(_)).flatten
+    if (matches(t)) t :: l else l
   }
 
   private[this] def imports(tokens: List[Token]): String = {
@@ -78,17 +65,45 @@ class IllegalImportsChecker extends ScalariformChecker {
     firsts.map(f => imports(t.prefixExpr.tokens) + f)
   }
 
-  private[this] def matches(t: ImportClauseVisit, illegalImportsList: List[String]): Boolean = {
-    val list = t.t.importExpr match {
+  protected final def imports(t: ImportClauseVisit): List[String] = {
+    t.t.importExpr match {
       case t: BlockImportExpr => imports(t)
       case _ => List(imports(t.t.importExpr.tokens))
     }
-
-    illegalImportsList.exists(ill => list.exists(s => s.startsWith(ill)))
   }
+
+  def matches(t: ImportClauseVisit): Boolean
 
   private[this] def localvisit(ast: Any): List[ImportClauseVisit] = ast match {
     case t: ImportClause => List(ImportClauseVisit(t, localvisit(t.importExpr), localvisit(t.otherImportExprs)))
     case t: Any => visit(t, localvisit)
   }
+}
+
+class IllegalImportsChecker extends AbstractImportChecker {
+  val errorKey = "illegal.imports"
+
+  val DefaultIllegalImports = "sun._"
+  var illegalImportsList: List[String] = _
+
+  // sun._ => sun\.
+  // sun.com.foobar => sun\.com\.foobar
+  private def toMatchList(s: String) = {
+    s.trim().split(" *, *").map(s => s.replaceAll("_$", "")).toList
+  }
+
+  override protected def init() = {
+    illegalImportsList = toMatchList(getString("illegalImports", DefaultIllegalImports))
+  }
+
+  def matches(t: ImportClauseVisit): Boolean = {
+    val list = imports(t)
+    illegalImportsList.exists(ill => list.exists(_.startsWith(ill)))
+  }
+}
+
+class UnderscoreImportChecker extends AbstractImportChecker {
+  val errorKey = "underscore.import"
+
+  def matches(t: ImportClauseVisit): Boolean = imports(t).exists(_.endsWith("._"))
 }
