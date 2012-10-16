@@ -16,20 +16,19 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.CompilationUnit
-import scalariform.parser.ImportExpr
-import scalariform.parser.BlockImportExpr
-import scalariform.parser.ImportSelectors
-import scalariform.parser.ImportClause
-import _root_.scalariform.lexer.Tokens._
-import _root_.scalariform.lexer.Token
-import org.scalastyle.ScalariformChecker
+import scala.Array.canBuildFrom
+
 import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import scala.collection.mutable.ListBuffer
+
+import scalariform.lexer.Token
+import scalariform.parser.BlockImportExpr
+import scalariform.parser.CompilationUnit
+import scalariform.parser.ImportClause
 
 abstract class AbstractImportChecker extends ScalariformChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
 
   case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit]);
 

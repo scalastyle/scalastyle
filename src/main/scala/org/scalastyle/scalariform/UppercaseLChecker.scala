@@ -16,11 +16,12 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
+
+import scalariform.lexer.Tokens.INTEGER_LITERAL
+import scalariform.parser.CompilationUnit
 
 class UppercaseLChecker extends ScalariformChecker {
   val errorKey = "uppercase.l"

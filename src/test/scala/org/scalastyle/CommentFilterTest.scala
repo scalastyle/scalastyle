@@ -22,7 +22,6 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import _root_.scalariform.lexer.Tokens._
 
 class CommentFilterTest extends AssertionsForJUnit {
   @Test def testTokens(): Unit = {

@@ -16,15 +16,19 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.parser._
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.LineColumn
+import org.scalastyle.Lines
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
+
+import scalariform.parser.BlockExpr
+import scalariform.parser.Expr
+import scalariform.parser.IfExpr
 
 class IfBraceChecker extends CombinedChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
   val DefaultSingleLineAllowed = true
   val DefaultDoubleLineAllowed = false
   val errorKey = "if.brace"

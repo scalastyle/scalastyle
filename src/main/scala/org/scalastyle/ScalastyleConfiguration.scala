@@ -16,10 +16,21 @@
 
 package org.scalastyle
 
+import scala.Option.option2Iterable
+import scala.xml.NodeSeq.seqToNodeSeq
+import scala.xml.Atom
+import scala.xml.Comment
+import scala.xml.Elem
+import scala.xml.EntityRef
+import scala.xml.Group
+import scala.xml.NamespaceBinding
+import scala.xml.Node
+import scala.xml.PrettyPrinter
+import scala.xml.ProcInstr
+import scala.xml.Text
+import scala.xml.TextBuffer
+import scala.xml.Utility
 import scala.xml.XML
-import scala.xml.Elem;
-import scala.xml.Node;
-import scala.xml.NodeSeq;
 
 object Level {
   def apply(s: String): Level = s match {
@@ -164,8 +175,6 @@ object ScalastyleDefinition {
 }
 
 case class ScalastyleDefinition(checkers: List[DefinitionChecker])
-
-import scala.xml._
 
 // it's unfortunate that we have to do this, but the scala xml PrettyPrinter converts CDATA sections to
 // Text, which means that multiple lines get wrapped into one. So we extend PrettyPrinter

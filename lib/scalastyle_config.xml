@@ -124,4 +124,11 @@
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.scalariform.EmptyClassChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.scalariform.ClassTypeParameterChecker" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[^[A-Z_]$]]></parameter>
+  </parameters>
+ </check>
+ <check level="warning" class="org.scalastyle.scalariform.UnderscoreImportChecker" enabled="true"></check>
 </scalastyle>

@@ -28,7 +28,7 @@ import scalariform.parser.CompilationUnit
 import scalariform.parser.TmplDef
 
 abstract class AbstractClassChecker extends ScalariformChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
 
   case class TmplClazz(t: TmplDef, position: Option[Int], subs: List[TmplClazz])
 

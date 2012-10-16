@@ -17,11 +17,16 @@
 package org.scalastyle.scalariform;
 
 import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
 import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser._
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import scalariform.parser.ParamClauses
+import scalariform.parser.TmplDef
+import org.scalastyle.ScalastyleError
+import scalariform.parser.FunDefOrDcl
+import scalariform.parser.Param
+import scalariform.parser.Type
+import org.scalastyle.PositionError
+import scalariform.parser.AstNode
 
 object VisitorHelper {
   class Clazz[+T <: AstNode]()
@@ -40,7 +45,7 @@ object VisitorHelper {
 }
 
 abstract class AbstractMethodChecker extends ScalariformChecker {
-  import VisitorHelper._
+  import VisitorHelper.{visit, Clazz}
 
   type ListType = List[BaseClazz[_ <: AstNode]]
   protected def params(): List[String] = List()

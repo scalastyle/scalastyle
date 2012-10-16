@@ -22,7 +22,6 @@ import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens._
 import scala.io.Source
 import java.nio.charset.MalformedInputException
 import scala.io.Codec

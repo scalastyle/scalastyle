@@ -16,18 +16,19 @@
 
 package org.scalastyle.scalariform;
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.FunDefOrDcl
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.Lines
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
+
+import scalariform.parser.FunDefOrDcl
 
 class MethodLengthChecker extends CombinedChecker {
   val errorKey = "method.length"
 
-  import VisitorHelper._
+  import VisitorHelper.{visit, Clazz}
   val DefaultMaximumLength = 50
 
   case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()

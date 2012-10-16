@@ -16,16 +16,18 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser._
-import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import scalariform.lexer.Tokens.CASE
+import scalariform.lexer.Tokens.DO
+import scalariform.lexer.Tokens.FOR
+import scalariform.lexer.Tokens.IF
+import scalariform.lexer.Tokens.VARID
+import scalariform.lexer.Tokens.WHILE
+import scalariform.lexer.Token
+import scalariform.parser.AstNode
+import scalariform.parser.FunDefOrDcl
 
 class CyclomaticComplexityChecker extends AbstractMethodChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
   val errorKey = "cyclomatic.complexity"
   val DefaultMaximum = 10
   private lazy val maximum = getInt("maximum", DefaultMaximum)

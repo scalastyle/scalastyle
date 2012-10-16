@@ -16,7 +16,6 @@
 
 package org.scalastyle
 
-import _root_.scalariform.lexer.Tokens._
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Comment
 import scala.collection.mutable.ListBuffer

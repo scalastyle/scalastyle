@@ -17,14 +17,20 @@
 package org.scalastyle.scalariform
 
 import scalariform.parser.CompilationUnit
-import scalariform.lexer.Tokens._
+import scalariform.lexer.Tokens.VARID
+import scalariform.lexer.Tokens.TRUE
+import scalariform.lexer.Tokens.FALSE
 import scalariform.lexer.Token
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.parser._
+import org.scalastyle.ScalastyleError
+import org.scalastyle.PositionError
+import _root_.scalariform.parser.AstNode
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.InfixExpr
+import _root_.scalariform.parser.PrefixExprElement
 
 class SimplifyBooleanExpressionChecker extends ScalariformChecker {
-  import VisitorHelper._
+  import VisitorHelper.{visit, Clazz}
   val errorKey = "simplify.boolean.expression"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {

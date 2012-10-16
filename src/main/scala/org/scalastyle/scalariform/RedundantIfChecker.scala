@@ -16,16 +16,23 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.parser._
-import _root_.scalariform.lexer.Token
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
+
+import VisitorHelper.visit
+import scalariform.lexer.Tokens.ELSE
+import scalariform.lexer.Tokens.FALSE
+import scalariform.lexer.Tokens.TRUE
+import scalariform.lexer.Token
+import scalariform.parser.ElseClause
+import scalariform.parser.Expr
+import scalariform.parser.GeneralTokens
+import scalariform.parser.IfExpr
 
 class RedundantIfChecker extends CombinedChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
   val errorKey = "if.redundant"
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {

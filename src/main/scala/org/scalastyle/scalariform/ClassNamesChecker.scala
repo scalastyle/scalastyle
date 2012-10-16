@@ -16,11 +16,15 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
+
+import scalariform.lexer.Tokens.CLASS
+import scalariform.lexer.Tokens.DEF
+import scalariform.lexer.Tokens.OBJECT
+import scalariform.lexer.Tokens.PACKAGE
+import scalariform.parser.CompilationUnit
 
 class ClassNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"

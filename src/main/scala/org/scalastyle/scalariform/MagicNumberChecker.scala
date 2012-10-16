@@ -16,20 +16,27 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import scala.Option.option2Iterable
+
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.parser.PatDefOrDcl
-import _root_.scalariform.parser.Expr
-import _root_.scalariform.parser.ExprElement
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.PrefixExprElement
-import _root_.scalariform.lexer.Token
+import org.scalastyle.ScalastyleError
+
+import VisitorHelper.Clazz
+import VisitorHelper.visit
+import scalariform.lexer.Tokens.INTEGER_LITERAL
+import scalariform.lexer.Tokens.VAL
+import scalariform.lexer.Token
+import scalariform.parser.CompilationUnit
+import scalariform.parser.Expr
+import scalariform.parser.ExprElement
+import scalariform.parser.GeneralTokens
+import scalariform.parser.PatDefOrDcl
+import scalariform.parser.PrefixExprElement
 
 class MagicNumberChecker extends ScalariformChecker {
-  import VisitorHelper._
+  import VisitorHelper.{visit, Clazz}
   val DefaultIgnore = "-1,0,1,2"
   val errorKey = "magic.number"
 

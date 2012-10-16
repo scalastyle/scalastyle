@@ -16,8 +16,12 @@
 
 package org.scalastyle.file
 
-import util.matching.Regex
-import org.scalastyle._
+import scala.util.matching.Regex
+
+import org.scalastyle.ColumnError
+import org.scalastyle.FileChecker
+import org.scalastyle.Lines
+import org.scalastyle.ScalastyleError
 
 class RegexChecker extends FileChecker {
   val errorKey = "regex"

@@ -20,7 +20,7 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import file.HeaderMatchesChecker
+import org.scalastyle.file.HeaderMatchesChecker
 
 object ScalastyleConfigurationTest {
   val filename = "src/test/resources/config/scalastyle_config.xml"
@@ -29,7 +29,7 @@ object ScalastyleConfigurationTest {
 }
 
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
-  import ScalastyleConfigurationTest._
+  import ScalastyleConfigurationTest.{filename, width, step}
 
   // just check we can read it
   @Test def readXml(): Unit = {

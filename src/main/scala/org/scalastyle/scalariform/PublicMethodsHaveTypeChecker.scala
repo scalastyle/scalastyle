@@ -16,8 +16,11 @@
 
 package org.scalastyle.scalariform
 
-import _root_.scalariform.parser._
-import org.scalastyle._
+import scalariform.parser.AccessModifier
+import scalariform.parser.Modifier
+import scalariform.parser.Param
+import scalariform.parser.ParamClauses
+import scalariform.parser.ProcFunBody
 
 class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[Unit] {
   val errorKey = "public.methods.have.type"

@@ -16,12 +16,10 @@
 
 package org.scalastyle.file
 
-import java.lang.reflect.Constructor;
 import org.scalastyle.FileChecker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
+import org.scalastyle.FileError
 import org.scalastyle.Lines
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
 
 class NewLineAtEofChecker extends FileChecker {
   val errorKey = "newline.at.eof"

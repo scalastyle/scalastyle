@@ -16,17 +16,17 @@
 
 package org.scalastyle.scalariform;
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.Refinement
+import org.scalastyle.ScalastyleError
+
+import VisitorHelper.visit
+import scalariform.parser.CompilationUnit
+import scalariform.parser.Refinement
 
 class StructuralTypeChecker extends ScalariformChecker {
   val errorKey = "structural.type"
-  import VisitorHelper._
+  import VisitorHelper.visit
 
   case class Position(position: Option[Int])
 

@@ -16,17 +16,17 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.parser._
-import _root_.scalariform.lexer.Token
-import util.matching.Regex
+import scala.util.matching.Regex
+
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
+
+import scalariform.lexer.Tokens.VARID
 
 class TokenChecker extends CombinedChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
   val errorKey = "token"
   private val DefaultRegEx = "^$"
 

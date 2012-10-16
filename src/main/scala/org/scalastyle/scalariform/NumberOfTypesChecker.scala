@@ -16,18 +16,17 @@
 
 package org.scalastyle.scalariform;
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.FileError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.TmplDef
+import org.scalastyle.ScalastyleError
+
+import scalariform.parser.CompilationUnit
+import scalariform.parser.TmplDef
 
 class NumberOfTypesChecker extends ScalariformChecker {
   val errorKey = "number.of.types"
   val DefaultMaximumTypes = 30
-  import VisitorHelper._
+  import VisitorHelper.visit
 
   case class Position(position: Option[Int])
 

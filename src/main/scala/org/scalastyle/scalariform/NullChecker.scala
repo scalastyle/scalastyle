@@ -16,11 +16,12 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
+
+import scalariform.lexer.Tokens.NULL
+import scalariform.parser.CompilationUnit
 
 class NullChecker extends ScalariformChecker {
   val errorKey = "null"

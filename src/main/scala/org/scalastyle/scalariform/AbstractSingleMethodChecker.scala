@@ -16,16 +16,17 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser._
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
+
+import scalariform.parser.CompilationUnit
+import scalariform.parser.FullDefOrDcl
+import scalariform.parser.FunDefOrDcl
 
 abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
-  import VisitorHelper._
+  import VisitorHelper.{visit, Clazz}
 
   case class FullDefOrDclVisit(fullDefOrDcl: FullDefOrDcl, funDefOrDcl: FunDefOrDcl, subs: List[FullDefOrDclVisit]) extends Clazz[FullDefOrDcl]()
 

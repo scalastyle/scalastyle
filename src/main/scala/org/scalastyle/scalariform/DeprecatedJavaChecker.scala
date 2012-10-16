@@ -16,18 +16,16 @@
 
 package org.scalastyle.scalariform;
 
-import java.lang.reflect.Constructor
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.Refinement
-import  _root_.scalariform.parser.{Annotation => ParserAnnotation}
+import org.scalastyle.ScalastyleError
+
+import scalariform.parser.{Annotation => ParserAnnotation}
+import scalariform.parser.CompilationUnit
 
 class DeprecatedJavaChecker extends ScalariformChecker {
   val errorKey = "deprecated.java"
-  import VisitorHelper._
+  import VisitorHelper.visit
   val deprecatedTokens = List("Deprecated", "java.lang.Deprecated")
 
   case class Position(position: Option[Int])

@@ -16,16 +16,13 @@
 
 package org.scalastyle.scalariform
 
-import java.lang.reflect.Constructor;
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser._
-import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import scala.annotation.implicitNotFound
+
+import scalariform.parser.AstNode
+import scalariform.parser.FunDefOrDcl
 
 class CovariantEqualsChecker extends AbstractMethodChecker {
-  import VisitorHelper._
+  import VisitorHelper.visit
   val errorKey = "covariant.equals"
 
   def matches(t: BaseClazz[AstNode]): Boolean = {

@@ -16,10 +16,12 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Tokens._
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
+
+import scalariform.lexer.Tokens.WHILE
+import scalariform.parser.CompilationUnit
 
 class WhileChecker extends ScalariformChecker {
   override val errorKey = "while"

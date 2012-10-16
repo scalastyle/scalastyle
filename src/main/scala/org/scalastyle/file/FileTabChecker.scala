@@ -16,12 +16,12 @@
 
 package org.scalastyle.file
 
-import java.lang.reflect.Constructor;
+import scala.Array.canBuildFrom
+
+import org.scalastyle.ColumnError
 import org.scalastyle.FileChecker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
 import org.scalastyle.Lines
-import org.scalastyle._
+import org.scalastyle.ScalastyleError
 
 class FileTabChecker extends FileChecker {
   val errorKey = "line.contains.tab"

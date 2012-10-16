@@ -16,8 +16,8 @@
 
 package org.scalastyle
 
-import java.io._
-import scala.xml._
+import java.io.File
+import java.io.FileFilter
 
 class Directory
 

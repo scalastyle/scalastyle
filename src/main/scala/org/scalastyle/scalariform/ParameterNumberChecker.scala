@@ -16,8 +16,8 @@
 
 package org.scalastyle.scalariform
 
-import _root_.scalariform.parser._
-import org.scalastyle._
+import scalariform.parser.Param
+import scalariform.parser.ParamClauses
 
 class ParameterNumberChecker extends AbstractSingleMethodChecker[Int] {
   val errorKey = "parameter.number"
