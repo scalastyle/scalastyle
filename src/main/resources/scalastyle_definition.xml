@@ -119,4 +119,9 @@
     </checker>
     <checker class="org.scalastyle.scalariform.UnderscoreImportChecker" id="underscore.import" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.LowercasePatternMatchChecker" id="lowercase.pattern.match" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.MultipleStringLiteralsChecker" id="multiple.string.literals" defaultLevel="warning" >
+        <parameters>
+            <parameter name="allowed" type="integer" default="1" />
+        </parameters>
+    </checker>
 </scalastyle-definition>
