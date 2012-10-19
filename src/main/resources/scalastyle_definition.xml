@@ -122,6 +122,7 @@
     <checker class="org.scalastyle.scalariform.MultipleStringLiteralsChecker" id="multiple.string.literals" defaultLevel="warning" >
         <parameters>
             <parameter name="allowed" type="integer" default="1" />
+            <parameter name="ignoreRegex" type="string" default="^&quot;&quot;$" />
         </parameters>
     </checker>
 </scalastyle-definition>

@@ -48,10 +48,14 @@ class Foobar {
   val d1 = "bar"
   def e1 = "bar"
   def f1(f: String = "bar") = "foobar"
+
+  val a2 = "1"
+  val b2 = "1"
 }
 """;
 
-    assertErrors(List(columnError(5, 10, List(""""foobar"""", "7", "3")), columnError(12, 11, List(""""bar"""", "4", "3"))), source, Map("allowed" -> "3"))
+    assertErrors(List(columnError(5, 10, List(""""foobar"""", "7", "3")), columnError(12, 11, List(""""bar"""", "4", "3"))), source,
+                    Map("allowed" -> "3", "ignoreRegex" -> "1"))
   }
 
   @Test def testDefaultParameters() {
@@ -63,6 +67,9 @@ class Foobar {
   var b = "foobar"
 
   var a1 = "bar"
+
+  var a2 = ""
+  var b2 = ""
 }
 """;
 

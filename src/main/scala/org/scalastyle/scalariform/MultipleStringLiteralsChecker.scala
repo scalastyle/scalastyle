@@ -16,6 +16,8 @@
 
 package org.scalastyle.scalariform;
 
+import scala.util.matching.Regex
+
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
@@ -24,18 +26,23 @@ import scalariform.lexer.Tokens.STRING_LITERAL
 
 class MultipleStringLiteralsChecker extends ScalariformChecker {
   private val DefaultAllowed = 1
+  private val DefaultIgnoreRegex = "^\"\"$"
   val errorKey = "multiple.string.literals"
+  private val Quote = "\""
   private val MultiQuote = "\"\"\""
   private val MultiQuoteLength = MultiQuote.length
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val allowed = getInt("allowed", DefaultAllowed)
+    val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
 
-    val ts = ast.tokens.filter(t => t.tokenType == STRING_LITERAL).groupBy(t => strip(t.text))
+    val ts = ast.tokens.filter(t => t.tokenType == STRING_LITERAL).groupBy(t => strip(t.text)).filter(g => !matches(g._1, ignoreRegex))
     ts.filter(g => g._2.size > allowed).map(g => PositionError(g._2(0).offset, List(g._1, "" + g._2.size, "" + allowed))).toList
   }
 
-  private def strip(s: String) = if (startsAndEndsWith(s, MultiQuote)) "\"" + s.substring(MultiQuoteLength,s.length()-MultiQuoteLength) + "\"" else s
+  private def matches(s: String, regex: Regex) = (regex findAllIn (s)).size == 1
+
+  private def strip(s: String) = if (startsAndEndsWith(s, MultiQuote)) Quote + s.substring(MultiQuoteLength,s.length()-MultiQuoteLength) + Quote else s
 
   private def startsAndEndsWith(s: String, sufpre: String) = s.startsWith(sufpre) && s.endsWith(sufpre)
 }

@@ -328,6 +328,7 @@ is considered to be a magic number.
     <check level="warning" class="org.scalastyle.scalariform.MultipleStringLiteralsChecker" enabled="true">
       <parameters>
         <parameter name="allowed">1</parameter>
+        <parameter name="ignoreRegex">^\"\"$</parameter>
       </parameters>
     </check>
  ]]>
