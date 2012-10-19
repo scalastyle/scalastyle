@@ -27,7 +27,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-// scalastyle:off magic.number
+// scalastyle:off magic.number multiple.string.literals
 
 class WhitespaceEndOfLineCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "whitespace.end.of.line"

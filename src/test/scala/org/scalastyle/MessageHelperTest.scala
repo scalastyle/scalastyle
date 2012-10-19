@@ -21,6 +21,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+// scalastyle:off multiple.string.literals
+
 class MessageHelperTest extends AssertionsForJUnit {
   val classLoader = this.getClass().getClassLoader()
   val definition = ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))

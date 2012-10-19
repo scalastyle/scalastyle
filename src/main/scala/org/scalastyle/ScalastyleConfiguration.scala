@@ -33,33 +33,45 @@ import scala.xml.Utility
 import scala.xml.XML
 
 object Level {
+  val Warning = "warning"
+  val Error = "error"
+
   def apply(s: String): Level = s match {
-    case "warning" => WarningLevel
-    case "error" => ErrorLevel
+    case Warning => WarningLevel
+    case Error => ErrorLevel
     case _ => WarningLevel
   }
 }
 sealed abstract class Level(val name: String)
-case object ErrorLevel extends Level("error")
-case object WarningLevel extends Level("warning")
+case object ErrorLevel extends Level(Level.Error)
+case object WarningLevel extends Level(Level.Warning)
 
 object ParameterType {
+  val Integer = "integer"
+  val String = "string"
+  val Boolean = "boolean"
+
   def apply(s: String): ParameterType = s match {
-    case "integer" => IntegerType
-    case "string" => StringType
-    case "boolean" => BooleanType
+    case Integer => IntegerType
+    case String => StringType
+    case Boolean => BooleanType
     case _ => StringType
   }
 }
 sealed abstract class ParameterType(val name: String)
-case object IntegerType extends ParameterType("integer")
-case object StringType extends ParameterType("string")
-case object BooleanType extends ParameterType("boolean")
+case object IntegerType extends ParameterType(ParameterType.Integer)
+case object StringType extends ParameterType(ParameterType.String)
+case object BooleanType extends ParameterType(ParameterType.Boolean)
 
 case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
 
 object ScalastyleConfiguration {
   val DefaultConfiguration: String = "/default_config.xml"
+  val Enabled = "enabled"
+  val Disabled = "disabled"
+  val True = "true"
+  val False = "false"
+  val Name = "name"
 
   def getDefaultConfiguration(): ScalastyleConfiguration = {
     val is = this.getClass().getClassLoader().getResourceAsStream(DefaultConfiguration)
@@ -69,8 +81,8 @@ object ScalastyleConfiguration {
   def readFromXml(file: String): ScalastyleConfiguration = fromXml(XML.loadFile(file))
 
   private[this] def fromXml(elem: Elem) = {
-    val commentFilter = elem.attribute("commentFilter").getOrElse(scala.xml.Text("enabled")).text.toLowerCase() != "disabled"
-    val name = (elem \\ "name").text
+    val commentFilter = elem.attribute("commentFilter").getOrElse(scala.xml.Text(Enabled)).text.toLowerCase() != Disabled
+    val name = (elem \\ Name).text
 
     ScalastyleConfiguration(name, commentFilter, (elem \\ "check").map(toCheck).toList)
   }
@@ -78,14 +90,14 @@ object ScalastyleConfiguration {
   def toCheck(node: Node): ConfigurationChecker = {
     val className = node.attribute("class").get.text
     val level = Level(node.attribute("level").get.text)
-    val enabled = node.attribute("enabled").getOrElse(scala.xml.Text("false")).text.toLowerCase() == "true"
+    val enabled = node.attribute(Enabled).getOrElse(scala.xml.Text(False)).text.toLowerCase() == True
     val ns = (node \\ "customMessage")
     val customMessage = if (ns.size == 0) None else (Some(ns(0).text))
 
     ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
       val attributeValue = e.attribute("value")
       val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
-      (e.attribute("name").head.text -> value)
+      (e.attribute(Name).head.text -> value)
     }).toMap, customMessage)
   }
 
@@ -109,10 +121,10 @@ object ScalastyleConfiguration {
         }
         case None => scala.xml.Null
       }
-      <check class={c.className} level={c.level.name} enabled={if (c.enabled) "true" else "false"}>{customMessage}{parameters}</check>
+      <check class={c.className} level={c.level.name} enabled={if (c.enabled) True else False}>{customMessage}{parameters}</check>
     })
 
-    <scalastyle commentFilter={if (scalastyleConfiguration.commentFilter) "enabled" else "disabled"}>
+    <scalastyle commentFilter={if (scalastyleConfiguration.commentFilter) Enabled else Disabled}>
       <name>{scalastyleConfiguration.name}</name>
       {elements}
     </scalastyle>
@@ -150,20 +162,20 @@ object ScalastyleDefinition {
     }).toMap)
   }
 
-  def stringAttr(node: Node, id: String, defaultValue: String = ""): String = {
-    attr(node, id, defaultValue, {s => s})
+  def stringAttr(node: Node, id: String): String = {
+    attr(node, id, "", {s => s})
   }
 
-  def levelAttr(node: Node, id: String, defaultValue: String = "warning"): Level = {
-    attr(node, id, defaultValue, {s => Level(s)})
+  def levelAttr(node: Node, id: String): Level = {
+    attr(node, id, Level.Warning, {s => Level(s)})
   }
 
-  def typeAttr(node: Node, id: String, defaultValue: String = "string"): ParameterType = {
-    attr(node, id, defaultValue, {s => ParameterType(s)})
+  def typeAttr(node: Node, id: String): ParameterType = {
+    attr(node, id, "string", {s => ParameterType(s)})
   }
 
-  def booleanAttr(node: Node, id: String, defaultValue: String = "false"): Boolean = {
-    attr(node, id, defaultValue, {s => "true" == s.toLowerCase()})
+  def booleanAttr(node: Node, id: String): Boolean = {
+    attr(node, id, "false", {s => "true" == s.toLowerCase()})
   }
 
   def attr[T](node: Node, id: String, defaultValue: String, fn: (String) => T): T = {

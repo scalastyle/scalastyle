@@ -20,7 +20,7 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
 
-// scalastyle:off magic.number
+// scalastyle:off magic.number multiple.string.literals
 
 class TokenCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val classUnderTest = classOf[TokenChecker]

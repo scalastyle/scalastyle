@@ -23,7 +23,7 @@ import org.junit.Test
 
 import org.scalastyle.file.FileLengthChecker
 
-// scalastyle:off magic.number
+// scalastyle:off magic.number multiple.string.literals
 
 class OutputTest extends AssertionsForJUnit {
   @Test def testXmlOutput(): Unit = {

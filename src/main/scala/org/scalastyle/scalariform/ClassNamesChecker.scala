@@ -26,6 +26,8 @@ import scalariform.lexer.Tokens.OBJECT
 import scalariform.lexer.Tokens.PACKAGE
 import scalariform.parser.CompilationUnit
 
+// scalastyle:off multiple.string.literals
+
 class ClassNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
   val errorKey = "class.name"

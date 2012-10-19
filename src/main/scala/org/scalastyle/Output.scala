@@ -58,7 +58,7 @@ case class OutputResult(files: Int, errors: Int, warnings: Int)
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(this.getClass().getClassLoader())
 
-  // scalastyle:off regex
+  // scalastyle:off regex multiple.string.literals
   override def message(m: Message[T]): Unit = m match {
     case StartWork() => if (verbose) println("Starting scalastyle")
     case EndWork() =>

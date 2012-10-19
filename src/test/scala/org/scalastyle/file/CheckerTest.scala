@@ -27,6 +27,8 @@ import org.scalastyle.ConfigurationChecker
 import org.scalastyle.FileSpec
 import org.scalastyle.ScalastyleConfiguration
 
+// scalastyle:off multiple.string.literals
+
 trait CheckerTest {
   protected val key: String
   protected val classUnderTest: Class[_ <: Checker[_]]

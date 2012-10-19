@@ -95,7 +95,7 @@ class IfBraceChecker extends CombinedChecker {
       body.contents(0) match {
         case e: BlockExpr => None
         case e: IfExpr => None
-        case e => lines.toLineColumn(e.tokens(0).offset)
+        case e: Any => lines.toLineColumn(e.tokens(0).offset)
       }
     } else {
       None
