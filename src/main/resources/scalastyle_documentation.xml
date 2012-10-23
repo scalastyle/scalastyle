@@ -335,4 +335,16 @@ is considered to be a magic number.
  </example-configuration>
  </check>
 
+
+ <check id="import.grouping">
+ <justification>
+  If imports are spread throughout the file, knowing what is in scope at any one place can be difficult to work out.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ImportGroupingChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>

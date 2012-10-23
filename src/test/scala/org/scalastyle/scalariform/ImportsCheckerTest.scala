@@ -116,3 +116,45 @@ object Foobar {
     assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(10, 2)), source)
   }
 }
+
+class ImportGroupingCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "import.grouping"
+  val classUnderTest = classOf[ImportGroupingChecker]
+
+  @Test def testKO() {
+    val source = """
+package foobar
+
+import java.util.List;
+import java.util._ // here is a comment
+import java.util._
+
+object Foobar {
+  import java.util.Map
+}
+
+import java.util.Collection
+
+object Barbar {
+  import java.util.HashMap
+}
+""";
+
+    assertErrors(List(columnError(9, 2), columnError(12, 0), columnError(15, 2)), source)
+  }
+
+
+  @Test def testNone() {
+    val source = """
+package foobar
+
+object Foobar {
+}
+
+object Barbar {
+}
+""";
+
+    assertErrors(List(), source)
+  }
+}

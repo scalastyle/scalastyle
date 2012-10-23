@@ -125,4 +125,5 @@
             <parameter name="ignoreRegex" type="string" default="^&quot;&quot;$" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.ImportGroupingChecker" id="import.grouping" defaultLevel="warning"/>
 </scalastyle-definition>
