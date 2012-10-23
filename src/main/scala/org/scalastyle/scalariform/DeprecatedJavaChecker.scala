@@ -27,8 +27,6 @@ class DeprecatedJavaChecker extends ScalariformChecker {
   val errorKey = "deprecated.java"
   val deprecatedTokens = List("Deprecated", "java.lang.Deprecated")
 
-  case class Position(position: Option[Int])
-
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       t <- VisitorHelper.getAll[ParserAnnotation](ast.immediateChildren(0));

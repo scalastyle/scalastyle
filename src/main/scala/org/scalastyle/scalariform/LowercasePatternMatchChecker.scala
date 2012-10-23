@@ -33,11 +33,9 @@ import VisitorHelper.visit
 class LowercasePatternMatchChecker extends ScalariformChecker {
   val errorKey = "lowercase.pattern.match"
 
-  case class Position(position: Option[Int])
-
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
-      f <- localvisit(ast.immediateChildren(0));
+      f <- visit(map)(ast.immediateChildren(0));
       if (matches(f))
     ) yield {
       PositionError(f.pattern.firstToken.offset)
@@ -53,8 +51,5 @@ class LowercasePatternMatchChecker extends ScalariformChecker {
     }
   }
 
-  private def localvisit(ast: Any): List[CasePattern] = ast match {
-    case t: CasePattern => List(t) ::: localvisit(t.pattern) ::: localvisit(t.guardOption)
-    case t: Any => visit(t, localvisit)
-  }
+  private def map(t: CasePattern): List[CasePattern] = List(t) ::: visit(map)(t.pattern) ::: visit(map)(t.guardOption)
 }

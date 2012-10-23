@@ -31,18 +31,26 @@ import VisitorHelper.{visit, Clazz}
 
 object VisitorHelper {
   class Clazz[+T <: AstNode]()
+  trait TreeVisit[T] {
+    def subs: List[T]
+  }
+
+  protected[scalariform] def traverse[T <: TreeVisit[T]](t: T, matches: T => Boolean): List[T] = {
+    val l = t.subs.map(traverse(_, matches)).flatten
+    if (matches(t)) t :: l else l
+  }
 
   protected[scalariform] def getAll[T <: AstNode](ast: Any)(implicit manifest: Manifest[T]): List[T] = {
     def fn(t : T): List[T] = List[T](t)
 
-    myVisit[T](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
+    myVisit[T, T](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
   }
 
-  protected[scalariform] def visit[T <: AstNode](fn: T => List[T])(ast: Any)(implicit manifest: Manifest[T]): List[T] = {
-    myVisit[T](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
+  protected[scalariform] def visit[T <: AstNode, X](fn: T => List[X])(ast: Any)(implicit manifest: Manifest[T]): List[X] = {
+    myVisit[T, X](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
   }
 
-  private[this] def myVisit[T <: AstNode](clazz: Class[T], fn: T => List[T])(ast: Any): List[T] = {
+  private[this] def myVisit[T <: AstNode, X](clazz: Class[T], fn: T => List[X])(ast: Any): List[X] = {
     if (ast.getClass().equals(clazz)) {
       fn(ast.asInstanceOf[T])
     } else {

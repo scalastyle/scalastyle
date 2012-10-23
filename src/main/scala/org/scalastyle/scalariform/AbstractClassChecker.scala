@@ -21,6 +21,8 @@ import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
 import VisitorHelper.visit
+import VisitorHelper.traverse
+import VisitorHelper.TreeVisit
 import scalariform.lexer.Tokens.LBRACE
 import scalariform.lexer.Tokens.RBRACE
 import scalariform.parser.AstNode
@@ -28,28 +30,20 @@ import scalariform.parser.CompilationUnit
 import scalariform.parser.TmplDef
 
 abstract class AbstractClassChecker extends ScalariformChecker {
-  case class TmplClazz(t: TmplDef, position: Option[Int], subs: List[TmplClazz])
+  case class TmplClazz(t: TmplDef, subs: List[TmplClazz]) extends TreeVisit[TmplClazz]
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
-      f <- localvisit(ast.immediateChildren(0));
-      t <- traverse(f)
+      f <- visit[TmplDef, TmplClazz](map)(ast.immediateChildren(0));
+      t <- traverse(f, matches)
     ) yield {
-      PositionError(t.position.get)
+      PositionError(t.t.name.offset)
     }
 
     it.toList
   }
 
-  private def traverse(t: TmplClazz): List[TmplClazz] = {
-    val l = t.subs.map(traverse(_)).flatten
-    if (matches(t)) t :: l else l
-  }
+  def matches(t: TmplClazz): Boolean
 
-  def matches(t: TmplClazz): Boolean;
-
-  private def localvisit(ast: Any): List[TmplClazz] = ast match {
-    case t: TmplDef => List(TmplClazz(t, Some(t.name.offset), localvisit(t.templateBodyOption)))
-    case t: Any => VisitorHelper.visit(t, localvisit)
-  }
+  private def map(t: TmplDef): List[TmplClazz] = List(TmplClazz(t, visit(map)(t.templateBodyOption)))
 }
