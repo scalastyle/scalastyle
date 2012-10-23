@@ -25,10 +25,8 @@ object PrintAst {
     val source = """package foobar
 class Foobar {
   def foobar() = {
-    val it = for (
-      i <- 5 to 10;
-      j <- i + 1
-    ) yield j
+    val f1 = 5
+    val f2 = 5 :: Nil
 
     println("it=" + it.toList)
   }
@@ -54,5 +52,7 @@ class Foobar {
 
     val lineNumbers = lineMap.keys.toList.sortWith((a, b) => a < b)
     lineNumbers.foreach(ln => println(("%02d" format ln) + ": " + lineMap.get(ln).get))
+    
+    println("ast=" + ast)
   }
 }
