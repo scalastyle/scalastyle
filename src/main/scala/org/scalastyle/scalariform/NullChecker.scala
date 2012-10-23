@@ -28,10 +28,10 @@ class NullChecker extends ScalariformChecker {
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == NULL)
+      t <- ast.tokens;
+      if (t.tokenType == NULL)
     ) yield {
-      PositionError(left.offset)
+      PositionError(t.offset)
     }
 
     it.toList

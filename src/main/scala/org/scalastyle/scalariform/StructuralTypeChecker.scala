@@ -27,20 +27,7 @@ import scalariform.parser.Refinement
 class StructuralTypeChecker extends ScalariformChecker {
   val errorKey = "structural.type"
 
-  case class Position(position: Option[Int])
-
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
-      f <- localvisit(ast.immediateChildren(0))
-    ) yield {
-      PositionError(f.position.get)
-    }
-
-    it.toList
-  }
-
-  private def localvisit(ast: Any): List[Position] = ast match {
-    case t: Refinement => List(Position(Some(t.lbrace.offset)))
-    case t: Any => visit(t, localvisit)
+    VisitorHelper.getAll[Refinement](ast.immediateChildren(0)).map(t => PositionError(t.firstToken.offset))
   }
 }

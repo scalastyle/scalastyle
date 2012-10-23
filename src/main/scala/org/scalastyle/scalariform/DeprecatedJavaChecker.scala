@@ -31,9 +31,10 @@ class DeprecatedJavaChecker extends ScalariformChecker {
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
-      f <- localvisit(ast.immediateChildren(0))
+      t <- VisitorHelper.getAll[ParserAnnotation](ast.immediateChildren(0));
+      if (isDeprecated(t))
     ) yield {
-      PositionError(f.position.get)
+      PositionError(t.firstToken.offset)
     }
 
     it.toList
@@ -42,10 +43,5 @@ class DeprecatedJavaChecker extends ScalariformChecker {
   private def isDeprecated(t: ParserAnnotation) = {
     val text = t.annotationType.tokens.foldLeft("")((x, y) => x + y.text)
     t.annotationType.tokens.size > 0 && deprecatedTokens.contains(text)
-  }
-
-  private def localvisit(ast: Any): List[Position] = ast match {
-    case t: ParserAnnotation if (isDeprecated(t)) => List(Position(Some(t.firstToken.offset)))
-    case t: Any => VisitorHelper.visit(t, localvisit)
   }
 }

@@ -28,8 +28,6 @@ class NumberOfTypesChecker extends ScalariformChecker {
   val errorKey = "number.of.types"
   val DefaultMaximumTypes = 30
 
-  case class Position(position: Option[Int])
-
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val maximumTypes = getInt("maxTypes", DefaultMaximumTypes)
 

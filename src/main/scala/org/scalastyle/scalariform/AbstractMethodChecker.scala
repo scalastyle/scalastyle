@@ -32,6 +32,24 @@ import VisitorHelper.{visit, Clazz}
 object VisitorHelper {
   class Clazz[+T <: AstNode]()
 
+  protected[scalariform] def getAll[T <: AstNode](ast: Any)(implicit manifest: Manifest[T]): List[T] = {
+    def fn(t : T): List[T] = List[T](t)
+
+    myVisit[T](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
+  }
+
+  protected[scalariform] def visit[T <: AstNode](fn: T => List[T])(ast: Any)(implicit manifest: Manifest[T]): List[T] = {
+    myVisit[T](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
+  }
+
+  private[this] def myVisit[T <: AstNode](clazz: Class[T], fn: T => List[T])(ast: Any): List[T] = {
+    if (ast.getClass().equals(clazz)) {
+      fn(ast.asInstanceOf[T])
+    } else {
+      visit(ast, myVisit(clazz, fn))
+    }
+  }
+
   protected[scalariform] def visit[T](ast: Any, visitfn: (Any) => List[T]): List[T] = ast match {
     case a: AstNode => visitfn(a.immediateChildren)
     case t: Token => List()

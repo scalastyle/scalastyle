@@ -109,33 +109,21 @@ class UnderscoreImportChecker extends AbstractImportChecker {
 class ImportGroupingChecker extends ScalariformChecker {
   val errorKey = "import.grouping"
 
-  case class ImportClauseVisit(val t: ImportClause)
-
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
-      t <- localvisit(ast.immediateChildren)
-    ) yield {
-      t
-    }
+    val it = VisitorHelper.getAll[ImportClause](ast.immediateChildren)
 
     if (it.size == 0) {
       List()
     } else {
-      val importTokens = it.map(ic => ic.t.tokens).flatten
+      val importTokens = it.map(ic => ic.tokens).flatten
       val (min, max) = (importTokens.head.offset, importTokens.last.offset)
 
       val s = ast.tokens.find(t => t.offset >= min && t.offset <= max && !t.isNewline && !(t.text == ";") && !importTokens.contains(t))
 
       s match {
-        case Some(x) => it.dropWhile(ic => ic.t.firstToken.offset <= x.offset).map(ic => PositionError(ic.t.firstToken.offset))
+        case Some(x) => it.dropWhile(ic => ic.firstToken.offset <= x.offset).map(ic => PositionError(ic.firstToken.offset))
         case None => List()
       }
     }
-  }
-
-
-  private[this] def localvisit(ast: Any): List[ImportClauseVisit] = ast match {
-    case t: ImportClause => List(ImportClauseVisit(t))
-    case t: Any => visit(t, localvisit)
   }
 }

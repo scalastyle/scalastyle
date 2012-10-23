@@ -27,7 +27,7 @@ import scalariform.parser.FunBody
 import scalariform.parser.PatDefOrDcl
 import scalariform.parser.TemplateBody
 import VisitorHelper.visit
-  
+
 abstract class VarChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
