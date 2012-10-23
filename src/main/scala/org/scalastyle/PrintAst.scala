@@ -52,7 +52,7 @@ class Foobar {
 
     val lineNumbers = lineMap.keys.toList.sortWith((a, b) => a < b)
     lineNumbers.foreach(ln => println(("%02d" format ln) + ": " + lineMap.get(ln).get))
-    
+
     println("ast=" + ast)
   }
 }
