@@ -22,11 +22,11 @@ import org.scalastyle.ScalastyleError
 
 import scalariform.parser.CompilationUnit
 import scalariform.parser.TmplDef
+import VisitorHelper.visit
 
 class NumberOfTypesChecker extends ScalariformChecker {
   val errorKey = "number.of.types"
   val DefaultMaximumTypes = 30
-  import VisitorHelper.visit
 
   case class Position(position: Option[Int])
 

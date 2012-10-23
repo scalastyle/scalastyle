@@ -24,11 +24,10 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 
 import scalariform.parser.FunDefOrDcl
+import VisitorHelper.visit
 
 class MethodLengthChecker extends CombinedChecker {
   val errorKey = "method.length"
-
-  import VisitorHelper.{visit, Clazz}
   val DefaultMaximumLength = 50
 
   case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()

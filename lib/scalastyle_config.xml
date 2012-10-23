@@ -138,4 +138,5 @@
    <parameter name="ignoreRegex"><![CDATA[^""$]]></parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.scalariform.ImportGroupingChecker" enabled="true"></check>
 </scalastyle>

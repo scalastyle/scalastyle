@@ -27,6 +27,7 @@ import scalariform.parser.Param
 import scalariform.parser.Type
 import org.scalastyle.PositionError
 import scalariform.parser.AstNode
+import VisitorHelper.{visit, Clazz}
 
 object VisitorHelper {
   class Clazz[+T <: AstNode]()
@@ -45,8 +46,6 @@ object VisitorHelper {
 }
 
 abstract class AbstractMethodChecker extends ScalariformChecker {
-  import VisitorHelper.{visit, Clazz}
-
   type ListType = List[BaseClazz[_ <: AstNode]]
   protected def params(): List[String] = List()
 

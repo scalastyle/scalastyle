@@ -24,9 +24,10 @@ import org.scalastyle.ScalastyleError
 import scalariform.parser.CompilationUnit
 import scalariform.parser.FullDefOrDcl
 import scalariform.parser.FunDefOrDcl
+import VisitorHelper.{visit, Clazz}
 
 abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
-  import VisitorHelper.{visit, Clazz}
+
 
   case class FullDefOrDclVisit(fullDefOrDcl: FullDefOrDcl, funDefOrDcl: FunDefOrDcl, subs: List[FullDefOrDclVisit]) extends Clazz[FullDefOrDcl]()
 

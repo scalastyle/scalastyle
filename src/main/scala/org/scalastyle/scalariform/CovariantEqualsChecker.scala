@@ -22,7 +22,6 @@ import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
 class CovariantEqualsChecker extends AbstractMethodChecker {
-  import VisitorHelper.visit
   val errorKey = "covariant.equals"
 
   def matches(t: BaseClazz[AstNode]): Boolean = {

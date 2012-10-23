@@ -26,7 +26,6 @@ import scalariform.parser.Refinement
 
 class StructuralTypeChecker extends ScalariformChecker {
   val errorKey = "structural.type"
-  import VisitorHelper.visit
 
   case class Position(position: Option[Int])
 

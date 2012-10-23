@@ -24,9 +24,9 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 
 import scalariform.lexer.Tokens.VARID
+import VisitorHelper.visit
 
 class TokenChecker extends CombinedChecker {
-  import VisitorHelper.visit
   val errorKey = "token"
   private val DefaultRegEx = "^$"
 

@@ -28,10 +28,10 @@ import scalariform.parser.Expr
 import scalariform.parser.GeneralTokens
 import scalariform.lexer.Token
 import scalariform.lexer.Tokens.VARID
+import VisitorHelper.visit
 
 class LowercasePatternMatchChecker extends ScalariformChecker {
   val errorKey = "lowercase.pattern.match"
-  import VisitorHelper.visit
 
   case class Position(position: Option[Int])
 

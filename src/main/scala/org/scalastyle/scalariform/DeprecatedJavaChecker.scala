@@ -25,7 +25,6 @@ import scalariform.parser.CompilationUnit
 
 class DeprecatedJavaChecker extends ScalariformChecker {
   val errorKey = "deprecated.java"
-  import VisitorHelper.visit
   val deprecatedTokens = List("Deprecated", "java.lang.Deprecated")
 
   case class Position(position: Option[Int])
@@ -47,6 +46,6 @@ class DeprecatedJavaChecker extends ScalariformChecker {
 
   private def localvisit(ast: Any): List[Position] = ast match {
     case t: ParserAnnotation if (isDeprecated(t)) => List(Position(Some(t.firstToken.offset)))
-    case t: Any => visit(t, localvisit)
+    case t: Any => VisitorHelper.visit(t, localvisit)
   }
 }

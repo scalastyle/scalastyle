@@ -26,9 +26,9 @@ import org.scalastyle.ScalastyleError
 import scalariform.parser.BlockExpr
 import scalariform.parser.Expr
 import scalariform.parser.IfExpr
+import VisitorHelper.visit
 
 class IfBraceChecker extends CombinedChecker {
-  import VisitorHelper.visit
   val DefaultSingleLineAllowed = true
   val DefaultDoubleLineAllowed = false
   val errorKey = "if.brace"

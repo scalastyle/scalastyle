@@ -23,8 +23,6 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
-import VisitorHelper.Clazz
-import VisitorHelper.visit
 import scalariform.lexer.Tokens.INTEGER_LITERAL
 import scalariform.lexer.Tokens.VAL
 import scalariform.lexer.Token
@@ -36,7 +34,6 @@ import scalariform.parser.PatDefOrDcl
 import scalariform.parser.PrefixExprElement
 
 class MagicNumberChecker extends ScalariformChecker {
-  import VisitorHelper.{visit, Clazz}
   val DefaultIgnore = "-1,0,1,2"
   val errorKey = "magic.number"
 
@@ -103,16 +100,16 @@ class MagicNumberChecker extends ScalariformChecker {
   private def localvisit(ast: Any): List[ExprVisit] = ast match {
     case Expr(List(t: Expr)) => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
     case t: Expr => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
-    case t: Any => visit(t, localvisit)
+    case t: Any => VisitorHelper.visit(t, localvisit)
   }
 
   case class PatDefOrDclVisit(t: PatDefOrDcl, valOrVarToken: Token, pattern: List[PatDefOrDclVisit], otherPatterns: List[PatDefOrDclVisit],
-                              equalsClauseOption: List[PatDefOrDclVisit]) extends Clazz[Expr]()
+                              equalsClauseOption: List[PatDefOrDclVisit])
 
   private def localvisitVal(ast: Any): List[PatDefOrDclVisit] = ast match {
     case t: PatDefOrDcl => List(PatDefOrDclVisit(t, t.valOrVarToken, localvisitVal(t.pattern),
                                     localvisitVal(t.otherPatterns), localvisitVal(t.equalsClauseOption)))
-    case t: Any => visit(t, localvisitVal)
+    case t: Any => VisitorHelper.visit(t, localvisitVal)
   }
 
   private def traverseVal(t: PatDefOrDclVisit): List[PatDefOrDclVisit] = t :: t.equalsClauseOption.map(traverseVal(_)).flatten

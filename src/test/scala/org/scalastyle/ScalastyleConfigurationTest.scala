@@ -22,14 +22,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.scalastyle.file.HeaderMatchesChecker
 
-object ScalastyleConfigurationTest {
+class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val filename = "src/test/resources/config/scalastyle_config.xml"
   val width = 1000
   val step = 1
-}
-
-class ScalastyleConfigurationTest extends AssertionsForJUnit {
-  import ScalastyleConfigurationTest.{filename, width, step}
 
   // just check we can read it
   @Test def readXml(): Unit = {

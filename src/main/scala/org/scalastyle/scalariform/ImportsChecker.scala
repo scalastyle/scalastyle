@@ -26,10 +26,9 @@ import scalariform.lexer.Token
 import scalariform.parser.BlockImportExpr
 import scalariform.parser.CompilationUnit
 import scalariform.parser.ImportClause
+import VisitorHelper.visit
 
 abstract class AbstractImportChecker extends ScalariformChecker {
-  import VisitorHelper.visit
-
   case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit]);
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -107,9 +106,7 @@ class UnderscoreImportChecker extends AbstractImportChecker {
   def matches(t: ImportClauseVisit): Boolean = imports(t).exists(_.endsWith("._"))
 }
 
-
 class ImportGroupingChecker extends ScalariformChecker {
-  import VisitorHelper.visit
   val errorKey = "import.grouping"
 
   case class ImportClauseVisit(val t: ImportClause)

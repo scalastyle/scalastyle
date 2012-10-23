@@ -28,8 +28,6 @@ import scalariform.parser.CompilationUnit
 import scalariform.parser.TmplDef
 
 abstract class AbstractClassChecker extends ScalariformChecker {
-  import VisitorHelper.visit
-
   case class TmplClazz(t: TmplDef, position: Option[Int], subs: List[TmplClazz])
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -52,6 +50,6 @@ abstract class AbstractClassChecker extends ScalariformChecker {
 
   private def localvisit(ast: Any): List[TmplClazz] = ast match {
     case t: TmplDef => List(TmplClazz(t, Some(t.name.offset), localvisit(t.templateBodyOption)))
-    case t: Any => visit(t, localvisit)
+    case t: Any => VisitorHelper.visit(t, localvisit)
   }
 }
