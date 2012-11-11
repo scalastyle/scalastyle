@@ -43,3 +43,4 @@ The following checkers were added:
 * VarLocalChecker - Checks that functions do not define mutable variables
 * WhileChecker - Checks that while is not used
 * WhitespaceEndOfLineChecker - Check that there is no trailing whitespace at the end of lines
+
