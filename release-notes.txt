@@ -1,4 +1,24 @@
 
+Version 0.2.0
+=============
+
+* Redundant if checker - check for if (x) then true else false
+* A token regular expression checker - similar to the regular expression checker, except that it only detects tokens, so println in a comment won't match
+* DeprecatedJavaChecker - check usage of @Deprecated as a java annotation
+* Empty class checker - warns if an empty class is used
+* underscore import checker - warns on use of wildcard imports
+* Lowercase pattern matcher checker - warns on use of a lowercase pattern match case x => foo, which can cause unexpected behaviour
+* duplicated string literals in a file checker.
+* Import grouping checker
+
+Also:
+
+* Upgrade to Scala 2.9.2
+* An SBT plugin, which generates checkstyle type report xml for jenkins
+* Correct handling of file encoding in the maven and Eclipse plugins
+* The maven plugin can optionally generate checkstyle type report xml for jenkins
+* Corrections to the import checker, to cope with import selectors
+
 Version 0.1.0
 =============
 
