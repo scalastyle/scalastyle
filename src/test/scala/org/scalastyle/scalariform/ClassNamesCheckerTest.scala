@@ -157,10 +157,11 @@ class Foobar {
   def foo() = 1
   def +() = 1
 //  def foo+() = 1
+  def setting_=(s: Boolean) {}
 }
 """;
 
-    assertErrors(List(columnError(6, 6, List("^[a-z][A-Za-z0-9]*$"))), source)
+    assertErrors(List(columnError(6, 6, List("^[a-z][A-Za-z0-9]*(_=)?$"))), source)
   }
 
   @Test def testNonDefault() {

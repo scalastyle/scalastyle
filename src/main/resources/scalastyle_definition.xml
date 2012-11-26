@@ -90,7 +90,7 @@
     </checker>
     <checker class="org.scalastyle.scalariform.MethodNamesChecker" id="method.name" defaultLevel="warning" >
         <parameters>
-            <parameter name="regex" type="string" default="^[a-z][A-Za-z0-9]*$" />
+            <parameter name="regex" type="string" default="^[a-z][A-Za-z0-9]*(_=)?$" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.NumberOfMethodsInTypeChecker" id="number.of.methods" defaultLevel="warning" >
