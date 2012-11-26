@@ -87,7 +87,7 @@ class PackageObjectNamesChecker extends ScalariformChecker {
 }
 
 class MethodNamesChecker extends ScalariformChecker {
-  val DefaultRegex = "^[a-z][A-Za-z0-9]*$"
+  val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
   val errorKey = "method.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
