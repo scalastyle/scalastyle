@@ -125,13 +125,16 @@ is considered to be a magic number.
 
  <check id="method.name">
  <justification>
- The Scala style guide recommends that method names conform to certain standards.
+ The Scala style guide recommends that method names conform to certain standards. If the methods are overriding another method, and the overridden method
+ cannot be changed, then use the ignoreOverride parameter.
  </justification>
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.MethodNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[A-Za-z]*$</parameter>
+        <parameter name="ignoreRegex">^.*$</parameter>
+        <parameter name="ignoreOverride">false</parameter>
       </parameters>
     </check>
  ]]>
