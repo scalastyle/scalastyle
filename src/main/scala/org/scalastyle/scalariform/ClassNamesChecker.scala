@@ -19,14 +19,17 @@ package org.scalastyle.scalariform
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-
 import scalariform.lexer.Tokens.CLASS
 import scalariform.lexer.Tokens.DEF
 import scalariform.lexer.Tokens.OBJECT
 import scalariform.lexer.Tokens.PACKAGE
 import scalariform.parser.CompilationUnit
-
 import scala.util.matching.Regex
+import scalariform.parser.FunDefOrDcl
+import scalariform.parser.AstNode
+import scalariform.parser.AccessModifier
+import scalariform.parser.Modifier
+import scalariform.parser.SimpleModifier
 
 // scalastyle:off multiple.string.literals
 
@@ -68,7 +71,6 @@ class ObjectNamesChecker extends ScalariformChecker {
   }
 }
 
-
 class PackageObjectNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z]*$"
   val errorKey = "package.object.name"
@@ -88,29 +90,40 @@ class PackageObjectNamesChecker extends ScalariformChecker {
   }
 }
 
-class MethodNamesChecker extends ScalariformChecker {
-  val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
-  val DefaultIgnoreRegex = "^$"
-  val DefaultIgnoreOverride = "true"
+case class MethodNamesCheckerParameters(regexString: String, ignoreRegexString: String, ignoreOverride: Boolean) {
+  private val regexR = regexString.r
+  private val ignoreRegexR = ignoreRegexString.r
+
+  def regex(): Regex = regexR
+  def ignoreRegex(): Regex = ignoreRegexR
+}
+
+class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerParameters] {
+  private val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
+  private val DefaultIgnoreRegex = "^$"
+  private val DefaultIgnoreOverride = false
   val errorKey = "method.name"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val regexString = getString("regex", DefaultRegex)
-    val regex = regexString.r
-    val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
+  protected def matchParameters() = {
+    MethodNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex),
+        getBoolean("ignoreOverride", DefaultIgnoreOverride))
+  }
 
-    val it = for (
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == DEF && (!matches(regex, right.text) && !matches(ignoreRegex, right.text)))
-    ) yield {
-      PositionError(right.offset, List(regexString))
+  protected def matches(t: FullDefOrDclVisit, p: MethodNamesCheckerParameters) = {
+    if (p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) {
+      false
+    } else {
+      val name = t.funDefOrDcl.nameToken.text
+      (!matches(p.regex, name) && !matches(p.ignoreRegex, name))
     }
-
-    it.toList
   }
 
-  private def matches(regex: Regex, s: String) = {
-    println("matches s=" + s + " regex=" + regex.pattern.pattern())
-    (regex findAllIn(s)).size > 0
-  }
+  protected override def describeParameters(p: MethodNamesCheckerParameters) = List("" + p.regex)
+
+  private def isOverride(modifiers: List[Modifier]) = modifiers.exists(_ match {
+    case sm: SimpleModifier if (sm.token.text == "override") => true
+    case _ => false
+  })
+
+  private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
 }

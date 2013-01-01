@@ -161,7 +161,7 @@ class Foobar {
 }
 """;
 
-    assertErrors(List(columnError(6, 6, List("^[a-z][A-Za-z0-9]*(_=)?$"))), source)
+    assertErrors(List(defErr(6, 6)), source)
   }
 
   @Test def testNonDefault() {
@@ -190,7 +190,7 @@ class Foobar {
 }
 """;
 
-    assertErrors(List(columnError(7, 6, List("^[a-z][A-Za-z0-9]*(_=)?$"))), source, Map("ignoreRegex" -> "^\\+$"))
+    assertErrors(List(defErr(7, 6)), source, Map("ignoreRegex" -> "^\\+$"))
   }
 
   @Test def testIgnoreOverride() {
@@ -211,6 +211,8 @@ class Foobar extends Bar {
 }
 """;
 
-    assertErrors(List(), source, Map("ignoreOverride" -> "true"))
+    assertErrors(List(defErr(5, 6), defErr(6, 6), defErr(7, 6)), source, Map("ignoreOverride" -> "true"))
   }
+
+  private def defErr(line: Int, column: Int) = columnError(line, column, List("^[a-z][A-Za-z0-9]*(_=)?$"))
 }
