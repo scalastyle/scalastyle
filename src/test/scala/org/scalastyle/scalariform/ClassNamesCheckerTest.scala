@@ -177,4 +177,40 @@ class Foobar {
 
     assertErrors(List(columnError(6, 6, List("^F[o*]*$"))), source, Map("regex" -> "^F[o*]*$"))
   }
+
+  @Test def testWithIgnoreRegex() {
+    val source = """
+package foobar
+
+class Foobar {
+  def foo() = 1
+  def +() = 1
+  def -() = 1
+//  def Foo+() = 1
+}
+""";
+
+    assertErrors(List(columnError(7, 6, List("^[a-z][A-Za-z0-9]*(_=)?$"))), source, Map("ignoreRegex" -> "^\\+$"))
+  }
+
+  @Test def testIgnoreOverride() {
+    val source = """
+package foobar
+
+trait Bar {
+  def +() = 1
+  def -() = 1
+  def &() = 1
+}
+
+class Foobar extends Bar {
+  override def +() = 1
+  protected override def &() = 1
+  override protected def -() = 1
+  def bar() = 1
+}
+""";
+
+    assertErrors(List(), source, Map("ignoreOverride" -> "true"))
+  }
 }

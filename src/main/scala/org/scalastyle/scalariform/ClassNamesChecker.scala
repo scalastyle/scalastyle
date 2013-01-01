@@ -26,6 +26,8 @@ import scalariform.lexer.Tokens.OBJECT
 import scalariform.lexer.Tokens.PACKAGE
 import scalariform.parser.CompilationUnit
 
+import scala.util.matching.Regex
+
 // scalastyle:off multiple.string.literals
 
 class ClassNamesChecker extends ScalariformChecker {
@@ -88,19 +90,27 @@ class PackageObjectNamesChecker extends ScalariformChecker {
 
 class MethodNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
+  val DefaultIgnoreRegex = "^$"
+  val DefaultIgnoreOverride = "true"
   val errorKey = "method.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
 
     val it = for (
       List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == DEF && (regex findAllIn (right.text)).size == 0)
+      if (left.tokenType == DEF && (!matches(regex, right.text) && !matches(ignoreRegex, right.text)))
     ) yield {
       PositionError(right.offset, List(regexString))
     }
 
     it.toList
+  }
+
+  private def matches(regex: Regex, s: String) = {
+    println("matches s=" + s + " regex=" + regex.pattern.pattern())
+    (regex findAllIn(s)).size > 0
   }
 }
