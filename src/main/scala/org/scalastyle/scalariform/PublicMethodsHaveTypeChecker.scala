@@ -22,24 +22,18 @@ import scalariform.parser.Param
 import scalariform.parser.ParamClauses
 import scalariform.parser.ProcFunBody
 
-class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[Unit] {
+case class PublicMethodsHaveTypeParameters(ignoreOverride: Boolean)
+
+class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMethodsHaveTypeParameters] {
   val errorKey = "public.methods.have.type"
 
-  protected def matchParameters() = Unit
+  protected def matchParameters() = PublicMethodsHaveTypeParameters(getBoolean("ignoreOverride", false))
 
-  protected def matches(t: FullDefOrDclVisit, p: Unit) = {
+  protected def matches(t: FullDefOrDclVisit, p: PublicMethodsHaveTypeParameters) = {
     t.funDefOrDcl.funBodyOpt match {
       case Some(ProcFunBody(newlineOpt, bodyBlock)) => false
-      case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers)
+      case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
+                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers))
     }
-  }
-
-  private def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists( _ match {
-      case am: AccessModifier => true
-      case _ => false
-    })
-
-  private def getParams(p: ParamClauses): List[Param] = {
-    p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
   }
 }

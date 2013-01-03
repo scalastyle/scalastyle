@@ -20,11 +20,13 @@ import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-
 import scalariform.parser.CompilationUnit
 import scalariform.parser.FullDefOrDcl
 import scalariform.parser.FunDefOrDcl
 import VisitorHelper.{visit, Clazz}
+import scalariform.parser.SimpleModifier
+import scalariform.parser.Modifier
+import scalariform.parser.AccessModifier
 
 abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
 
@@ -61,4 +63,14 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
     case t: FunDefOrDcl => localvisit(t.funBodyOpt)
     case t: Any => visit(t, localvisit)
   }
+
+  protected def isOverride(modifiers: List[Modifier]) = modifiers.exists(_ match {
+    case sm: SimpleModifier if (sm.token.text == "override") => true
+    case _ => false
+  })
+
+  protected def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists( _ match {
+    case am: AccessModifier => true
+    case _ => false
+  })
 }

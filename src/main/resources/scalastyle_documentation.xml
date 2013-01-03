@@ -162,7 +162,11 @@ is considered to be a magic number.
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"/>
+    <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true">
+      <parameters>
+        <parameter name="ignoreOverride">false</parameter>
+      </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>

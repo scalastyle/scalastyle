@@ -100,7 +100,11 @@
             <parameter name="maxMethods" type="integer" default="30" />
         </parameters>
     </checker>
-    <checker class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" id="public.methods.have.type" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" id="public.methods.have.type" defaultLevel="warning" >
+        <parameters>
+            <parameter name="ignoreOverride" type="boolean" default="false" />
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.file.NewLineAtEofChecker" id="newline.at.eof" defaultLevel="warning"/>
     <checker class="org.scalastyle.file.NoNewLineAtEofChecker" id="no.newline.at.eof" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.WhileChecker" id="while" defaultLevel="warning"/>

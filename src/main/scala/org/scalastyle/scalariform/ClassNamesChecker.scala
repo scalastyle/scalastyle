@@ -120,10 +120,5 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
 
   protected override def describeParameters(p: MethodNamesCheckerParameters) = List("" + p.regex)
 
-  private def isOverride(modifiers: List[Modifier]) = modifiers.exists(_ match {
-    case sm: SimpleModifier if (sm.token.text == "override") => true
-    case _ => false
-  })
-
   private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
 }

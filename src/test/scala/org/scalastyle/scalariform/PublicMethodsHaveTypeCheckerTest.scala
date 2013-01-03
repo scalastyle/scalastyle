@@ -56,4 +56,22 @@ class OK {
     assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6), columnError(15, 54),
                         columnError(16, 6), columnError(16, 58), columnError(17, 6), columnError(17, 57)), source)
   }
+
+  @Test def testClassOverride() {
+    val source = """
+package foobar
+
+trait Foobar {
+  def foobar: Int
+}
+
+class Sub extends Foobar {
+  override def foobar() = 5
+}
+""";
+
+    assertErrors(List(), source, Map("ignoreOverride" -> "true"))
+    assertErrors(List(columnError(9, 15)), source, Map("ignoreOverride" -> "false"))
+    assertErrors(List(columnError(9, 15)), source)
+  }
 }
