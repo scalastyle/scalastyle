@@ -57,6 +57,15 @@ class OK {
                         columnError(16, 6), columnError(16, 58), columnError(17, 6), columnError(17, 57)), source)
   }
 
+  @Test def testConstructor() {
+    val source = """
+class Constructor(a: Int) {
+  def this() = this(1)
+}
+"""
+    assertErrors(List(), source)
+  }
+
   @Test def testClassOverride() {
     val source = """
 package foobar
