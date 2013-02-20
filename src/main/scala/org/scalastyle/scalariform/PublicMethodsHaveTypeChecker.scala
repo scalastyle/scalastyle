@@ -33,6 +33,7 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMet
     t.funDefOrDcl.funBodyOpt match {
       case Some(ProcFunBody(newlineOpt, bodyBlock)) => false
       case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
+                           !isConstructor(t.fullDefOrDcl.defOrDcl) &&
                            !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers))
     }
   }
