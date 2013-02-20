@@ -21,12 +21,14 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import scalariform.parser.CompilationUnit
+import scalariform.parser.DefOrDcl
 import scalariform.parser.FullDefOrDcl
 import scalariform.parser.FunDefOrDcl
 import VisitorHelper.{visit, Clazz}
 import scalariform.parser.SimpleModifier
 import scalariform.parser.Modifier
 import scalariform.parser.AccessModifier
+import scalariform.lexer.Tokens
 
 abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
 
@@ -73,4 +75,9 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
     case am: AccessModifier => true
     case _ => false
   })
+
+  protected def isConstructor(defOrDcl: DefOrDcl) = defOrDcl match {
+    case fun: FunDefOrDcl => fun.nameToken.tokenType == Tokens.THIS
+    case _ => false
+  }
 }
