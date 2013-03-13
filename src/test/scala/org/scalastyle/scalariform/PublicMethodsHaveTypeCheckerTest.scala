@@ -56,14 +56,34 @@ class OK {
     assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6), columnError(15, 54),
                         columnError(16, 6), columnError(16, 58), columnError(17, 6), columnError(17, 57)), source)
   }
+  
+  @Test def testProc() {
+    assertNoError("""
+class classOK {
+  def proc1 {}
+  def proc2() {}
+}
+
+abstract class abstractOK {
+  def proc1 {}
+  def proc2() {}
+  def proc3()
+}
+
+trait traitOK {
+  def proc1 {}
+  def proc2() {}
+  def proc3()
+}
+""")
+  }
 
   @Test def testConstructor() {
-    val source = """
-class Constructor(a: Int) {
+    assertNoError("""
+class ConstructorOK(a: Int) {
   def this() = this(1)
 }
-"""
-    assertErrors(List(), source)
+""")
   }
 
   @Test def testClassOverride() {
