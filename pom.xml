@@ -7,7 +7,7 @@
     <version>7</version>
   </parent>
   <groupId>org.scalastyle</groupId>
-  <artifactId>${scalastyle.artifactId}</artifactId>
+  <artifactId>scalastyle_2.9.2</artifactId>
   <name>Scalastyle style checker for Scala</name>
   <version>0.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
