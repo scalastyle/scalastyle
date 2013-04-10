@@ -20,6 +20,7 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.Ignore
 import org.scalastyle.file.HeaderMatchesChecker
 
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
@@ -32,6 +33,7 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
     val config = ScalastyleConfiguration.readFromXml(filename)
   }
 
+  @Ignore
   @Test def writeXml(): Unit = {
     val config = ScalastyleConfiguration.readFromXml(filename)
     val contents = scala.io.Source.fromFile(filename).mkString

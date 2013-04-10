@@ -51,7 +51,7 @@ class SimplifyBooleanExpressionChecker extends ScalariformChecker {
     (it1.toList ::: it2.toList).sortWith((a, b) => a.position < b.position)
   }
 
-  private def matches(t: Clazz[_]): Boolean = {
+  private def matches[T <: AstNode](t: Clazz[T]): Boolean = {
     t match {
       case t: InfixExprClazz => matchesInfixOp(t.id) && (boolean(t.left) || boolean(t.right))
       case _ => false

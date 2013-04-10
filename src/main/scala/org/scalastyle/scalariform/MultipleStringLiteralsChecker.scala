@@ -37,7 +37,7 @@ class MultipleStringLiteralsChecker extends ScalariformChecker {
     val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
 
     val ts = ast.tokens.filter(t => t.tokenType == STRING_LITERAL).groupBy(t => strip(t.text)).filter(g => !matches(g._1, ignoreRegex))
-    ts.filter(g => g._2.size > allowed).map(g => PositionError(g._2(0).offset, List(g._1, "" + g._2.size, "" + allowed))).toList
+    ts.filter(g => g._2.size > allowed).map(g => PositionError(g._2(0).offset, List(g._1, "" + g._2.size, "" + allowed))).toList.sortBy(_.position)
   }
 
   private def matches(s: String, regex: Regex) = (regex findAllIn (s)).size == 1
