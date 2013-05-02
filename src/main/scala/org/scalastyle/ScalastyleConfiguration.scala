@@ -88,6 +88,7 @@ object ScalastyleConfiguration {
   }
 
   def toCheck(node: Node): ConfigurationChecker = {
+    // Catch the 'id' attribute of the node is present -- this is a custom ID
     val id = try {
       Some(node.attribute("id").get.text)
     } catch {

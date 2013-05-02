@@ -148,8 +148,8 @@ object Checker {
     try {
       val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
       val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
-      c match {
-        case r: RegexChecker => r.setCustomId(id)
+      id match {
+        case Some(i) => c.setCustomId(i)
         case _ =>
       }
       c.setParameters(parameters)
@@ -171,7 +171,7 @@ trait Checker[A] {
   var level: Level = WarningLevel;
   var customMessage: Option[String] = None
 
-  //protected def setCustomId(id: Option[String]) = this.errorKey = id.getOrElse("");
+  protected def setCustomId(id: String) = this.errorKey = id
   protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
   protected def setLevel(level: Level) = this.level = level;
   protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage

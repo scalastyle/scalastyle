@@ -27,10 +27,6 @@ class RegexChecker extends FileChecker {
   this.errorKey = "regex"
   private val DefaultRegEx = ""
 
-  def setCustomId(id: Option[String]): Unit = {
-    this.errorKey = id.getOrElse("regex")
-  }
-
   def verify(lines: Lines): List[ScalastyleError] = {
     val file = (for (line <- lines.lines) yield line.text).mkString("\n")
     val regExpStr = getString("regex", DefaultRegEx)
