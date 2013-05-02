@@ -24,7 +24,7 @@ import scalariform.parser.{Annotation => ParserAnnotation}
 import scalariform.parser.CompilationUnit
 
 class DeprecatedJavaChecker extends ScalariformChecker {
-  val errorKey = "deprecated.java"
+  this.errorKey = "deprecated.java"
   val deprecatedTokens = List("Deprecated", "java.lang.Deprecated")
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {

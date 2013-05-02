@@ -27,7 +27,7 @@ import scalariform.lexer.Tokens.STRING_LITERAL
 class MultipleStringLiteralsChecker extends ScalariformChecker {
   private val DefaultAllowed = 1
   private val DefaultIgnoreRegex = "^\"\"$"
-  val errorKey = "multiple.string.literals"
+  this.errorKey = "multiple.string.literals"
   private val Quote = "\""
   private val MultiQuote = "\"\"\""
   private val MultiQuoteLength = MultiQuote.length

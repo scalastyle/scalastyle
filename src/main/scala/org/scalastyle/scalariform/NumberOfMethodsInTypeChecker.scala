@@ -19,7 +19,7 @@ package org.scalastyle.scalariform
 import scalariform.parser.AstNode
 
 class NumberOfMethodsInTypeChecker extends AbstractMethodChecker {
-  val errorKey = "number.of.methods"
+  this.errorKey = "number.of.methods"
   val DefaultMaxMethods = 30
 
   override def params(): List[String] = List("" + getInt("maxMethods", DefaultMaxMethods))

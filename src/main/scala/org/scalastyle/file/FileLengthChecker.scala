@@ -22,7 +22,7 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
 class FileLengthChecker extends FileChecker {
-  val errorKey = "file.size.limit"
+  this.errorKey = "file.size.limit"
   val DefaultMaxFileLength = 1000
 
   def verify(ast: Lines): List[ScalastyleError] = {

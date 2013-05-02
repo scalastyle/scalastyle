@@ -28,7 +28,8 @@ import scalariform.lexer.Tokens.NULL
 import scalariform.lexer.Tokens.INTEGER_LITERAL
 import scalariform.lexer.Tokens.VARID
 
-abstract class AbstractTokenChecker(val errorKey: String, tokenType: TokenType) extends ScalariformChecker {
+abstract class AbstractTokenChecker(key: String, tokenType: TokenType) extends ScalariformChecker {
+  this.errorKey = key
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
       t <- ast.tokens;

@@ -27,7 +27,7 @@ import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
 class CyclomaticComplexityChecker extends AbstractMethodChecker {
-  val errorKey = "cyclomatic.complexity"
+  this.errorKey = "cyclomatic.complexity"
   val DefaultMaximum = 10
   private lazy val maximum = getInt("maximum", DefaultMaximum)
   private val tokens = Set(IF, CASE, WHILE, DO, FOR)

@@ -31,7 +31,7 @@ import scalariform.lexer.Tokens.VARID
 import VisitorHelper.visit
 
 class LowercasePatternMatchChecker extends ScalariformChecker {
-  val errorKey = "lowercase.pattern.match"
+  this.errorKey = "lowercase.pattern.match"
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (

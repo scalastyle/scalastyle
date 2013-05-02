@@ -32,7 +32,7 @@ import scalariform.parser.GeneralTokens
 import scalariform.parser.IfExpr
 
 class RedundantIfChecker extends CombinedChecker {
-  val errorKey = "if.redundant"
+  this.errorKey = "if.redundant"
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val it = for (

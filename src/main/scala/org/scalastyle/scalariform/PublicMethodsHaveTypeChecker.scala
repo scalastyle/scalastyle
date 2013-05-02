@@ -25,7 +25,7 @@ import scalariform.parser.ProcFunBody
 case class PublicMethodsHaveTypeParameters(ignoreOverride: Boolean)
 
 class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMethodsHaveTypeParameters] {
-  val errorKey = "public.methods.have.type"
+  this.errorKey = "public.methods.have.type"
 
   protected def matchParameters() = PublicMethodsHaveTypeParameters(getBoolean("ignoreOverride", false))
 
