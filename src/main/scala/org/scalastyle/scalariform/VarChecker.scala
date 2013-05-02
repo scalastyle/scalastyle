@@ -51,11 +51,11 @@ abstract class VarChecker extends ScalariformChecker {
 }
 
 class VarLocalChecker extends VarChecker {
-  val errorKey = "var.local"
+  this.errorKey = "var.local"
   override protected def matches(enclosingFunction: Boolean): Boolean = enclosingFunction
 }
 
 class VarFieldChecker extends VarChecker {
-  val errorKey = "var.field"
+  this.errorKey = "var.field"
   override protected def matches(enclosingFunction: Boolean): Boolean = !enclosingFunction
 }

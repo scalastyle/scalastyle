@@ -24,7 +24,7 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
 class FileTabChecker extends FileChecker {
-  val errorKey = "line.contains.tab"
+  this.errorKey = "line.contains.tab"
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val errors = for (

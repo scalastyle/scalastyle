@@ -23,7 +23,7 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
 class HeaderMatchesChecker extends FileChecker {
-  val errorKey = "header.matches"
+  this.errorKey = "header.matches"
   val DefaultHeader = ""
 
   def verify(ast: Lines): List[ScalastyleError] = {

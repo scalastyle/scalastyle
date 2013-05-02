@@ -31,7 +31,7 @@ import _root_.scalariform.parser.PrefixExprElement
 import VisitorHelper.{visit, Clazz}
 
 class SimplifyBooleanExpressionChecker extends ScalariformChecker {
-  val errorKey = "simplify.boolean.expression"
+  this.errorKey = "simplify.boolean.expression"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it1 = for (

@@ -35,7 +35,7 @@ import scalariform.parser.SimpleModifier
 
 class ClassNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
-  val errorKey = "class.name"
+  this.errorKey = "class.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
@@ -54,7 +54,7 @@ class ClassNamesChecker extends ScalariformChecker {
 
 class ObjectNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
-  val errorKey = "object.name"
+  this.errorKey = "object.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
     val regexString = getString("regex", DefaultRegex)
@@ -73,7 +73,7 @@ class ObjectNamesChecker extends ScalariformChecker {
 
 class PackageObjectNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z]*$"
-  val errorKey = "package.object.name"
+  this.errorKey = "package.object.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
     val regexString = getString("regex", DefaultRegex)
@@ -102,7 +102,7 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   private val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
   private val DefaultIgnoreRegex = "^$"
   private val DefaultIgnoreOverride = false
-  val errorKey = "method.name"
+  this.errorKey = "method.name"
 
   protected def matchParameters() = {
     MethodNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex),

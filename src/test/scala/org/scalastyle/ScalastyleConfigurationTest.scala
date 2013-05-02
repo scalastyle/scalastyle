@@ -22,6 +22,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.Ignore
 import org.scalastyle.file.HeaderMatchesChecker
+import org.scalastyle.Checker
+import org.scalastyle.file.RegexChecker
 
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val filename = "src/test/resources/config/scalastyle_config.xml"
@@ -31,6 +33,15 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   // just check we can read it
   @Test def readXml(): Unit = {
     val config = ScalastyleConfiguration.readFromXml(filename)
+  }
+  
+  @Test
+  def customIdTest(): Unit = {
+    val config = ScalastyleConfiguration.readFromXml(filename)
+    config.checks.flatMap(cc => Checker.newInstance(cc.id, cc.className, cc.level, cc.parameters, cc.customMessage)).map(c => c match {
+      case c: RegexChecker => assertEquals("regex.println", c.errorKey) 
+      case _ =>
+    })
   }
 
   @Ignore

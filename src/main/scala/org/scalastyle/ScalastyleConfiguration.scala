@@ -63,7 +63,7 @@ case object IntegerType extends ParameterType(ParameterType.Integer)
 case object StringType extends ParameterType(ParameterType.String)
 case object BooleanType extends ParameterType(ParameterType.Boolean)
 
-case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
+case class ConfigurationChecker(id: Option[String], className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
 
 object ScalastyleConfiguration {
   val DefaultConfiguration: String = "/default_config.xml"
@@ -88,13 +88,18 @@ object ScalastyleConfiguration {
   }
 
   def toCheck(node: Node): ConfigurationChecker = {
+    val id = try {
+      Some(node.attribute("id").get.text)
+    } catch {
+      case e => None
+    }
     val className = node.attribute("class").get.text
     val level = Level(node.attribute("level").get.text)
     val enabled = node.attribute(Enabled).getOrElse(scala.xml.Text(False)).text.toLowerCase() == True
     val ns = (node \\ "customMessage")
     val customMessage = if (ns.size == 0) None else (Some(ns(0).text))
 
-    ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
+    ConfigurationChecker(id, className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
       val attributeValue = e.attribute("value")
       val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
       (e.attribute(Name).head.text -> value)

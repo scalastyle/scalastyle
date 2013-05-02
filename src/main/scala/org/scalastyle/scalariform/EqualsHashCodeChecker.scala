@@ -20,7 +20,7 @@ import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
 class EqualsHashCodeChecker extends AbstractMethodChecker {
-  val errorKey = "equals.hash.code"
+  this.errorKey = "equals.hash.code"
 
   def matches(t: BaseClazz[AstNode]): Boolean = {
     val hc = t.subs.exists(matchFunDefOrDcl(_, isHashCode))

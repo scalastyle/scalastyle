@@ -31,7 +31,7 @@ import VisitorHelper.visit
 class IfBraceChecker extends CombinedChecker {
   val DefaultSingleLineAllowed = true
   val DefaultDoubleLineAllowed = false
-  val errorKey = "if.brace"
+  this.errorKey = "if.brace"
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val doubleLineAllowed = getBoolean("doubleLineAllowed", DefaultDoubleLineAllowed)

@@ -25,7 +25,7 @@ import scalariform.parser.CompilationUnit
 import scalariform.parser.Refinement
 
 class StructuralTypeChecker extends ScalariformChecker {
-  val errorKey = "structural.type"
+  this.errorKey = "structural.type"
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     VisitorHelper.getAll[Refinement](ast.immediateChildren(0)).map(t => PositionError(t.firstToken.offset))
