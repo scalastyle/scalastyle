@@ -7,7 +7,7 @@
     <version>7</version>
   </parent>
   <groupId>org.scalastyle</groupId>
-  <artifactId>scalastyle_2.9.2</artifactId>
+  <artifactId>scalastyle_2.10</artifactId>
   <name>Scalastyle style checker for Scala</name>
   <version>0.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -16,19 +16,17 @@
     <junit.version>4.11</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <scalastyle.artifactId>scalastyle_2.9.2</scalastyle.artifactId>
+    <scala.version>2.10.0</scala.version>
+    <scala.library.version>2.10.0</scala.library.version>
 
-    <scala.version>2.9.2</scala.version>
-    <scala.library.version>2.9.2</scala.library.version>
-        
-    <scalariform.artifactId>scalariform_2.9.2</scalariform.artifactId>
-    <scalariform.version>0.1.2</scalariform.version>
-    
-    <scalatest.artifactId>scalatest_2.9.2</scalatest.artifactId>
-    <scalatest.version>2.0.M4</scalatest.version>
-    
+    <scalariform.artifactId>scalariform_2.10</scalariform.artifactId>
+    <scalariform.version>0.1.4</scalariform.version>
+
+    <scalatest.artifactId>scalatest_2.10</scalatest.artifactId>
+    <scalatest.version>2.0.M6-SNAP9</scalatest.version>
+
     <scopt.version>2.1.0</scopt.version>
-    <scopt.artifactId>scopt_2.9.2</scopt.artifactId>
+    <scopt.artifactId>scopt_2.10</scopt.artifactId>
   </properties>
 
   <dependencies>
@@ -258,35 +256,22 @@
     </profile>
     
     <profile>
-      <id>scala-2.10</id>
+      <id>scala-2.9</id>
       <properties>
-        <scala.version>2.10.0</scala.version>
-        <scala.library.version>2.10.0</scala.library.version>
+        <scala.version>2.9.2</scala.version>
+        <scala.library.version>2.9.2</scala.library.version>
     
-        <scalariform.artifactId>scalariform_2.10</scalariform.artifactId>
-        <scalariform.version>0.1.3</scalariform.version>
+        <scalariform.artifactId>scalariform_2.9.2</scalariform.artifactId>
+        <scalariform.version>0.1.2</scalariform.version>
 
-        <scalatest.artifactId>scalatest_2.10</scalatest.artifactId>
-        <scalatest.version>2.0.M6-SNAP9</scalatest.version>
+        <scalatest.artifactId>scalatest_2.9.2</scalatest.artifactId>
+        <scalatest.version>2.0.M4</scalatest.version>
 
         <scopt.version>2.1.0</scopt.version>
-        <scopt.artifactId>scopt_2.10</scopt.artifactId>
+        <scopt.artifactId>scopt_2.9.2</scopt.artifactId>
       </properties>
     </profile>
-    
-    <profile>
-      <id>scalariform-hack</id>
-	  <dependencies>
   
-        <dependency>
-          <groupId>org.scalariform</groupId>
-          <artifactId>${scalariform.artifactId}</artifactId>
-          <version>${scalariform.version}</version>
-          <scope>system</scope>
-          <systemPath>${basedir}/scalariform/scalariform_0.1.4.201304100518-12ea0f8.jar</systemPath>
-        </dependency>
-      </dependencies>
-    </profile>
   </profiles>
 
   <url>http://www.scalastyle.org</url>

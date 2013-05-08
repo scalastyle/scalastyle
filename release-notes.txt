@@ -1,4 +1,12 @@
 
+Version 0.3.0
+=============
+
+* Support for 2.10
+* Skip PublicMethodsHaveTypeChecker for constructors
+* Added ignoreOverride parameter for PublicMethodsHaveTypeChecker, if true, don't check methods with override
+* For method names, ignore mutators by default (foo=_())
+
 Version 0.2.0
 =============
 
