@@ -353,5 +353,16 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
+ 
+ <check id="not.implemented.error.usage">
+ <justification>
+  The ??? operator denotes that an implementation is missing. This rule helps to avoid potential runtime errors because of not implemented code.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
 
 </scalastyle-documentation>
