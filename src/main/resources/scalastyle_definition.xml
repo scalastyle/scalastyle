@@ -132,4 +132,5 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.ImportGroupingChecker" id="import.grouping" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.BlockImportChecker" id="block.import.checker" defaultLevel="warning"/>
 </scalastyle-definition>

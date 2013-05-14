@@ -353,5 +353,16 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
+ 
+ <check id="block.import.checker">
+ <justification>
+  Block imports can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations. 
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.BlockImportChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
 
 </scalastyle-documentation>
