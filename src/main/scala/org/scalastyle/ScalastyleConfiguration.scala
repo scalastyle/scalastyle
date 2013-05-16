@@ -63,7 +63,8 @@ case object IntegerType extends ParameterType(ParameterType.Integer)
 case object StringType extends ParameterType(ParameterType.String)
 case object BooleanType extends ParameterType(ParameterType.Boolean)
 
-case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String], customMessage: Option[String])
+case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String],
+                                customMessage: Option[String], customId: Option[String])
 
 object ScalastyleConfiguration {
   val DefaultConfiguration: String = "/default_config.xml"
@@ -88,17 +89,21 @@ object ScalastyleConfiguration {
   }
 
   def toCheck(node: Node): ConfigurationChecker = {
+    def contentsOf(n: String) = {
+      val ns = (node \\ n)
+      if (ns.size == 0) None else (Some(ns(0).text))
+    }
     val className = node.attribute("class").get.text
     val level = Level(node.attribute("level").get.text)
     val enabled = node.attribute(Enabled).getOrElse(scala.xml.Text(False)).text.toLowerCase() == True
-    val ns = (node \\ "customMessage")
-    val customMessage = if (ns.size == 0) None else (Some(ns(0).text))
+    val customMessage = contentsOf("customMessage")
+    val customId = contentsOf("customId")
 
     ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
       val attributeValue = e.attribute("value")
       val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
       (e.attribute(Name).head.text -> value)
-    }).toMap, customMessage)
+    }).toMap, customMessage, customId)
   }
 
   private[this] def toCDATA(s: String) = scala.xml.Unparsed("<![CDATA[" + s + "]]>")

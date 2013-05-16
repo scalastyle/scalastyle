@@ -82,7 +82,7 @@ object Checker {
       case _ => List[CommentFilter]()
     }
 
-    classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters, cc.customMessage)).map(c => c match {
+    classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters, cc.customMessage, cc.customId)).map(c => c match {
       case c: FileChecker => c.verify(file, c.level, lines, lines)
       case c: ScalariformChecker => scalariformAst match {
         case Some(ast) => c.verify(file, c.level, ast.ast, lines)
@@ -143,13 +143,14 @@ object Checker {
     }
   }
 
-  def newInstance(name: String, level: Level, parameters: Map[String, String], customMessage: Option[String]): Option[Checker[_]] = {
+  def newInstance(name: String, level: Level, parameters: Map[String, String], customMessage: Option[String], customId: Option[String]): Option[Checker[_]] = {
     try {
       val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
       val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
       c.setParameters(parameters)
       c.setLevel(level)
       c.setCustomMessage(customMessage)
+      c.setCustomErrorKey(customId)
       Some(c)
     } catch {
       case e: Exception => {
@@ -161,13 +162,15 @@ object Checker {
 }
 
 trait Checker[A] {
-  val errorKey: String;
+  protected val errorKey: String;
   var parameters = Map[String, String]();
   var level: Level = WarningLevel;
   var customMessage: Option[String] = None
+  var customErrorKey: Option[String] = None
 
   protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
   protected def setLevel(level: Level) = this.level = level;
+  protected def setCustomErrorKey(customErrorKey: Option[String]) = this.customErrorKey = customErrorKey
   protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
   protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
   protected def getString(parameter: String, defaultValue: String): String = parameters.getOrElse(parameter, defaultValue)
@@ -184,11 +187,13 @@ trait Checker[A] {
       case _ => p
     }
 
+    val sErrorKey = customErrorKey.getOrElse(errorKey)
+
     p2 match {
-      case PositionError(position, args) => StyleError(file, this.getClass(), errorKey, level, args, customMessage = customMessage)
-      case FileError(args) => StyleError(file, this.getClass(), errorKey, level, args, None, None, customMessage)
-      case LineError(line, args) => StyleError(file, this.getClass(), errorKey, level, args, Some(line), None, customMessage)
-      case ColumnError(line, column, args) => StyleError(file, this.getClass(), errorKey, level, args, Some(line), Some(column), customMessage)
+      case PositionError(position, args) => StyleError(file, this.getClass(), sErrorKey, level, args, customMessage = customMessage)
+      case FileError(args) => StyleError(file, this.getClass(), sErrorKey, level, args, None, None, customMessage)
+      case LineError(line, args) => StyleError(file, this.getClass(), sErrorKey, level, args, Some(line), None, customMessage)
+      case ColumnError(line, column, args) => StyleError(file, this.getClass(), sErrorKey, level, args, Some(line), Some(column), customMessage)
     }
   }
 

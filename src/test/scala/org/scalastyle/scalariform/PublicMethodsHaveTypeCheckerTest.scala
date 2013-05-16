@@ -56,7 +56,7 @@ class OK {
     assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6), columnError(15, 54),
                         columnError(16, 6), columnError(16, 58), columnError(17, 6), columnError(17, 57)), source)
   }
-  
+
   @Test def testProc() {
     assertNoError("""
 class classOK {
