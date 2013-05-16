@@ -26,7 +26,7 @@ import scalariform.lexer.Tokens.PLUS
 import scalariform.parser.CompilationUnit
 
 class SpacesAfterPlusChecker extends ScalariformChecker {
-  val errorKey = "spaces.after.plus"
+  this.errorKey = "spaces.after.plus"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (

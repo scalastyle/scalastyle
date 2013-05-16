@@ -24,7 +24,7 @@ import scalariform.lexer.Tokens.LBRACKET
 import scalariform.parser.CompilationUnit
 
 class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
-  val errorKey = "no.whitespace.before.left.bracket"
+  this.errorKey = "no.whitespace.before.left.bracket"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (
@@ -39,7 +39,7 @@ class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
 }
 
 class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
-  val errorKey = "no.whitespace.after.left.bracket"
+  this.errorKey = "no.whitespace.after.left.bracket"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for (

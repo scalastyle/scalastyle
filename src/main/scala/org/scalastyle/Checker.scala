@@ -22,6 +22,7 @@ import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
+import org.scalastyle.file.RegexChecker
 import scala.io.Source
 import java.nio.charset.MalformedInputException
 import scala.io.Codec
@@ -82,7 +83,7 @@ object Checker {
       case _ => List[CommentFilter]()
     }
 
-    classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters, cc.customMessage)).map(c => c match {
+    classes.flatMap(cc => newInstance(cc.id, cc.className, cc.level, cc.parameters, cc.customMessage)).map(c => c match {
       case c: FileChecker => c.verify(file, c.level, lines, lines)
       case c: ScalariformChecker => scalariformAst match {
         case Some(ast) => c.verify(file, c.level, ast.ast, lines)
@@ -143,17 +144,21 @@ object Checker {
     }
   }
 
-  def newInstance(name: String, level: Level, parameters: Map[String, String], customMessage: Option[String]): Option[Checker[_]] = {
+  def newInstance(id: Option[String], name: String, level: Level, parameters: Map[String, String], customMessage: Option[String]): Option[Checker[_]] = {
     try {
       val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
       val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
+      id match {
+        case Some(i) => c.setCustomId(i)
+        case _ =>
+      }
       c.setParameters(parameters)
       c.setLevel(level)
       c.setCustomMessage(customMessage)
       Some(c)
     } catch {
       case e: Exception => {
-        // TODO log something here
+        println(e.toString())
         None
       }
     }
@@ -161,11 +166,12 @@ object Checker {
 }
 
 trait Checker[A] {
-  val errorKey: String;
+  var errorKey: String = ""
   var parameters = Map[String, String]();
   var level: Level = WarningLevel;
   var customMessage: Option[String] = None
 
+  protected def setCustomId(id: String) = this.errorKey = id
   protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
   protected def setLevel(level: Level) = this.level = level;
   protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage

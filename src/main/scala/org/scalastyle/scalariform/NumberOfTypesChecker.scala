@@ -25,7 +25,7 @@ import scalariform.parser.TmplDef
 import VisitorHelper.visit
 
 class NumberOfTypesChecker extends ScalariformChecker {
-  val errorKey = "number.of.types"
+  this.errorKey = "number.of.types"
   val DefaultMaximumTypes = 30
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {

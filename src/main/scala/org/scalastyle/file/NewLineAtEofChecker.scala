@@ -22,7 +22,7 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
 class NewLineAtEofChecker extends FileChecker {
-  val errorKey = "newline.at.eof"
+  this.errorKey = "newline.at.eof"
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val endsWithNewLine = (lines.lastChar == '\n' || lines.lastChar == '\r')
@@ -31,7 +31,7 @@ class NewLineAtEofChecker extends FileChecker {
 }
 
 class NoNewLineAtEofChecker extends FileChecker {
-  val errorKey = "no.newline.at.eof"
+  this.errorKey = "no.newline.at.eof"
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val endsWithNewLine = (lines.lastChar == '\n' || lines.lastChar == '\r')

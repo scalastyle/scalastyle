@@ -26,7 +26,7 @@ import org.scalastyle.ScalastyleError
 class FileLineLengthChecker extends FileChecker {
   val DefaultMaxLineLength = 160
   val DefaultTabSize = 4
-  val errorKey = "line.size.limit"
+  this.errorKey = "line.size.limit"
 
   private def spaces(column: Int, tabSize: Int): String = {
     val m = column % tabSize

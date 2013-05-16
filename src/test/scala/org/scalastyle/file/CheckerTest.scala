@@ -37,9 +37,18 @@ trait CheckerTest {
     def name(): String = ""
   }
 
-  protected def assertErrors[T <: FileSpec](expected: List[Message[T]], source: String, params: Map[String, String] = Map(),
-                                            customMessage: Option[String] = None, commentFilter: Boolean = true) = {
-    val classes =  List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params, customMessage))
+  protected def assertErrors[T <: FileSpec](expected: List[Message[T]], 
+		  									source: String, 
+		  									params: Map[String, String] = Map(),
+                                            customMessage: Option[String] = None, 
+                                            commentFilter: Boolean = true) = {
+    val classes =  List(ConfigurationChecker(Some(key), 
+    										 classUnderTest.getName(), 
+    										 WarningLevel, 
+    										 true, 
+    										 params, 
+    										 customMessage))
+
     val configuration = ScalastyleConfiguration("", commentFilter, classes)
     assertEquals(expected.mkString("\n"), Checker.verifySource(configuration, classes, NullFileSpec, source).mkString("\n"))
   }

@@ -35,7 +35,7 @@ import scalariform.parser.PrefixExprElement
 
 class MagicNumberChecker extends ScalariformChecker {
   val DefaultIgnore = "-1,0,1,2"
-  val errorKey = "magic.number"
+  this.errorKey = "magic.number"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet

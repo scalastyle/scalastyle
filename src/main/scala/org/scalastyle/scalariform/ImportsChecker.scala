@@ -79,7 +79,7 @@ abstract class AbstractImportChecker extends ScalariformChecker {
 }
 
 class IllegalImportsChecker extends AbstractImportChecker {
-  val errorKey = "illegal.imports"
+  this.errorKey = "illegal.imports"
 
   val DefaultIllegalImports = "sun._"
   var illegalImportsList: List[String] = _
@@ -101,13 +101,13 @@ class IllegalImportsChecker extends AbstractImportChecker {
 }
 
 class UnderscoreImportChecker extends AbstractImportChecker {
-  val errorKey = "underscore.import"
+  this.errorKey = "underscore.import"
 
   def matches(t: ImportClauseVisit): Boolean = imports(t).exists(_.endsWith("._"))
 }
 
 class ImportGroupingChecker extends ScalariformChecker {
-  val errorKey = "import.grouping"
+  this.errorKey = "import.grouping"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = VisitorHelper.getAll[ImportClause](ast.immediateChildren)

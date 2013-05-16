@@ -20,7 +20,7 @@ import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
 class NoFinalizeChecker extends AbstractMethodChecker {
-  val errorKey = "no.finalize"
+  this.errorKey = "no.finalize"
 
   def matches(t: BaseClazz[AstNode]): Boolean = {
     t.subs.exists(matchFunDefOrDcl(_, isFinalize))

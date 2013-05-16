@@ -33,7 +33,7 @@ import scalariform.parser.VarianceTypeElement
 import scala.util.matching.Regex
 
 class EmptyClassChecker extends AbstractClassChecker {
-  val errorKey = "empty.class"
+  this.errorKey = "empty.class"
 
   private def isEmptyBlock(ast: AstNode): Boolean = {
     ast.tokens.size == 2 && ast.tokens(0).tokenType == LBRACE && ast.tokens(1).tokenType == RBRACE
@@ -49,7 +49,7 @@ class EmptyClassChecker extends AbstractClassChecker {
 
 class ClassTypeParameterChecker extends AbstractClassChecker {
   val DefaultRegex = "^[A-Z_]$"
-  val errorKey = "class.type.parameter.name"
+  this.errorKey = "class.type.parameter.name"
 
   private[this] def matches(t: TypeParamClause): Boolean = {
     val regexString = getString("regex", DefaultRegex)

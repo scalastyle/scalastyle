@@ -24,7 +24,7 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
 class RegexChecker extends FileChecker {
-  val errorKey = "regex"
+  this.errorKey = "regex"
   private val DefaultRegEx = ""
 
   def verify(lines: Lines): List[ScalastyleError] = {
@@ -49,7 +49,7 @@ class RegexChecker extends FileChecker {
     var line = 0
     var found = false
 
-    while (!found){
+    while (!found) {
       val currentLine = lines.lines(line)
 
       if (location >= currentLine.start && location < currentLine.end) {

@@ -20,7 +20,7 @@ import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
 class NoCloneChecker extends AbstractMethodChecker {
-  val errorKey = "no.clone"
+  this.errorKey = "no.clone"
 
   def matches(t: BaseClazz[AstNode]): Boolean = {
     t.subs.exists(matchFunDefOrDcl(_, isClone))
