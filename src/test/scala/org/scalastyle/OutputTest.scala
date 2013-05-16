@@ -26,62 +26,62 @@ import org.scalastyle.file.FileLengthChecker
 // scalastyle:off magic.number multiple.string.literals
 
 class OutputTest extends AssertionsForJUnit {
-//  @Test def testXmlOutput(): Unit = {
-//    val fooSpec = new FileSpec { def name: String = "foo" }
-//    val barSpec = new FileSpec { def name: String = "bar" }
-//
-//    val messages = List(
-//        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
-//        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
-//        StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
-//        StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
-//        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
-//    )
-//
-//    new java.io.File("target").mkdir();
-//    new java.io.File("target/test").mkdir();
-//
-//    XmlOutput.save("target/test/OutputTest.xml", "UTF-8", messages);
-//
-//    val lineSep = System.getProperty("line.separator");
-//    val lines = scala.io.Source.fromFile(new java.io.File("target/test/OutputTest.xml")).getLines().mkString(lineSep)
-//
-//    val expected = """<?xml version="1.0" encoding="UTF-8"?>
-//<checkstyle version="5.0">
-// <file name="bar">
-//  <error severity="warning" message="barbar.message" source="org.scalastyle.file.FileLengthChecker"></error>
-//  <error line="5" severity="error" message="bazbaz" source="org.scalastyle.file.FileLengthChecker" column="6"></error>
-//  <error line="7" severity="error" message="noClass" column="8"></error>
-// </file>
-// <file name="foo">
-//  <error line="1" severity="error" message="custom" source="org.scalastyle.file.FileLengthChecker" column="2"></error>
-//  <error line="3" severity="error" message="custom 3" source="org.scalastyle.file.FileLengthChecker" column="4"></error>
-// </file>
-//</checkstyle>"""
-//
-//    assertEquals(expected, lines);
-//  }
-//
-//  @Test def testXmlOutputCannotCreateFile(): Unit = {
-//    val fooSpec = new FileSpec { def name: String = "foo" }
-//    val barSpec = new FileSpec { def name: String = "bar" }
-//
-//    val messages = List(
-//        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
-//        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
-//        StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
-//        StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
-//        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
-//    )
-//
-//    new java.io.File("target").mkdir();
-//
-//    try {
-//        XmlOutput.save("target/does.not.exist/OutputTest.xml", "UTF-8", messages);
-//    } catch {
-//      case e: java.io.FileNotFoundException => // OK
-//      case _ => fail("expected FileNotFoundException")
-//    }
-//
-//  }
+ @Test def testXmlOutput(): Unit = {
+   val fooSpec = new FileSpec { def name: String = "foo" }
+   val barSpec = new FileSpec { def name: String = "bar" }
+
+   val messages = List(
+       StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
+       StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
+       StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
+       StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
+       StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
+   )
+
+   new java.io.File("target").mkdir();
+   new java.io.File("target/test").mkdir();
+
+   XmlOutput.save("target/test/OutputTest.xml", "UTF-8", messages);
+
+   val lineSep = System.getProperty("line.separator");
+   val lines = scala.io.Source.fromFile(new java.io.File("target/test/OutputTest.xml")).getLines().mkString(lineSep)
+
+   val expected = """<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+ <file name="foo">
+  <error column="2" line="1" source="org.scalastyle.file.FileLengthChecker" severity="error" message="custom"></error>
+  <error column="4" line="3" source="org.scalastyle.file.FileLengthChecker" severity="error" message="custom 3"></error>
+ </file>
+ <file name="bar">
+  <error source="org.scalastyle.file.FileLengthChecker" severity="warning" message="barbar.message"></error>
+  <error column="6" line="5" source="org.scalastyle.file.FileLengthChecker" severity="error" message="bazbaz"></error>
+  <error column="8" line="7" severity="error" message="noClass"></error>
+ </file>
+</checkstyle>"""
+
+   assertEquals(expected, lines);
+ }
+
+ @Test def testXmlOutputCannotCreateFile(): Unit = {
+   val fooSpec = new FileSpec { def name: String = "foo" }
+   val barSpec = new FileSpec { def name: String = "bar" }
+
+   val messages = List(
+       StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
+       StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
+       StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
+       StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
+       StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
+   )
+
+   new java.io.File("target").mkdir();
+
+   try {
+       XmlOutput.save("target/does.not.exist/OutputTest.xml", "UTF-8", messages);
+   } catch {
+     case e: java.io.FileNotFoundException => // OK
+     case _: Throwable => fail("expected FileNotFoundException")
+   }
+
+ }
 }
