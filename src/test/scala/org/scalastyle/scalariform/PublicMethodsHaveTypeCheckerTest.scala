@@ -58,7 +58,7 @@ class OK {
   }
 
   @Test def testProc() {
-    assertNoError("""
+    val source = """
 class classOK {
   def proc1 {}
   def proc2() {}
@@ -75,15 +75,19 @@ trait traitOK {
   def proc2() {}
   def proc3()
 }
-""")
+"""
+
+    assertErrors(List(), source)
   }
 
   @Test def testConstructor() {
-    assertNoError("""
+    val source = """
 class ConstructorOK(a: Int) {
   def this() = this(1)
 }
-""")
+"""
+
+    assertErrors(List(), source)
   }
 
   @Test def testClassOverride() {

@@ -48,7 +48,7 @@ class MessageHelper(classLoader: ClassLoader) {
       MessageFormat.format(pattern, args.map(_.asInstanceOf[AnyRef]): _*)
     } catch {
       // If there is no message, just use the key
-      case _ => MessageFormat.format(key, args.map(_.asInstanceOf[AnyRef]): _*)
+      case _: Throwable => MessageFormat.format(key, args.map(_.asInstanceOf[AnyRef]): _*)
     }
   }
 
