@@ -80,6 +80,7 @@ object ScalastyleConfiguration {
   }
 
   def readFromXml(file: String): ScalastyleConfiguration = fromXml(XML.loadFile(file))
+  def readFromString(s: String): ScalastyleConfiguration = fromXml(XML.loadString(s))
 
   private[this] def fromXml(elem: Elem) = {
     val commentFilter = elem.attribute("commentFilter").getOrElse(scala.xml.Text(Enabled)).text.toLowerCase() != Disabled
@@ -88,16 +89,17 @@ object ScalastyleConfiguration {
     ScalastyleConfiguration(name, commentFilter, (elem \\ "check").map(toCheck).toList)
   }
 
+  def contentsOf(node: Node, n: String) = {
+    val ns = (node \\ n)
+    if (ns.size == 0) None else (Some(ns(0).text))
+  }
+
   def toCheck(node: Node): ConfigurationChecker = {
-    def contentsOf(n: String) = {
-      val ns = (node \\ n)
-      if (ns.size == 0) None else (Some(ns(0).text))
-    }
     val className = node.attribute("class").get.text
     val level = Level(node.attribute("level").get.text)
     val enabled = node.attribute(Enabled).getOrElse(scala.xml.Text(False)).text.toLowerCase() == True
-    val customMessage = contentsOf("customMessage")
-    val customId = contentsOf("customId")
+    val customMessage = contentsOf(node, "customMessage")
+    val customId = node.attribute("customId").flatMap(x => Some(x.text))
 
     ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
       val attributeValue = e.attribute("value")

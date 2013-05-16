@@ -42,4 +42,54 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   }
 
   def clean(s: String): String = s.replace("\015", "")
+
+  @Test def readXmlStringWithCustom() {
+    val xml = """<scalastyle commentFilter="enabled">
+    <name>name</name>
+ <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
+  <parameters>
+   <parameter name="maxFileLength"><![CDATA[800]]></parameter>
+  </parameters>
+  <customMessage>customMessage</customMessage>
+ </check>
+</scalastyle>"""
+
+    val config = ScalastyleConfiguration.readFromString(xml)
+
+    assertEquals("name", config.name)
+    assertEquals(true, config.commentFilter)
+    assertEquals(1, config.checks.size)
+
+    val check = config.checks(0)
+
+    assertEquals("org.scalastyle.file.FileLengthChecker", check.className)
+    assertEquals(WarningLevel, check.level)
+    assertEquals(true, check.enabled)
+    assertEquals(1, check.parameters.size)
+    assertEquals(Some("800"), check.parameters.get("maxFileLength"))
+    assertEquals(Some("customMessage"), check.customMessage)
+    assertEquals(Some("custom.id"), check.customId)
+  }
+
+  @Test def readXmlString() {
+    val xml = """<scalastyle>
+    <name>name</name>
+ <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="false"/>
+</scalastyle>"""
+
+    val config = ScalastyleConfiguration.readFromString(xml)
+
+    assertEquals("name", config.name)
+    assertEquals(true, config.commentFilter)
+    assertEquals(1, config.checks.size)
+
+    val check = config.checks(0)
+
+    assertEquals("org.scalastyle.file.FileLengthChecker", check.className)
+    assertEquals(ErrorLevel, check.level)
+    assertEquals(0, check.parameters.size)
+    assertEquals(false, check.enabled)
+    assertEquals(None, check.customMessage)
+    assertEquals(None, check.customId)
+  }
 }
