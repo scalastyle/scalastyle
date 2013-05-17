@@ -1,1 +1,1 @@
-<scalastyle-project-configuration enabled="true" file="/scalastyle/lib/scalastyle_config.xml"></scalastyle-project-configuration>
+<scalastyle-project-configuration file="/scalastyle/lib/scalastyle_config.xml" enabled="true"></scalastyle-project-configuration>
