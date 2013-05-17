@@ -31,6 +31,7 @@ import scala.xml.Text
 import scala.xml.TextBuffer
 import scala.xml.Utility
 import scala.xml.XML
+import scala.xml.Attribute
 
 object Level {
   val Warning = "warning"
@@ -89,7 +90,7 @@ object ScalastyleConfiguration {
     ScalastyleConfiguration(name, commentFilter, (elem \\ "check").map(toCheck).toList)
   }
 
-  def contentsOf(node: Node, n: String) = {
+  private def contentsOf(node: Node, n: String) = {
     val ns = (node \\ n)
     if (ns.size == 0) None else (Some(ns(0).text))
   }
@@ -128,7 +129,11 @@ object ScalastyleConfiguration {
         }
         case None => scala.xml.Null
       }
-      <check class={c.className} level={c.level.name} enabled={if (c.enabled) True else False}>{customMessage}{parameters}</check>
+      val check = <check class={c.className} level={c.level.name} enabled={if (c.enabled) True else False}>{customMessage}{parameters}</check>
+      c.customId match {
+        case Some(x) => check % Attribute(None, "customId", Text(x), scala.xml.Null)
+        case None => check
+      }
     })
 
     <scalastyle commentFilter={if (scalastyleConfiguration.commentFilter) Enabled else Disabled}>
