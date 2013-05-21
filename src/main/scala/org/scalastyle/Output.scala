@@ -18,6 +18,7 @@ package org.scalastyle
 
 import scala.xml.XML
 import scala.xml.Elem
+import scala.collection.JavaConversions.collectionAsScalaIterable
 
 object Output {
   // messageHelper passed in here to work around a scala compiler bug?
@@ -34,7 +35,10 @@ trait Output[T <: FileSpec] {
   private var warnings = 0
   private var files = 0
 
-  def output(messages: Seq[Message[T]]): OutputResult = {
+  def output(messages: Seq[Message[T]]): OutputResult = privateOutput(messages)
+  def output(messages: java.util.List[Message[T]]): OutputResult = privateOutput(collectionAsScalaIterable(messages))
+
+  private[this] def privateOutput(messages: Iterable[Message[T]]): OutputResult = {
     messages.foreach(m => { eachMessage(m); message(m) })
     OutputResult(files, errors, warnings)
   }
@@ -53,7 +57,7 @@ trait Output[T <: FileSpec] {
   def message(m: Message[T]): Unit
 }
 
-case class OutputResult(files: Int, errors: Int, warnings: Int)
+case class OutputResult(val files: Int, val errors: Int, val warnings: Int)
 
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(this.getClass().getClassLoader())
@@ -82,7 +86,10 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
 object XmlOutput {
   def save[T <: FileSpec](target: String, encoding: String, messages: Seq[Message[T]]): Unit = save(new java.io.File(target), encoding, messages)
 
-  def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Seq[Message[T]]) {
+  def save[T <: FileSpec](target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
+        save(new java.io.File(target), encoding, scala.collection.JavaConversions.collectionAsScalaIterable(messages))
+
+  def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Iterable[Message[T]]) {
     val width = 1000;
     val step = 1;
     val messageHelper = new MessageHelper(this.getClass().getClassLoader())
@@ -107,7 +114,7 @@ object XmlOutput {
 
   case class Alert(filename: String, severity: String, message: String, source: Option[Class[_]], line: Option[Int], column: Option[Int])
 
-  private[this] def toCheckstyleFormat[T <: FileSpec](messageHelper: MessageHelper, messages: Seq[Message[T]]): Elem = {
+  private[this] def toCheckstyleFormat[T <: FileSpec](messageHelper: MessageHelper, messages: Iterable[Message[T]]): Elem = {
     <checkstyle version="5.0">{
       messages.collect {
         case StyleError(file, clazz, key, level, args, line, column, customMessage) =>

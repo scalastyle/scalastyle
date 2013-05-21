@@ -18,6 +18,8 @@ package org.scalastyle
 
 import java.io.File
 import java.io.FileFilter
+import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConversions.collectionAsScalaIterable
 
 class Directory
 
@@ -30,7 +32,15 @@ object Directory {
     def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
   }
 
-  def getFiles(encoding: Option[String], files: Seq[File]): List[FileSpec] = {
+  def getFilesAsJava(encoding: Option[String], files: java.util.List[File]): java.util.List[FileSpec] = {
+    seqAsJavaList(privateGetFiles(encoding, collectionAsScalaIterable(files)))
+  }
+
+  def getFiles(encoding: Option[String], files: Iterable[File]): List[FileSpec] = {
+    privateGetFiles(encoding, files);
+  }
+
+  private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File]): List[FileSpec] = {
     files.map(f => {
       if (f.isDirectory) {
         getFiles(encoding, f.listFiles)
@@ -41,5 +51,6 @@ object Directory {
       }
     }).flatten.toList
   }
+
 }
 

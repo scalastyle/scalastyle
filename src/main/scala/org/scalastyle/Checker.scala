@@ -25,6 +25,8 @@ import _root_.scalariform.lexer.Token
 import scala.io.Source
 import java.nio.charset.MalformedInputException
 import scala.io.Codec
+import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConversions.asScalaIterable
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -48,10 +50,20 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 }
 
 class ScalastyleChecker[T <: FileSpec] {
-  def checkFiles(configuration: ScalastyleConfiguration, files: List[T]): List[Message[T]] = {
+  def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] = {
     val checks = configuration.checks.filter(_.enabled)
     StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration, checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
   }
+
+  def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
+    seqAsJavaList(privateCheckFiles(configuration, asScalaIterable(files)))
+  }
+
+  private[this] def privateCheckFiles(configuration: ScalastyleConfiguration, files: Iterable[T]): Seq[Message[T]] = {
+    val checks = configuration.checks.filter(_.enabled)
+    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration, checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
+  }
+
 }
 
 case class ScalariformAst(ast: CompilationUnit, comments: List[Comment])
