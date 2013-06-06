@@ -74,4 +74,28 @@ import scala.collection.mutable.{Buffer, ArrayBuffer}
       """
     assertErrors(List(columnError(2, 7)), source)
   }
+
+  @Test
+  def wildcardImportAfterRenameImportsIsNoBlockImport() {
+    val source = """
+import scala.collection.mutable.{Buffer => MB, ArrayBuffer => _, _}
+      """
+    assertErrors(Nil, source)
+  }
+
+  @Test
+  def wildcardImportAfterNormalImportAndRenameImportIsBlockImport() {
+    val source = """
+import scala.collection.mutable.{Buffer => MB, ArrayBuffer, _}
+      """
+    assertErrors(List(columnError(2, 7)), source)
+  }
+
+  @Test
+  def wildcardImportAfterNormalImportIsBlockImport() {
+    val source = """
+import scala.collection.mutable.{ArrayBuffer, _}
+      """
+    assertErrors(List(columnError(2, 7)), source)
+  }
 }
