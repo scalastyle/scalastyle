@@ -76,7 +76,7 @@ object Checker {
   }).flatten
 
   def parseScalariform(source: String): Option[ScalariformAst] = {
-    val (hiddenTokenInfo, tokens) = ScalaLexer.tokeniseFull(source, true)
+    val tokens = ScalaLexer.tokenise(source, true, "2.10.0")
 
     Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), comments(tokens)))
   }
