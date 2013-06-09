@@ -7,26 +7,26 @@
     <version>7</version>
   </parent>
   <groupId>org.scalastyle</groupId>
-  <artifactId>scalastyle_2.9.3</artifactId>
+  <artifactId>scalastyle_2.10</artifactId>
   <name>Scalastyle style checker for Scala</name>
-  <version>0.3.1</version>
+  <version>0.3.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Scalastyle style checker for Scala</description>
   <properties>
     <junit.version>4.11</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <scala.version>2.9.3</scala.version>
-    <scala.library.version>2.9.3</scala.library.version>
-    
-    <scalariform.artifactId>scalariform_2.9.2</scalariform.artifactId>
-    <scalariform.version>0.1.2</scalariform.version>
+    <scala.version>2.10.0</scala.version>
+    <scala.library.version>2.10.0</scala.library.version>
 
-    <scalatest.artifactId>scalatest_2.9.2</scalatest.artifactId>
-    <scalatest.version>2.0.M4</scalatest.version>
+    <scalariform.artifactId>scalariform_2.10</scalariform.artifactId>
+    <scalariform.version>0.1.4</scalariform.version>
+
+    <scalatest.artifactId>scalatest_2.10</scalatest.artifactId>
+    <scalatest.version>2.0.M6-SNAP9</scalatest.version>
 
     <scopt.version>2.1.0</scopt.version>
-    <scopt.artifactId>scopt_2.9.2</scopt.artifactId>
+    <scopt.artifactId>scopt_2.10</scopt.artifactId>
   </properties>
 
   <dependencies>
