@@ -28,7 +28,10 @@ case class MainConfig(config: Option[String], directories: List[String],
 
 object Main {
   def main(args: Array[String]) {
-    val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", "0.2.0") {
+    val properties = new java.util.Properties();
+    properties.load(this.getClass().getResourceAsStream("/version.properties"));
+
+    val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", properties.getProperty("scalastyle.version")) {
       def options = Seq(
         opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },
         booleanOpt("v", "verbose", "verbose") { (v: Boolean, c: MainConfig) => c.copy(verbose = v) },
