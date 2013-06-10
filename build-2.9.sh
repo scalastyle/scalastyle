@@ -5,8 +5,8 @@ usage() {
 }
 
 case $1 in
-deploy)	phase=deploy ;;
-*)	phase=package ;;
+deploy)	phase=deploy ; profile="-Prelease-sign-artifacts" ;;
+*)	phase=package ; profile="" ;;
 esac
 
 replace_version() {
@@ -41,11 +41,13 @@ replace_versions() {
 
 dir=`pwd`
 
+set -x
+
 for version in 2.9.2 2.9.3
 do
 	builddir="build-$version"
 
 	rm -rf target/$builddir
 	mkdir -p target
-	( cd target; git clone --depth=1 file://$dir $builddir; cd $builddir; rm -rf .git; replace_versions $version; mvn $phase)
+	( cd target; git clone --depth=1 file://$dir $builddir; cd $builddir; rm -rf .git; replace_versions $version; mvn $phase $profile)
 done
