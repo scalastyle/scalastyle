@@ -32,15 +32,18 @@ class CyclomaticComplexityChecker extends AbstractMethodChecker {
   private lazy val maximum = getInt("maximum", DefaultMaximum)
   private val tokens = Set(IF, CASE, WHILE, DO, FOR)
 
-  override def params(): List[String] = List("" + maximum)
+  override def params(t: BaseClazz[AstNode]): List[String] = List("" + cyclomaticComplexity(t), "" + maximum)
 
   def matches(t: BaseClazz[AstNode]): Boolean = {
-    matchFunDefOrDcl(t, cyclomaticComplexity(maximum) _)
+    cyclomaticComplexity(t) > maximum
   }
 
   private def isLogicalOrAnd(t: Token) = t.tokenType == VARID && (t.text == "&&" || t.text == "||")
 
-  private def cyclomaticComplexity(maximum: Int)(t: FunDefOrDcl): Boolean = {
-    t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t)) + 1 > maximum
+  def cyclomaticComplexity(t: BaseClazz[AstNode]): Int = {
+    t match {
+      case f: FunDefOrDclClazz => f.t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t)) + 1
+      case _ => 0
+    }
   }
 }
