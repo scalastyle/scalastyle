@@ -122,3 +122,17 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
 
   private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

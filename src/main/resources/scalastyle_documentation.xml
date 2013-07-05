@@ -364,13 +364,30 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
- <check id="block.import.checker">
+ <check id="block.import">
  <justification>
   Block imports can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations. 
  </justification>
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.BlockImportChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="procedure.declaration">
+ <justification>
+  A procedure style declaration can cause confusion - the developer may have simply forgotten to add a '=', and now their method returns Unit rather than the inferred type: 
+  
+    def foo() { println("hello"); 5 }
+    def foo() = { println("hello"); 5 }
+    
+  This checker raises a warning with the first line. To fix it, use an explicit return type, or add a '=' before the body.
+  
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ProcedureDeclarationChecker" enabled="true" />
  ]]>
  </example-configuration>
  </check>
