@@ -86,8 +86,10 @@ object Checker {
         }.tail, source.charAt(source.length()-1))
 
   def verifySource[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
-    if (source.isEmpty())
+    if (source.isEmpty()) {
       return Nil
+    }
+
     val lines = parseLines(source)
     val scalariformAst = parseScalariform(source)
 

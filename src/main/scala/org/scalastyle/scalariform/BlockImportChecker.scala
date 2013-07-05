@@ -25,7 +25,7 @@ import scalariform.parser.{AstNode, BlockImportExpr, CompilationUnit, Expr, Gene
 
 class BlockImportChecker extends ScalariformChecker {
 
-  val errorKey = "block.import.checker"
+  val errorKey = "block.import"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] =
     findBlockImports(ast)
@@ -48,10 +48,7 @@ class BlockImportChecker extends ScalariformChecker {
           false
       }
 
-      if (blockImportFound)
-        List(PositionError(prefix.firstToken.offset))
-      else
-        Nil
+      if (blockImportFound) List(PositionError(prefix.firstToken.offset)) else Nil
 
     // other block imports
     case b: BlockImportExpr => List(PositionError(b.firstToken.offset))

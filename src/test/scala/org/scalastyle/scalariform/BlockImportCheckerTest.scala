@@ -24,7 +24,7 @@ import org.junit.Test
 
 class BlockImportCheckerTest extends AssertionsForJUnit with CheckerTest {
 
-  val key = "block.import.checker"
+  val key = "block.import"
   val classUnderTest = classOf[BlockImportChecker]
 
   @Test
