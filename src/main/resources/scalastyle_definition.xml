@@ -77,6 +77,11 @@
     </checker>
     <checker class="org.scalastyle.scalariform.UppercaseLChecker" id="uppercase.l" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.SimplifyBooleanExpressionChecker" id="simplify.boolean.expression" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.SimpleExprWithBraceChecker" id="simple.expression.with.brace" defaultLevel="warning" >
+        <parameters>
+            <parameter name="targetTokens" type="string" default="" />
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.scalariform.IfBraceChecker" id="if.brace" defaultLevel="warning" >
         <parameters>
             <parameter name="singleLineAllowed" type="boolean" default="true" />
