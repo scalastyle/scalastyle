@@ -33,7 +33,7 @@ class A{
   val x = 1
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "val"))
+    assertErrors(List(), code, Map("targetTokens" -> "val"))
   }
 
   @Test def testValWithSingleExprBody(): Unit = {
@@ -44,7 +44,7 @@ class A{
   }
 }
 """.stripMargin
-    assertErrors(List(columnError(3, 10)), code, Map("TargetTokens" -> "val"))
+    assertErrors(List(columnError(3, 10)), code, Map("targetTokens" -> "val"))
   }
 
   @Test def testValWithMultipleExprBody(): Unit = {
@@ -56,7 +56,7 @@ class A{
   }
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "val"))
+    assertErrors(List(), code, Map("targetTokens" -> "val"))
   }
 
   @Test def testVarOK(): Unit = {
@@ -65,7 +65,7 @@ class A{
   var x = 1
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "var"))
+    assertErrors(List(), code, Map("targetTokens" -> "var"))
   }
 
   @Test def testVarWithSingleExprBody(): Unit = {
@@ -76,7 +76,7 @@ class A{
   }
 }
 """.stripMargin
-    assertErrors(List(columnError(3, 10)), code, Map("TargetTokens" -> "var"))
+    assertErrors(List(columnError(3, 10)), code, Map("targetTokens" -> "var"))
   }
 
   @Test def testVarWithMultipleExprBody(): Unit = {
@@ -88,7 +88,7 @@ class A{
   }
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "var"))
+    assertErrors(List(), code, Map("targetTokens" -> "var"))
   }
 
   @Test def testDefOK(): Unit = {
@@ -98,7 +98,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "def"))
+    assertErrors(List(), code, Map("targetTokens" -> "def"))
   }
 
   @Test def testDefWithSingleExprBody(): Unit = {
@@ -110,7 +110,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(columnError(3, 11)), code, Map("TargetTokens" -> "def"))
+    assertErrors(List(columnError(3, 11)), code, Map("targetTokens" -> "def"))
   }
 
   @Test def testDefWithMultipleExprBody(): Unit = {
@@ -123,7 +123,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "def"))
+    assertErrors(List(), code, Map("targetTokens" -> "def"))
   }
 
   @Test def testForWithSingleExprBody(): Unit = {
@@ -136,7 +136,7 @@ class A{
  }
 }
 """.stripMargin
-    assertErrors(List(columnError(4, 23)), code, Map("TargetTokens" -> "for"))
+    assertErrors(List(columnError(4, 23)), code, Map("targetTokens" -> "for"))
   }
 
   @Test def testForWithMultipleExprBody(): Unit = {
@@ -151,7 +151,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "for"))
+    assertErrors(List(), code, Map("targetTokens" -> "for"))
   }
 
   @Test def testForSingleLine(): Unit = {
@@ -165,7 +165,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "for"))
+    assertErrors(List(), code, Map("targetTokens" -> "for"))
   }
 
   @Test def testWhileSingleLineBody(): Unit = {
@@ -179,7 +179,7 @@ class A{
  }
 }
 """.stripMargin
-    assertErrors(List(columnError(5, 13)), code, Map("TargetTokens" -> "while"))
+    assertErrors(List(columnError(5, 13)), code, Map("targetTokens" -> "while"))
   }
 
   @Test def testWhileLongBody(): Unit = {
@@ -195,7 +195,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "while"))
+    assertErrors(List(), code, Map("targetTokens" -> "while"))
   }
 
   @Test def testWhileSingleLine(): Unit = {
@@ -208,7 +208,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "while"))
+    assertErrors(List(), code, Map("targetTokens" -> "while"))
   }
 
   @Test def testIfOK(): Unit = {
@@ -221,7 +221,7 @@ class A{
 }
 """.stripMargin
 
-    assertErrors(List(), code, Map("TargetTokens" -> "if"))
+    assertErrors(List(), code, Map("targetTokens" -> "if"))
   }
 
   @Test def testIfWithSingleExprBody(): Unit = {
@@ -234,7 +234,7 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(columnError(4, 10)), code, Map("TargetTokens" -> "if"))
+    assertErrors(List(columnError(4, 10)), code, Map("targetTokens" -> "if"))
   }
 
   @Test def testIfWithMultipleExprBody(): Unit = {
@@ -248,7 +248,7 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "if"))
+    assertErrors(List(), code, Map("targetTokens" -> "if"))
   }
 
   @Test def testElseOK(): Unit = {
@@ -261,7 +261,7 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "else"))
+    assertErrors(List(), code, Map("targetTokens" -> "else"))
   }
 
   @Test def testElseWithSingleExprBody(): Unit = {
@@ -276,7 +276,7 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(columnError(6, 7)), code, Map("TargetTokens" -> "else"))
+    assertErrors(List(columnError(6, 7)), code, Map("targetTokens" -> "else"))
   }
 
   @Test def testElseWithMultipleExprBody(): Unit = {
@@ -292,7 +292,7 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "else"))
+    assertErrors(List(), code, Map("targetTokens" -> "else"))
   }
 
   @Test def testCaseWithSingleExprBody(): Unit = {
@@ -306,7 +306,7 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(columnError(5, 12)), code, Map("TargetTokens" -> "case"))
+    assertErrors(List(columnError(5, 12)), code, Map("targetTokens" -> "case"))
   }
 
   @Test def testCaseWithMultipleExprBody(): Unit = {
@@ -321,6 +321,6 @@ class A {
  }
 }
 """.stripMargin
-    assertErrors(List(), code, Map("TargetTokens" -> "case"))
+    assertErrors(List(), code, Map("targetTokens" -> "case"))
   }
 }
