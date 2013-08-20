@@ -47,6 +47,12 @@ import VisitorHelper.visit
  *
  * To specify multiple tokens, write all expression name and separate them with ","
  * available tokens are def,val,var,if,else,for,while,do,case
+ *
+ * 2, To allow nested expression
+ *
+ * <parameter name="nestedAllowed">true</parameter>
+ *
+ * By default, the value is false
  */
 
 class SimpleExprWithBraceChecker extends CombinedChecker {
@@ -55,17 +61,21 @@ class SimpleExprWithBraceChecker extends CombinedChecker {
   val ParamTargetTokens = "targetTokens"
   val ParamTargetTokensDefValue = ""
 
+  val ParamNestedAllowed = "nestedAllowed"
+  val ParamNestedAllowedDefValue = false
+
   val TargetTokensSeparator = ","
 
-  case class SourceContext(lines: Lines, targetTokens: Set[TokenType])
+  case class SourceContext(lines: Lines, targetTokens: Set[TokenType], nestedAllowed: Boolean)
 
   override def verify(cAst: CombinedAst): List[ScalastyleError] = {
     val targetTokensString = getString(ParamTargetTokens, ParamTargetTokensDefValue)
     val targetTokens = (for (
       tokenString <- targetTokensString.split(TargetTokensSeparator)
     ) yield TokenType(tokenString.toUpperCase())).toSet
+    val nestedAllowed = getBoolean(ParamNestedAllowed, ParamNestedAllowedDefValue)
 
-    val sourceContext = SourceContext(cAst.lines, targetTokens)
+    val sourceContext = SourceContext(cAst.lines, targetTokens, nestedAllowed)
 
     val it = for (Some(a) <- visit(cAst.compilationUnit, localvisit(_, sourceContext))) yield a
 
@@ -79,9 +89,20 @@ class SimpleExprWithBraceChecker extends CombinedChecker {
     case a: Any => visit(a, localvisit(_, sc))
   }
 
-  private def checkBlockExprHasSingleExpr(b: BlockExpr): Option[ScalastyleError] = b.caseClausesOrStatSeq match {
-    case Right(s: StatSeq) if s.otherStats.isEmpty => Some(PositionError(b.lbrace.offset))
-    case a: Any => None
+  private def checkBlockExprHasSingleExpr(b: BlockExpr, nestedAllowed: Boolean): Option[ScalastyleError] =
+    b.caseClausesOrStatSeq match {
+      case Right(s: StatSeq) if s.otherStats.isEmpty && checkStatSeq(s, nestedAllowed) => Some(PositionError(b.lbrace.offset))
+      case a: Any => None
+    }
+
+  private def checkStatSeq(ss: StatSeq, nestedAllowed: Boolean): Boolean = {
+    val length = expandExpr(ss).length
+    length <= 1 || (length > 1 && !nestedAllowed)
+  }
+
+  private def expandExpr(a: Any): List[CallExpr] = a match {
+    case e: CallExpr => e :: visit(e, expandExpr)
+    case a: Any => visit(a, expandExpr)
   }
 
   private def visitCaseClause(c: CaseClause, sc: SourceContext): List[Option[ScalastyleError]] = {
@@ -91,7 +112,7 @@ class SimpleExprWithBraceChecker extends CombinedChecker {
     }
 
     blockExprOrEmpty.flatMap {
-      case x: BlockExpr => checkBlockExprHasSingleExpr(x) :: visit(x, localvisit(_, sc))
+      case x: BlockExpr => checkBlockExprHasSingleExpr(x, sc.nestedAllowed) :: visit(x, localvisit(_, sc))
       case _ => visit(c, localvisit(_, sc))
     }
   }
@@ -106,13 +127,13 @@ class SimpleExprWithBraceChecker extends CombinedChecker {
   }
 
   private def visitExprFunBody(e: ExprFunBody, sc: SourceContext): List[Option[ScalastyleError]] = e.body.contents match {
-    case (x: BlockExpr) :: xs => checkBlockExprHasSingleExpr(x) :: visit(e.body, localvisit(_, sc))
+    case (x: BlockExpr) :: xs => checkBlockExprHasSingleExpr(x, sc.nestedAllowed) :: visit(e.body, localvisit(_, sc))
     case _ => visit(e.body, localvisit(_, sc))
   }
 
   private def visitPatDefOrDcl(p: PatDefOrDcl, sc: SourceContext): List[Option[ScalastyleError]] = p.equalsClauseOption match {
     case Some((_, e: Expr)) => e.contents match {
-      case (x: BlockExpr) :: xs => checkBlockExprHasSingleExpr(x) :: visit(e, localvisit(_, sc))
+      case (x: BlockExpr) :: xs => checkBlockExprHasSingleExpr(x, sc.nestedAllowed) :: visit(e, localvisit(_, sc))
       case _ => visit(e, localvisit(_, sc))
     }
     case _ => visit(p, localvisit(_, sc))
@@ -127,14 +148,14 @@ class SimpleExprWithBraceChecker extends CombinedChecker {
   }
 
   private def visitExpr(t: TokenType, e: Expr, sc: SourceContext): List[Option[ScalastyleError]] = e.contents match {
-    case (x: BlockExpr) :: xs if sc.targetTokens.contains(t) => checkBlockExprHasSingleExpr(x) :: visit(e, localvisit(_, sc))
+    case (x: BlockExpr) :: xs if sc.targetTokens.contains(t) => checkBlockExprHasSingleExpr(x, sc.nestedAllowed) :: visit(e, localvisit(_, sc))
     case _ => visit(e, localvisit(_, sc))
   }
 
   private def visitIfExpr(i: IfExpr, sc: SourceContext): List[Option[ScalastyleError]] = {
     val ifExprErrors = i.body.contents match {
       case (x: BlockExpr) :: xs if sc.targetTokens.contains(IF) =>
-        checkBlockExprHasSingleExpr(x) :: visit(i.body, localvisit(_, sc))
+        checkBlockExprHasSingleExpr(x, sc.nestedAllowed) :: visit(i.body, localvisit(_, sc))
       case _ => visit(i.body, localvisit(_, sc))
     }
 
@@ -149,7 +170,7 @@ class SimpleExprWithBraceChecker extends CombinedChecker {
   private def visitElseOrElseif(e: ElseClause, sc: SourceContext): List[Option[ScalastyleError]] = e.elseBody.contents match {
     case (x: IfExpr) :: xs => visitIfExpr(x, sc) ::: visit(xs, localvisit(_, sc))
     case (x: BlockExpr) :: xs if sc.targetTokens.contains(ELSE) =>
-      checkBlockExprHasSingleExpr(x) :: visit(e.elseBody, localvisit(_, sc))
+      checkBlockExprHasSingleExpr(x, sc.nestedAllowed) :: visit(e.elseBody, localvisit(_, sc))
     case a: Any => visit(a, localvisit(_, sc))
   }
 }

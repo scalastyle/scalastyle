@@ -323,4 +323,24 @@ class A {
 """.stripMargin
     assertErrors(List(), code, Map("targetTokens" -> "case"))
   }
+
+  @Test def testNestedExpressionAllowed(): Unit = {
+    val code = """
+class A {
+  def a() = {
+    List(1,2,3).map(_ + 1).filter(_ == 1)
+  }
+}""".stripMargin
+    assertErrors(List(), code, Map("targetTokens" -> "def", "nestedAllowed" -> "true"))
+  }
+
+  @Test def testNestedExpressionNotAllowed(): Unit = {
+    val code = """
+class A {
+  def a() = {
+    List(1,2,3).map(_ + 1).filter(_ == 1)
+  }
+}""".stripMargin
+    assertErrors(List(columnError(3, 12)), code, Map("targetTokens" -> "def", "nestedAllowed" -> "false"))
+  }
 }

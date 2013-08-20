@@ -80,6 +80,7 @@
     <checker class="org.scalastyle.scalariform.SimpleExprWithBraceChecker" id="simple.expression.with.brace" defaultLevel="warning" >
         <parameters>
             <parameter name="targetTokens" type="string" default="" />
+            <parameter name="nestedAllowed" type="boolean" default="false" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.IfBraceChecker" id="if.brace" defaultLevel="warning" >
