@@ -54,7 +54,10 @@ class RemovableMatchChecker extends ScalariformChecker {
   }
 
   private def hasRemovableMatch(c: CallExpr): Boolean = {
-    val anonymousFunction = findAnonymousFunction(c.newLineOptsAndArgumentExprss(0)._2)
+    val anonymousFunction = c.newLineOptsAndArgumentExprss match {
+      case x::_ => findAnonymousFunction(x._2)
+      case _ => None
+    }
 
     anonymousFunction match {
       case Some(f) => isRemovable(f)
@@ -74,16 +77,12 @@ class RemovableMatchChecker extends ScalariformChecker {
     case _ => false
   }
 
-  private def findAnonymousFunction(ast: AstNode, level: Int = 0): Option[AnonymousFunction] = {
-    if (level > 3) {
-      return None
-    }
+  private def findAnonymousFunction(ast: AstNode, level: Int = 0): Option[AnonymousFunction] =
     ast.immediateChildren.headOption match {
+      case opt if level > 3 || opt.isEmpty => None
       case Some(n: AnonymousFunction) => Some(n)
       case Some(n) => findAnonymousFunction(n)
-      case _ => None
     }
-  }
 
   private def getAllCallExpr(ast: Any): List[ExprElement] = ast match {
     case t: InfixExpr => t :: visit(t.immediateChildren, getAllCallExpr)

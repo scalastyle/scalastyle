@@ -26,36 +26,36 @@ class RemovableMatchCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "removable.match"
   val classUnderTest = classOf[RemovableMatchChecker]
 
-//  @Test def testClassOK() {
-//    val source = """
-//package foobar
-//
-//class OK {
-//  def foo() {
-//    val l = List(1, 2, 3)
-//    l.map{
-//      case 1 => 1
-//      case _ => 0
-//    }
-//    l.map{ i =>
-//      i match {
-//        case 1 => i
-//        case _ => 0
-//      }
-//    }
-//    l.map{ i =>
-//      l.sliding(2) match {
-//        case List(x, y) => x + y
-//      }
-//    }
-//    l.foreach{}
-//    l.foreach(println)
-//  }
-//}
-//                 """;
-//
-//    assertErrors(List(), source)
-//  }
+  @Test def testClassOK() {
+    val source = """
+package foobar
+
+class OK {
+  def foo() {
+    val l = List(1, 2, 3)
+    l.map{
+      case 1 => 1
+      case _ => 0
+    }
+    l.map{ i =>
+      i match {
+        case 1 => i
+        case _ => 0
+      }
+    }
+    l.map{ i =>
+      l.sliding(2) match {
+        case List(x, y) => x + y
+      }
+    }
+    l.foreach{}
+    l.foreach(println)
+  }
+}
+                 """;
+
+    assertErrors(List(), source)
+  }
 
   @Test def testClassKO() {
     val source = """
@@ -83,5 +83,20 @@ class KO {
                  """;
 
     assertErrors(List(columnError(7, 6), columnError(14, 30), columnError(17, 34)), source)
+  }
+
+  @Test def testVariableHasSameNameInTargetCalls() = {
+    val source = """
+package foobar
+
+class Foo {
+  val count = 1
+  val bar = {
+    count + count
+  }
+}
+                 """;
+
+    assertErrors(List(), source)
   }
 }
