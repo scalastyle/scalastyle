@@ -19,12 +19,14 @@ package org.scalastyle.scalariform
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper._
+import scalariform.parser._
+import org.scalastyle.PositionError
 import scalariform.parser.AnonymousFunction
-import scalariform.parser.AstNode
-import scalariform.parser.Expr
 import scalariform.parser.CompilationUnit
 import org.scalastyle.PositionError
+import scala.Some
 import scalariform.parser.MatchExpr
+import scalariform.parser.Expr
 import scalariform.parser.CallExpr
 
 class RemovableMatchChecker extends ScalariformChecker {
@@ -34,9 +36,21 @@ class RemovableMatchChecker extends ScalariformChecker {
     "partition", "prefixLength", "reverseMap", "segmentLength", "sortBy", "span", "takeWhile", "withFilter")
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    getAllCallExpr(ast).withFilter(t => targetCalls.contains(t.id.text) && hasRemovableMatch(t))
-      .map(t => PositionError(t.id.offset))
-      .toList
+    getAllCallExpr(ast).withFilter(isTargetDefinitions).map(getErrorPosition)
+  }
+
+  private def isTargetDefinitions(t: ExprElement): Boolean = t match {
+    case t: CallExpr => targetCalls.contains(t.id.text) && hasRemovableMatch(t)
+    case t: InfixExpr =>
+      findAnonymousFunction(t.right.head) match {
+        case Some(f) => targetCalls.contains(t.infixId.text) && isRemovable(f)
+        case None => false
+      }
+  }
+
+  private def getErrorPosition(t: ExprElement) = t match {
+    case t: CallExpr => PositionError(t.id.offset)
+    case t: InfixExpr => PositionError(t.infixId.offset)
   }
 
   private def hasRemovableMatch(c: CallExpr): Boolean = {
@@ -71,7 +85,8 @@ class RemovableMatchChecker extends ScalariformChecker {
     }
   }
 
-  private def getAllCallExpr(ast: Any): List[CallExpr] = ast match {
+  private def getAllCallExpr(ast: Any): List[ExprElement] = ast match {
+    case t: InfixExpr => t :: visit(t.immediateChildren, getAllCallExpr)
     case t: CallExpr => t :: visit(t.immediateChildren, getAllCallExpr)
     case t: Any => visit(t, getAllCallExpr)
   }
