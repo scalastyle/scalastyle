@@ -64,7 +64,7 @@ package foobar
 class KO {
   def foo() {
     val l = List(1, 2, 3)
-    l map{ i => i match {
+    l.map{ i => i match {
       case 1 => println("foo")
       case _ =>
       }
@@ -83,6 +83,43 @@ class KO {
                  """;
 
     assertErrors(List(columnError(7, 6), columnError(14, 30), columnError(17, 34)), source)
+  }
+
+  @Test def testInfixCollectionMethodOK() = {
+    val source = """
+package foobar
+
+class Foo {
+  def bar() {
+    list map {
+      case Some(x) => x
+      case None => default
+    }
+  }
+}
+                 """;
+
+    assertErrors(List(), source)
+  }
+
+
+  @Test def testInfixCollectionMethodKO() = {
+    val source = """
+package foobar
+
+class Foo {
+  def bar() {
+    list map { item =>
+      item match {
+        case Some(x) => x
+        case None => default
+      }
+    }
+  }
+}
+                 """;
+
+    assertErrors(List(columnError(6, 9)), source)
   }
 
   @Test def testVariableHasSameNameInTargetCalls() = {

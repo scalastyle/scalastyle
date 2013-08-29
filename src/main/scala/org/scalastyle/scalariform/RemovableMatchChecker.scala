@@ -36,7 +36,7 @@ class RemovableMatchChecker extends ScalariformChecker {
     "partition", "prefixLength", "reverseMap", "segmentLength", "sortBy", "span", "takeWhile", "withFilter")
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    getAllCallExpr(ast).withFilter(isTargetDefinitions).map(getErrorPosition)
+    getAllCallAndInfixExpr(ast).withFilter(isTargetDefinitions).map(getErrorPosition)
   }
 
   private def isTargetDefinitions(t: ExprElement): Boolean = t match {
@@ -48,7 +48,7 @@ class RemovableMatchChecker extends ScalariformChecker {
       }
   }
 
-  private def getErrorPosition(t: ExprElement) = t match {
+  private def getErrorPosition(t: ExprElement): PositionError = t match {
     case t: CallExpr => PositionError(t.id.offset)
     case t: InfixExpr => PositionError(t.infixId.offset)
   }
@@ -84,9 +84,9 @@ class RemovableMatchChecker extends ScalariformChecker {
       case Some(n) => findAnonymousFunction(n)
     }
 
-  private def getAllCallExpr(ast: Any): List[ExprElement] = ast match {
-    case t: InfixExpr => t :: visit(t.immediateChildren, getAllCallExpr)
-    case t: CallExpr => t :: visit(t.immediateChildren, getAllCallExpr)
-    case t: Any => visit(t, getAllCallExpr)
+  private def getAllCallAndInfixExpr(ast: Any): List[ExprElement] = ast match {
+    case t: InfixExpr => t :: visit(t.immediateChildren, getAllCallAndInfixExpr)
+    case t: CallExpr => t :: visit(t.immediateChildren, getAllCallAndInfixExpr)
+    case t: Any => visit(t, getAllCallAndInfixExpr)
   }
 }
