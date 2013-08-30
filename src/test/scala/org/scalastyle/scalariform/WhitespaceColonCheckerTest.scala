@@ -19,6 +19,7 @@ package org.scalastyle.scalariform
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
+import org.scalastyle.ColumnError
 
 // scalastyle:off magic.number
 
@@ -37,7 +38,6 @@ class Foobar(a: Int, b: Int) { }
 
     assertErrors(List(), source)
   }
-
 
   @Test def testClassStatementKO() {
     val source = """
@@ -58,6 +58,9 @@ class Foobar() {
     val l = 1 :: List(2, 3)
   }
   def bar: Unit { }
+  def baz(x: Int)(implicit y: Int): Int = x
+  def foobar[T]: Int = 1
+  def foobaz[T](x: Int): Int = 1
 }
                  """;
 
@@ -74,10 +77,13 @@ class Foobar() {
     val l = 1 :: List(2, 3)
   }
   def bar : Unit { }
+  def foobar[T] : Int = 1
+  def foobaz[T](x : Int) : Int = 1
 }
                  """;
 
-    assertErrors(List(columnError(3, 11), columnError(4, 15), columnError(6, 10), columnError(9, 10)), source)
+    assertErrors(List(columnError(3, 11), columnError(4, 15), columnError(6, 10),
+      columnError(9, 10), columnError(10, 16), columnError(11, 18), columnError(11, 25)), source)
   }
 
   @Test def testCaseStatementOK() {
@@ -117,6 +123,48 @@ class Foobar() {
 
     assertErrors(List(columnError(8, 13), columnError(9, 13)), source)
   }
+
+  @Test def testLineBreakAllowed() {
+    val source = """
+case class Something()
+case class Anything()
+
+class Foobar() {
+  def bar(
+    veryLongArgumentFoo: Int,
+    veryLongArgumentBar: Int)
+  : Unit {
+    val a: Int = 0
+    val b
+    : Int = 0
+  }
+}
+                 """;
+
+    assertErrors(List(), source, Map("lineBreakAllowed" -> "true"))
+  }
+
+  @Test def testLineBreakNotAllowed() {
+    val source = """
+case class Something()
+case class Anything()
+
+class Foobar() {
+  def bar(
+    veryLongArgumentFoo: Int,
+    veryLongArgumentBar: Int)
+  : Unit {
+    val a :
+     Int = 0
+    val b
+    : Int = 0
+  }
+}
+                 """;
+
+    assertErrors(List(columnError(9, 2), columnError(10, 10), columnError(13, 4)), source, Map("lineBreakAllowed" -> "false"))
+  }
+
 }
 
 class WhitespaceAfterColonCheckerTest extends AssertionsForJUnit with CheckerTest {

@@ -135,6 +135,10 @@
     <checker class="org.scalastyle.scalariform.NotImplementedErrorUsage" id="not.implemented.error.usage" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.BlockImportChecker" id="block.import" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ProcedureDeclarationChecker" id="procedure.declaration" defaultLevel="warning"/>
-    <checker class="org.scalastyle.scalariform.NoWhitespaceBeforeColonChecker" id="no.whitespace.before.colon" defaultLevel="warning"/>
-    <checker class="org.scalastyle.scalariform.WhitespaceAfterColonChecker" id="no.whitespace.after.colon" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.NoWhitespaceBeforeColonChecker" id="no.whitespace.before.colon" defaultLevel="warning">
+      <parameters>
+          <parameter name="lineBreakAllowed" type="boolean" default="true" />
+      </parameters>
+    </checker>
+    <checker class="org.scalastyle.scalariform.WhitespaceAfterColonChecker" id="whitespace.after.colon" defaultLevel="warning"/>
 </scalastyle-definition>

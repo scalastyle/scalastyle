@@ -32,56 +32,60 @@ import org.scalastyle.PositionError
 /**
  * Check each tokens in type annotations
  */
-abstract class TypeAnnotationTokenChecker extends ScalariformChecker {
+abstract class TypeAnnotationTokenChecker extends CombinedChecker {
   val specialOperators = Set("*", "/", "%", "+", "-", ":", "=", "!", "<", ">", "&", "^", "|")
 
-  protected def matcher(tokens: List[Token]): List[ScalastyleError]
+  protected def matcher(tokens: List[Token], lines: Lines): List[ScalastyleError]
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    localvisit(ast)
+  def verify(ast: CombinedAst): List[ScalastyleError] = {
+    val tokenList = localvisit(ast.compilationUnit)
+    tokenList.map(matcher(_, ast.lines)).flatten
   }
 
-  def localvisit(ast: Any): List[ScalastyleError] = ast match {
-    case t: TmplDef => checkClassDefinition(t, matcher) ::: visit(t.immediateChildren, localvisit)
-    case c: CasePattern => matcher(c.pattern.tokens) ::: visit(c.immediateChildren, localvisit)
-    case v: PatDefOrDcl => checkPatternDefinition(v, matcher) ::: visit(v.immediateChildren, localvisit)
-    case f: FunDefOrDcl => checkFunctionDefinition(f, matcher) ::: visit(f.immediateChildren, localvisit)
+  def localvisit(ast: Any): List[List[Token]] = ast match {
+    case t: TmplDef => checkClassDefinition(t) :: visit(t.immediateChildren, localvisit)
+    case c: CasePattern => c.pattern.tokens :: visit(c.immediateChildren, localvisit)
+    case v: PatDefOrDcl => checkPatternDefinition(v) :: visit(v.immediateChildren, localvisit)
+    case f: FunDefOrDcl => checkFunctionDefinition(f) :: visit(f.funBodyOpt, localvisit)
     case a: Any => visit(a, localvisit)
   }
 
-  private def checkClassDefinition(t: TmplDef, matcher: List[Token] => List[ScalastyleError]) = {
+  private def checkClassDefinition(t: TmplDef): List[Token] = {
     val paramError = t.paramClausesOpt match {
-      case Some(x) => matcher(x.tokens)
+      case Some(x) => x.tokens
       case None => Nil
     }
     val typeParamError = t.typeParamClauseOpt match {
-      case Some(x) => matcher(x.tokens)
+      case Some(x) => x.tokens
       case None => Nil
     }
     typeParamError ::: paramError
   }
 
-  private def checkPatternDefinition(v: PatDefOrDcl, matcher: List[Token] => List[ScalastyleError]) = v.typedOpt match {
+  private def checkPatternDefinition(v: PatDefOrDcl): List[Token] = v.typedOpt match {
     case Some((x, y)) =>
       if (specialOperators.exists(op => v.pattern.firstToken.text.startsWith(op))) {
         val shiftedPatternToken = v.pattern.tokens.map(t => t.copy(offset = t.offset + 1))
-        matcher(shiftedPatternToken ::: x :: y.tokens)
+        shiftedPatternToken ::: x :: y.tokens
       } else {
-        matcher(v.pattern.tokens ::: x :: y.tokens)
+        v.pattern.tokens ::: x :: y.tokens
 
       }
     case None => Nil
   }
 
-  private def checkFunctionDefinition(f: FunDefOrDcl, matcher: List[Token] => List[ScalastyleError]) = f.returnTypeOpt match {
+  private def checkFunctionDefinition(f: FunDefOrDcl): List[Token] = f.returnTypeOpt match {
     case Some((x, y)) =>
-      if (specialOperators.exists(op => f.nameToken.text.startsWith(op))) {
-        val shiftedNameToken = f.nameToken.copy(offset = f.nameToken.offset + 1)
-        matcher(shiftedNameToken :: f.paramClauses.tokens ::: x :: y.tokens)
+      val namedToken = if (specialOperators.exists(op => f.nameToken.text.startsWith(op))) {
+        f.nameToken.copy(offset = f.nameToken.offset + 1)
       } else {
-        matcher(f.nameToken :: f.paramClauses.tokens ::: x :: y.tokens)
+        f.nameToken
       }
-    case None => matcher(f.paramClauses.tokens)
+      f.typeParamClauseOpt match {
+        case None => namedToken :: f.paramClauses.tokens ::: x :: y.tokens
+        case Some(t) => namedToken :: t.tokens ::: f.paramClauses.tokens ::: x :: y.tokens
+      }
+    case None => f.paramClauses.tokens
   }
 }
 
@@ -90,12 +94,12 @@ abstract class TypeAnnotationTokenChecker extends ScalariformChecker {
  */
 abstract class ColonChecker extends TypeAnnotationTokenChecker {
 
-  def localMatcher(prev: Token, current: Token, next: Token): Boolean
+  def localMatcher(prev: Token, current: Token, next: Token, lines: Lines): Boolean
 
-  override def matcher(tokens: List[Token]): List[PositionError] = {
+  override def matcher(tokens: List[Token], lines: Lines): List[PositionError] = {
     val it = for (
       List(prev, current, next) <- tokens.sliding(3);
-      if (localMatcher(prev, current, next))
+      if (localMatcher(prev, current, next, lines))
     ) yield {
       PositionError(current.offset)
     }
@@ -104,6 +108,9 @@ abstract class ColonChecker extends TypeAnnotationTokenChecker {
 
   def isSingleColonToken(current: Token, next: Token) =
     current.tokenType == COLON && next.tokenType != COLON
+
+  def linesBetweenTokens(lines: Lines, srcToken: Token, dstToken: Token): Int =
+    Math.abs(lines.toLineColumn(srcToken.offset).get.line - lines.toLineColumn(dstToken.offset).get.line)
 }
 
 /**
@@ -111,9 +118,18 @@ abstract class ColonChecker extends TypeAnnotationTokenChecker {
  */
 class NoWhitespaceBeforeColonChecker extends ColonChecker {
   val errorKey = "no.whitespace.before.colon"
+  val paramLineBreakAllowed = "lineBreakAllowed"
 
-  def localMatcher(prev: Token, current: Token, next: Token) =
-    isSingleColonToken(current, next) && charsBetweenTokens(prev, current) != 0
+  def localMatcher(prev: Token, current: Token, next: Token, lines: Lines) = {
+    val allowLineBreak = getBoolean(paramLineBreakAllowed, false)
+
+    allowLineBreak match {
+      case true =>
+        isSingleColonToken(current, next) && !(charsBetweenTokens(prev, current) == 0 || linesBetweenTokens(lines, prev, current) == 1)
+      case false =>
+        isSingleColonToken(current, next) && !(charsBetweenTokens(prev, current) == 0)
+    }
+  }
 }
 
 /**
@@ -122,6 +138,6 @@ class NoWhitespaceBeforeColonChecker extends ColonChecker {
 class WhitespaceAfterColonChecker extends ColonChecker {
   val errorKey = "whitespace.after.colon"
 
-  def localMatcher(prev: Token, current: Token, next: Token) =
+  def localMatcher(prev: Token, current: Token, next: Token, lines: Lines) =
     isSingleColonToken(current, next) && charsBetweenTokens(current, next) != 1
 }
