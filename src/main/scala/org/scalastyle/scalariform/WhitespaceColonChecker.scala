@@ -16,18 +16,14 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle._
-
-import _root_.scalariform.lexer.Tokens.COLON
-import org.scalastyle.scalariform.VisitorHelper._
-import _root_.scalariform.parser.PatDefOrDcl
-import _root_.scalariform.parser.FunDefOrDcl
-import _root_.scalariform.parser.CasePattern
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.TmplDef
-import _root_.scalariform.parser.CompilationUnit
+import scalariform.lexer.Token
+import scalariform.parser.{FunDefOrDcl, PatDefOrDcl, TmplDef, CasePattern}
 import scala.Some
+import org.scalastyle._
+import org.scalastyle.Lines
 import org.scalastyle.PositionError
+import org.scalastyle.scalariform.VisitorHelper.visit
+import _root_.scalariform.lexer.Tokens.COLON
 
 /**
  * Check each tokens in type annotations
@@ -137,7 +133,16 @@ class NoWhitespaceBeforeColonChecker extends ColonChecker {
  */
 class WhitespaceAfterColonChecker extends ColonChecker {
   val errorKey = "whitespace.after.colon"
+  val paramLineBreakAllowed = "lineBreakAllowed"
 
-  def localMatcher(prev: Token, current: Token, next: Token, lines: Lines) =
-    isSingleColonToken(current, next) && charsBetweenTokens(current, next) != 1
+  def localMatcher(prev: Token, current: Token, next: Token, lines: Lines) = {
+    val allowLineBreak = getBoolean(paramLineBreakAllowed, false)
+
+    allowLineBreak match {
+      case true =>
+        isSingleColonToken(current, next) && !(charsBetweenTokens(current, next) == 1 || linesBetweenTokens(lines, current, next) == 1)
+      case false =>
+        isSingleColonToken(current, next) && !(charsBetweenTokens(current, next) == 1)
+    }
+  }
 }
