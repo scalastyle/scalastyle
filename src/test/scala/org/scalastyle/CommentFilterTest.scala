@@ -81,10 +81,15 @@ class CommentFilterTest extends AssertionsForJUnit {
   @Test def testOnelineFilter(): Unit = {
     val source = """
 // scalastyle:ignore
+ // scalastyle:ignore test
 """
-  val expected = List(None, Some(LineColumn(2,0)) Some(LineColumn(2,0) ) )
+  val expected = List( CommentFilter( None         , Some(LineColumn(2,0)), Some(LineColumn(2,0) ) ) 
+                     , CommentFilter( Some("test") , Some(LineColumn(3,1)), Some(LineColumn(3,1) ) )
+                     )
   assertCommentFilter(expected, source)
   }
+
+
 
   private[this] def assertCommentFilter(expected: List[CommentFilter], text: String) = {
     val hiddenTokenInfo = Checker.parseScalariform(text).get.comments

@@ -27,7 +27,7 @@ case class CommentInter(id: Option[String], position: Int, off: Boolean)
 object CommentFilter {
 
   private[this] val OnOff = """//\s*scalastyle:(on|off)(.*)""".r
-  private[this] val OneLine = """//\s*scalastyle:ignore.*""".r
+  private[this] val OneLine = """//\s*scalastyle:ignore(.*)""".r
   private[this] val allMatchers = List(OnOff, OneLine)
 
   private[this] def isComment(s: String): Boolean = allMatchers.exists(_.pattern.matcher(s.trim).matches) 
@@ -39,22 +39,28 @@ object CommentFilter {
   def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = 
     findOnlineCommentFilters(comments, lines) ++ findOnOffCommentFilters(comments, lines)
 
+  def checkEmpty(s:String) = if (s != "") Some(s) else None
+  def splitIds( s:String, notEmpty:Boolean = false ):List[String] = s.trim.split("\\s+").toList match {
+    case Nil if(notEmpty) => List("")
+    case ls               => ls
+  }
 
   def findOnlineCommentFilters(comments: List[Comment], lines: Lines):List[CommentFilter] = 
     for {
-      comment   <- comments
-      OneLine() <- List(comment.text.trim)
-      position  =  lines.toLineColumn( comment.token.offset )
-    } yield CommentFilter( None, position, position )
+      comment    <- comments
+      OneLine(s) <- List(comment.text.trim)
+      position   =  lines.toLineColumn( comment.token.offset )
+      id         <- splitIds(s, true)
+    } yield CommentFilter(  checkEmpty(id) , position, position )
 
   def findOnOffCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
 
     val it:List[CommentInter] =
       for {
-        comment <- comments
+        comment                <- comments
         OnOff(onoff, idString) <- List(comment.text.trim) // this is a bit ugly
-        id      <- idString.trim.split("\\s+").toList
-      } yield CommentInter( if (id != "") Some(id) else None
+        id                     <- splitIds( idString )
+      } yield CommentInter( checkEmpty(id)
                           , comment.token.offset
                           , onoff == "off"
                           )
