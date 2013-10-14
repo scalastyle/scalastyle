@@ -56,6 +56,19 @@ package foobar
     assertErrors(List(lineError(4, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
+  @Test def testWithImports() {
+    val source = """
+package foobar
+import org.scalastyle.file.SuperLongImportClass
+
+    object Foobar {
+}
+""";
+
+    assertErrors(List(lineError(5, List("15"))), source, Map("maxLineLength" -> "15", "ignoreImports" -> "true"))
+    assertErrors(List(lineError(3, List("15")), lineError(5, List("15"))), source, Map("maxLineLength" -> "15"))
+  }
+
   @Test def testWithTwoMax() {
     val source = """
 package foobar
