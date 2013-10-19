@@ -82,9 +82,11 @@ class CommentFilterTest extends AssertionsForJUnit {
     val source = """
 // scalastyle:ignore
  // scalastyle:ignore test
+some code //   scalastyle:ignore     
 """
-  val expected = List( CommentFilter( None         , Some(LineColumn(2,0)), Some(LineColumn(2,0) ) ) 
-                     , CommentFilter( Some("test") , Some(LineColumn(3,1)), Some(LineColumn(3,1) ) )
+  val expected = List( CommentFilter( None         , Some(LineColumn(2,0)), Some(LineColumn(2,20)) ) 
+                     , CommentFilter( Some("test") , Some(LineColumn(3,0)), Some(LineColumn(3,26)) )
+                     , CommentFilter( None         , Some(LineColumn(4,0)), Some(LineColumn(4,37)) )
                      )
   assertCommentFilter(expected, source)
   }

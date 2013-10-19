@@ -35,18 +35,26 @@ case class HiddenTokenInfo(tokens: Seq[HiddenToken])
 case class LineColumn(line: Int, column: Int)
 
 case class Lines(lines: Array[Line], lastChar: Char) {
-  def toLineColumn(position: Int): Option[LineColumn] = {
+
+  def findLineAndIndex(position:Int):Option[(Line, Int)] = {
     var i = 0
 
     lines.foreach(l => {
       i = i + 1
       if (position >= l.start && position < l.end) {
-        return Some(LineColumn(i, position - l.start))
+        return Some( ( l, i ) )
       }
     })
 
     None
   }
+
+  def toLineColumn(position: Int): Option[LineColumn] = 
+    findLineAndIndex(position) map {case (line, index) => LineColumn(index, position - line.start) }
+
+  def toFullLineTuple(position:Int):Option[ (LineColumn, LineColumn) ] = 
+    findLineAndIndex(position) map {case (line, index) =>  ( LineColumn( index, 0 ), LineColumn(index, (line.end - 1) - line.start ) ) }
+
 }
 
 class ScalastyleChecker[T <: FileSpec] {

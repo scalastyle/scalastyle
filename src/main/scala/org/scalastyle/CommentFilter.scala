@@ -37,7 +37,7 @@ object CommentFilter {
   }
 
   def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = 
-    findOnlineCommentFilters(comments, lines) ++ findOnOffCommentFilters(comments, lines)
+    findOneLineCommentFilters(comments, lines) ++ findOnOffCommentFilters(comments, lines)
 
   def checkEmpty(s:String) = if (s != "") Some(s) else None
   def splitIds( s:String, notEmpty:Boolean = false ):List[String] = s.trim.split("\\s+").toList match {
@@ -45,13 +45,13 @@ object CommentFilter {
     case ls               => ls
   }
 
-  def findOnlineCommentFilters(comments: List[Comment], lines: Lines):List[CommentFilter] = 
+  def findOneLineCommentFilters(comments: List[Comment], lines: Lines):List[CommentFilter] = 
     for {
-      comment    <- comments
-      OneLine(s) <- List(comment.text.trim)
-      position   =  lines.toLineColumn( comment.token.offset )
-      id         <- splitIds(s, true)
-    } yield CommentFilter(  checkEmpty(id) , position, position )
+      comment      <- comments
+      OneLine(s)   <- List(comment.text.trim)
+      (start, end) <-  lines.toFullLineTuple( comment.token.offset ).toList
+      id           <- splitIds(s, true)
+    } yield CommentFilter(  checkEmpty(id) , Some(start), Some(end) )
 
   def findOnOffCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
 
