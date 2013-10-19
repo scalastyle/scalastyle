@@ -26,25 +26,44 @@ case class CommentInter(id: Option[String], position: Int, off: Boolean)
 
 object CommentFilter {
 
-  private[this] val MatchRegex = """//\s*scalastyle:(on|off)(.*)""".r
+  private[this] val OnOff = """//\s*scalastyle:(on|off)(.*)""".r
+  private[this] val OneLine = """//\s*scalastyle:ignore(.*)""".r
+  private[this] val allMatchers = List(OnOff, OneLine)
 
-  private[this] def isComment(s: String): Boolean = MatchRegex.pattern.matcher(s.trim).matches
+  private[this] def isComment(s: String): Boolean = allMatchers.exists(_.pattern.matcher(s.trim).matches) 
 
   def findScalastyleComments(tokens: List[Comment]): Iterable[Comment] = {
     tokens.filter(c => isComment(c.text))
   }
 
-  def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
-    val it = comments.map(c => {
-      c.text.trim match {
-        case MatchRegex(onoff, idString) => {
-          val ids = idString.trim.split("\\s+")
-          val off = onoff == "off"
-          ids.map(id => CommentInter(if (id != "") Some(id) else None, c.token.offset, off)).toList
-        }
-        case _ => List() // shouldn't get here
-      }
-    }).flatten.toList.sortWith((e1, e2) => (e1.position - e2.position) < 0)
+  def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = 
+    findOneLineCommentFilters(comments, lines) ++ findOnOffCommentFilters(comments, lines)
+
+  def checkEmpty(s:String) = if (s != "") Some(s) else None
+  def splitIds( s:String, notEmpty:Boolean = false ):List[String] = s.trim.split("\\s+").toList match {
+    case Nil if(notEmpty) => List("")
+    case ls               => ls
+  }
+
+  def findOneLineCommentFilters(comments: List[Comment], lines: Lines):List[CommentFilter] = 
+    for {
+      comment      <- comments
+      OneLine(s)   <- List(comment.text.trim)
+      (start, end) <-  lines.toFullLineTuple( comment.token.offset ).toList
+      id           <- splitIds(s, true)
+    } yield CommentFilter(  checkEmpty(id) , Some(start), Some(end) )
+
+  def findOnOffCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
+
+    val it:List[CommentInter] =
+      for {
+        comment                <- comments
+        OnOff(onoff, idString) <- List(comment.text.trim) // this is a bit ugly
+        id                     <- splitIds( idString )
+      } yield CommentInter( checkEmpty(id)
+                          , comment.token.offset
+                          , onoff == "off"
+                          )
 
     val list = ListBuffer[CommentFilter]()
     var inMap = new HashMap[Option[String], Boolean]()
@@ -74,6 +93,7 @@ object CommentFilter {
 
     list.toList
   }
+
 
   def filterApplies[T <: FileSpec](m: Message[T], commentFilters: List[CommentFilter]): Boolean = {
     m match {
