@@ -13,6 +13,25 @@
  ]]>
  </example-configuration>
  </check>
+
+ <check id="line.size.limit">
+ <justification>
+ Lines that are too long can be hard to read and horizontal scrolling is annoying.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+ <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
+  <parameters>
+   <parameter name="maxLineLength" type="integer" default="100" />
+   <parameter name="tabSize" type="integer" default="2" />
+   <parameter name="ignoreImports" type="boolean" default="true" />
+  </parameters>
+ </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+
  <check id="magic.number">
  <justification>
  Replacing a magic number with a named constant can make code easier to read and understand, and can avoid some subtle bugs.
@@ -25,7 +44,7 @@
 is not a magic number, but
 
     var foo = 4
-	
+
 is considered to be a magic number.
  </extra-description>
  <example-configuration>
@@ -80,7 +99,7 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
- 
+
  <check id="uppercase.l">
  <justification>
  A lowercase L (l) can look similar to a number 1 with some fonts.
@@ -192,7 +211,7 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
- 
+
  <check id="while">
  <justification>
  while loops are deprecated if you're using a strict functional style
@@ -203,7 +222,7 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
- 
+
  <check id="var.field">
  <justification>
  var (mutable fields) are deprecated if you're using a strict functional style
@@ -214,7 +233,7 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
- 
+
  <check id="var.local">
  <justification>
  vars (mutable local variables) loops are deprecated if you're using a strict functional style
@@ -228,7 +247,7 @@ is considered to be a magic number.
 
  <check id="if.redundant">
  <justification>
- If expressions with boolean constants in both branches can be eliminated without affecting readability. Prefer simply `cond` to `if (cond) true else false` and `!cond` to `if (cond) false else true`. 
+ If expressions with boolean constants in both branches can be eliminated without affecting readability. Prefer simply `cond` to `if (cond) true else false` and `!cond` to `if (cond) false else true`.
  </justification>
  <example-configuration>
  <![CDATA[
@@ -275,7 +294,7 @@ is considered to be a magic number.
  <check id="class.type.parameter.name">
  <justification>
  Scala generic type names are generally single upper case letters. This check checks for classes and traits.
- 
+
  Note that this check only checks the innermost type parameter, to allow for List\[T\].
  </justification>
  <example-configuration>
@@ -303,21 +322,21 @@ is considered to be a magic number.
  <check id="lowercase.pattern.match">
  <justification>
   A lower case pattern match clause with no other tokens is the same as \_; this is not true for patterns which start with an upper
-  case letter. This can cause confusion, and may not be what was intended: 
-  
+  case letter. This can cause confusion, and may not be what was intended:
+
     val foo = "foo"
     val Bar = "bar"
     "bar" match { case Bar => "we got bar" }   // result = "we got bar"
     "bar" match { case foo => "we got foo" }   // result = "we got foo"
     "bar" match { case `foo` => "we got foo" } // result = MatchError
-    
+
   This checker raises a warning with the second match. To fix it, use an identifier which starts with an upper case letter (best), use case \_ or,
   if you wish to refer to the value, add a type `: Any`
-  
+
     val lc = "lc"
     "something" match { case lc: Any => "lc" } // result = "lc"
     "something" match { case _ => "lc" } // result = "lc"
-  
+
  </justification>
  <example-configuration>
  <![CDATA[
@@ -353,7 +372,7 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
- 
+
  <check id="not.implemented.error.usage">
  <justification>
   The ??? operator denotes that an implementation is missing. This rule helps to avoid potential runtime errors because of not implemented code.
@@ -366,7 +385,7 @@ is considered to be a magic number.
  </check>
  <check id="block.import">
  <justification>
-  Block imports can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations. 
+  Block imports can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations.
  </justification>
  <example-configuration>
  <![CDATA[
@@ -377,13 +396,13 @@ is considered to be a magic number.
 
  <check id="procedure.declaration">
  <justification>
-  A procedure style declaration can cause confusion - the developer may have simply forgotten to add a '=', and now their method returns Unit rather than the inferred type: 
-  
+  A procedure style declaration can cause confusion - the developer may have simply forgotten to add a '=', and now their method returns Unit rather than the inferred type:
+
     def foo() { println("hello"); 5 }
     def foo() = { println("hello"); 5 }
-    
+
   This checker raises a warning with the first line. To fix it, use an explicit return type, or add a '=' before the body.
-  
+
  </justification>
  <example-configuration>
  <![CDATA[
