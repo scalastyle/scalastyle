@@ -30,22 +30,22 @@ object CommentFilter {
   private[this] val OneLine = """//\s*scalastyle:ignore(.*)""".r
   private[this] val allMatchers = List(OnOff, OneLine)
 
-  private[this] def isComment(s: String): Boolean = allMatchers.exists(_.pattern.matcher(s.trim).matches) 
+  private[this] def isComment(s: String): Boolean = allMatchers.exists(_.pattern.matcher(s.trim).matches)
 
   def findScalastyleComments(tokens: List[Comment]): Iterable[Comment] = {
     tokens.filter(c => isComment(c.text))
   }
 
-  def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = 
+  def findCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] =
     findOneLineCommentFilters(comments, lines) ++ findOnOffCommentFilters(comments, lines)
 
-  def checkEmpty(s:String) = if (s != "") Some(s) else None
-  def splitIds( s:String, notEmpty:Boolean = false ):List[String] = s.trim.split("\\s+").toList match {
+  private[this] def checkEmpty(s:String) = if (s != "") Some(s) else None
+  private[this] def splitIds(s: String, notEmpty: Boolean = false):List[String] = s.trim.split("\\s+").toList match {
     case Nil if(notEmpty) => List("")
-    case ls               => ls
+    case ls: List[String] => ls
   }
 
-  def findOneLineCommentFilters(comments: List[Comment], lines: Lines):List[CommentFilter] = 
+  private[this] def findOneLineCommentFilters(comments: List[Comment], lines: Lines):List[CommentFilter] =
     for {
       comment      <- comments
       OneLine(s)   <- List(comment.text.trim)
@@ -53,8 +53,7 @@ object CommentFilter {
       id           <- splitIds(s, true)
     } yield CommentFilter(  checkEmpty(id) , Some(start), Some(end) )
 
-  def findOnOffCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
-
+  private[this] def findOnOffCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
     val it:List[CommentInter] =
       for {
         comment                <- comments
@@ -93,7 +92,6 @@ object CommentFilter {
 
     list.toList
   }
-
 
   def filterApplies[T <: FileSpec](m: Message[T], commentFilters: List[CommentFilter]): Boolean = {
     m match {
