@@ -78,9 +78,73 @@ class CommentFilterTest extends AssertionsForJUnit {
 """)
   }
 
+  @Test def testOneLine(): Unit = {
+    val source = """
+// scalastyle:ignore
+ // scalastyle:ignore test
+some code //   scalastyle:ignore
+"""
+  val expected = List( CommentFilter(None         ,Some(LineColumn(2,0)), Some(LineColumn(2,20)) )
+                     , CommentFilter(Some("test") ,Some(LineColumn(3,0)), Some(LineColumn(3,26)) )
+                     , CommentFilter(None         ,Some(LineColumn(4,0)), Some(LineColumn(4,32)) )
+                     )
+  assertCommentFilter(expected, source)
+  }
+
+
+  @Test def testCombination(): Unit = {
+    val source = """
+// scalastyle:off magic.number
+// scalastyle:ignore magic.number
+// scalastyle:on magic.number
+// scalastyle:ignore magic.number
+// scalastyle:off magic.number
+"""
+  val expected = List( CommentFilter(Some("magic.number"), Some(LineColumn(3,0)), Some(LineColumn(3,33)))
+                     , CommentFilter(Some("magic.number"), Some(LineColumn(5,0)), Some(LineColumn(5,33)))
+                     , CommentFilter(Some("magic.number"), Some(LineColumn(2,0)), Some(LineColumn(4,0)))
+                     , CommentFilter(Some("magic.number"), Some(LineColumn(6,0)), None)
+                     )
+  assertCommentFilter(expected, source)
+  }
+
+
+  @Test def testCombination2(): Unit = {
+    val source = """
+package foobar
+
+class foobar {
+  // scalastyle:on class.name
+  class barbar1 { } // scalastyle:ignore class.name
+  //
+
+  // scalastyle:on
+  class barbar2 { } // scalastyle:ignore
+  // scalastyle:off
+
+  // scalastyle:on
+  class barbar3 { } // scalastyle:ignore class.name
+  // scalastyle:off
+
+  // scalastyle:on
+  class barbar4 { } // scalastyle:ignore magic.number
+  // scalastyle:off
+}
+""";
+  val expected = List( CommentFilter(Some("class.name"),   Some(LineColumn(6,0)), Some(LineColumn(6,51)))
+                     , CommentFilter(None              ,   Some(LineColumn(10,0)), Some(LineColumn(10,40)))
+                     , CommentFilter(Some("class.name"),   Some(LineColumn(14,0)), Some(LineColumn(14,51)))
+                     , CommentFilter(Some("magic.number"), Some(LineColumn(18,0)), Some(LineColumn(18,53)))
+                     , CommentFilter(None,                 Some(LineColumn(11,2)), Some(LineColumn(13,2)))
+                     , CommentFilter(None,                 Some(LineColumn(15,2)), Some(LineColumn(17,2)))
+                     , CommentFilter(None,                 Some(LineColumn(19,2)), None)
+                     )
+  assertCommentFilter(expected, source)
+  }
+
   private[this] def assertCommentFilter(expected: List[CommentFilter], text: String) = {
     val hiddenTokenInfo = Checker.parseScalariform(text).get.comments
     val lines = Checker.parseLines(text)
-    assertEquals(expected, CommentFilter.findCommentFilters(hiddenTokenInfo, lines))
+    assertEquals(expected.mkString("\n"), CommentFilter.findCommentFilters(hiddenTokenInfo, lines).mkString("\n"))
   }
 }
