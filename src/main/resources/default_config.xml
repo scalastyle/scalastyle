@@ -116,4 +116,9 @@
  <check level="warning" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true" />
  <check level="warning" class="org.scalastyle.scalariform.BlockImportChecker" enabled="false"/>
  <check level="warning" class="org.scalastyle.scalariform.ProcedureDefinitionChecker" enabled="true"/>
+ <check level="warning" class="org.scalastyle.scalariform.GeneratorVariableLengthChecker" enabled="false">
+  <parameters>
+   <parameter name="maxVariableLength"><![CDATA[1]]></parameter>
+  </parameters>
+ </check>
 </scalastyle>
