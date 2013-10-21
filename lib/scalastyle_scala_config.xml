@@ -111,4 +111,5 @@
    <parameter name="maxMethods"><![CDATA[30]]></parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.scalariform.RemovableMatchChecker" enabled="true"></check>
 </scalastyle>

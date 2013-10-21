@@ -136,4 +136,5 @@
     <checker class="org.scalastyle.scalariform.NotImplementedErrorUsage" id="not.implemented.error.usage" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.BlockImportChecker" id="block.import" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ProcedureDeclarationChecker" id="procedure.declaration" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.RemovableMatchChecker" id="removable.match" defaultLevel="warning"/>
 </scalastyle-definition>

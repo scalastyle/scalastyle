@@ -148,4 +148,5 @@
  <check class="org.scalastyle.scalariform.NotImplementedErrorUsage" level="warning" enabled="true"></check>
  <check class="org.scalastyle.scalariform.BlockImportChecker" level="warning" enabled="false"></check>
  <check class="org.scalastyle.scalariform.ProcedureDeclarationChecker" level="warning" enabled="true"></check>
+ <check class="org.scalastyle.scalariform.RemovableMatchChecker" level="warning" enabled="true"></check>
 </scalastyle>
