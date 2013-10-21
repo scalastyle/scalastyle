@@ -49,9 +49,9 @@ object CommentFilter {
     for {
       comment      <- comments
       OneLine(s)   <- List(comment.text.trim)
-      (start, end) <-  lines.toFullLineTuple( comment.token.offset ).toList
+      (start, end) <- lines.toFullLineTuple(comment.token.offset).toList
       id           <- splitIds(s, true)
-    } yield CommentFilter(  checkEmpty(id) , Some(start), Some(end) )
+    } yield CommentFilter(checkEmpty(id), Some(start), Some(end))
 
   private[this] def findOnOffCommentFilters(comments: List[Comment], lines: Lines): List[CommentFilter] = {
     val it:List[CommentInter] =

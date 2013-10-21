@@ -84,9 +84,9 @@ class CommentFilterTest extends AssertionsForJUnit {
  // scalastyle:ignore test
 some code //   scalastyle:ignore
 """
-  val expected = List( CommentFilter(None         ,Some(LineColumn(2,0)), Some(LineColumn(2,21)) )
-                     , CommentFilter(Some("test") ,Some(LineColumn(3,0)), Some(LineColumn(3,27)) )
-                     , CommentFilter(None         ,Some(LineColumn(4,0)), Some(LineColumn(4,33)) )
+  val expected = List( CommentFilter(None         ,Some(LineColumn(2,0)), Some(LineColumn(3,0)) )
+                     , CommentFilter(Some("test") ,Some(LineColumn(3,0)), Some(LineColumn(4,0)) )
+                     , CommentFilter(None         ,Some(LineColumn(4,0)), Some(LineColumn(5,0)) )
                      )
   assertCommentFilter(expected, source)
   }
@@ -100,8 +100,8 @@ some code //   scalastyle:ignore
 // scalastyle:ignore magic.number
 // scalastyle:off magic.number
 """
-  val expected = List( CommentFilter(Some("magic.number"), Some(LineColumn(3,0)), Some(LineColumn(3,34)))
-                     , CommentFilter(Some("magic.number"), Some(LineColumn(5,0)), Some(LineColumn(5,34)))
+  val expected = List( CommentFilter(Some("magic.number"), Some(LineColumn(3,0)), Some(LineColumn(4,0)))
+                     , CommentFilter(Some("magic.number"), Some(LineColumn(5,0)), Some(LineColumn(6,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(2,0)), Some(LineColumn(4,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(6,0)), None)
                      )
@@ -131,10 +131,10 @@ class foobar {
   // scalastyle:off
 }
 """;
-  val expected = List( CommentFilter(Some("class.name"),   Some(LineColumn(6,0)), Some(LineColumn(6,52)))
-                     , CommentFilter(None              ,   Some(LineColumn(10,0)), Some(LineColumn(10,41)))
-                     , CommentFilter(Some("class.name"),   Some(LineColumn(14,0)), Some(LineColumn(14,52)))
-                     , CommentFilter(Some("magic.number"), Some(LineColumn(18,0)), Some(LineColumn(18,54)))
+  val expected = List( CommentFilter(Some("class.name"),   Some(LineColumn(6,0)), Some(LineColumn(7,0)))
+                     , CommentFilter(None              ,   Some(LineColumn(10,0)), Some(LineColumn(11,0)))
+                     , CommentFilter(Some("class.name"),   Some(LineColumn(14,0)), Some(LineColumn(15,0)))
+                     , CommentFilter(Some("magic.number"), Some(LineColumn(18,0)), Some(LineColumn(19,0)))
                      , CommentFilter(None,                 Some(LineColumn(11,2)), Some(LineColumn(13,2)))
                      , CommentFilter(None,                 Some(LineColumn(15,2)), Some(LineColumn(17,2)))
                      , CommentFilter(None,                 Some(LineColumn(19,2)), None)
