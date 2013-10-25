@@ -28,7 +28,7 @@ class BlockImportCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[BlockImportChecker]
 
   @Test
-  def singleImportIsNoBlockImport() {
+  def singleImportIsNoBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable.Buffer
       """
@@ -36,7 +36,7 @@ import scala.collection.mutable.Buffer
   }
 
   @Test
-  def importAllIsNoBlockImport() {
+  def importAllIsNoBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable._
       """
@@ -44,7 +44,7 @@ import scala.collection.mutable._
   }
 
   @Test
-  def hideImportIsNoBlockImport() {
+  def hideImportIsNoBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable.{Buffer => _}
       """
@@ -52,7 +52,7 @@ import scala.collection.mutable.{Buffer => _}
   }
 
   @Test
-  def renameImportIsNoBlockImport() {
+  def renameImportIsNoBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable.{Buffer => MB}
       """
@@ -60,7 +60,7 @@ import scala.collection.mutable.{Buffer => MB}
   }
 
   @Test
-  def commaSeparatedImportIsBlockImport() {
+  def commaSeparatedImportIsBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable, mutable.Buffer, mutable.ArrayBuffer
       """
@@ -68,7 +68,7 @@ import scala.collection.mutable, mutable.Buffer, mutable.ArrayBuffer
   }
 
   @Test
-  def blockImportFound() {
+  def blockImportFound(): Unit = {
     val source = """
 import scala.collection.mutable.{Buffer, ArrayBuffer}
       """
@@ -76,7 +76,7 @@ import scala.collection.mutable.{Buffer, ArrayBuffer}
   }
 
   @Test
-  def wildcardImportAfterRenameImportsIsNoBlockImport() {
+  def wildcardImportAfterRenameImportsIsNoBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable.{Buffer => MB, ArrayBuffer => _, _}
       """
@@ -84,7 +84,7 @@ import scala.collection.mutable.{Buffer => MB, ArrayBuffer => _, _}
   }
 
   @Test
-  def wildcardImportAfterNormalImportAndRenameImportIsBlockImport() {
+  def wildcardImportAfterNormalImportAndRenameImportIsBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable.{Buffer => MB, ArrayBuffer, _}
       """
@@ -92,7 +92,7 @@ import scala.collection.mutable.{Buffer => MB, ArrayBuffer, _}
   }
 
   @Test
-  def wildcardImportAfterNormalImportIsBlockImport() {
+  def wildcardImportAfterNormalImportIsBlockImport(): Unit = {
     val source = """
 import scala.collection.mutable.{ArrayBuffer, _}
       """

@@ -30,10 +30,10 @@ import scalariform.lexer.Tokens.VARID
 
 abstract class AbstractTokenChecker(val errorKey: String, tokenType: TokenType) extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       t <- ast.tokens;
       if (t.tokenType == tokenType && matches(t))
-    ) yield {
+    } yield {
       PositionError(t.offset)
     }
 

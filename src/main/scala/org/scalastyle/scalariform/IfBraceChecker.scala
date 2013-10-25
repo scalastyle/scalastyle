@@ -37,10 +37,10 @@ class IfBraceChecker extends CombinedChecker {
     val doubleLineAllowed = getBoolean("doubleLineAllowed", DefaultDoubleLineAllowed)
     val singleLineAllowed = doubleLineAllowed || getBoolean("singleLineAllowed", DefaultSingleLineAllowed)
 
-    val it = for (
+    val it = for {
       t <- localvisit(ast.compilationUnit);
       f <- traverse(t, ast.lines, singleLineAllowed, doubleLineAllowed)
-    ) yield {
+    } yield {
       PositionError(f.position.get)
     }
 

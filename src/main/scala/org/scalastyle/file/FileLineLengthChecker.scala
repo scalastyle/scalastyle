@@ -64,10 +64,10 @@ class FileLineLengthChecker extends FileChecker {
     val tabSize = getInt("tabSize", DefaultTabSize)
 
     val importPattern = """^\s*import""".r
-    val errors = for (
+    val errors = for {
       line <- lines.lines.zipWithIndex;
       if (replaceTabs(line._1.text, tabSize).length() > maxLineLength && !(ignoreImports && importPattern.findFirstIn(line._1.text).isDefined))
-    ) yield {
+    } yield {
       LineError(line._2 + 1, List("" + maxLineLength))
     }
 

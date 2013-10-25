@@ -35,10 +35,10 @@ class RedundantIfChecker extends CombinedChecker {
   val errorKey = "if.redundant"
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       t <- localvisit(ast.compilationUnit);
       if matches(t)
-   ) yield {
+    } yield {
       PositionError(t.firstToken.offset)
     }
 

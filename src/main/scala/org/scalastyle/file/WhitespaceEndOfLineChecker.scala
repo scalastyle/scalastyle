@@ -46,11 +46,11 @@ class WhitespaceEndOfLineChecker extends FileChecker {
   }
 
   def verify(lines: Lines): List[ScalastyleError] = {
-    val errors = for (
+    val errors = for {
       line <- lines.lines.zipWithIndex;
       whitespace = endsWithWhitespace(line._1.text)
       if (whitespace._1)
-    ) yield {
+    } yield {
       ColumnError(line._2 + 1, whitespace._2)
     }
 

@@ -38,11 +38,11 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val p = matchParameters()
 
-    val it = for (
+    val it = for {
       t <- localvisit(ast.immediateChildren(0));
       f <- traverse(t);
       if (matches(f, p))
-    ) yield {
+    } yield {
       PositionError(f.funDefOrDcl.nameToken.offset, describeParameters(p))
     }
 

@@ -32,7 +32,7 @@ class ProcedureDeclarationCheckerTest extends AssertionsForJUnit with CheckerTes
   val key = "procedure.declaration"
   val classUnderTest = classOf[ProcedureDeclarationChecker]
 
-  @Test def testClassOK() {
+  @Test def testClassOK(): Unit = {
     val source = """
 package foobar
 
@@ -59,7 +59,7 @@ abstract class OK {
     assertErrors(List(columnError(10, 6), columnError(11, 6), columnError(14, 6), columnError(15, 6)), source)
   }
 
-  @Test def testConstructor() {
+  @Test def testConstructor(): Unit = {
     val source = """
 class ConstructorOK(a: Int) {
   def this() = this(1)

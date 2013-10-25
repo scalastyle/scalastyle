@@ -32,7 +32,7 @@ class LowercasePatternMatchCheckerTest extends AssertionsForJUnit with CheckerTe
   val key = "lowercase.pattern.match"
   val classUnderTest = classOf[LowercasePatternMatchChecker]
 
-  @Test def testOK() {
+  @Test def testOK(): Unit = {
     val source = """
 package foobar
 
@@ -51,7 +51,7 @@ class F1 {
     assertErrors(List(), source)
   }
 
-  @Test def testKO() {
+  @Test def testKO(): Unit = {
     val source = """
 package foobar
 

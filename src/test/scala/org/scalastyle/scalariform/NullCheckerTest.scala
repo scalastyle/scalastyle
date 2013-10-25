@@ -32,7 +32,7 @@ class NullCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "null"
   val classUnderTest = classOf[NullChecker]
 
-  @Test def testZero() {
+  @Test def testZero(): Unit = {
     val source = """
 package foobar
 
@@ -44,7 +44,7 @@ object Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 package foobar
 

@@ -40,19 +40,19 @@ class MagicNumberChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
 
-    val intList = for (
+    val intList = for {
       t <- localvisit(ast.immediateChildren(0));
       f <- traverse(t);
       if (matches(f, ignores))
-    ) yield {
+    } yield {
       f
     }
 
-    val valList = (for (
+    val valList = (for {
       t <- localvisitVal(ast.immediateChildren(0));
       f <- traverseVal(t);
       g <- toOption(f)
-    ) yield {
+    } yield {
       g
     }).map( d => d match {
       case Expr(List(t: Expr)) => t

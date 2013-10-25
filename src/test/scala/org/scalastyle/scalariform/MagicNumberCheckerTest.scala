@@ -32,7 +32,7 @@ class MagicNumberCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "magic.number"
   val classUnderTest = classOf[MagicNumberChecker]
 
-  @Test def testVal() {
+  @Test def testVal(): Unit = {
     val source = """
 package foobar
 
@@ -51,7 +51,7 @@ class Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testVar() {
+  @Test def testVar(): Unit = {
     val source = """
 package foobar
 
@@ -69,7 +69,7 @@ class Foobar {
     assertErrors(List(columnError(5, 13), columnError(10, 13), columnError(11, 13)), source)
   }
 
-  @Test def testVar2() {
+  @Test def testVar2(): Unit = {
     val source = """
 package foobar
 

@@ -34,7 +34,7 @@ class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "line.size.limit"
   val classUnderTest = classOf[FileLineLengthChecker]
 
-  @Test def testNoMax() {
+  @Test def testNoMax(): Unit = {
     val source = """
 package foobar
 
@@ -45,7 +45,7 @@ package foobar
     assertErrors(List(), source, Map("maxLineLength" -> "20"))
   }
 
-  @Test def testWithOneMax() {
+  @Test def testWithOneMax(): Unit = {
     val source = """
 package foobar
 
@@ -56,7 +56,7 @@ package foobar
     assertErrors(List(lineError(4, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
-  @Test def testWithImports() {
+  @Test def testWithImports(): Unit = {
     val source = """
 package foobar
 import org.scalastyle.file.SuperLongImportClass
@@ -78,7 +78,7 @@ import org.scalastyle.file.SuperLongImportClass
   }
 
 
-  @Test def testWithTwoMax() {
+  @Test def testWithTwoMax(): Unit = {
     val source = """
 package foobar
 
@@ -91,7 +91,7 @@ package foobar
     assertErrors(List(lineError(4, List("15")), lineError(6, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
-  @Test def testWithSpacesTabs() {
+  @Test def testWithSpacesTabs(): Unit = {
     val source = """
 package foobar
 

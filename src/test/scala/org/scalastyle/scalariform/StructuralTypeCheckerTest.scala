@@ -32,7 +32,7 @@ class StructuralTypeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "structural.type"
   val classUnderTest = classOf[StructuralTypeChecker]
 
-  @Test def testKO() {
+  @Test def testKO(): Unit = {
     val source = """
 package foobar
 

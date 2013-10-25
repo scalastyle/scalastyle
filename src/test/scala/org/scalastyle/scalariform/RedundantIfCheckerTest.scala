@@ -26,7 +26,7 @@ class RedundantIfCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val classUnderTest = classOf[RedundantIfChecker]
   protected val key = "if.redundant"
 
-  @Test def testErrors {
+  @Test def testErrors(): Unit = {
     val source = """
 package foobar
 
@@ -48,7 +48,7 @@ object Foobar {
     assertErrors(List(columnError(6, 11), columnError(7, 11), columnError(9, 6), columnError(12, 20), columnError(15, 11)), source)
   }
 
-  @Test def testOk {
+  @Test def testOk(): Unit = {
     val source = """
 package foobar
 

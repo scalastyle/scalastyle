@@ -32,7 +32,7 @@ class NumberOfMethodsInTypeCheckerTest extends AssertionsForJUnit with CheckerTe
   val key = "number.of.methods"
   val classUnderTest = classOf[NumberOfMethodsInTypeChecker]
 
-  @Test def testOK() {
+  @Test def testOK(): Unit = {
     val source = """
 package foobar
 

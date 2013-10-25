@@ -32,7 +32,7 @@ class MultipleStringLiteralsCheckerTest extends AssertionsForJUnit with CheckerT
   val key = "multiple.string.literals"
   val classUnderTest = classOf[MultipleStringLiteralsChecker]
 
-  @Test def testParameters() {
+  @Test def testParameters(): Unit = {
     val source = """
 package foobar
 
@@ -58,7 +58,7 @@ class Foobar {
                     Map("allowed" -> "3", "ignoreRegex" -> "1"))
   }
 
-  @Test def testDefaultParameters() {
+  @Test def testDefaultParameters(): Unit = {
     val source = """
 package foobar
 
@@ -76,7 +76,7 @@ class Foobar {
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
   }
 
-  @Test def testMultiLine() {
+  @Test def testMultiLine(): Unit = {
     val source = """
 package foobar
 
@@ -92,7 +92,7 @@ class Foobar {
   oop"""", "2", "1"))), source)
   }
 
-  @Test def testMultiLineAndNormal() {
+  @Test def testMultiLineAndNormal(): Unit = {
     val source = """
 package foobar
 

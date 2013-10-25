@@ -32,7 +32,7 @@ class VarLocalCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "var.local"
   val classUnderTest = classOf[VarLocalChecker]
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 class C1 {
   var f1 = 1

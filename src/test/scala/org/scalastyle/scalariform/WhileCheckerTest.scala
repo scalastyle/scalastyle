@@ -28,7 +28,7 @@ class WhileCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   protected val key = "while"
 
-  @Test def testZeroErrors {
+  @Test def testZeroErrors(): Unit = {
     val source = """
 class C1 {
   def m1(n: Int) = n
@@ -37,7 +37,7 @@ class C1 {
     assertErrors(List(), source)
   }
 
-  @Test def testOneError {
+  @Test def testOneError(): Unit = {
     val source = """
 class C1 {
   def m1(n: Int) = {
@@ -52,7 +52,7 @@ class C1 {
     assertErrors(List(columnError(5, 4)), source)
   }
 
-  @Test def testTwoErrors {
+  @Test def testTwoErrors(): Unit = {
     val source = """
 class C1 {
   def m1(n: Int) = {

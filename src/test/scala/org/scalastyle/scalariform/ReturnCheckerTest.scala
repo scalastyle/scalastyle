@@ -33,7 +33,7 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   protected val key = "return"
 
-  @Test def testZeroErrors {
+  @Test def testZeroErrors(): Unit = {
     val source = """
          |package foobar
          |object Foobar {
@@ -42,7 +42,7 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List(), source)
   }
 
-  @Test def testOneError {
+  @Test def testOneError(): Unit = {
     val source = """
          |package foobar
          |object Foobar {

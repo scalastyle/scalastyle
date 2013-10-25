@@ -32,7 +32,7 @@ class NoFinalizeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "no.finalize"
   val classUnderTest = classOf[NoFinalizeChecker]
 
-  @Test def testClassOK() {
+  @Test def testClassOK(): Unit = {
     val source = """
 package foobar
 
@@ -44,7 +44,7 @@ class OK {
     assertErrors(List(), source)
   }
 
-  @Test def testClassCovariantEqualsNoObjectKO() {
+  @Test def testClassCovariantEqualsNoObjectKO(): Unit = {
     val source = """
 package foobar
 
@@ -56,7 +56,7 @@ class CloneKO {
     assertErrors(List(columnError(4, 6)), source)
   }
 
-  @Test def testObjectOK() {
+  @Test def testObjectOK(): Unit = {
     val source = """
 package foobar
 
@@ -68,7 +68,7 @@ object OK {
     assertErrors(List(), source)
   }
 
-  @Test def testObjectCovariantEqualsNoObjectKO() {
+  @Test def testObjectCovariantEqualsNoObjectKO(): Unit = {
     val source = """
 package foobar
 

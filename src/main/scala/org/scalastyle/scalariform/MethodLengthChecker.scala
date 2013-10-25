@@ -35,11 +35,11 @@ class MethodLengthChecker extends CombinedChecker {
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val maxLength = getInt("maxLength", DefaultMaximumLength)
 
-    val it = for (
+    val it = for {
       t <- localvisit(ast.compilationUnit.immediateChildren(0));
       f <- traverse(t);
       if (matches(f, ast.lines, maxLength))
-    ) yield {
+    } yield {
       PositionError(t.position.get, List("" + maxLength))
     }
 

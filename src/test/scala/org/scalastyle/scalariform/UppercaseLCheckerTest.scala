@@ -32,7 +32,7 @@ class UppercaseLCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "uppercase.l"
   val classUnderTest = classOf[UppercaseLChecker]
 
-  @Test def testOK() {
+  @Test def testOK(): Unit = {
     val source = """
 package foobar
 

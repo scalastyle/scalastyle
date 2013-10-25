@@ -24,7 +24,7 @@ import java.io.File
 class SourceFileParserTest extends AssertionsForJUnit {
 
   @Test
-  def parseEmptyFile() {
+  def parseEmptyFile(): Unit = {
     val configPath = "src/test/resources/config/scalastyle_config.xml"
     val config = ScalastyleConfiguration.readFromXml(configPath)
     val checks = config.checks.filter(_.enabled)

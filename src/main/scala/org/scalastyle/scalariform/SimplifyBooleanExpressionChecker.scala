@@ -34,17 +34,17 @@ class SimplifyBooleanExpressionChecker extends ScalariformChecker {
   val errorKey = "simplify.boolean.expression"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it1 = for (
+    val it1 = for {
       List(left, right) <- ast.tokens.sliding(2);
       if (left.text == "!" && isBoolean(right))
-    ) yield {
+    } yield {
       PositionError(left.offset)
     }
 
-    val it2 = for (
+    val it2 = for {
       t <- localvisit(ast);
       if (matches(t))
-    ) yield {
+    } yield {
       PositionError(t.position.get)
     }
 

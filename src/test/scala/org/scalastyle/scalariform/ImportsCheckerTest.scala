@@ -32,7 +32,7 @@ class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "illegal.imports"
   val classUnderTest = classOf[IllegalImportsChecker]
 
-  @Test def testNone() {
+  @Test def testNone(): Unit = {
     val source = """
 package foobar
 
@@ -46,7 +46,7 @@ object Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testDefault() {
+  @Test def testDefault(): Unit = {
     val source = """package foobar
 
 import java.util._
@@ -60,7 +60,7 @@ object Foobar {
     assertErrors(List(columnError(4, 0), columnError(5, 0)), source)
   }
 
-  @Test def testRenamingWildcard() {
+  @Test def testRenamingWildcard(): Unit = {
     val source = """package foobar
 
 import java.util.{List => JList}
@@ -76,7 +76,7 @@ object Foobar {
     assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0), columnError(7, 0)), source, Map("illegalImports" -> "java.util._"))
   }
 
-  @Test def testRenamingSpecific() {
+  @Test def testRenamingSpecific(): Unit = {
     val source = """package foobar
 
 import java.util.{List => JList}
@@ -99,7 +99,7 @@ class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "underscore.import"
   val classUnderTest = classOf[UnderscoreImportChecker]
 
-  @Test def testNone() {
+  @Test def testNone(): Unit = {
     val source = """
 package foobar
 
@@ -121,7 +121,7 @@ class ImportGroupingCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "import.grouping"
   val classUnderTest = classOf[ImportGroupingChecker]
 
-  @Test def testKO() {
+  @Test def testKO(): Unit = {
     val source = """
 package foobar
 
@@ -144,7 +144,7 @@ object Barbar {
   }
 
 
-  @Test def testNone() {
+  @Test def testNone(): Unit = {
     val source = """
 package foobar
 

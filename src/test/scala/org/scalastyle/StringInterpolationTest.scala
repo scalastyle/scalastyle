@@ -30,13 +30,13 @@ class StringInterpolationTest extends CheckerTest {
   val classUnderTest = classOf[FileLengthChecker]
   val message = Some("custom")
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 package foobar
 
 object Foobar {
   val name = "Fred"
-  println(s"Hello $name")
+  pfoorintln(s"Hello $name")
 }
 """;
 

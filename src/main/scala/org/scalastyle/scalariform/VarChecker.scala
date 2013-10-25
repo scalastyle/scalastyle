@@ -30,9 +30,9 @@ import VisitorHelper.visit
 
 abstract class VarChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       f <- localvisit(false)(ast.immediateChildren(0))
-    ) yield {
+    } yield {
       PositionError(f.firstToken.offset)
     }
 

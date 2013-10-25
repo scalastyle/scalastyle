@@ -89,7 +89,7 @@ object XmlOutput {
   def save[T <: FileSpec](target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
         save(new java.io.File(target), encoding, scala.collection.JavaConversions.collectionAsScalaIterable(messages))
 
-  def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Iterable[Message[T]]) {
+  def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Iterable[Message[T]]): Unit = {
     val width = 1000;
     val step = 1;
     val messageHelper = new MessageHelper(this.getClass().getClassLoader())
@@ -101,7 +101,7 @@ object XmlOutput {
     // scalastyle:on regex
   }
 
-  private def printToFile(f: java.io.File, encoding: String)(op: java.io.PrintWriter => Unit) {
+  private def printToFile(f: java.io.File, encoding: String)(op: java.io.PrintWriter => Unit): Unit = {
     val p = new java.io.PrintWriter(f, encoding)
     try {
       op(p)

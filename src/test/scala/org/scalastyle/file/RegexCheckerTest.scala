@@ -40,52 +40,52 @@ class foobar {
 """
 
   @Test
-  def testSimpleCheck() {
+  def testSimpleCheck(): Unit = {
     assertErrors(List(columnError(7, 2, List("def"))), source,
       Map("regex" -> "def"))
   }
 
   @Test
-  def testNoSemiColon() {
+  def testNoSemiColon(): Unit = {
     assertErrors(List(columnError(9, 17, List(";"))), source,
       Map("regex" -> ";"))
   }
 
   @Test
-  def testStartOfLineIsZeroColumn() {
+  def testStartOfLineIsZeroColumn(): Unit = {
     assertErrors(List(columnError(5, 0, List("class"))), source,
       Map("regex" -> "class"))
   }
 
   @Test
-  def testCanMatchLastCharInFile() {
+  def testCanMatchLastCharInFile(): Unit = {
     assertErrors(List(columnError(12, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
   }
 
   @Test
-  def testCanMatchFirstCharInFile() {
+  def testCanMatchFirstCharInFile(): Unit = {
     assertErrors(List(columnError(1, 0, List("(?m)^//$"))), source, Map("regex" -> "(?m)^//$"))
   }
 
   @Test
-  def testNoDoubleBlankLines() {
+  def testNoDoubleBlankLines(): Unit = {
     assertErrors(List(columnError(3, 0, List("(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))), source,
       Map("regex" -> "(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))
   }
 
   @Test
-  def testMultipleMatchesReportMultipleErrors() {
+  def testMultipleMatchesReportMultipleErrors(): Unit = {
     assertErrors(List(columnError(10, 2, List("}")), columnError(12, 0, List("}"))), source,
       Map("regex" -> "}"))
   }
 
   @Test
-  def testCannotFindMatch() {
+  def testCannotFindMatch(): Unit = {
     assertErrors(List(), source, Map("regex" -> "^SHOULD$"))
   }
 
   @Test
-  def testSingleMatchWithBoundsCheck() {
+  def testSingleMatchWithBoundsCheck(): Unit = {
     assertErrors(List(columnError(12, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
   }
 }

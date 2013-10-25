@@ -32,7 +32,7 @@ class DeprecatedJavaCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "deprecated.java"
   val classUnderTest = classOf[DeprecatedJavaChecker]
 
-  @Test def testClassOK() {
+  @Test def testClassOK(): Unit = {
     val source = """
 package foobar
 

@@ -33,7 +33,7 @@ class NoNewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTest 
   val key = "no.newline.at.eof"
   val classUnderTest = classOf[NoNewLineAtEofChecker]
 
-  @Test def testNoNewLine() {
+  @Test def testNoNewLine(): Unit = {
     val source = """
 package foobar
 
@@ -50,7 +50,7 @@ class NewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "newline.at.eof"
   val classUnderTest = classOf[NewLineAtEofChecker]
 
-  @Test def testRequireNewLineTrue() {
+  @Test def testRequireNewLineTrue(): Unit = {
     val source = """
 package foobar
 

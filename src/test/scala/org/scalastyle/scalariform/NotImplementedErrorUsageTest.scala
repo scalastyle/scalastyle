@@ -28,7 +28,7 @@ class NotImplementedErrorUsageTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[NotImplementedErrorUsage]
 
   @Test
-  def noErrors() {
+  def noErrors(): Unit = {
     val source = """
 class X {
   val x = 0
@@ -38,7 +38,7 @@ class X {
   }
 
   @Test
-  def notImplementedErrorFound() {
+  def notImplementedErrorFound(): Unit = {
     val source = """
 class X {
   val x = ???

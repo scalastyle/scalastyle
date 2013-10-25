@@ -27,12 +27,12 @@ case class MainConfig(config: Option[String], directories: List[String],
                         xmlEncoding: Option[String] = None, inputEncoding: Option[String] = None)
 
 object Main {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val properties = new java.util.Properties();
     properties.load(this.getClass().getResourceAsStream("/version.properties"));
 
     val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", properties.getProperty("scalastyle.version")) {
-      def options = Seq(
+      def options = Seq( // scalastyle:ignore public.methods.have.type
         opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },
         booleanOpt("v", "verbose", "verbose") { (v: Boolean, c: MainConfig) => c.copy(verbose = v) },
         booleanOpt("q", "quiet", "quiet") { (v: Boolean, c: MainConfig) => c.copy(quiet = v) },

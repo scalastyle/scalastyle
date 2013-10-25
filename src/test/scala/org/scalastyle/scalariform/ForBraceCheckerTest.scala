@@ -32,7 +32,7 @@ class ForBraceCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "for.brace"
   val classUnderTest = classOf[ForBraceChecker]
 
-  @Test def testKO() {
+  @Test def testKO(): Unit = {
     val source = """
 package foobar
 

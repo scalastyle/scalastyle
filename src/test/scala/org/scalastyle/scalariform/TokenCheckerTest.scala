@@ -26,7 +26,7 @@ class TokenCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val classUnderTest = classOf[TokenChecker]
   protected val key = "token"
 
-  @Test def testErrors1 {
+  @Test def testErrors1(): Unit = {
     val source = """
 object foo {
   def bar(x: Any) = x.asInstanceOf[Int]
@@ -35,7 +35,7 @@ object foo {
     assertErrors(List(columnError(3, 22)), source, Map("regex" -> "^[ai]sInstanceOf$"))
   }
 
-  @Test def testErrors2 {
+  @Test def testErrors2(): Unit = {
     val source = """
 import collection.mutable._
 object foo {
@@ -45,7 +45,7 @@ object foo {
     assertErrors(List(columnError(2, 18), columnError(4, 24)), source, Map("regex" -> "^ArrayList|ArrayBuffer|mutable$"))
   }
 
-  @Test def testOk {
+  @Test def testOk(): Unit = {
     val source = """
 object foo {
   /** asInstanceOf[Int] is not used */

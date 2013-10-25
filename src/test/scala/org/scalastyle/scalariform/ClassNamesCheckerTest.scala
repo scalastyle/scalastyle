@@ -32,7 +32,7 @@ class ClassNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "class.name"
   val classUnderTest = classOf[ClassNamesChecker]
 
-  @Test def testZero() {
+  @Test def testZero(): Unit = {
     val source = """
 package foobar
 
@@ -44,7 +44,7 @@ class Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 package foobar
 
@@ -62,7 +62,7 @@ class ObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "object.name"
   val classUnderTest = classOf[ObjectNamesChecker]
 
-  @Test def testZero() {
+  @Test def testZero(): Unit = {
     val source = """
 package foobar
 
@@ -74,7 +74,7 @@ object Foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 package foobar
 
@@ -87,7 +87,7 @@ object foobar {
     assertErrors(List(columnError(4, 7, List("^[A-Z][A-Za-z]*$")), columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
   }
 
-  @Test def testPackageObject() {
+  @Test def testPackageObject(): Unit = {
     val source = """
 package foobar
 
@@ -106,7 +106,7 @@ class PackageObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest 
   val key = "package.object.name"
   val classUnderTest = classOf[PackageObjectNamesChecker]
 
-  @Test def testZero() {
+  @Test def testZero(): Unit = {
     val source = """
 package foobar
 
@@ -118,7 +118,7 @@ package object foobar {
     assertErrors(List(), source)
   }
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 package foobar
 
@@ -131,7 +131,7 @@ package object Barbar {
     assertErrors(List(columnError(4, 15, List("^[a-z][A-Za-z]*$")), columnError(6, 15, List("^[a-z][A-Za-z]*$"))), source)
   }
 
-  @Test def testPackageObject() {
+  @Test def testPackageObject(): Unit = {
     val source = """
 package foobar
 
@@ -149,7 +149,7 @@ class MethodNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "method.name"
   val classUnderTest = classOf[MethodNamesChecker]
 
-  @Test def testDefault() {
+  @Test def testDefault(): Unit = {
     val source = """
 package foobar
 
@@ -164,7 +164,7 @@ class Foobar {
     assertErrors(List(defErr(6, 6)), source)
   }
 
-  @Test def testNonDefault() {
+  @Test def testNonDefault(): Unit = {
     val source = """
 package foobar
 
@@ -178,7 +178,7 @@ class Foobar {
     assertErrors(List(columnError(6, 6, List("^F[o*]*$"))), source, Map("regex" -> "^F[o*]*$"))
   }
 
-  @Test def testWithIgnoreRegex() {
+  @Test def testWithIgnoreRegex(): Unit = {
     val source = """
 package foobar
 
@@ -193,7 +193,7 @@ class Foobar {
     assertErrors(List(defErr(7, 6)), source, Map("ignoreRegex" -> "^\\+$"))
   }
 
-  @Test def testIgnoreOverride() {
+  @Test def testIgnoreOverride(): Unit = {
     val source = """
 package foobar
 

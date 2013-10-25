@@ -26,7 +26,7 @@ class SimplifyBooleanExpressionCheckerTest extends AssertionsForJUnit with Check
   protected val classUnderTest = classOf[SimplifyBooleanExpressionChecker]
   protected val key = "simplify.boolean.expression"
 
-  @Test def testEquals {
+  @Test def testEquals(): Unit = {
     val source = """
 package foobar
 
@@ -42,7 +42,7 @@ object Foobar {
   }
 
 
-  @Test def testErrors {
+  @Test def testErrors(): Unit = {
     val source = """
 package foobar
 
@@ -56,7 +56,7 @@ object Foobar {
     assertErrors(List(columnError(6, 15), columnError(7, 14), columnError(8, 14)), source)
   }
 
-  @Test def testErrors2 {
+  @Test def testErrors2(): Unit = {
     val source = """
 package foobar
 
@@ -71,7 +71,7 @@ object Foobar {
     assertErrors(List(columnError(6, 14), columnError(7, 14), columnError(8, 14), columnError(9, 14)), source)
   }
 
-  @Test def testErrors3 {
+  @Test def testErrors3(): Unit = {
     val source = """
 package foobar
 
@@ -86,7 +86,7 @@ object Foobar {
     assertErrors(List(columnError(6, 14), columnError(7, 14), columnError(8, 14), columnError(9, 14)), source)
   }
 
-  @Test def testOK {
+  @Test def testOK(): Unit = {
     val source = """
 package foobar
 

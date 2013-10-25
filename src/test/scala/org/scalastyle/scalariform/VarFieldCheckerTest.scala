@@ -32,7 +32,7 @@ class VarFieldCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "var.field"
   val classUnderTest = classOf[VarFieldChecker]
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 class C1 {
   var f1 = 1

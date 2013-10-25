@@ -27,10 +27,10 @@ class FileTabChecker extends FileChecker {
   val errorKey = "line.contains.tab"
 
   def verify(lines: Lines): List[ScalastyleError] = {
-    val errors = for (
+    val errors = for {
       line <- lines.lines.zipWithIndex;
       if line._1.text.contains('\t')
-    ) yield {
+    } yield {
       ColumnError(line._2 + 1, line._1.text.indexOf('\t'))
     }
 

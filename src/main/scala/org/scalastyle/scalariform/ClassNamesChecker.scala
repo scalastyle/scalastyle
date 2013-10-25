@@ -41,10 +41,10 @@ class ClassNamesChecker extends ScalariformChecker {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
-    val it = for (
+    val it = for {
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == CLASS && (regex findAllIn (right.text)).size == 0)
-    ) yield {
+    } yield {
       PositionError(right.offset, List(regexString))
     }
 
@@ -60,10 +60,10 @@ class ObjectNamesChecker extends ScalariformChecker {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
-    val it = for (
+    val it = for {
       List(left, middle, right) <- ast.tokens.sliding(3);
       if (left.tokenType != PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.text)).size == 0)
-    ) yield {
+    } yield {
       PositionError(right.offset, List(regexString))
     }
 
@@ -79,10 +79,10 @@ class PackageObjectNamesChecker extends ScalariformChecker {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
-    val it = for (
+    val it = for {
       List(left, middle, right) <- ast.tokens.sliding(3);
       if (left.tokenType == PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.text)).size == 0)
-    ) yield {
+    } yield {
       PositionError(right.offset, List(regexString))
     }
 

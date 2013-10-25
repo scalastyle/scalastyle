@@ -32,7 +32,7 @@ class IfBraceCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "if.brace"
   val classUnderTest = classOf[IfBraceChecker]
 
-  @Test def testDefault() {
+  @Test def testDefault(): Unit = {
     val source = """
 package foobar
 
@@ -54,7 +54,7 @@ class Foobar {
     assertErrors(List(columnError(6, 13)), source)
   }
 
-  @Test def testDefault2() {
+  @Test def testDefault2(): Unit = {
     val source = """
 package foobar
 
@@ -74,7 +74,7 @@ class Foobar {
     assertErrors(List(columnError(5, 13), columnError(8, 13), columnError(10, 13)), source)
   }
 
-  @Test def testSingleLineNotAllowed() {
+  @Test def testSingleLineNotAllowed(): Unit = {
     val source = """
 package foobar
 
@@ -96,7 +96,7 @@ class Foobar {
     assertErrors(List(columnError(5, 13), columnError(6, 13)), source, Map("singleLineAllowed" -> "false"))
   }
 
-  @Test def testDoubleLine() {
+  @Test def testDoubleLine(): Unit = {
     val source = """
 package foobar
 
@@ -110,7 +110,7 @@ class Foobar {
     assertErrors(List(), source, Map("doubleLineAllowed" -> "true"))
   }
 
-  @Test def testElseIf() {
+  @Test def testElseIf(): Unit = {
     val source = """
 package foobar
 

@@ -32,6 +32,7 @@
   <parameters>
    <parameter name="maxLineLength"><![CDATA[160]]></parameter>
    <parameter name="tabSize"><![CDATA[4]]></parameter>
+   <parameter name="ignoreImports"><![CDATA[false]]></parameter>
   </parameters>
  </check>
  <check class="org.scalastyle.scalariform.ClassNamesChecker" level="warning" enabled="true">
@@ -148,4 +149,5 @@
  <check class="org.scalastyle.scalariform.NotImplementedErrorUsage" level="warning" enabled="true"></check>
  <check class="org.scalastyle.scalariform.BlockImportChecker" level="warning" enabled="false"></check>
  <check class="org.scalastyle.scalariform.ProcedureDeclarationChecker" level="warning" enabled="true"></check>
+ <check class="org.scalastyle.scalariform.ForBraceChecker" level="warning" enabled="true"></check>
 </scalastyle>

@@ -32,7 +32,7 @@ class EmptyClassCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "empty.class"
   val classUnderTest = classOf[EmptyClassChecker]
 
-  @Test def testKO() {
+  @Test def testKO(): Unit = {
     val source = """
 package foobar
 
@@ -53,7 +53,7 @@ class Foobar7
     assertErrors(List(columnError(4, 6), columnError(5, 6), columnError(6, 6), columnError(9, 6), columnError(10, 6)), source)
   }
 
-  @Test def testInnerClass() {
+  @Test def testInnerClass(): Unit = {
     val source = """
 package foobar
 
@@ -72,7 +72,7 @@ class ClassTypeParameterCheckerTest extends AssertionsForJUnit with CheckerTest 
   val key = "class.type.parameter.name"
   val classUnderTest = classOf[ClassTypeParameterChecker]
 
-  @Test def testClass() {
+  @Test def testClass(): Unit = {
     val source = """
 package foobar
 
@@ -94,7 +94,7 @@ class Foobar0[+Foo]
     assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
   }
 
-  @Test def testTrait() {
+  @Test def testTrait(): Unit = {
     val source = """
 package foobar
 

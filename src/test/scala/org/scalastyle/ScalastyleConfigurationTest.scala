@@ -43,7 +43,7 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
 
   def clean(s: String): String = s.replace("\015", "")
 
-  @Test def readXmlStringWithCustom() {
+  @Test def readXmlStringWithCustom(): Unit = {
     val xml = """<scalastyle commentFilter="enabled">
     <name>name</name>
  <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
@@ -71,7 +71,7 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
     assertEquals(Some("custom.id"), check.customId)
   }
 
-  @Test def readXmlString() {
+  @Test def readXmlString(): Unit = {
     val xml = """<scalastyle>
     <name>name</name>
  <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="false"/>

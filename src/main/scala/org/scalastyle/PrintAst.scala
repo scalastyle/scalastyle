@@ -21,7 +21,7 @@ import _root_.scalariform.lexer.Token
 // scalastyle:off regex
 
 object PrintAst {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val source = """package foobar
 class Foobar {
   def foobar() = {
@@ -36,7 +36,7 @@ class Foobar {
     printAst(source)
   }
 
-  def printAst(source: String) {
+  def printAst(source: String): Unit =  {
     val lines = Checker.parseLines(source)
     val scalariformAst = Checker.parseScalariform(source)
     scalariformAst match {
@@ -47,7 +47,7 @@ class Foobar {
 
   private def lineNumber(lines: Lines, token: Token) = lines.toLineColumn(token.offset)
 
-  private def printAst(lines: Lines, ast: CompilationUnit) {
+  private def printAst(lines: Lines, ast: CompilationUnit): Unit = {
     val lineMap = ast.tokens.groupBy(t => lines.toLineColumn(t.offset).get.line)
 
     val lineNumbers = lineMap.keys.toList.sortWith((a, b) => a < b)

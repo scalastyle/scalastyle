@@ -31,9 +31,9 @@ class NumberOfTypesChecker extends ScalariformChecker {
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val maximumTypes = getInt("maxTypes", DefaultMaximumTypes)
 
-    val it = for (
+    val it = for {
       f <- localvisit(ast.immediateChildren(0))
-    ) yield {
+    } yield {
       f
     }
 

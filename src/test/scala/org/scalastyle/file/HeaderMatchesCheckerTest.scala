@@ -52,7 +52,7 @@ class HeaderMatchesCheckerTest extends AssertionsForJUnit with CheckerTest {
  * limitations under the License.
  */"""
 
-  @Test def testOK() {
+  @Test def testOK(): Unit = {
     val source = licence + """
 package foobar
 
@@ -63,7 +63,7 @@ package foobar
     assertErrors(List(), source, Map("header" -> licence))
   }
 
-  @Test def testKO() {
+  @Test def testKO(): Unit = {
     val source = licence.replaceAll("BASIS,", "XXX") + """
 package foobar
 
@@ -74,7 +74,7 @@ package foobar
     assertErrors(List(lineError(13)), source, Map("header" -> licence))
   }
 
-  @Test def testTooShort() {
+  @Test def testTooShort(): Unit = {
     val source = """/**
  * Copyright (C) 2009-2010 the original author or authors.
  * See the notice.md file distributed with this work for additional

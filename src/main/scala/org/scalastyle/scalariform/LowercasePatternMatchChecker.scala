@@ -34,10 +34,10 @@ class LowercasePatternMatchChecker extends ScalariformChecker {
   val errorKey = "lowercase.pattern.match"
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       f <- visit(map)(ast.immediateChildren(0));
       if (matches(f))
-    ) yield {
+    } yield {
       PositionError(f.pattern.firstToken.offset)
     }
 

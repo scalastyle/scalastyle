@@ -32,7 +32,7 @@ class FileEncodingTest extends AssertionsForJUnit {
   // so all of the files get read correctly, but the UTF16 file doesn't return the correct characters.
   // so this test MUST BE RUN with a -Dfile.encoding=UTF-8.
   // so we can't test that the strings are returned correctly
-  @Test def testFileEncodings() {
+  @Test def testFileEncodings(): Unit = {
     assertEquals(TestString, Checker.readFile(createFile("UTF16"), None))
     assertEquals(TestString, Checker.readFile(createFile("UTF8"), None))
     Checker.readFile(createFile("ISO-8859-1"), None) // can't tell difference between UTF-8 & ISO-8859-1

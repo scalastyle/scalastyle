@@ -29,7 +29,7 @@ class CommentFilterDisabledTest extends CheckerTest {
   val key = "file.size.limit"
   val classUnderTest = classOf[FileLengthChecker]
 
-  @Test def testOne() {
+  @Test def testOne(): Unit = {
     val source = """
 
       // scalastyle:off

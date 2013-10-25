@@ -85,11 +85,11 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
   }
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       t <- localvisit(ast.immediateChildren(0));
       f <- traverse(t);
       if (matches(f))
-    ) yield {
+    } yield {
       PositionError(f.position.get, params(f))
     }
 

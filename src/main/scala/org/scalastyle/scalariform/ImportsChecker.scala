@@ -34,10 +34,10 @@ abstract class AbstractImportChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     init()
 
-    val it = for (
+    val it = for {
       t <- localvisit(ast.immediateChildren);
       f <- traverse(t)
-    ) yield {
+    } yield {
       PositionError(t.t.firstToken.offset)
     }
 

@@ -32,7 +32,7 @@ class CommentFilterTest extends AssertionsForJUnit with CheckerTest {
   val key = "class.name"
   val classUnderTest = classOf[ClassNamesChecker]
 
-  @Test def testOnOff() {
+  @Test def testOnOff(): Unit = {
     val source = """
 package foobar
 
@@ -53,7 +53,7 @@ class foobar {
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(14, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
 
-  @Test def testOnOffIgnore() {
+  @Test def testOnOffIgnore(): Unit = {
     val source = """
 package foobar
 

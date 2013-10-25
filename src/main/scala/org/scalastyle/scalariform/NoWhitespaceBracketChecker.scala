@@ -27,10 +27,10 @@ class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
   val errorKey = "no.whitespace.before.left.bracket"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       List(left, right) <- ast.tokens.sliding(2);
       if (right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
-    ) yield {
+    } yield {
       PositionError(left.offset)
     }
 
@@ -42,10 +42,10 @@ class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
   val errorKey = "no.whitespace.after.left.bracket"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       List(left, right) <- ast.tokens.sliding(2);
       if (left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
-    ) yield {
+    } yield {
       PositionError(left.offset)
     }
 

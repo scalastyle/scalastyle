@@ -32,7 +32,7 @@ class PublicMethodsHaveTypeCheckerTest extends AssertionsForJUnit with CheckerTe
   val key = "public.methods.have.type"
   val classUnderTest = classOf[PublicMethodsHaveTypeChecker]
 
-  @Test def testClassOK() {
+  @Test def testClassOK(): Unit = {
     val source = """
 package foobar
 
@@ -57,22 +57,22 @@ class OK {
                         columnError(16, 6), columnError(16, 58), columnError(17, 6), columnError(17, 57)), source)
   }
 
-  @Test def testProc() {
+  @Test def testProc(): Unit = {
     val source = """
 class classOK {
   def proc1 {}
-  def proc2() {}
+  def proc2(): Unit = {}
 }
 
 abstract class abstractOK {
   def proc1 {}
-  def proc2() {}
+  def proc2(): Unit = {}
   def proc3()
 }
 
 trait traitOK {
   def proc1 {}
-  def proc2() {}
+  def proc2(): Unit = {}
   def proc3()
 }
 """
@@ -80,7 +80,7 @@ trait traitOK {
     assertErrors(List(), source)
   }
 
-  @Test def testConstructor() {
+  @Test def testConstructor(): Unit = {
     val source = """
 class ConstructorOK(a: Int) {
   def this() = this(1)
@@ -90,7 +90,7 @@ class ConstructorOK(a: Int) {
     assertErrors(List(), source)
   }
 
-  @Test def testClassOverride() {
+  @Test def testClassOverride(): Unit = {
     val source = """
 package foobar
 

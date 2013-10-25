@@ -28,7 +28,7 @@ class RegexChecker extends FileChecker {
   private val DefaultRegEx = ""
 
   def verify(lines: Lines): List[ScalastyleError] = {
-    val file = (for (line <- lines.lines) yield line.text).mkString("\n")
+    val file = (for {line <- lines.lines} yield line.text).mkString("\n")
     val regExpStr = getString("regex", DefaultRegEx)
     val regExp = new Regex(regExpStr)
     val allMatches = regExp.findAllIn(file)

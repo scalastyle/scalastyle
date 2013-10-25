@@ -33,10 +33,10 @@ abstract class AbstractClassChecker extends ScalariformChecker {
   case class TmplClazz(t: TmplDef, subs: List[TmplClazz]) extends TreeVisit[TmplClazz]
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for (
+    val it = for {
       f <- visit[TmplDef, TmplClazz](map)(ast.immediateChildren(0));
       t <- traverse(f, matches)
-    ) yield {
+    } yield {
       PositionError(t.t.name.offset)
     }
 
