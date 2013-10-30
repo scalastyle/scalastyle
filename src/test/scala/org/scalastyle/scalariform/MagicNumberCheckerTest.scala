@@ -86,4 +86,59 @@ class Foobar {
 
     assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 19), columnError(9, 19)), source)
   }
+
+  @Test def testValLong(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+
+  val foo0 = -2L
+  val foo1 = -1L
+  val foo2 = 0L
+  val foo3 = 1L
+  val foo4 = 2L
+  val foo5 = 3L
+  val foo6 = 4L
+}
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testVarLong(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  var foo0 = -2L
+  var foo1 = -1L
+  var foo2 = 0L
+  var foo3 = 1L
+  var foo4 = 2L
+  var foo5 = 3L
+  var foo6 = 4L
+}
+""";
+
+    assertErrors(List(columnError(5, 13), columnError(10, 13), columnError(11, 13)), source)
+  }
+
+  @Test def testVar2Long(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  var foo6 = 4L
+  var foo7 = +4L
+  var foo8 = -4L
+  var bar1 = fn(7L, -5L)
+  var bar2 = fn(1L, -5L)
+
+  def fn(i: Int, j: Int) = i + j
+}
+""";
+
+    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 20), columnError(9, 20)), source)
+  }
 }

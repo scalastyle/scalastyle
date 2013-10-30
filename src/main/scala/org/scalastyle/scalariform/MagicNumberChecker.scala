@@ -92,7 +92,7 @@ class MagicNumberChecker extends ScalariformChecker {
 
   private def toIntegerLiteralToken(list: List[Token]): Option[String] = {
     list match {
-      case List(Token(tokenType, text, start, end)) if (tokenType == INTEGER_LITERAL) => Some(text)
+      case List(Token(tokenType, text, start, end)) if (tokenType == INTEGER_LITERAL) => Some(text.replaceAll("[Ll]", ""))
       case _ => None
     }
   }
