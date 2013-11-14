@@ -26,6 +26,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "scaladoc"
   val classUnderTest = classOf[ScalaDocChecker]
 
+  import ScalaDocChecker._
+
   @Test def noParamsCCTO(): Unit = {
     def al(access: String = "", checked: Boolean): Unit = {
       val traitSource = s"%s${access}trait Foo"
@@ -41,7 +43,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
       List(traitSource, classSource, caseClassSource, objectSource).foreach { source =>
         assertErrors(Nil, source format doc)
-        assertErrors(if (checked) List(lineError(1, List("missing"))) else Nil, source format "")
+        assertErrors(if (checked) List(lineError(1, List(Missing))) else Nil, source format "")
       }
     }
 
@@ -74,8 +76,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
     List(classSource, caseClassSource).foreach { source =>
       assertErrors(Nil, source format doc)
-      assertErrors(List(lineError(1, List("missing"))), source format "")
-      assertErrors(List(lineError(5, List("malformedParams"))), source format missingParamDoc)
+      assertErrors(List(lineError(1, List(Missing))), source format "")
+      assertErrors(List(lineError(5, List(MalformedParams))), source format missingParamDoc)
     }
   }
 
@@ -101,8 +103,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
     List(traitSource, classSource, caseClassSource).foreach { source =>
       assertErrors(Nil, source format doc)
-      assertErrors(List(lineError(1, List("missing"))), source format "")
-      assertErrors(List(lineError(5, List("malformedTypeParams"))), source format malformedDoc)
+      assertErrors(List(lineError(1, List(Missing))), source format "")
+      assertErrors(List(lineError(5, List(MalformedTypeParams))), source format malformedDoc)
     }
   }
 
@@ -182,16 +184,16 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | """.stripMargin
 
       assertErrors(Nil, fun format doc(false))
-      assertErrors(if (checked) List(lineError(6, List("missing"))) else Nil, fun format "")
-      assertErrors(if (checked) List(lineError(15, List("malformedParams"))) else Nil, fun format missingParamsDoc(false))
-      assertErrors(if (checked) List(lineError(15, List("malformedTypeParams"))) else Nil, fun format missingTypeParamsDoc(false))
-      assertErrors(if (checked) List(lineError(15, List("malformedReturn"))) else Nil, fun format missingReturnDoc)
+      assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, fun format "")
+      assertErrors(if (checked) List(lineError(15, List(MalformedParams))) else Nil, fun format missingParamsDoc(false))
+      assertErrors(if (checked) List(lineError(15, List(MalformedTypeParams))) else Nil, fun format missingTypeParamsDoc(false))
+      assertErrors(if (checked) List(lineError(15, List(MalformedReturn))) else Nil, fun format missingReturnDoc)
 
       List(proc1, proc2).foreach { source =>
         assertErrors(Nil, source format doc(false))
-        assertErrors(if (checked) List(lineError(6, List("missing"))) else Nil, source format "")
-        assertErrors(if (checked) List(lineError(14, List("malformedParams"))) else Nil, source format missingParamsDoc(true))
-        assertErrors(if (checked) List(lineError(14, List("malformedTypeParams"))) else Nil, source format missingTypeParamsDoc(true))
+        assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, source format "")
+        assertErrors(if (checked) List(lineError(14, List(MalformedParams))) else Nil, source format missingParamsDoc(true))
+        assertErrors(if (checked) List(lineError(14, List(MalformedTypeParams))) else Nil, source format missingTypeParamsDoc(true))
       }
     }
 
@@ -227,7 +229,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
       List(source("class"), source("case class"), source("object ")).foreach { source =>
         assertErrors(Nil, source format doc)
-        assertErrors(if (checked) List(lineError(8, List("missing"))) else Nil, source format "")
+        assertErrors(if (checked) List(lineError(8, List(Missing))) else Nil, source format "")
       }
     }
 
@@ -240,5 +242,5 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
       al(s"private $member", false)
     }
   }
-  
+
 }

@@ -22,15 +22,11 @@ import scala.util.matching.Regex
  */
 class ScalaDocChecker extends CombinedChecker {
   protected val errorKey: String = "scaladoc"
-  private val Missing = "missing"
-  private val MalformedParams = "malformedParams"
-  private val MalformedTypeParams = "malformedTypeParams"
-  private val MalformedReturn = "malformedReturn"
 
-  private val skipPrivate = true
-  private val skipQualifiedPrivate = false
-  private val skipProtected = false
-  private val skipQualifiedProtected = false
+  val skipPrivate = true
+  val skipQualifiedPrivate = false
+  val skipProtected = false
+  val skipQualifiedProtected = false
 
   override def verify(ast: CombinedAst): List[ScalastyleError] = {
     localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren(0))
@@ -202,6 +198,10 @@ class ScalaDocChecker extends CombinedChecker {
  * Contains the ScalaDoc model with trivial parsers
  */
 object ScalaDocChecker {
+  val Missing = "Missing"
+  val MalformedParams = "Malformed @params"
+  val MalformedTypeParams = "Malformed @tparams"
+  val MalformedReturn = "Malformed @return"
 
   /**
    * Companion for the ScalaDoc object that parses its text to pick up its elements
