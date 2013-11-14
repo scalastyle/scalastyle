@@ -106,61 +106,100 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
-  @Test def methods(): Unit = {
+  @Test def publicMethodWithEverything(): Unit = {
+    def al(access: String = "", checked: Boolean): Unit = {
+      val fun =
+        s"""
+          |/**
+          | * XXX
+          | */
+          |trait X {
+          |  %s${access} def foo[A, B, U](a: A, b: B): U = ???
+          |}
+        """.stripMargin
+      val proc1 =
+        s"""
+          |/**
+          | * XXX
+          | */
+          |trait X {
+          |  %s${access} def foo[A, B, U](a: A, b: B): Unit = ()
+          |}
+        """.stripMargin
+      val proc2 =
+        s"""
+          |/**
+          | * XXX
+          | */
+          |trait X {
+          |  %s${access} def foo[A, B, U](a: A, b: B) = ()
+          |}
+        """.stripMargin
+      def doc(proc: Boolean) =
+        """
+          |/**
+          | * Does foo
+          | * @param a the A
+          | * @param b the B
+          | * @tparam A the A
+          | * @tparam B the B
+          | * @tparam U the U%s
+          | */
+        """.stripMargin format (if (proc) "" else "\n@return some u")
 
+      def missingTypeParamsDoc(proc: Boolean) =
+        """
+          |/**
+          | * Does foo
+          | * @param a the A
+          | * @param b the B
+          | * @tparam A the A
+          | * @tparam U the U%s
+          | */
+          | """.stripMargin format (if (proc) "" else "\n@return some u")
+
+      def missingParamsDoc(proc: Boolean) =
+        """
+          |/**
+          | * Does foo
+          | * @param a the A
+          | * @tparam A the A
+          | * @tparam B the B
+          | * @tparam U the U%s
+          | */
+          | """.stripMargin format (if (proc) "" else "\n@return some u")
+
+      val missingReturnDoc =
+        """
+          |/**
+          | * Does foo
+          | * @param a the A
+          | * @param b the b
+          | * @tparam A the A
+          | * @tparam B the B
+          | * @tparam U the U
+          | */
+          | """.stripMargin
+
+      assertErrors(Nil, fun format doc(false))
+      assertErrors(if (checked) List(lineError(6, List("missing"))) else Nil, fun format "")
+      assertErrors(if (checked) List(lineError(15, List("malformedParams"))) else Nil, fun format missingParamsDoc(false))
+      assertErrors(if (checked) List(lineError(15, List("malformedTypeParams"))) else Nil, fun format missingTypeParamsDoc(false))
+      assertErrors(if (checked) List(lineError(15, List("malformedReturn"))) else Nil, fun format missingReturnDoc)
+
+      List(proc1, proc2).foreach { source =>
+        assertErrors(Nil, source format doc(false))
+        assertErrors(if (checked) List(lineError(6, List("missing"))) else Nil, source format "")
+        assertErrors(if (checked) List(lineError(14, List("malformedParams"))) else Nil, source format missingParamsDoc(true))
+        assertErrors(if (checked) List(lineError(14, List("malformedTypeParams"))) else Nil, source format missingTypeParamsDoc(true))
+      }
+    }
+
+    al("", true)
+    al("private[xxx] ", true)
+    al("protected[xxx] ", true)
+    al("protected ", true)
+
+    al("private ", false)
   }
 }
-
-/*
-package foobar  // missing ScalaDoc is OK on package
-
-trait Foo // missing ScalaDoc :(
-class Bar // missing ScalaDoc :(
-case class Baz  // missing ScalaDoc :(
-
-private[foobar] trait Foo // missing ScalaDoc OK on non-public
-private class Bar         // missing ScalaDoc OK on non-public
-private case class Baz    // missing ScalaDoc OK on non-public
-
-/**
- * Proper scaladoc
- */
-class A {
-  private val ok: Unit = ()
-
-  /**
-   * Existence only
-   */
-  protected val ok1: Unit = ()
-
-  /**
-   * Existence only
-   */
-  val ok2: Unit = ()
-
-  /**
-   * With Scaladoc, ignoring its structure.
-   *
-   * @return ()
-   */
-  def ok3: Unit = ()
-
-  /**
-   * With Scaladoc, ignoring its structure.
-   *
-   * @return ()
-   */
-  protected def ok4: Unit = ()
-
-  private def nonPublicOk(): Unit = ()
-
-// the non-OK scenarios
-
-  val notOk1: Unit = ()
-  protected val notOk2: Unit = ()
-  def notOk3: Unit = ()
-  protected def notOk4: Unit = ()
-
-}
-
- */
