@@ -202,4 +202,43 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
     al("private ", false)
   }
+
+  @Test def valsVarsAndTypes() {
+    def al(what: String = "", checked: Boolean): Unit = {
+      val tlDoc =
+        """
+          |/**
+          | * Top-level doc
+          | */
+        """.stripMargin
+      def source(container: String) =
+        s"""
+           |$tlDoc
+           |$container Foo {
+           |  %s${what}
+           |}
+        """.stripMargin
+      val doc =
+        """
+          |/**
+          | * This is the documentation for whatever follows with no params, no tparams, no return, no throws
+          | */
+        """.stripMargin
+
+      List(source("class"), source("case class"), source("object ")).foreach { source =>
+        assertErrors(Nil, source format doc)
+        assertErrors(if (checked) List(lineError(8, List("missing"))) else Nil, source format "")
+      }
+    }
+
+    List("val a = 1", "var a = 2", "type X = String").foreach { member =>
+      al(member, true)
+      al(s"private[pkg] $member", true)
+      al(s"protected[pkg] $member", true)
+      al(s"protected $member", true)
+
+      al(s"private $member", false)
+    }
+  }
+  
 }
