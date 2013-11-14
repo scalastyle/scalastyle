@@ -132,7 +132,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | * XXX
           | */
           |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B) = ()
+          |  %s${access} def foo[A, B, U](a: A, b: B) {}
           |}
         """.stripMargin
       def doc(proc: Boolean) =
