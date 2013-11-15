@@ -16,7 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import _root_.scalariform.lexer.{TokenType, HiddenTokens, Token}
+import _root_.scalariform.lexer.{HiddenTokens, Token}
 import _root_.scalariform.parser._
 import _root_.scalariform.parser.FunDefOrDcl
 import _root_.scalariform.parser.TmplDef
@@ -77,9 +77,12 @@ class ScalaDocChecker extends CombinedChecker {
   // parse the parameters and report errors for the parameters (constructor or method)
   private def paramErrors(line: Int, paramClausesOpt: Option[ParamClauses])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
     def params(xs: List[Token]): List[String] = xs match {
+      // @annotation a: B; @annotation(...) a: B
       case Token(_, "@", _, _)::Token(_, annotation, _, _)::
            Token(_, paramName, _, _)::Token(_, ":", _, _)::Token(_, _, _, _)::t => paramName :: params(t)
+      // a: B
       case Token(_, paramName, _, _)::Token(_, ":", _, _)::Token(_, _, _, _)::t => paramName :: params(t)
+      // any other token
       case _::t => params(t)
       case Nil  => Nil
     }
@@ -98,9 +101,12 @@ class ScalaDocChecker extends CombinedChecker {
   // parse the type parameters and report errors for the parameters (constructor or method)
   private def tparamErrors(line: Int, tparamClausesOpt: Option[TypeParamClause])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
     def tparams(xs: List[Token]): List[String] = xs match {
+      // [@foo A, @bar(b) B]
       case Token(_, "@", _, _)::Token(_, annotation, _, _)::
         Token(tokenType, paramName, _, _)::t  if tokenType.name == "VARID"   => paramName :: tparams(t)
+      // [A, B]
       case Token(tokenType, paramName, _, _)::t if tokenType.name == "VARID" => paramName :: tparams(t)
+      // any other token
       case _::t => tparams(t)
       case Nil  => Nil
     }
