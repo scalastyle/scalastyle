@@ -58,6 +58,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def classParams(): Unit = {
     val classSource = "%sclass Foo(a: Int, b: Int)"
     val caseClassSource = "%scase class Foo(a: Int, b: Int)"
+    val annotatedCaseClassSource = s"%scase class Foo @JpaAbomination() (@Field a: Int, @Field b: Int)"
+    val annotatedCaseClassSource2 = s"""%scase class Foo @JpaAbomination(me) (@Field(a = 4, b = "foo") a: Int, @Field() b: Int)"""
     val missingParamDoc =
       """
         |/**
@@ -74,7 +76,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
         | */
       """.stripMargin
 
-    List(classSource, caseClassSource).foreach { source =>
+    List(classSource, caseClassSource, annotatedCaseClassSource, annotatedCaseClassSource2).foreach { source =>
       assertErrors(Nil, source format doc)
       assertErrors(List(lineError(1, List(Missing))), source format "")
       assertErrors(List(lineError(5, List(MalformedParams))), source format missingParamDoc)
@@ -117,6 +119,15 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | */
           |trait X {
           |  %s${access} def foo[A, B, U](a: A, b: B): U = ???
+          |}
+        """.stripMargin
+      val annotatedFun =
+        s"""
+          |/**
+          | * XXX
+          | */
+          |trait X {
+          |  %s${access} def foo[@unchecked A, @annotated B, U](@Field() a: A, @Field("b") b: B): U = ???
           |}
         """.stripMargin
       val proc1 =
@@ -183,11 +194,13 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | */
           | """.stripMargin
 
-      assertErrors(Nil, fun format doc(false))
-      assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, fun format "")
-      assertErrors(if (checked) List(lineError(15, List(MalformedParams))) else Nil, fun format missingParamsDoc(false))
-      assertErrors(if (checked) List(lineError(15, List(MalformedTypeParams))) else Nil, fun format missingTypeParamsDoc(false))
-      assertErrors(if (checked) List(lineError(15, List(MalformedReturn))) else Nil, fun format missingReturnDoc)
+      List(fun, annotatedFun).foreach { source =>
+        assertErrors(Nil, source format doc(false))
+        assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, source format "")
+        assertErrors(if (checked) List(lineError(15, List(MalformedParams))) else Nil, source format missingParamsDoc(false))
+        assertErrors(if (checked) List(lineError(15, List(MalformedTypeParams))) else Nil, source format missingTypeParamsDoc(false))
+        assertErrors(if (checked) List(lineError(15, List(MalformedReturn))) else Nil, source format missingReturnDoc)
+      }
 
       List(proc1, proc2).foreach { source =>
         assertErrors(Nil, source format doc(false))
@@ -205,12 +218,12 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
       al(s"private $modifier", false)
 
-      al(s"@tailrec @another $modifier", true)
-      al(s"@tailrec @another private[xxx] $modifier", true)
-      al(s"@tailrec @another protected[xxx] $modifier", true)
-      al(s"@tailrec @another protected $modifier", true)
+      al(s"@tailrec @another(a = b) $modifier", true)
+      al(s"@tailrec @another(a = b) private[xxx] $modifier", true)
+      al(s"@tailrec @another(a = b) protected[xxx] $modifier", true)
+      al(s"@tailrec @another(a = b) protected $modifier", true)
 
-      al(s"@tailrec @another private $modifier", false)
+      al(s"@tailrec @another(a = b) private $modifier", false)
     }
   }
 

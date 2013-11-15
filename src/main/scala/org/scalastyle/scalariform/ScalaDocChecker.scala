@@ -16,7 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import _root_.scalariform.lexer.{HiddenTokens, Token}
+import _root_.scalariform.lexer.{TokenType, HiddenTokens, Token}
 import _root_.scalariform.parser._
 import _root_.scalariform.parser.FunDefOrDcl
 import _root_.scalariform.parser.TmplDef
@@ -76,11 +76,15 @@ class ScalaDocChecker extends CombinedChecker {
 
   // parse the parameters and report errors for the parameters (constructor or method)
   private def paramErrors(line: Int, paramClausesOpt: Option[ParamClauses])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
-    val varidTokens = paramClausesOpt.map(_.tokens.filter(_.tokenType.name == "VARID")).getOrElse(Nil)
-    val paramNames = for {
-      (name, idx) <- varidTokens.zipWithIndex
-      if idx % 2 == 0
-    } yield name.text
+    def params(xs: List[Token]): List[String] = xs match {
+      case Token(_, "@", _, _)::Token(_, annotation, _, _)::
+           Token(_, paramName, _, _)::Token(_, ":", _, _)::Token(_, _, _, _)::t => paramName :: params(t)
+      case Token(_, paramName, _, _)::Token(_, ":", _, _)::Token(_, _, _, _)::t => paramName :: params(t)
+      case _::t => params(t)
+      case Nil  => Nil
+    }
+
+    val paramNames = paramClausesOpt.map(pc => params(pc.tokens)).getOrElse(Nil)
 
     if (paramNames.size != scalaDoc.params.size) {
       // bad param sizes
@@ -93,7 +97,15 @@ class ScalaDocChecker extends CombinedChecker {
 
   // parse the type parameters and report errors for the parameters (constructor or method)
   private def tparamErrors(line: Int, tparamClausesOpt: Option[TypeParamClause])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
-    val tparamNames = tparamClausesOpt.map(_.tokens.filter(_.tokenType.name == "VARID").map(_.text)).getOrElse(Nil)
+    def tparams(xs: List[Token]): List[String] = xs match {
+      case Token(_, "@", _, _)::Token(_, annotation, _, _)::
+        Token(tokenType, paramName, _, _)::t  if tokenType.name == "VARID"   => paramName :: tparams(t)
+      case Token(tokenType, paramName, _, _)::t if tokenType.name == "VARID" => paramName :: tparams(t)
+      case _::t => tparams(t)
+      case Nil  => Nil
+    }
+
+    val tparamNames = tparamClausesOpt.map(tc => tparams(tc.tokens)).getOrElse(Nil)
 
     if (tparamNames.size != scalaDoc.typeParams.size) {
       // bad param sizes
