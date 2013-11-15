@@ -204,6 +204,13 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
       al(s"protected $modifier", true)
 
       al(s"private $modifier", false)
+
+      al(s"@tailrec @another $modifier", true)
+      al(s"@tailrec @another private[xxx] $modifier", true)
+      al(s"@tailrec @another protected[xxx] $modifier", true)
+      al(s"@tailrec @another protected $modifier", true)
+
+      al(s"@tailrec @another private $modifier", false)
     }
   }
 
