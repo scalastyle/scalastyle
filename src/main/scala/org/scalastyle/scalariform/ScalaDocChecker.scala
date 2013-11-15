@@ -54,14 +54,14 @@ class ScalaDocChecker extends CombinedChecker {
    * Finds the ScalaDoc hidden in the ``token``, falling back on ``fallback`` if ``token``
    * contains no ScalaDoc.
    *
-   * This is useful when including access levels, which are not reported as part of the following
-   * token. So,
+   * This is useful when including access levels, annotations and such like,
+   * which are not reported as part of the following token. So,
    *
    * ```
    * &#47;**
    *  * Contains magic
    *  *&#47;
-   * protected val foo = 5
+   * @magic protected val foo = 5
    * ```
    * is interpreted as
    *
