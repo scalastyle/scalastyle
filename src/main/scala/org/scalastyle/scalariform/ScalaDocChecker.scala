@@ -130,26 +130,30 @@ class ScalaDocChecker extends CombinedChecker {
       // protected, protected[xxx];
 
       // check if we are going to include or skip depending on access modifier
-      val skip = t.modifiers match {
-        case AccessModifier(pop, Some(_))::_ =>
-          if (pop.text == "private") skipQualifiedPrivate
-          else                       skipQualifiedProtected
-        case AccessModifier(pop, None)::_ =>
-          if (pop.text == "private") skipPrivate
-          else                       skipProtected
-        case _                       =>
+      val accessModifier = t.modifiers.find {
+        case AccessModifier(_, _) => true
+        case _                    => false
+      }
+      val skip = accessModifier.exists {
+        case AccessModifier(pop, Some(_)) =>
+          if (pop.text == "private") skipQualifiedPrivate else skipQualifiedProtected
+        case AccessModifier(pop, None) =>
+          if (pop.text == "private") skipPrivate else skipProtected
+        case _ =>
           false
       }
 
       // pick the ScalaDoc "attached" to the modifier, which actually means
       // ScalaDoc of the following member
-      val scalaDoc = t.modifiers match {
-        case AccessModifier(pop, _)::_ => pop.associatedWhitespaceAndComments
-        case _                         => HiddenTokens(Nil)
-      }
+      val scalaDocs = for {
+        modifier <- t.modifiers
+        token    <- modifier.tokens
+        comment  <- token.associatedWhitespaceAndComments
+        if comment.token.isScalaDocComment
+      } yield comment
 
       // descend
-      visit(t, localVisit(skip, scalaDoc, lines))
+      visit(t, localVisit(skip, HiddenTokens(scalaDocs), lines))
     case t: TmplDef      =>
       // trait Foo, trait Foo[A];
       // class Foo, class Foo[A](a: A);

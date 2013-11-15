@@ -197,12 +197,14 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
       }
     }
 
-    al("", true)
-    al("private[xxx] ", true)
-    al("protected[xxx] ", true)
-    al("protected ", true)
+    List("", "final ").foreach { modifier =>
+      al(modifier, true)
+      al(s"private[xxx] $modifier", true)
+      al(s"protected[xxx] $modifier", true)
+      al(s"protected $modifier", true)
 
-    al("private ", false)
+      al(s"private $modifier", false)
+    }
   }
 
   @Test def valsVarsAndTypes() {
