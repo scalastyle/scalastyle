@@ -3,4 +3,6 @@
 *.iws
 target
 .idea
+.worksheet
+*.sc
 
