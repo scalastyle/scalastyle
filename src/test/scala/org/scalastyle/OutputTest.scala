@@ -36,6 +36,7 @@ class OutputTest extends AssertionsForJUnit {
        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
        StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
+       StyleError(barSpec, classOf[FileLengthChecker], "bazbar", InfoLevel, List[String](), None, None, None),
        StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
    )
@@ -56,6 +57,7 @@ class OutputTest extends AssertionsForJUnit {
  </file>
  <file name="bar">
   <error source="org.scalastyle.file.FileLengthChecker" severity="warning" message="barbar.message"></error>
+  <error source="org.scalastyle.file.FileLengthChecker" severity="info" message="bazbar.message"></error>
   <error column="6" line="5" source="org.scalastyle.file.FileLengthChecker" severity="error" message="bazbaz"></error>
   <error column="8" line="7" severity="error" message="noClass"></error>
  </file>
@@ -72,6 +74,7 @@ class OutputTest extends AssertionsForJUnit {
        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(1), Some(2), Some("custom")),
        StyleError(fooSpec, classOf[FileLengthChecker], "foobar", ErrorLevel, List[String](), Some(3), Some(4), Some("custom 3")),
        StyleError(barSpec, classOf[FileLengthChecker], "barbar", WarningLevel, List[String](), None, None, None),
+       StyleError(barSpec, classOf[FileLengthChecker], "bazbar", InfoLevel, List[String](), None, None, None),
        StyleException(barSpec, Some(classOf[FileLengthChecker]), "bazbaz", "stacktrace\nstacktrace", Some(5), Some(6)),
        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
    )

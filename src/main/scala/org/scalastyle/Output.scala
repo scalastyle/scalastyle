@@ -33,6 +33,7 @@ object Output {
 trait Output[T <: FileSpec] {
   private var errors = 0
   private var warnings = 0
+  private var infos = 0
   private var files = 0
 
   def output(messages: Seq[Message[T]]): OutputResult = privateOutput(messages)
@@ -40,7 +41,7 @@ trait Output[T <: FileSpec] {
 
   private[this] def privateOutput(messages: Iterable[Message[T]]): OutputResult = {
     messages.foreach(m => { eachMessage(m); message(m) })
-    OutputResult(files, errors, warnings)
+    OutputResult(files, errors, warnings, infos)
   }
 
   def eachMessage(m: Message[T]): Unit = m match {
@@ -50,6 +51,7 @@ trait Output[T <: FileSpec] {
     case EndFile(file) =>
     case StyleError(file, clazz, key, level, args, line, column, customMessage) => level match {
       case WarningLevel => warnings += 1
+      case InfoLevel => infos += 1
       case _ => errors += 1
     }
     case StyleException(file, clazz, message, stacktrace, line, column) => errors += 1
@@ -57,7 +59,7 @@ trait Output[T <: FileSpec] {
   def message(m: Message[T]): Unit
 }
 
-case class OutputResult(val files: Int, val errors: Int, val warnings: Int)
+case class OutputResult(val files: Int, val errors: Int, val warnings: Int, val infos: Int)
 
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(this.getClass().getClassLoader())

@@ -36,16 +36,19 @@ import scala.xml.Attribute
 object Level {
   val Warning = "warning"
   val Error = "error"
+  val Info = "info"
 
   def apply(s: String): Level = s match {
     case Warning => WarningLevel
     case Error => ErrorLevel
+    case Info => InfoLevel
     case _ => WarningLevel
   }
 }
 sealed abstract class Level(val name: String)
 case object ErrorLevel extends Level(Level.Error)
 case object WarningLevel extends Level(Level.Warning)
+case object InfoLevel extends Level(Level.Info)
 
 object ParameterType {
   val Integer = "integer"
