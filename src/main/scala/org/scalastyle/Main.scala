@@ -31,16 +31,16 @@ object Main {
     val properties = new java.util.Properties();
     properties.load(this.getClass().getResourceAsStream("/version.properties"));
 
-    val parser = new scopt.immutable.OptionParser[MainConfig]("scalastyle", properties.getProperty("scalastyle.version")) {
-      def options = Seq( // scalastyle:ignore public.methods.have.type
-        opt("c", "config", "configuration file (required)") { (v: String, c: MainConfig) => c.copy(config = Some(v)) },
-        booleanOpt("v", "verbose", "verbose") { (v: Boolean, c: MainConfig) => c.copy(verbose = v) },
-        booleanOpt("q", "quiet", "quiet") { (v: Boolean, c: MainConfig) => c.copy(quiet = v) },
-        opt("xmlOutput", "XML output (optional)") { (v: String, c: MainConfig) => c.copy(xmlFile = Some(v)) },
-        opt("xmlEncoding", "XML output encoding (optional)") { (v: String, c: MainConfig) => c.copy(xmlEncoding = Some(v)) },
-        opt("inputEncoding", "Source file encoding (input) (optional)") { (v: String, c: MainConfig) => c.copy(inputEncoding = Some(v)) },
-        booleanOpt("w", "warnings", "fail if there are warnings") { (v: Boolean, c: MainConfig) => c.copy(warningsaserrors = v) },
-        arglist("<directory>", "directories / files") { (v: String, c: MainConfig) => c.copy(directories = v :: c.directories) })
+    val parser = new scopt.OptionParser[MainConfig]("scalastyle") {
+        head("scalastyle", properties.getProperty("scalastyle.version"))
+        opt[String]('c', "config") action { (v: String, c: MainConfig) => c.copy(config = Some(v)) } text("configuration file (required)")
+        opt[Boolean]('v', "verbose") action { (v: Boolean, c: MainConfig) => c.copy(verbose = v) } text("verbose")
+        opt[Boolean]('q', "quiet") action { (v: Boolean, c: MainConfig) => c.copy(quiet = v) } text("quiet")
+        opt[String]("xmlOutput") action { (v: String, c: MainConfig) => c.copy(xmlFile = Some(v)) } text("XML output (optional)")
+        opt[String]("xmlEncoding") action { (v: String, c: MainConfig) => c.copy(xmlEncoding = Some(v)) } text("XML output encoding (optional)")
+        opt[String]("inputEncoding") action { (v: String, c: MainConfig) => c.copy(inputEncoding = Some(v)) } text("Source file encoding (input) (optional)")
+        opt[Boolean]('w', "warnings") action { (v: Boolean, c: MainConfig) => c.copy(warningsaserrors = v) } text("fail if there are warnings")
+        arg[String]("<directory>") action { (v: String, c: MainConfig) => c.copy(directories = v :: c.directories) } text("directories / files")
     }
 
     // parser.parse returns Option[C]
