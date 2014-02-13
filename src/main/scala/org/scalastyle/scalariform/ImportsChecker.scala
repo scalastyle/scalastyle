@@ -83,6 +83,7 @@ class IllegalImportsChecker extends AbstractImportChecker {
 
   val DefaultIllegalImports = "sun._"
   var illegalImportsList: List[String] = _
+  var legalImportsList: List[String] = _
 
   // sun._ => sun\.
   // sun.com.foobar => sun\.com\.foobar
@@ -92,10 +93,12 @@ class IllegalImportsChecker extends AbstractImportChecker {
 
   override protected def init() = {
     illegalImportsList = toMatchList(getString("illegalImports", DefaultIllegalImports))
+    legalImportsList = toMatchList(getString("legalImports", ""))
   }
 
   def matches(t: ImportClauseVisit): Boolean = {
     val list = imports(t)
+    val revisedList = list diff legalImportsList
     illegalImportsList.exists(ill => list.exists(_.startsWith(ill)))
   }
 }
