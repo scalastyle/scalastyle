@@ -137,4 +137,5 @@
     <checker class="org.scalastyle.scalariform.BlockImportChecker" id="block.import" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ProcedureDeclarationChecker" id="procedure.declaration" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ForBraceChecker" id="for.brace" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.SpaceAfterCommentStart" id="space.after.comment.start" defaultLevel="warning"/>
 </scalastyle-definition>
