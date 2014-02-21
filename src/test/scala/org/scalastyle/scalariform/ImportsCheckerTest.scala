@@ -93,7 +93,26 @@ object Foobar {
     assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0)), source,
         Map("illegalImports" -> "java.util.List, java.util.Map"))
   }
+
+  @Test def testWithExemptImports(): Unit = {
+    val source = """package foobar
+
+import java.util.{List => JList}
+import java.lang.{Object => JObject}
+import java.util.{Iterator => JIterator, List => JList, Collection => JCollection}
+import java.util.{List, Map}
+import java.util.{_}
+import java.util._
+
+object Foobar {
 }
+                 """.stripMargin;
+
+    assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(8, 0)), source,
+      Map("illegalImports" -> "java.util._", "exemptImports" -> "java.util.List"))
+  }
+}
+
 
 class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "underscore.import"
