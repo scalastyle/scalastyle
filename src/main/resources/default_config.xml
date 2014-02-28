@@ -117,4 +117,5 @@
  <check level="warning" class="org.scalastyle.scalariform.BlockImportChecker" enabled="false"/>
  <check level="warning" class="org.scalastyle.scalariform.ProcedureDefinitionChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.ForBraceChecker" enabled="true"/>
+ <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStart" enabled="true"/>
 </scalastyle>
