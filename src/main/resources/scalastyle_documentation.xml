@@ -455,7 +455,7 @@ To bring consistency with how comments should be formatted, leave a space right 
 </justification>
 <example-configuration>
 <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStart" enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true" />
 ]]>
 </example-configuration>
 </check>
