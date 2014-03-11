@@ -17,9 +17,7 @@
 package org.scalastyle
 
 import java.text.MessageFormat
-import java.util.ResourceBundle
-import java.util.Locale
-import scala.collection.mutable.HashMap
+import com.typesafe.config._
 
 trait FileSpec {
   def name: String
@@ -31,20 +29,16 @@ class SourceSpec(val name: String, val contents: String) extends FileSpec
 
 // for the methods in this class, if a key does not exist
 // we return the key so something always appears
-class MessageHelper(classLoader: ClassLoader) {
-  val bundles = HashMap[String, ResourceBundle]()
+class MessageHelper(config: Config) {
 
-  def text(key: String): String = getMessage(classLoader, key + ".text", List())
+  def text(key: String): String = getMessage(config, key + ".text", List())
 
-  def label(key: String): String = getMessage(classLoader, key + ".label", List())
-  def description(key: String): String = getMessage(classLoader, key + ".description", List())
+  def label(key: String): String = getMessage(config, key + ".label", List())
+  def description(key: String): String = getMessage(config, key + ".description", List())
 
-  private[this] def getMessage(classLoader: ClassLoader, key: String, args: List[String]) = {
+  private[this] def getMessage(config: Config, key: String, args: List[String]) = {
     try {
-      val bundle = ResourceBundle.getBundle("scalastyle_messages", Locale.getDefault(), classLoader)
-
-      // Use ClassLoader of the class from which the message came
-      val pattern = bundle.getString(key)
+      val pattern = config.getString(key)
       MessageFormat.format(pattern, args.map(_.asInstanceOf[AnyRef]): _*)
     } catch {
       // If there is no message, just use the key
@@ -52,9 +46,9 @@ class MessageHelper(classLoader: ClassLoader) {
     }
   }
 
-  def message(classLoader: ClassLoader, key: String, args: List[String]): String = {
+  def message(config: Config, key: String, args: List[String]): String = {
     // Use ClassLoader of the class from which the message came
-    getMessage(classLoader, key + ".message", args)
+    getMessage(config, key + ".message", args)
   }
 }
 
