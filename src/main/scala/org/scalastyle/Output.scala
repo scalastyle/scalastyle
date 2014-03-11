@@ -69,7 +69,7 @@ trait Output[T <: FileSpec] {
 case class OutputResult(val files: Int, val errors: Int, val warnings: Int, val infos: Int)
 
 class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
-  private val messageHelper = new MessageHelper(ConfigFactory.load())
+  private val messageHelper = new MessageHelper(Output.config)
 
   // scalastyle:off regex multiple.string.literals
   override def message(m: Message[T]): Unit = m match {
@@ -103,7 +103,7 @@ object XmlOutput {
   def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Iterable[Message[T]]): Unit = {
     val width = 1000
     val step = 1
-    val messageHelper = new MessageHelper(ConfigFactory.load())
+    val messageHelper = new MessageHelper(Output.config)
 
     val decl = """<?xml version="1.0" encoding="""" + encoding + """"?>"""
     val s = new XmlPrettyPrinter(width, step).format(toCheckstyleFormat(messageHelper, messages))
