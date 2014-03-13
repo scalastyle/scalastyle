@@ -34,9 +34,12 @@ package foobar
 object Foobar {
   //Incorrect
   // correct comment
+  /////////////////////////////////
+  ///Invalid
+  /// Invalid
 }"""
 
-    assertErrors(List(columnError(5, 2)), source)
+    assertErrors(List(columnError(5, 2), columnError(8, 2), columnError(9, 2)), source)
   }
 
   @Test def testMultipleInlineComments(): Unit = {
