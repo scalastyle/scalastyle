@@ -122,7 +122,7 @@ object XmlOutput {
         case StyleError(file, clazz, key, level, args, line, column, customMessage) =>
           Alert(file.name, messageHelper.text(level.name), Output.findMessage(messageHelper, clazz, key, args, customMessage), Some(clazz), line, column)
         case StyleException(file, clazz, message, stacktrace, line, column) =>
-          Alert(file.name, "error", message, clazz, line, column)
+          Alert(file.name, "error", message + "\n" + stacktrace, clazz, line, column)
       }.groupBy{_.filename}.map { case (filename, alerts) =>
         <file name={filename}>{
           alerts.map {
