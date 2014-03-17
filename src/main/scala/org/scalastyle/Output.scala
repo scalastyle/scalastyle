@@ -16,7 +16,6 @@
 
 package org.scalastyle
 
-import scala.xml.XML
 import scala.xml.Elem
 import scala.collection.JavaConversions.collectionAsScalaIterable
 
@@ -70,12 +69,12 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
     case EndWork() =>
     case StartFile(file) => if (verbose) println("start file " + file)
     case EndFile(file) => if (verbose) println("end file " + file)
-    case StyleError(file, clazz, key, level, args, line, column, customMessage) => {
+    case StyleError(file, clazz, key, level, args, line, column, customMessage) => if (!quiet || verbose) {
       println(messageHelper.text(level.name) + print("file", file.name) +
           print("message", Output.findMessage(messageHelper, clazz, key, args, customMessage)) +
           print("line", line) + print("column", column))
     }
-    case StyleException(file, clazz, message, stacktrace, line, column) => {
+    case StyleException(file, clazz, message, stacktrace, line, column) => if (!quiet || verbose) {
       println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))
     }
   }
