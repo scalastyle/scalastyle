@@ -459,4 +459,20 @@ To bring consistency with how comments should be formatted, leave a space right 
 ]]>
 </example-configuration>
 </check>
+<check id="header.matches">
+ <justification>
+  A lot of projects require a header with a copyright notice, or they require a license in each file. This does a simple text comparison between the header and the first lines of the file.
+  You can have multiple lines, but make sure you surround the text with a CDATA section.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
+  <parameters>
+   <parameter name="header"><![CDATA[// Copyright (C) 2011-2012 the original author or authors.]]]]><![CDATA[></parameter>
+  </parameters>
+ </check>
+ ]]>
+ </example-configuration>
+ </check>
+
 </scalastyle-documentation>
