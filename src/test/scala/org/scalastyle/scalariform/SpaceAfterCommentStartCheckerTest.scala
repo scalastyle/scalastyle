@@ -55,7 +55,7 @@ object Foobar {
   val d = 2 // Correct
   val e = 3
 }"""
-      assertErrors(List(columnError(5, 2), columnError(7, 12), columnError(8, 14)), source)
+    assertErrors(List(columnError(5, 2), columnError(7, 12), columnError(8, 14)), source)
 
   }
 
@@ -67,16 +67,16 @@ object Foobar {
   /*WRONG
   *
   */
-  /* Correct*/
-
+  /* Correct */
+  /* Wrong*/
   val d = 2 /*Wrong*/
   /*
    *Correct
    */
-  val e = 3/* Correct*/
+  val e = 3/* Correct */
 }"""
 
-    assertErrors(List(columnError(5, 2), columnError(10, 12)), source)
+    assertErrors(List(columnError(5, 2), columnError(9, 2), columnError(10, 12)), source)
   }
 
 
@@ -88,14 +88,15 @@ object Foobar {
   /**WRONG
   *
   */
-  /** Correct*/
+  /** Correct */
   val d = 2 /**Wrong*/
+  /** Wrong*/
   /**
    *Correct
    */
-  val e = 3/** Correct*/
+  val e = 3/** Correct */
 }"""
-    assertErrors(List(columnError(5, 2), columnError(9, 12)), source)
+    assertErrors(List(columnError(5, 2), columnError(9, 12), columnError(10, 2)), source)
   }
 
   @Test def testMixedComments(): Unit = {
@@ -106,12 +107,12 @@ object Foobar {
   /**WRONG
   *
   */
-  /** Correct*/
+  /** Correct */
   val d = 2 /*Wrong*/ //Wrong
   /**
    *Correct
    */
-  val e = 3/** Correct*/ // Correct
+  val e = 3/** Correct */ // Correct
 }"""
     assertErrors(List(columnError(5, 2), columnError(9, 12), columnError(9, 22)), source)
   }
