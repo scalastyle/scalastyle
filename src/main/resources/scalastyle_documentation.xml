@@ -473,6 +473,31 @@ To bring consistency with how comments should be formatted, leave a space right 
  </check>
  ]]>
  </example-configuration>
- </check>
+</check>
+<check id="space.after.colon">
+  <justification>
+    To bring consistency with how a colon is placed either while specifying return type explcitly
+    or as method argument.
 
+    package foobar
+
+    object Foobar {
+      // Valid styles:
+      val a: Int = 0
+      def b(c: Int): Int = 1
+      class Dummy[T: Manifest]
+
+      // Invalid styles:
+      class Dummy[T : Manifest]
+      val a:Int = 0
+      val b : Int = 1
+      def c(d:Int) :Int = 2
+    }
+  </justification>
+  <example-configuration>
+    <![CDATA[
+             <check level="warning" class="org.scalastyle.scalariform.SpaceAfterColonChecker" enabled="true" />
+    ]]>
+  </example-configuration>
+</check>
 </scalastyle-documentation>
