@@ -20,19 +20,15 @@ import scalariform.lexer.Tokens
 import scalariform.parser.CompilationUnit
 import org.scalastyle._
 
-class SpaceAfterColonChecker extends ScalariformChecker {
-  override protected val errorKey: String = "space.after.colon"
+class SingleSpaceAfterKeyword extends ScalariformChecker {
+  override protected val errorKey: String = "single.space.after.keyword"
 
   override def verify(ast: CompilationUnit): List[ScalastyleError] = {
     (for {
-      List(left, middle, right) <- ast.tokens.sliding(3)
-      if (middle.tokenType == Tokens.COLON
-        && !middle.associatedWhitespaceAndComments.containsNewline
-        && !right.associatedWhitespaceAndComments.containsNewline
-        && (charsBetweenTokens(middle, right) != 1
-        || charsBetweenTokens(left, middle) != 0))
+      List(left, right) <- ast.tokens.sliding(2)
+      if Tokens.KEYWORDS.contains(left.tokenType) && charsBetweenTokens(left, right) != 1
     } yield {
-      PositionError(middle.offset)
+      PositionError(right.offset)
     }).toList
   }
 }

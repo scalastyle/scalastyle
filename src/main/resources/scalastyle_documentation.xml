@@ -476,8 +476,7 @@ To bring consistency with how comments should be formatted, leave a space right 
 </check>
 <check id="space.after.colon">
   <justification>
-    To bring consistency with how a colon is placed either while specifying return type explcitly
-    or as method argument.
+    To bring consistency with how a colon is placed either while specifying return type explcitly or as method argument.
 
     package foobar
 
@@ -500,4 +499,24 @@ To bring consistency with how comments should be formatted, leave a space right 
     ]]>
   </example-configuration>
 </check>
+<check id="single.space.after.keyword">
+  <justification>
+    Turns out in scala there are various ways compiler lets one format the code and this leads to a lot inconsistency. This style check ensures that after keywords like (if, else, case, class, extends) a single space is left.
+
+    package foobar
+
+    object Foobar {
+      if(true) false
+      if (true) false
+      if  (true) false
+     
+    }
+  </justification>
+  <example-configuration>
+    <![CDATA[
+             <check level="warning" class="org.scalastyle.scalariform.SingleSpaceAfterKeyword" enabled="true" />
+    ]]>
+  </example-configuration>
+</check>
+
 </scalastyle-documentation>

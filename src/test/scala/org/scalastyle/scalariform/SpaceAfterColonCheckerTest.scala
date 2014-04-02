@@ -69,6 +69,9 @@ class SpaceAfterColonCheckerTest extends AssertionsForJUnit with CheckerTest {
         |  val a: Int = 0
         |  // A:B:C
         |  def b(ch: Int): Int = 1
+        |  d ++: e
+        |  d :\ e
+        |  e /: d
         |}
         |
       """.stripMargin
