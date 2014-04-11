@@ -21,39 +21,74 @@ import java.util.Date;
 import scala.io.Codec;
 
 class Main
-case class MainConfig(config: Option[String], directories: List[String],
-                        verbose: Boolean = false, quiet: Boolean = false,
-                        warningsaserrors: Boolean = false, xmlFile: Option[String] = None,
-                        xmlEncoding: Option[String] = None, inputEncoding: Option[String] = None)
+case class MainConfig(error: Boolean, config: Option[String] = None, directories: List[String] = List(),
+  verbose: Boolean = false, quiet: Boolean = false,
+  warningsaserrors: Boolean = false, xmlFile: Option[String] = None,
+  xmlEncoding: Option[String] = None, inputEncoding: Option[String] = None)
 
 object Main {
+  // scalastyle:off regex
+  private def usage(version: String) = {
+    println("scalastyle " + version)
+    println("Usage: scalastyle [options] <source directory>")
+    println(" -c, --config FILE               configuration file (required)")
+    println(" -v, --verbose true|false        verbose output")
+    println(" -q, --quiet true|false          be quiet")
+    println("     --xmlOutput FILE            write checkstyle format output to this file")
+    println("     --xmlEncoding STRING        encoding to use for the xml file")
+    println("     --inputEncoding STRING      encoding for the source files")
+    println(" -w, --warnings true|false       fail if there are warnings")
+    System.exit(1)
+  }
+  // scalastyle:on regex
+
+  private def isTrue(s: String) = "true" equalsIgnoreCase s
+
+  def parseArgs(args: Array[String], version: String) = {
+    var config = MainConfig(false)
+    var i = 0
+    while (i < args.length) {
+      if (args(i).startsWith("-") && i < args.length - 1) {
+        args(i) match {
+          case ("-c" | "--config") => config = config.copy(config = Some(args(i + 1)))
+          case ("-v" | "--verbose") => config = config.copy(verbose = isTrue(args(i + 1)))
+          case ("-q" | "--quiet") => config = config.copy(quiet = isTrue(args(i + 1)))
+          case ("-w" | "--warnings") => config = config.copy(warningsaserrors = isTrue(args(i + 1)))
+          case ("--xmlOutput") => config = config.copy(xmlFile = Some(args(i + 1)))
+          case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
+          case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
+          case _ => config = config.copy(error = true)
+        }
+        i = i + 2
+      } else {
+        config = config.copy(directories = args(i) :: config.directories)
+        i = i + 1
+      }
+    }
+
+    if (!config.config.isDefined || config.directories.size == 0) {
+      config = config.copy(error = true)
+    }
+
+    config
+  }
+
   def main(args: Array[String]): Unit = {
     val properties = new java.util.Properties();
     properties.load(this.getClass().getResourceAsStream("/version.properties"));
 
-    val parser = new scopt.OptionParser[MainConfig]("scalastyle") {
-        head("scalastyle", properties.getProperty("scalastyle.version"))
-        opt[String]('c', "config") action { (v: String, c: MainConfig) => c.copy(config = Some(v)) } text("configuration file (required)")
-        opt[Boolean]('v', "verbose") action { (v: Boolean, c: MainConfig) => c.copy(verbose = v) } text("verbose")
-        opt[Boolean]('q', "quiet") action { (v: Boolean, c: MainConfig) => c.copy(quiet = v) } text("quiet")
-        opt[String]("xmlOutput") action { (v: String, c: MainConfig) => c.copy(xmlFile = Some(v)) } text("XML output (optional)")
-        opt[String]("xmlEncoding") action { (v: String, c: MainConfig) => c.copy(xmlEncoding = Some(v)) } text("XML output encoding (optional)")
-        opt[String]("inputEncoding") action { (v: String, c: MainConfig) => c.copy(inputEncoding = Some(v)) } text("Source file encoding (input) (optional)")
-        opt[Boolean]('w', "warnings") action { (v: Boolean, c: MainConfig) => c.copy(warningsaserrors = v) } text("fail if there are warnings")
-        arg[String]("<directory>") action { (v: String, c: MainConfig) => c.copy(directories = v :: c.directories) } text("directories / files")
-    }
+    val version = properties.getProperty("scalastyle.version")
 
-    // parser.parse returns Option[C]
-    val exitVal = parser.parse(args, MainConfig(None, List())) map { config =>
-      if (!config.config.isDefined || config.directories.size == 0) {
-        parser.showUsage
+    val a = Array("-v", "true")
+    val config = parseArgs(a, version)
+
+    val exitVal = {
+      if (config.error) {
+        usage(version)
         1
       } else {
         if (execute(config)) 1 else 0
       }
-    } getOrElse {
-      // arguments are bad, usage message will have been displayed
-      1
     }
 
     System.exit(exitVal)

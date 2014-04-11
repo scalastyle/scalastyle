@@ -16,17 +16,14 @@
     <junit.version>4.11</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <scala.version>2.10.0</scala.version>
-    <scala.library.version>2.10.0</scala.library.version>
+    <scala.version>2.10.4</scala.version>
+    <scala.library.version>2.10.4</scala.library.version>
 
     <scalariform.artifactId>scalariform_2.10</scalariform.artifactId>
     <scalariform.version>0.1.4</scalariform.version>
 
     <scalatest.artifactId>scalatest_2.10</scalatest.artifactId>
     <scalatest.version>2.0.M6-SNAP9</scalatest.version>
-
-    <scopt.version>3.2.0</scopt.version>
-    <scopt.artifactId>scopt_2.10</scopt.artifactId>
   </properties>
 
   <dependencies>
@@ -34,6 +31,12 @@
       <groupId>org.scalariform</groupId>
       <artifactId>${scalariform.artifactId}</artifactId>
       <version>${scalariform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.library.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
@@ -46,11 +49,6 @@
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.scopt</groupId>
-      <artifactId>${scopt.artifactId}</artifactId>
-      <version>${scopt.version}</version>
     </dependency>
   </dependencies>
   <build>
