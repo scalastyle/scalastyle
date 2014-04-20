@@ -62,3 +62,4 @@ pomExtra := (
       <url>http://www.farwell.co.uk</url>
     </developer>
   </developers>)
+
