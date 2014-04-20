@@ -1,3 +1,5 @@
+import AssemblyKeys._
+
 name := "scalastyle"
 
 organization := "org.scalastyle"
@@ -63,3 +65,20 @@ pomExtra := (
     </developer>
   </developers>)
 
+assemblySettings
+
+artifact in (Compile, assembly) ~= { art =>
+  art.copy(`classifier` = Some("assembly"))
+}
+
+addArtifact(artifact in (Compile, assembly), assembly)
+
+mainClass in assembly := Some("org.scalastyle.Main")
+
+buildInfoSettings
+
+sourceGenerators in Compile <+= buildInfo
+
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+
+buildInfoPackage := "org.scalastyle"
