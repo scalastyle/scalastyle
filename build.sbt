@@ -8,17 +8,23 @@ git.baseVersion := "0.5.0"
 
 scalaVersion := "2.10.4"
 
-scalacOptions ++= Seq("-feature", "-deprecation")
+scalacOptions ++= Seq("-deprecation")
 
 crossScalaVersions := Seq("2.9.3")
 
 description := "Scalastyle style checker for Scala"
 
+def scalatestDependency(scalaVersion: String) = scalaVersion match {
+  case "2.9.3" => "org.scalatest" % "scalatest_2.9.3" % "2.0.M5b" % "test"
+  case _ => "org.scalatest" % "scalatest_2.10" % "2.0.M6-SNAP9" % "test"
+}
+
 libraryDependencies ++= Seq(
                         "org.scalariform" %% "scalariform" % "0.1.4",
 						"junit" % "junit" % "4.11" % "test",
-                        "org.scalatest" %% "scalatest" % "2.0.M6-SNAP9" % "test",
                         "com.novocode" % "junit-interface" % "0.10" % "test")
+
+libraryDependencies <+= scalaVersion(scalatestDependency(_))
 
 fork in Test := true
 
