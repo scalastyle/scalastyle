@@ -79,8 +79,7 @@ object Main {
 
     val version = properties.getProperty("scalastyle.version")
 
-    val a = Array("-v", "true")
-    val config = parseArgs(a, version)
+    val config = parseArgs(args, version)
 
     val exitVal = {
       if (config.error) {
