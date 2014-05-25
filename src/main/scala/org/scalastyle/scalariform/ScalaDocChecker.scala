@@ -16,14 +16,26 @@
 
 package org.scalastyle.scalariform
 
-import _root_.scalariform.lexer.{HiddenTokens, Token}
-import _root_.scalariform.parser._
-import _root_.scalariform.parser.FunDefOrDcl
-import _root_.scalariform.parser.TmplDef
-import org.scalastyle._
-import org.scalastyle.scalariform.VisitorHelper._
-import org.scalastyle.CombinedAst
 import scala.util.matching.Regex
+
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.LineError
+import org.scalastyle.Lines
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
+
+import scalariform.lexer.HiddenTokens
+import scalariform.lexer.Token
+import scalariform.parser.AccessModifier
+import scalariform.parser.FullDefOrDcl
+import scalariform.parser.FunDefOrDcl
+import scalariform.parser.ParamClauses
+import scalariform.parser.PatDefOrDcl
+import scalariform.parser.TmplDef
+import scalariform.parser.Type
+import scalariform.parser.TypeDefOrDcl
+import scalariform.parser.TypeParamClause
 
 /**
  * Checks that the ScalaDoc exists for all accessible members:
@@ -48,7 +60,7 @@ class ScalaDocChecker extends CombinedChecker {
     localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren(0))
   }
 
-  import ScalaDocChecker._
+  import ScalaDocChecker._ // scalastyle:ignore underscore.import
 
   /*
    * Finds the ScalaDoc hidden in the ``token``, falling back on ``fallback`` if ``token``

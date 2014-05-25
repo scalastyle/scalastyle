@@ -26,7 +26,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "scaladoc"
   val classUnderTest = classOf[ScalaDocChecker]
 
-  import ScalaDocChecker._
+  import ScalaDocChecker._ // scalastyle:ignore underscore.import
 
   @Test def noParamsCCTO(): Unit = {
     def al(access: String = "", checked: Boolean): Unit = {
@@ -227,7 +227,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
-  @Test def valsVarsAndTypes() {
+  @Test def valsVarsAndTypes(): Unit = {
     def al(what: String = "", checked: Boolean): Unit = {
       val tlDoc =
         """

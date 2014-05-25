@@ -17,7 +17,8 @@
 package org.scalastyle
 
 import java.text.MessageFormat
-import com.typesafe.config._
+
+import com.typesafe.config.Config
 
 trait FileSpec {
   def name: String

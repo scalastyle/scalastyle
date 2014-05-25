@@ -16,10 +16,15 @@
 
 package org.scalastyle.scalariform
 
+import scala.Array.fallbackCanBuildFrom
 
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+
+import scalariform.lexer.Token
+import scalariform.lexer.TokenType
+import scalariform.lexer.Tokens
 import scalariform.parser.CompilationUnit
-import scalariform.lexer.{TokenType, Token, Tokens}
-import org.scalastyle._
 
 trait SpaceAroundTokenChecker extends ScalariformChecker {
   val DefaultTokens: String
