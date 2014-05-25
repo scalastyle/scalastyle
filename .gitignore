@@ -5,4 +5,5 @@ target
 .idea
 .worksheet
 *.sc
+.cache
 
