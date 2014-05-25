@@ -23,7 +23,8 @@ def scalatestDependency(scalaVersion: String) = scalaVersion match {
 
 libraryDependencies ++= Seq(
                         "org.scalariform" %% "scalariform" % "0.1.4",
-						"junit" % "junit" % "4.11" % "test",
+                        "com.typesafe" % "config" % "1.2.0",
+                        "junit" % "junit" % "4.11" % "test",
                         "com.novocode" % "junit-interface" % "0.10" % "test")
 
 libraryDependencies <+= scalaVersion(scalatestDependency(_))
