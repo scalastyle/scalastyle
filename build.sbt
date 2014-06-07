@@ -8,7 +8,7 @@ versionWithGit
 
 git.baseVersion := "0.5.0"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.1"
 
 scalacOptions ++= Seq("-deprecation")
 
