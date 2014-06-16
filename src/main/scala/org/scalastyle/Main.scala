@@ -43,7 +43,7 @@ object Main {
       | -v, --verbose true|false        verbose output
       | -q, --quiet true|false          be quiet
       |     --xmlOutput FILE            write checkstyle format output to this file
-      |     --xmlEncoding STRING        encoding to use for the xml file")
+      |     --xmlEncoding STRING        encoding to use for the xml file
       |     --inputEncoding STRING      encoding for the source files
       | -w, --warnings true|false       fail if there are warnings
       """.trim.stripMargin.format(version)
