@@ -20,7 +20,6 @@ import java.io.File
 import java.util.Date
 import scala.io.Codec
 
-class Main
 case class MainConfig(error: Boolean, config: Option[String] = None, directories: List[String] = List(),
   verbose: Boolean = false, quiet: Boolean = false,
   warningsaserrors: Boolean = false, xmlFile: Option[String] = None,
