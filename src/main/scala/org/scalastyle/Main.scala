@@ -16,9 +16,9 @@
 
 package org.scalastyle
 
-import java.io.File;
-import java.util.Date;
-import scala.io.Codec;
+import java.io.File
+import java.util.Date
+import scala.io.Codec
 
 class Main
 case class MainConfig(error: Boolean, config: Option[String] = None, directories: List[String] = List(),
@@ -74,8 +74,8 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
-    val properties = new java.util.Properties();
-    properties.load(this.getClass().getResourceAsStream("/version.properties"));
+    val properties = new java.util.Properties()
+    properties.load(this.getClass().getResourceAsStream("/version.properties"))
 
     val version = properties.getProperty("scalastyle.version")
 
