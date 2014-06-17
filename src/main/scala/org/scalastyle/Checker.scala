@@ -190,14 +190,14 @@ object Checker {
 }
 
 trait Checker[A] {
-  protected val errorKey: String;
-  var parameters = Map[String, String]();
-  var level: Level = WarningLevel;
+  protected val errorKey: String
+  var parameters = Map[String, String]()
+  var level: Level = WarningLevel
   var customMessage: Option[String] = None
   var customErrorKey: Option[String] = None
 
-  protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
-  protected def setLevel(level: Level) = this.level = level;
+  protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters
+  protected def setLevel(level: Level) = this.level = level
   protected def setCustomErrorKey(customErrorKey: Option[String]) = this.customErrorKey = customErrorKey
   protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
   protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
