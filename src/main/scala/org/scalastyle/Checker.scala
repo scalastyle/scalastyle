@@ -175,10 +175,10 @@ object Checker {
     try {
       val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
       val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
-      c.setParameters(parameters)
-      c.setLevel(level)
-      c.setCustomMessage(customMessage)
-      c.setCustomErrorKey(customId)
+      c.parameters = parameters
+      c.level = level
+      c.customMessage = customMessage
+      c.customErrorKey = customId
       Some(c)
     } catch {
       case e: Exception => {
@@ -191,15 +191,11 @@ object Checker {
 
 trait Checker[A] {
   protected val errorKey: String
-  var parameters = Map[String, String]()
-  var level: Level = WarningLevel
-  var customMessage: Option[String] = None
-  var customErrorKey: Option[String] = None
+  protected var parameters = Map[String, String]()
+  protected var level: Level = WarningLevel
+  protected var customMessage: Option[String] = None
+  protected var customErrorKey: Option[String] = None
 
-  protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters
-  protected def setLevel(level: Level) = this.level = level
-  protected def setCustomErrorKey(customErrorKey: Option[String]) = this.customErrorKey = customErrorKey
-  protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
   protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
   protected def getString(parameter: String, defaultValue: String): String = parameters.getOrElse(parameter, defaultValue)
   protected def getBoolean(parameter: String, defaultValue: Boolean): Boolean = parameters.getOrElse(parameter, "" + defaultValue) == "true"
