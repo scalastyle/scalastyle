@@ -81,16 +81,12 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
       println("[" + messageHelper.text(level.name).toUpperCase + "]" + print(file.name, line, column) +
         Output.findMessage(messageHelper, key, args, customMessage))
     }
-    case StyleException(file, clazz, message, stacktrace, line, column) => if (!quiet || verbose) {
-      println("[ERROR]" + print(file.name, line, column)  + message)
+    case StyleException(file, clazz, message, stackTrace, line, column) => if (!quiet || verbose) {
+      println("[ERROR]" + print(file.name, line, column)  + message + "\n" + stackTrace)
     }
   }
 
   // scalastyle:on regex
-
-  private def print(s: String, no: Option[Int]): String = if (no.isDefined) print(s, "" + no.get) else ""
-
-  private def print(s: String, value: String): String = " " + s + "=" + value
 
   private def print(file: String, line: Option[Int], column: Option[Int]): String = {
      val l = line.getOrElse("")
