@@ -17,61 +17,62 @@
 package org.scalastyle.scalariform
 
 import scala.Array.fallbackCanBuildFrom
-
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
-
 import scalariform.lexer.Token
 import scalariform.lexer.TokenType
 import scalariform.lexer.Tokens
 import scalariform.parser.CompilationUnit
+import org.scalastyle.Message
+import org.scalastyle.ScalastyleError
 
 trait SpaceAroundTokenChecker extends ScalariformChecker {
   val DefaultTokens: String
   val disallowSpace: Boolean
   val beforeToken: Boolean
 
-  def verify(ast: CompilationUnit) = {
+  private def checkSpaces(left: Token, middle: Token, right: Token) =
+    if (beforeToken) charsBetweenTokens(left, middle) != (if (disallowSpace) 0 else 1)
+    else charsBetweenTokens(middle, right) != (if (disallowSpace) 0 else 1)
+
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val tokens: Seq[TokenType] = getString("tokens", DefaultTokens).split(",").map(x => TokenType(x.trim))
-    def checkSpaces(left: Token, middle: Token, right: Token) =
-      if (beforeToken) charsBetweenTokens(left, middle) != (if (disallowSpace) 0 else 1)
-      else charsBetweenTokens(middle, right) != (if (disallowSpace) 0 else 1)
     (for {
-      l@List(left, middle, right) <- ast.tokens.sliding(3)
+      l @ List(left, middle, right) <- ast.tokens.sliding(3)
       if (l.forall(x => x.tokenType != Tokens.NEWLINE && x.tokenType != Tokens.NEWLINES)
         && tokens.contains(middle.tokenType)
         && !middle.associatedWhitespaceAndComments.containsNewline
         && !right.associatedWhitespaceAndComments.containsNewline
         && checkSpaces(left, middle, right))
     } yield {
-      PositionError(middle.offset)
+      PositionError(middle.offset, List(middle.getText))
     }).toList
   }
 
 }
 
-class EnsureSpaceAfterToken extends SpaceAroundTokenChecker {
+class EnsureSingleSpaceAfterTokenChecker extends SpaceAroundTokenChecker {
   val errorKey: String = "ensure.single.space.after.token"
   val DefaultTokens = "COLON, IF"
   val disallowSpace = false
   val beforeToken = false
 }
 
-class EnsureSpaceBeforeToken extends SpaceAroundTokenChecker {
+class EnsureSingleSpaceBeforeTokenChecker extends SpaceAroundTokenChecker {
   val errorKey: String = "ensure.single.space.before.token"
   val DefaultTokens = ""
   val disallowSpace = false
   val beforeToken = true
 }
 
-class DisallowSpaceBeforeToken extends SpaceAroundTokenChecker {
+class DisallowSpaceBeforeTokenChecker extends SpaceAroundTokenChecker {
   val errorKey: String = "disallow.space.before.token"
   val DefaultTokens = "COLON, COMMA, RPAREN"
   val disallowSpace = true
   val beforeToken = true
 }
 
-class DisallowSpaceAfterToken extends SpaceAroundTokenChecker {
+class DisallowSpaceAfterTokenChecker extends SpaceAroundTokenChecker {
   val errorKey: String = "disallow.space.after.token"
   val DefaultTokens = "LPAREN"
   val disallowSpace = true

@@ -39,15 +39,15 @@ class SpaceAfterCommentStartChecker extends ScalariformChecker {
   }
 
   private def multiLineCommentRegex(comment: Token) =
-    Pattern.compile( """/\*\S+.*""", Pattern.DOTALL).matcher(comment.text.trim).matches() ||
-      Pattern.compile( """/\*.*\S\*/""", Pattern.DOTALL).matcher(comment.text.trim).matches()
+    Pattern.compile("""/\*\S+.*""", Pattern.DOTALL).matcher(comment.text.trim).matches() ||
+      Pattern.compile("""/\*.*\S\*/""", Pattern.DOTALL).matcher(comment.text.trim).matches()
 
   private def scalaDocPatternRegex(comment: Token) =
-    Pattern.compile( """/\*\*\S+.*""", Pattern.DOTALL).matcher(comment.text.trim).matches() ||
-      Pattern.compile( """/\*\*.*\S\*/""", Pattern.DOTALL).matcher(comment.text.trim).matches()
+    Pattern.compile("""/\*\*\S+.*""", Pattern.DOTALL).matcher(comment.text.trim).matches() ||
+      Pattern.compile("""/\*\*.*\S\*/""", Pattern.DOTALL).matcher(comment.text.trim).matches()
 
   private def singleLineCommentRegex(comment: String): Boolean =
-    comment.matches( """//\S+.*""") && !comment.matches( """///+""")
+    comment.matches("""//\S+.*""") && !comment.matches("""///+""")
 
   private def hasComment(x: Token) =
     x.associatedWhitespaceAndComments != null && !x.associatedWhitespaceAndComments.comments.isEmpty // scalastyle:ignore null

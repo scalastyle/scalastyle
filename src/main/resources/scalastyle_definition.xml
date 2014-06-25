@@ -138,4 +138,10 @@
     <checker class="org.scalastyle.scalariform.ProcedureDeclarationChecker" id="procedure.declaration" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ForBraceChecker" id="for.brace" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" id="space.after.comment.start" defaultLevel="warning"/>
+
+    <checker class="org.scalastyle.scalariform.ScalaDocChecker" id="scaladoc" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" id="disallow.space.after.token" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" id="disallow.space.before.token" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" id="ensure.single.space.after.token" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker" id="ensure.single.space.before.token" defaultLevel="warning"/>
 </scalastyle-definition>

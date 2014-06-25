@@ -100,7 +100,7 @@ some code //   scalastyle:ignore
 // scalastyle:ignore magic.number
 // scalastyle:off magic.number
 """
-  val expected = List( CommentFilter(Some("magic.number"), Some(LineColumn(3,0)), Some(LineColumn(4,0)))
+  val expected = List(CommentFilter(Some("magic.number"), Some(LineColumn(3,0)), Some(LineColumn(4,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(5,0)), Some(LineColumn(6,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(2,0)), Some(LineColumn(4,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(6,0)), None)
