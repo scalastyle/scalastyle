@@ -82,4 +82,16 @@ object Foobar {
 
     assertErrors(List(), source)
   }
+
+   @Test def testPlusInMethod(): Unit = {
+      val source = """
+package foobar
+
+object Foobar {
+  def +() = 1
+}
+""";
+
+      assertErrors(List(), source)
+   }
 }

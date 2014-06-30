@@ -23,6 +23,7 @@ import org.scalastyle.ScalastyleError
 import scalariform.lexer.Tokens.LBRACKET
 import scalariform.lexer.Tokens.NEWLINE
 import scalariform.lexer.Tokens.PLUS
+import scalariform.lexer.Tokens.DEF
 import scalariform.parser.CompilationUnit
 
 class SpacesAfterPlusChecker extends ScalariformChecker {
@@ -31,7 +32,8 @@ class SpacesAfterPlusChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
       List(left, middle, right) <- ast.tokens.sliding(3);
-      if (middle.tokenType == PLUS && left.tokenType != LBRACKET && right.tokenType != NEWLINE && charsBetweenTokens(middle, right) == 0)
+      if (middle.tokenType == PLUS && !Seq(LBRACKET, DEF).contains(left.tokenType) && right.tokenType != NEWLINE && charsBetweenTokens(middle,
+         right) == 0)
     } yield {
       PositionError(middle.offset)
     }
