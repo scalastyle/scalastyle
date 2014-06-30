@@ -9,7 +9,7 @@
   <groupId>org.scalastyle</groupId>
   <artifactId>scalastyle_2.10</artifactId>
   <name>Scalastyle style checker for Scala</name>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.5.0</version>
   <packaging>jar</packaging>
   <description>Scalastyle style checker for Scala</description>
   <properties>
