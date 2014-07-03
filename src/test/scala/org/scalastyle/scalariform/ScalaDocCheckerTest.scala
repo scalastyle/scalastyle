@@ -227,6 +227,27 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
+  @Test def returnAsParamDescription(): Unit = {
+    val source =
+      """
+        |/**
+        | * Doc
+        | */
+        |object X {
+        |
+        |  /**
+        |   * Foo does some foos
+        |   * @param a
+        |   * @param b
+        |   * @return some integer
+        |   */
+        |  def foo(a: Int, b: Int): Int = a + b
+        |}
+      """.stripMargin
+
+    assertErrors(Nil, source)
+  }
+
   @Test def valsVarsAndTypes(): Unit = {
     def al(what: String = "", checked: Boolean): Unit = {
       val tlDoc =

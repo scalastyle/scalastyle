@@ -268,6 +268,8 @@ object ScalaDocChecker {
     def apply(raw: Token): ScalaDoc = {
       def paramsInRegex(r: Regex): List[ScalaDocParameter] = r.findAllIn(raw.rawText).matchData.map(m => ScalaDocParameter(m.group(1), m.group(2))).toList
 
+      raw.rawText.indexOf("@param")
+
       val params = paramsInRegex(ParamRegex)
       val typeParams = paramsInRegex(TypeParamRegex)
       val returns = ReturnRegex.findFirstMatchIn(raw.text).map(_.group(1))
