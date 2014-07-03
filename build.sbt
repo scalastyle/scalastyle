@@ -25,7 +25,10 @@ libraryDependencies ++= Seq(
                         "org.scalariform" %% "scalariform" % "0.1.4",
                         "com.typesafe" % "config" % "1.2.0",
                         "junit" % "junit" % "4.11" % "test",
-                        "com.novocode" % "junit-interface" % "0.10" % "test")
+                        "com.novocode" % "junit-interface" % "0.10" % "test",
+                        "org.reflections" % "reflections" % "0.9.9-RC2" % "test" exclude("org.javassist", "javassist") exclude("com.google.guava", "guava"),
+                        "com.google.guava" % "guava" % "15.0" % "test",
+                        "org.javassist" % "javassist" % "3.18.2-GA" % "test")
 
 libraryDependencies <+= scalaVersion(scalatestDependency(_))
 
