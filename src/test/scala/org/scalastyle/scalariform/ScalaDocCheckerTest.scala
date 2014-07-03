@@ -79,7 +79,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     List(classSource, caseClassSource, annotatedCaseClassSource, annotatedCaseClassSource2).foreach { source =>
       assertErrors(Nil, source format doc)
       assertErrors(List(lineError(1, List(Missing))), source format "")
-      assertErrors(List(lineError(5, List(MalformedParams))), source format missingParamDoc)
+      assertErrors(List(lineError(5, List(missingParam("a"))), lineError(5, List(missingParam("b")))), source format missingParamDoc)
     }
   }
 
@@ -158,7 +158,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | * @tparam B the B
           | * @tparam U the U%s
           | */
-        """.stripMargin format (if (proc) "" else "\n@return some u")
+        """.stripMargin format (if (proc) "" else "\n * @return some u")
 
       def missingTypeParamsDoc(proc: Boolean) =
         """
@@ -169,7 +169,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | * @tparam A the A
           | * @tparam U the U%s
           | */
-          | """.stripMargin format (if (proc) "" else "\n@return some u")
+          | """.stripMargin format (if (proc) "" else "\n * @return some u")
 
       def missingParamsDoc(proc: Boolean) =
         """
@@ -180,7 +180,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
           | * @tparam B the B
           | * @tparam U the U%s
           | */
-          | """.stripMargin format (if (proc) "" else "\n@return some u")
+          | """.stripMargin format (if (proc) "" else "\n * @return some u")
 
       val missingReturnDoc =
         """
@@ -197,7 +197,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
       List(fun, annotatedFun).foreach { source =>
         assertErrors(Nil, source format doc(false))
         assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, source format "")
-        assertErrors(if (checked) List(lineError(15, List(MalformedParams))) else Nil, source format missingParamsDoc(false))
+        assertErrors(if (checked) List(lineError(15, List(missingParam("b")))) else Nil, source format missingParamsDoc(false))
         assertErrors(if (checked) List(lineError(15, List(MalformedTypeParams))) else Nil, source format missingTypeParamsDoc(false))
         assertErrors(if (checked) List(lineError(15, List(MalformedReturn))) else Nil, source format missingReturnDoc)
       }
@@ -205,7 +205,7 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
       List(proc1, proc2).foreach { source =>
         assertErrors(Nil, source format doc(false))
         assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, source format "")
-        assertErrors(if (checked) List(lineError(14, List(MalformedParams))) else Nil, source format missingParamsDoc(true))
+        assertErrors(if (checked) List(lineError(14, List(missingParam("b")))) else Nil, source format missingParamsDoc(true))
         assertErrors(if (checked) List(lineError(14, List(MalformedTypeParams))) else Nil, source format missingTypeParamsDoc(true))
       }
     }
@@ -236,16 +236,25 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
         |object X {
         |
         |  /**
-        |   * Foo does some foos
+        |   * Foo does some foos. With a
+        |   *
+        |   * ```
+        |   *     code example here
+        |   * ```
+        |   * and something or other else with ``code`` and (link)[to]
+        |   *
         |   * @param a
-        |   * @param b
+        |   *   Some text for parameter A
+        |   *   More for A
+        |   * @param b B
+        |   * @param c
         |   * @return some integer
         |   */
-        |  def foo(a: Int, b: Int): Int = a + b
+        |  def foo(a: Int, b: Int, c: Int): Int = a + b
         |}
       """.stripMargin
 
-    assertErrors(Nil, source)
+    assertErrors(List(lineError(22, List(emptyParam("c")))), source)
   }
 
   @Test def valsVarsAndTypes(): Unit = {

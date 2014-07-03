@@ -101,13 +101,16 @@ class ScalaDocChecker extends CombinedChecker {
 
     val paramNames = paramClausesOpt.map(pc => params(pc.tokens)).getOrElse(Nil)
 
-    if (paramNames.size != scalaDoc.params.size) {
-      // bad param sizes
-      List(LineError(line, List(MalformedParams)))
-    } else {
-      if (!scalaDoc.params.forall(p => paramNames.exists(p.name ==))) List(LineError(line, List(MalformedParams)))
-      else Nil
-    }
+    val missingScalaDocParams = paramNames.filterNot(name => scalaDoc.params.exists(_.name == name))
+    val extraScalaDocParams = scalaDoc.params.filterNot(param => paramNames.exists(param.name ==))
+    val validScalaDocParams = scalaDoc.params.filter(param => paramNames.exists(param.name ==))
+
+    missingScalaDocParams.map(missing => LineError(line, List(missingParam(missing)))) ++
+    extraScalaDocParams.map(extra => LineError(line, List(extraParam(extra.name)))) ++
+    validScalaDocParams.filter(_.text.isEmpty).map(empty => LineError(line, List(emptyParam(empty.name))))
+
+//      if (!scalaDoc.params.forall(p => paramNames.exists(name => p.name == name && !p.text.isEmpty))) List(LineError(line, List(MalformedParams)))
+//      else Nil
   }
 
   // parse the type parameters and report errors for the parameters (constructor or method)
@@ -248,7 +251,9 @@ class ScalaDocChecker extends CombinedChecker {
  */
 object ScalaDocChecker {
   val Missing = "Missing"
-  val MalformedParams = "Malformed @params"
+  def missingParam(name: String) = "Missing @param " + name
+  def extraParam(name: String) = "Extra @param " + name
+  def emptyParam(name: String) = "Missing text for @param " + name
   val MalformedTypeParams = "Malformed @tparams"
   val MalformedReturn = "Malformed @return"
 
@@ -260,19 +265,43 @@ object ScalaDocChecker {
     private val TypeParamRegex = "@tparam\\W+(\\w+)\\W+(.*)".r
     private val ReturnRegex = "@return\\W+(.*)".r
 
+    private val TagRegex = """\W*[*]\W+\@(\w+)\W+(\w+)(.*)""".r
+
+    sealed trait ScalaDocLine {
+      def isTag: Boolean
+    }
+    case class TagSclaDocLine(tag: String, ref: String, rest: String) extends ScalaDocLine {
+      def isTag: Boolean = true
+    }
+    case class RawScalaDocLine(text: String) extends ScalaDocLine {
+      def isTag: Boolean = false
+      override val toString = text.replaceFirst("\\*\\W+", "")
+    }
+
     /**
      * Take the ``raw`` and parse an instance of ``ScalaDoc``
      * @param raw the token containing the ScalaDoc
      * @return the parsed instance
      */
     def apply(raw: Token): ScalaDoc = {
-      def paramsInRegex(r: Regex): List[ScalaDocParameter] = r.findAllIn(raw.rawText).matchData.map(m => ScalaDocParameter(m.group(1), m.group(2))).toList
+      val lines = raw.rawText.split("\\n").toList.flatMap(x => x.trim match {
+        case TagRegex(tag, ref, rest) => Some(TagSclaDocLine(tag, ref, rest))
+        case "/**"                    => None
+        case "*/"                     => None
+        case text                     => Some(RawScalaDocLine(text))
+      })
 
-      raw.rawText.indexOf("@param")
+      def combineScalaDocFor[A](lines: List[ScalaDocLine], tag: String, f: (String, String) => A): List[A] = lines match {
+        case TagSclaDocLine(`tag`, ref, text)::ls =>
+          val rawLines = ls.takeWhile(!_.isTag)
+          f(ref, text + rawLines.mkString(" ")) :: combineScalaDocFor(ls.drop(rawLines.length), tag, f)
+        case _::ls => combineScalaDocFor(ls, tag, f)
+        case Nil => Nil
+      }
 
-      val params = paramsInRegex(ParamRegex)
-      val typeParams = paramsInRegex(TypeParamRegex)
-      val returns = ReturnRegex.findFirstMatchIn(raw.text).map(_.group(1))
+      val params = combineScalaDocFor(lines, "param", ScalaDocParameter)
+      val typeParams = combineScalaDocFor(lines, "tparam", ScalaDocParameter)
+      val returns = combineScalaDocFor(lines, "return", _ + _).headOption
 
       ScalaDoc(raw.rawText, params, typeParams, returns, None)
     }
