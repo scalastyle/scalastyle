@@ -16,28 +16,38 @@
 
 package org.scalastyle
 
-import java.io.File;
-import java.util.Date;
-import scala.io.Codec;
+import java.io.File
+import java.util.Date
+import scala.io.Codec
 
-class Main
-case class MainConfig(error: Boolean, config: Option[String] = None, directories: List[String] = List(),
-  verbose: Boolean = false, quiet: Boolean = false,
-  warningsaserrors: Boolean = false, xmlFile: Option[String] = None,
-  xmlEncoding: Option[String] = None, inputEncoding: Option[String] = None)
+case class MainConfig(
+  error: Boolean,
+  config: Option[String] = None,
+  directories: List[String] = List(),
+  verbose: Boolean = false,
+  quiet: Boolean = false,
+  warningsaserrors: Boolean = false,
+  xmlFile: Option[String] = None,
+  xmlEncoding: Option[String] = None,
+  inputEncoding: Option[String] = None
+)
 
 object Main {
   // scalastyle:off regex
   private def usage(version: String) = {
-    println("scalastyle " + version)
-    println("Usage: scalastyle [options] <source directory>")
-    println(" -c, --config FILE               configuration file (required)")
-    println(" -v, --verbose true|false        verbose output")
-    println(" -q, --quiet true|false          be quiet")
-    println("     --xmlOutput FILE            write checkstyle format output to this file")
-    println("     --xmlEncoding STRING        encoding to use for the xml file")
-    println("     --inputEncoding STRING      encoding for the source files")
-    println(" -w, --warnings true|false       fail if there are warnings")
+    println(
+      """
+      |scalastyle %s
+      |Usage: scalastyle [options] <source directory>
+      | -c, --config FILE               configuration file (required)
+      | -v, --verbose true|false        verbose output
+      | -q, --quiet true|false          be quiet
+      |     --xmlOutput FILE            write checkstyle format output to this file
+      |     --xmlEncoding STRING        encoding to use for the xml file
+      |     --inputEncoding STRING      encoding for the source files
+      | -w, --warnings true|false       fail if there are warnings
+      """.trim.stripMargin.format(version)
+    )
     System.exit(1)
   }
   // scalastyle:on regex
@@ -74,8 +84,8 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
-    val properties = new java.util.Properties();
-    properties.load(this.getClass().getResourceAsStream("/version.properties"));
+    val properties = new java.util.Properties()
+    properties.load(this.getClass().getResourceAsStream("/version.properties"))
 
     val version = properties.getProperty("scalastyle.version")
 
