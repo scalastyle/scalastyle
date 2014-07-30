@@ -34,8 +34,6 @@ libraryDependencies <+= scalaVersion(scalatestDependency(_))
 
 fork in Test := true
 
-javaOptions in Test += "-Dfile.encoding=UTF-8"
-
 publishMavenStyle := true
 
 seq(bintrayPublishSettings:_*)
