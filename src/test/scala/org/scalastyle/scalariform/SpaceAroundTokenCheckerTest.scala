@@ -227,9 +227,11 @@ class EnsureSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTest {
         |package foobar
         |
         |class Dummy1{}
+        |class Dummy2{
+        |  }
         |
       """.stripMargin
 
-    assertErrors(List(columnError(4, 12, List("{"))), source, Map("tokens" -> "LBRACE"))
+    assertErrors(List(columnError(4, 12, List("{")), columnError(5, 12, List("{"))), source, Map("tokens" -> "LBRACE"))
   }
 }
