@@ -19,16 +19,13 @@ package org.scalastyle
 import scala.xml.Elem
 import scala.collection.JavaConversions.collectionAsScalaIterable
 import com.typesafe.config.ConfigFactory
+import com.typesafe.config.Config
 
 object Output {
-  val config = ConfigFactory.load()
-  // messageHelper passed in here to work around a scala compiler bug?
   def findMessage(messageHelper: MessageHelper, key: String, args: List[String], customMessage: Option[String]): String = {
     customMessage match {
       case Some(s) => s
-      case None =>
-        val msg = messageHelper.message(config, key, args)
-        msg
+      case None => messageHelper.message(key, args)
     }
   }
 }
@@ -68,8 +65,8 @@ trait Output[T <: FileSpec] {
 
 case class OutputResult(val files: Int, val errors: Int, val warnings: Int, val infos: Int)
 
-class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
-  private val messageHelper = new MessageHelper(Output.config)
+class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
+  private val messageHelper = new MessageHelper(config)
 
   // scalastyle:off regex multiple.string.literals
   override def message(m: Message[T]): Unit = m match {
@@ -95,15 +92,15 @@ class TextOutput[T <: FileSpec](verbose: Boolean = false, quiet: Boolean = false
 }
 
 object XmlOutput {
-  def save[T <: FileSpec](target: String, encoding: String, messages: Seq[Message[T]]): Unit = save(new java.io.File(target), encoding, messages)
+  def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: Seq[Message[T]]): Unit = save(config, new java.io.File(target), encoding, messages)
 
-  def save[T <: FileSpec](target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
-    save(new java.io.File(target), encoding, scala.collection.JavaConversions.collectionAsScalaIterable(messages))
+  def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
+    save(config, new java.io.File(target), encoding, scala.collection.JavaConversions.collectionAsScalaIterable(messages))
 
-  def save[T <: FileSpec](target: java.io.File, encoding: String, messages: Iterable[Message[T]]): Unit = {
+  def save[T <: FileSpec](config: Config, target: java.io.File, encoding: String, messages: Iterable[Message[T]]): Unit = {
     val width = 1000
     val step = 1
-    val messageHelper = new MessageHelper(Output.config)
+    val messageHelper = new MessageHelper(config)
 
     val decl = """<?xml version="1.0" encoding="""" + encoding + """"?>"""
     val s = new XmlPrettyPrinter(width, step).format(toCheckstyleFormat(messageHelper, messages))

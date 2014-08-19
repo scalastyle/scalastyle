@@ -16,9 +16,10 @@
 
 package org.scalastyle
 
-import java.io.File;
-import java.util.Date;
+import java.io.File
+import java.util.Date
 import scala.io.Codec;
+import com.typesafe.config.ConfigFactory
 
 class Main
 case class MainConfig(error: Boolean, config: Option[String] = None, directories: List[String] = List(),
@@ -95,29 +96,29 @@ object Main {
 
   private[this] def now(): Long = new Date().getTime()
 
-  private[this] def execute(config: MainConfig)(implicit codec: Codec): Boolean = {
+  private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
-    val configuration = ScalastyleConfiguration.readFromXml(config.config.get)
-    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(config.inputEncoding, config.directories.map(new File(_)).toSeq))
+    val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
+    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq))
 
     // scalastyle:off regex
-
-    val outputResult = new TextOutput().output(messages)
-    config.xmlFile match {
+    val config = ConfigFactory.load()
+    val outputResult = new TextOutput(config).output(messages)
+    mc.xmlFile match {
       case Some(x) => {
-        val encoding = config.xmlEncoding.getOrElse(codec.charSet).toString
-        XmlOutput.save(x, encoding, messages)
+        val encoding = mc.xmlEncoding.getOrElse(codec.charSet).toString
+        XmlOutput.save(config, x, encoding, messages)
       }
       case None =>
     }
 
-    if (!config.quiet) println("Processed " + outputResult.files + " file(s)")
-    if (!config.quiet) println("Found " + outputResult.errors + " errors")
-    if (!config.quiet) println("Found " + outputResult.warnings + " warnings")
-    if (!config.quiet) println("Finished in " + (now - start) + " ms")
+    if (!mc.quiet) println("Processed " + outputResult.files + " file(s)")
+    if (!mc.quiet) println("Found " + outputResult.errors + " errors")
+    if (!mc.quiet) println("Found " + outputResult.warnings + " warnings")
+    if (!mc.quiet) println("Finished in " + (now - start) + " ms")
 
     // scalastyle:on regex
 
-    outputResult.errors > 0 || (config.warningsaserrors && outputResult.warnings > 0)
+    outputResult.errors > 0 || (mc.warningsaserrors && outputResult.warnings > 0)
   }
 }

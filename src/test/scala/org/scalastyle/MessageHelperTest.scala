@@ -47,9 +47,9 @@ class MessageHelperTest extends AssertionsForJUnit {
     })
   }
 
-  private[this] def assertMessage(id: String, suffix: String, fn: (Config, String, List[String]) => String) = {
+  private[this] def assertMessage(id: String, suffix: String, fn: (String, List[String]) => String) = {
     val key = id + "." + suffix
-    assert(fn(config, id, List[String]()) != key, "checker " + id + " should have a (" + key + ")")
+    assert(fn(id, List[String]()) != key, "checker " + id + " should have a (" + key + ")")
   }
 
   private[this] def assertMessage(id: String, suffix: String, fn: (String) => String) = {

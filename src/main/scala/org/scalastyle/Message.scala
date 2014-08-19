@@ -17,8 +17,8 @@
 package org.scalastyle
 
 import java.text.MessageFormat
-
 import com.typesafe.config.Config
+import java.io.FileWriter
 
 trait FileSpec {
   def name: String
@@ -32,12 +32,12 @@ class SourceSpec(val name: String, val contents: String) extends FileSpec
 // we return the key so something always appears
 class MessageHelper(config: Config) {
 
-  def text(key: String): String = getMessage(config, key + ".text", List())
+  def text(key: String): String = getMessage(key + ".text", List())
 
-  def label(key: String): String = getMessage(config, key + ".label", List())
-  def description(key: String): String = getMessage(config, key + ".description", List())
+  def label(key: String): String = getMessage(key + ".label", List())
+  def description(key: String): String = getMessage(key + ".description", List())
 
-  private[this] def getMessage(config: Config, key: String, args: List[String]) = {
+  private[this] def getMessage(key: String, args: List[String]) = {
     try {
       val pattern = config.getString(key)
       MessageFormat.format(pattern, args.map(_.asInstanceOf[AnyRef]): _*)
@@ -47,9 +47,9 @@ class MessageHelper(config: Config) {
     }
   }
 
-  def message(config: Config, key: String, args: List[String]): String = {
+  def message(key: String, args: List[String]): String = {
     // Use ClassLoader of the class from which the message came
-    getMessage(config, key + ".message", args)
+    getMessage(key + ".message", args)
   }
 }
 
