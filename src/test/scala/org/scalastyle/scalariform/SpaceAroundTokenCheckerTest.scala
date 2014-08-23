@@ -204,3 +204,34 @@ class EnsureSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List(columnError(7, 20, List(":")), columnError(9, 7, List(":")), columnError(10, 8, List(":"))), source)
   }
 }
+
+class EnsureSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTest {
+  override protected val key: String = "ensure.single.space.before.token"
+  override protected val classUnderTest = classOf[EnsureSingleSpaceBeforeTokenChecker]
+
+@Test def testOK(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |class Dummy {}
+        |
+      """.stripMargin
+
+    assertErrors(List(), source, Map("tokens" -> "LBRACE"))
+  }
+
+  @Test def testFailureCases(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |class Dummy1{}
+        |class Dummy2{
+        |  }
+        |
+      """.stripMargin
+
+    assertErrors(List(columnError(4, 12, List("{")), columnError(5, 12, List("{"))), source, Map("tokens" -> "LBRACE"))
+  }
+}

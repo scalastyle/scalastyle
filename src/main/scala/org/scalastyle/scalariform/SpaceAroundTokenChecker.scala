@@ -42,7 +42,7 @@ trait SpaceAroundTokenChecker extends ScalariformChecker {
       if (l.forall(x => x.tokenType != Tokens.NEWLINE && x.tokenType != Tokens.NEWLINES)
         && tokens.contains(middle.tokenType)
         && !middle.associatedWhitespaceAndComments.containsNewline
-        && !right.associatedWhitespaceAndComments.containsNewline
+        && (!right.associatedWhitespaceAndComments.containsNewline || beforeToken)
         && checkSpaces(left, middle, right))
     } yield {
       PositionError(middle.offset, List(middle.getText))
