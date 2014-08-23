@@ -18,23 +18,32 @@ package org.scalastyle
 
 import java.lang.reflect.Modifier
 import scala.collection.convert.WrapAsScala.asScalaSet
+import scala.collection.convert.WrapAsScala.asScalaBuffer
 import org.junit.Test
-import org.reflections.Reflections
 import org.scalatest.junit.AssertionsForJUnit
 import com.typesafe.config.ConfigFactory
 import java.lang.reflect.Method
+import com.google.common.reflect.ClassPath
 
 // scalastyle:off multiple.string.literals
 
 class ScalastyleDefinitionTest extends AssertionsForJUnit {
+
+  private def isChecker(ci: ClassPath.ClassInfo) = {
+    ci.getName().startsWith("org.scalastyle") && {
+      val clazz = ci.load
+
+      classOf[Checker[_]].isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())
+    }
+  }
 
   @Test
   def checkAllCheckersInScalastyleDefinition(): Unit = {
     val classLoader = this.getClass().getClassLoader()
     val config = ConfigFactory.load()
 
-    val reflections = new Reflections("org.scalastyle")
-    val subTypes = asScalaSet(reflections.getSubTypesOf(classOf[Checker[_]])).filter(st => !Modifier.isAbstract(st.getModifiers())).toList
+    val cp = ClassPath.from(this.getClass().getClassLoader())
+    val subTypes = asScalaBuffer(cp.getAllClasses().asList()).filter(isChecker)
     val definition = ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))
     val messageHelper = new MessageHelper(config)
 
