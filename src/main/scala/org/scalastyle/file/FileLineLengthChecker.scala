@@ -28,36 +28,6 @@ class FileLineLengthChecker extends FileChecker {
   val DefaultTabSize = 4
   val errorKey = "line.size.limit"
 
-  private def spaces(column: Int, tabSize: Int): String = {
-    val m = column % tabSize
-    val length = if (m == 0) {
-      tabSize
-    } else {
-      tabSize - m
-    }
-
-    String.format("%" + length + "s", " ")
-  }
-
-  private def replaceTabs(s: String, tabSize: Int): String = {
-    val sb = new StringBuilder(s)
-    val len = sb.length
-    var i = 0;
-
-    while (i < len) {
-      if (sb.charAt(i) == '\t') {
-        sb.replace(i, i + 1, spaces(i, tabSize))
-      }
-      i += 1
-    }
-
-    if (sb.endsWith("\r")) {
-      sb.setLength(sb.length-1);
-    }
-
-    sb.toString
-  }
-
   def verify(lines: Lines): List[ScalastyleError] = {
     val maxLineLength = getInt("maxLineLength", DefaultMaxLineLength)
     val ignoreImports = getBoolean("ignoreImports", false)
@@ -65,10 +35,10 @@ class FileLineLengthChecker extends FileChecker {
 
     val importPattern = """^\s*import""".r
     val errors = for {
-      line <- lines.lines.zipWithIndex;
-      if (replaceTabs(line._1.text, tabSize).length() > maxLineLength && !(ignoreImports && importPattern.findFirstIn(line._1.text).isDefined))
+      line <- NormalizedLine.normalize(lines, tabSize);
+      if (line.length > maxLineLength && !(ignoreImports && importPattern.findFirstIn(line.body).isDefined))
     } yield {
-      LineError(line._2 + 1, List("" + maxLineLength))
+      line.mkError(List("" + maxLineLength))
     }
 
     errors.toList
