@@ -20,7 +20,7 @@ import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 
-// scalastyle:off magic.number
+// scalastyle:off magic.number multiple.string.literals
 
 class DisallowSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
   override protected val key: String = "disallow.space.after.token"

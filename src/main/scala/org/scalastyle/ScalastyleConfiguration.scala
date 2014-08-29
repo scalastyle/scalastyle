@@ -32,6 +32,7 @@ import scala.xml.TextBuffer
 import scala.xml.Utility
 import scala.xml.XML
 import scala.xml.Attribute
+import scala.xml.MinimizeMode
 
 object Level {
   val Warning = "warning"
@@ -225,7 +226,7 @@ class XmlPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step)
       case _ =>
         val test = {
           val sb = new StringBuilder()
-          Utility.toXML(node, pscope, sb, false)
+          Utility.serialize(node, pscope, sb, false, minimizeTags = MinimizeMode.Default)
           if (doPreserve(node)) sb.toString else TextBuffer.fromString(sb.toString()).toText(0).data
         }
         if (childrenAreLeaves(node) && fits(test)) {

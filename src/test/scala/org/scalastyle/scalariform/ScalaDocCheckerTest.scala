@@ -20,13 +20,13 @@ import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 
-// scalastyle:off magic.number
+// scalastyle:off magic.number multiple.string.literals
 
 class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "scaladoc"
   val classUnderTest = classOf[ScalaDocChecker]
 
-  import ScalaDocChecker._ // scalastyle:ignore underscore.import
+  import ScalaDocChecker._ // scalastyle:ignore underscore.import import.grouping
 
   @Test def noParamsCCTO(): Unit = {
     def al(access: String = "", checked: Boolean): Unit = {

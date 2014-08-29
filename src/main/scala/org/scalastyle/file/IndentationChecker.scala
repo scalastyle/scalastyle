@@ -23,7 +23,7 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
 object NormalizedLine {
-  def normalize(lines: Lines, tabSize: Int) =
+  def normalize(lines: Lines, tabSize: Int): Array[NormalizedLine] =
     lines.lines.zipWithIndex map {
       case (line, index) => NormalizedLine(index + 1, line, tabSize)
     }
@@ -36,7 +36,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
   lazy val isBlank = { body.length == 0 }
   lazy val indentDepth = normalizedText prefixLength { _ == ' ' }
 
-  def mkError(args: List[String] = Nil) = LineError(lineNumber, args)
+  def mkError(args: List[String] = Nil): LineError = LineError(lineNumber, args)
 
   // generates a string of spaces equal to the width of the tab
   private def spaces(column: Int, tabSize: Int): String = {

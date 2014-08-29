@@ -60,7 +60,7 @@ class ScalaDocChecker extends CombinedChecker {
     localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren(0))
   }
 
-  import ScalaDocChecker._ // scalastyle:ignore underscore.import
+  import ScalaDocChecker._ // scalastyle:ignore underscore.import import.grouping
 
   /*
    * Finds the ScalaDoc hidden in the ``token``, falling back on ``fallback`` if ``token``
@@ -132,8 +132,7 @@ class ScalaDocChecker extends CombinedChecker {
       // bad param sizes
       List(LineError(line, List(MalformedTypeParams)))
     } else {
-      if (!scalaDoc.typeParams.forall(tp => tparamNames.exists(tp.name ==))) List(LineError(line, List(MalformedTypeParams)))
-      else Nil
+      if (!scalaDoc.typeParams.forall(tp => tparamNames.exists(tp.name ==))) List(LineError(line, List(MalformedTypeParams))) else Nil
     }
   }
 
@@ -251,9 +250,9 @@ class ScalaDocChecker extends CombinedChecker {
  */
 object ScalaDocChecker {
   val Missing = "Missing"
-  def missingParam(name: String) = "Missing @param " + name
-  def extraParam(name: String) = "Extra @param " + name
-  def emptyParam(name: String) = "Missing text for @param " + name
+  def missingParam(name: String): String = "Missing @param " + name
+  def extraParam(name: String): String = "Extra @param " + name
+  def emptyParam(name: String): String = "Missing text for @param " + name
   val MalformedTypeParams = "Malformed @tparams"
   val MalformedReturn = "Malformed @return"
 
@@ -288,7 +287,7 @@ object ScalaDocChecker {
         case TagRegex(tag, ref, rest) => Some(TagSclaDocLine(tag, ref, rest))
         case "/**"                    => None
         case "*/"                     => None
-        case text                     => Some(RawScalaDocLine(text))
+        case text: Any                => Some(RawScalaDocLine(text))
       })
 
       def combineScalaDocFor[A](lines: List[ScalaDocLine], tag: String, f: (String, String) => A): List[A] = lines match {

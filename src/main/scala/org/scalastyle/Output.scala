@@ -92,7 +92,8 @@ class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet:
 }
 
 object XmlOutput {
-  def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: Seq[Message[T]]): Unit = save(config, new java.io.File(target), encoding, messages)
+  def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: Seq[Message[T]]): Unit =
+                      save(config, new java.io.File(target), encoding, messages)
 
   def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
     save(config, new java.io.File(target), encoding, scala.collection.JavaConversions.collectionAsScalaIterable(messages))

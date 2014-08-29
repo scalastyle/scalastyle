@@ -43,11 +43,11 @@ object VisitorHelper {
   protected[scalariform] def getAll[T <: AstNode](ast: Any)(implicit manifest: Manifest[T]): List[T] = {
     def fn(t : T): List[T] = List[T](t)
 
-    myVisit[T, T](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
+    myVisit[T, T](manifest.runtimeClass.asInstanceOf[Class[T]], fn)(ast)
   }
 
   protected[scalariform] def visit[T <: AstNode, X](fn: T => List[X])(ast: Any)(implicit manifest: Manifest[T]): List[X] = {
-    myVisit[T, X](manifest.erasure.asInstanceOf[Class[T]], fn)(ast)
+    myVisit[T, X](manifest.runtimeClass.asInstanceOf[Class[T]], fn)(ast)
   }
 
   private[this] def myVisit[T <: AstNode, X](clazz: Class[T], fn: T => List[X])(ast: Any): List[X] = {

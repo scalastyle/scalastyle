@@ -51,7 +51,7 @@ class B(
     )
 }
 """
-  @Test def testNoErrorsDefaultTabSize() {
+  @Test def testNoErrorsDefaultTabSize(): Unit = {
     assertErrors(List(), cleanSource)
   }
 
@@ -70,7 +70,7 @@ for {
     assertErrors(Nil, source)
   }
 
-  @Test def DSL(): Unit = {
+  @Test def dsl(): Unit = {
     val source =
 """
   |val id = 123
@@ -88,17 +88,17 @@ for {
   }
 
 
-  @Test def testNoErrorsSetTabSize() {
+  @Test def testNoErrorsSetTabSize(): Unit = {
     val source = cleanSource replaceAll("  ", "    ")
     assertErrors(List(), source, Map("tabSize" -> "4"))
   }
 
-  @Test def testNoErrorsWithTabs() {
+  @Test def testNoErrorsWithTabs(): Unit = {
     val source = cleanSource replaceAll("  ", "\t")
     assertErrors(List(), source)
   }
 
-  @Test def testErrorsIncorrectTabSize() {
+  @Test def testErrorsIncorrectTabSize(): Unit = {
     val source =
 """
 class A {
@@ -111,7 +111,7 @@ class A {
     assertErrors(List(lineError(3), lineError(4)), source)
   }
 
-  @Test def testExtraIndent() {
+  @Test def testExtraIndent(): Unit = {
     val source =
 """
 class A {
