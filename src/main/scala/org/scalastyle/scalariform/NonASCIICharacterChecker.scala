@@ -32,7 +32,7 @@ class NonASCIICharacterChecker extends ScalariformChecker {
   }
 
   private def hasNonAsciiChars(x: Token) =
-    x.rawText.trim.nonEmpty && !Pattern.compile( """\p{ASCII}+""", Pattern.DOTALL)
+    x.text.trim.nonEmpty && !Pattern.compile( """\p{ASCII}+""", Pattern.DOTALL)
       .matcher(x.text.trim).matches()
 
 }
