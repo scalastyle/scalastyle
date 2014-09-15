@@ -20,6 +20,8 @@ import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 
+// scalastyle:off magic.number
+
 class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
   override protected val key: String = "non.ascii.character.disallowed"
   override protected val classUnderTest = classOf[NonASCIICharacterChecker]
