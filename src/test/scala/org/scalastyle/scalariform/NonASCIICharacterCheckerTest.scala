@@ -41,10 +41,10 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testClassNotOk(): Unit = {
     val source = """
                    |package foobar
-                   |// →
+                   |// \u2190
                    |class NotOK {
-                   |  def → = "something"
-                   |  def `⇒` = "test"
+                   |  def \u2192 = "something"
+                   |  def `\u21d2` = "test"
                    |}
                    | """.stripMargin
     assertErrors(List(columnError(2, 14), columnError(5, 6), columnError(6, 6)), source)
