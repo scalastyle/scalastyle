@@ -458,7 +458,35 @@ To bring consistency with how comments should be formatted, leave a space right 
     <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true" />
 ]]>
 </example-configuration>
+
 </check>
+    <check id="non.ascii.character.disallowed">
+        <justification>
+            Scala allows unicode characters as operators and some editors misbehave when they see non-ascii character.
+            In a project collaborated by a community of developers. This check can be helpful in such situations.
+
+
+            "value".match {
+            case "value" => println("matched")
+            ...
+            }
+
+            is preferred to
+
+            "value".match {
+            case "value" ⇒ println("matched")
+            ...
+            }
+
+            To fix it, replace the (unicode operator)⇒ with =>.
+        </justification>
+        <example-configuration>
+            <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true" />
+]]>
+        </example-configuration>
+</check>
+
 <check id="header.matches">
  <justification>
   A lot of projects require a header with a copyright notice, or they require a license in each file. This does a simple text comparison between the header and the first lines of the file.
