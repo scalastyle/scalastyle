@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
 class FileEncodingTest extends AssertionsForJUnit {
-  val TestString = "foobaré¨à$éèè¨è¨"
+  val TestString = "foobar\u00E9\u00A8\u00E0$\u00E9\u00E8\u00E8\u00A8\u00E8\u00A8"
 
   // The default encoding within Eclipse is UTF-8
   // however, the default encoding within maven varies depending upon operating system (windows => windows-1252)
