@@ -166,6 +166,20 @@ class EnsureSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List(), source)
   }
 
+  @Test def testFirstTokenAfterNewLine(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |case class A(i
+        |  :Int
+        |)
+        |
+      """.stripMargin
+
+    assertErrors(List(columnError(5, 2, List(":"))), source)
+  }
+
   @Test def testEdgeCases(): Unit = {
     val source =
       """
