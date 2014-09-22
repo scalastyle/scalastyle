@@ -23,7 +23,7 @@
     <scalariform.version>0.1.4</scalariform.version>
 
     <scalatest.artifactId>scalatest_2.10</scalatest.artifactId>
-    <scalatest.version>2.0.M6-SNAP9</scalatest.version>
+    <scalatest.version>2.2.2</scalatest.version>
   </properties>
 
   <dependencies>

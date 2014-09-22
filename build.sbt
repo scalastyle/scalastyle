@@ -4,31 +4,32 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-versionWithGit
+//versionWithGit
 
-git.baseVersion := "0.5.0"
+//git.baseVersion := "0.5.0"
+version := "0.6.0-SNAPSHOT"
 
 scalaVersion := "2.10.4"
 
 scalacOptions ++= Seq("-deprecation")
 
-crossScalaVersions := Seq("2.9.3")
+crossScalaVersions := Seq("2.11.1")
 
 description := "Scalastyle style checker for Scala"
 
-def scalatestDependency(scalaVersion: String) = scalaVersion match {
-  case "2.9.3" => "org.scalatest" % "scalatest_2.9.3" % "2.0.M5b" % "test"
-  case _ => "org.scalatest" % "scalatest_2.10" % "2.0.M6-SNAP9" % "test"
+def scalariformDependency(scalaVersion: String) = scalaVersion match {
+  case "2.11.1" => "com.danieltrinh" %% "scalariform" % "0.1.5"
+  case _ => "org.scalariform" %% "scalariform" % "0.1.4"
 }
 
+libraryDependencies <+= scalaVersion(scalariformDependency(_))
+
 libraryDependencies ++= Seq(
-                        "org.scalariform" %% "scalariform" % "0.1.4",
                         "com.typesafe" % "config" % "1.2.0",
                         "junit" % "junit" % "4.11" % "test",
                         "com.novocode" % "junit-interface" % "0.10" % "test",
-                        "com.google.guava" % "guava" % "17.0" % "test")
-
-libraryDependencies <+= scalaVersion(scalatestDependency(_))
+                        "com.google.guava" % "guava" % "17.0" % "test",
+                        "org.scalatest" %% "scalatest" % "2.2.2" % "test")
 
 fork in Test := true
 
