@@ -4,9 +4,6 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-//versionWithGit
-
-//git.baseVersion := "0.5.0"
 version := "0.6.0-SNAPSHOT"
 
 scalaVersion := "2.10.4"
@@ -71,7 +68,7 @@ pomExtra := (
 assemblySettings
 
 artifact in (Compile, assembly) ~= { art =>
-  art.copy(`classifier` = Some("assembly"))
+  art.copy(`classifier` = Some("batch"))
 }
 
 addArtifact(artifact in (Compile, assembly), assembly)
@@ -85,3 +82,5 @@ sourceGenerators in Compile <+= buildInfo
 buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "org.scalastyle"
+
+seq(filterSettings: _*)
