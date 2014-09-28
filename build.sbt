@@ -34,11 +34,17 @@ javaOptions in Test += "-Dfile.encoding=UTF-8"
 
 publishMavenStyle := true
 
-seq(bintrayPublishSettings:_*)
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots") 
+  else Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+}
 
-bintray.Keys.repository in bintray.Keys.bintray := "scalastyle"
+//seq(bintrayPublishSettings:_*)
 
-bintray.Keys.bintrayOrganization in bintray.Keys.bintray := Some("scalastyle")
+//bintray.Keys.repository in bintray.Keys.bintray := "scalastyle"
+
+//bintray.Keys.bintrayOrganization in bintray.Keys.bintray := Some("scalastyle")
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
@@ -46,13 +52,6 @@ pomIncludeRepository := { _ => false }
 
 pomExtra := (
   <url>http://www.scalastyle.org</url>
-  <licenses>
-    <license>
-      <name>Apache 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
   <scm>
     <url>scm:git:git@github.com:scalastyle/scalastyle.git</url>
     <connection>scm:git:git@github.com:scalastyle/scalastyle.git</connection>
@@ -84,3 +83,5 @@ buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
 buildInfoPackage := "org.scalastyle"
 
 seq(filterSettings: _*)
+
+aetherSettings
