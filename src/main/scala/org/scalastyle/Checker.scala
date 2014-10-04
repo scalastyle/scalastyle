@@ -141,7 +141,7 @@ object Checker {
    * if we pass an encoding in, then we only try that encoding.
    * If there is no encoding passed, we try the default, then UTF-8, then UTF-16, then ISO-8859-1
    */
-  def readFile(file: String, encoding: Option[String])(implicit codec: Codec): String = {
+  def readFile(file: String, encoding: Option[String]): String = {
     def readFileWithEncoding(file: String, encodings: List[String]): Option[String] = {
       if (encodings.size == 0) {
         None
@@ -160,7 +160,7 @@ object Checker {
 
     val encodings = encoding match {
       case Some(x) => List(x)
-      case None => List(codec.charSet.toString(), "UTF-8", "UTF-16", "ISO-8859-1")
+      case None => List("UTF-8", "UTF-16", "ISO-8859-1")
     }
 
     // as far as I can tell, most files should be readable with ISO-8859-1 (though obviously it won't

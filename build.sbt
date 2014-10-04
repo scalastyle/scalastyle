@@ -25,8 +25,6 @@ libraryDependencies ++= Seq(
 
 fork in Test := true
 
-javaOptions in Test += "-Dfile.encoding=UTF-8"
-
 publishMavenStyle := true
 
 publishTo := {
