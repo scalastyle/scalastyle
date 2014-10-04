@@ -41,7 +41,7 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
     assertEquals(clean(contents), clean(ScalastyleConfiguration.toXmlString(config, width, step)))
   }
 
-  def clean(s: String): String = s.replace("\015", "")
+  def clean(s: String): String = s.replace("\u000d", "")
 
   @Test def readXmlStringWithCustom(): Unit = {
     val xml = """<scalastyle commentFilter="enabled">

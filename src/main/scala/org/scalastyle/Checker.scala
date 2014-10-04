@@ -84,7 +84,7 @@ object Checker {
   }).flatten
 
   def parseScalariform(source: String): Option[ScalariformAst] = {
-    val tokens = ScalaLexer.tokenise(source, true, "2.10.0")
+    val tokens = ScalaLexer.tokenise(source, true, "2.11.0")
 
     Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), comments(tokens)))
   }
@@ -133,7 +133,7 @@ object Checker {
       }
       verifySource(configuration, classes, file, s)
     } catch {
-      case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTraceString))
+      case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTrace().mkString("", "\n", "\n")))
     }
   }
 
