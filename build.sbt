@@ -10,7 +10,7 @@ scalaVersion := "2.10.4"
 
 scalacOptions ++= Seq("-deprecation")
 
-crossScalaVersions := Seq("2.11.1")
+crossScalaVersions := Seq("2.11.2")
 
 description := "Scalastyle style checker for Scala"
 
@@ -79,4 +79,6 @@ buildInfoPackage := "org.scalastyle"
 
 seq(filterSettings: _*)
 
-aetherSettings
+aetherPublishBothSettings
+
+aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
