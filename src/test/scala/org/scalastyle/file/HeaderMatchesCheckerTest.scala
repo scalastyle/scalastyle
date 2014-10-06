@@ -82,4 +82,47 @@ package foobar
 
     assertErrors(List(lineError(4)), source, Map("header" -> licence))
   }
+
+  val licenceRegex = {
+    def literalOK(c: Char): Boolean = c match {
+      case ' '|'-'|':'|'/'|'\n' => true
+      case ld if ld.isLetterOrDigit => true
+      case _ => false
+    }
+    (licence flatMap { c => if (literalOK(c)) c.toString else "\\" + c}).replace("2009-2010", "(?:\\d{4}-)?\\d{4}")
+  }
+
+  @Test def testRegexOK(): Unit = {
+    val source = licence + """
+package foobar
+
+  object Foobar {
+}
+"""
+
+    assertErrors(List(), source, Map("header" -> licenceRegex, "regex" -> "true"))
+  }
+
+  @Test def testRegexFlexible(): Unit = {
+    val source = licence.replace("2009-2010", "2009-2014") + """
+package foobar
+
+  object Foobar {
+}
+"""
+
+    assertErrors(List(), source, Map("header" -> licenceRegex, "regex" -> "true"))
+  }
+
+  @Test def testRegexKO(): Unit = {
+    val source = licence.replace("2009-2010", "xxxx-xxxx") + """
+package foobar
+
+  object Foobar {
+}
+"""
+
+    assertErrors(List(fileError()), source, Map("header" -> licenceRegex, "regex" -> "true"))
+  }
+
 }

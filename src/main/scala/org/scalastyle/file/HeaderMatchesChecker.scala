@@ -19,6 +19,7 @@ package org.scalastyle.file
 import org.scalastyle.Checker
 import org.scalastyle.FileChecker
 import org.scalastyle.LineError
+import org.scalastyle.FileError
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
@@ -27,17 +28,29 @@ class HeaderMatchesChecker extends FileChecker {
   val DefaultHeader = ""
 
   def verify(ast: Lines): List[ScalastyleError] = {
-    val header = Checker.parseLines(getString("header", DefaultHeader))
-
-    val found = (0 to scala.math.min(ast.lines.size-1, header.lines.size-1)).find(i => !ast.lines(i).text.trim.equals(header.lines(i).text.trim))
-
-    found match {
-      case Some(x) => List(LineError(x + 1))
-      case None => {
-        if (ast.lines.size < header.lines.size) {
-          List(LineError(ast.lines.size))
-        } else {
+    val regexParameter = getBoolean("regex", false)
+    val headerParameter = getString("header", DefaultHeader)
+    if (regexParameter) {
+      val Regex = (headerParameter ++ "(?s:.*)").r
+      val fullSource = ast.lines map { _.text } mkString "\n"
+      fullSource match {
+        case Regex() =>
           List()
+        case _ =>
+          List(FileError())
+      }
+    } else {
+      val header = Checker.parseLines(headerParameter)
+      val found = (0 to scala.math.min(ast.lines.size - 1, header.lines.size - 1)).find(i => !ast.lines(i).text.trim.equals(header.lines(i).text.trim))
+
+      found match {
+        case Some(x) => List(LineError(x + 1))
+        case None => {
+          if (ast.lines.size < header.lines.size) {
+            List(LineError(ast.lines.size))
+          } else {
+            List()
+          }
         }
       }
     }
