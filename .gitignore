@@ -6,4 +6,6 @@ target
 .worksheet
 *.sc
 .cache
-
+.classpath
+.project
+.settings
