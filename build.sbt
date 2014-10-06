@@ -35,12 +35,6 @@ publishTo := {
   else Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
-//seq(bintrayPublishSettings:_*)
-
-//bintray.Keys.repository in bintray.Keys.bintray := "scalastyle"
-
-//bintray.Keys.bintrayOrganization in bintray.Keys.bintray := Some("scalastyle")
-
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
 pomIncludeRepository := { _ => false }
@@ -73,7 +67,7 @@ buildInfoSettings
 
 sourceGenerators in Compile <+= buildInfo
 
-buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+buildInfoKeys := Seq[BuildInfoKey](organization, name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "org.scalastyle"
 
@@ -82,3 +76,5 @@ seq(filterSettings: _*)
 aetherPublishBothSettings
 
 aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
+
+EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed

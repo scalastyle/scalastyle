@@ -45,7 +45,7 @@ object Main {
 
   private def isTrue(s: String) = "true" equalsIgnoreCase s
 
-  def parseArgs(args: Array[String], version: String) = {
+  def parseArgs(args: Array[String]) = {
     var config = MainConfig(false)
     var i = 0
     while (i < args.length) {
@@ -75,16 +75,12 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
-    val properties = new java.util.Properties();
-    properties.load(this.getClass().getResourceAsStream("/version.properties"));
 
-    val version = properties.getProperty("scalastyle.version")
-
-    val config = parseArgs(args, version)
+    val config = parseArgs(args)
 
     val exitVal = {
       if (config.error) {
-        usage(version)
+        usage(BuildInfo.version)
         1
       } else {
         if (execute(config)) 1 else 0

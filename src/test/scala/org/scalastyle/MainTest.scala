@@ -55,10 +55,10 @@ class MainTest extends AssertionsForJUnit {
   }
 
   private def testParseArgs(args: Array[String], config: MainConfig) = {
-    assert(Main.parseArgs(args, "version") === config)
+    assert(Main.parseArgs(args) === config)
   }
 
   private def testParseArgsError(args: Array[String]) = {
-    assert(Main.parseArgs(args, "version").error === true)
+    assert(Main.parseArgs(args).error === true)
   }
 }
