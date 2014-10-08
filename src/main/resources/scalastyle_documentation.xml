@@ -87,7 +87,7 @@ is considered to be a magic number.
 
  <check id="cyclomatic.complexity">
  <justification>
- If there are too many classes/objects defined in a single file, this can cause the code to be difficult to understand.
+ If the code is too complex, then this can make code hard to read.
  </justification>
  <example-configuration>
  <![CDATA[
@@ -113,7 +113,7 @@ is considered to be a magic number.
 
  <check id="if.brace">
  <justification>
- A lowercase L (l) can look similar to a number 1 with some fonts.
+ Some people find if clauses with braces easier to read.
  </justification>
  <example-configuration>
  <![CDATA[
@@ -496,12 +496,21 @@ To bring consistency with how comments should be formatted, leave a space right 
  <![CDATA[
     <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
   <parameters>
-   <parameter name="regex">true</parameter>
+   <parameter name="regex">false</parameter>
    <parameter name="header"><![CDATA[// Copyright (C) 2011-2012 the original author or authors.]]]]><![CDATA[></parameter>
   </parameters>
  </check>
  ]]>
  </example-configuration>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
+  <parameters>
+   <parameter name="regex">true</parameter>
+   <parameter name="header"><![CDATA[// Copyright (C) (?:\d{4}-)?\d{4} the original author or authors.]]]]><![CDATA[></parameter>
+  </parameters>
  </check>
-
+ ]]>
+ </example-configuration>
+ </check>
 </scalastyle-documentation>
