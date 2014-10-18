@@ -78,3 +78,15 @@ aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
 
 releaseSettings
+
+ReleaseKeys.crossBuild := true
+
+val dynamicPublish = Def.taskDyn {
+  if (version.value.trim.endsWith("SNAPSHOT")) {
+    Def.task { publish }
+  } else {
+    Def.task { PgpKeys.publishSigned }
+  }
+}
+
+ReleaseKeys.publishArtifactsAction := dynamicPublish.value
