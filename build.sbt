@@ -4,8 +4,6 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-version := "0.6.0-SNAPSHOT"
-
 scalaVersion := "2.10.4"
 
 scalacOptions ++= Seq("-deprecation")
