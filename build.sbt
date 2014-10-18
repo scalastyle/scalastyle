@@ -83,9 +83,9 @@ ReleaseKeys.crossBuild := true
 
 val dynamicPublish = Def.taskDyn {
   if (version.value.trim.endsWith("SNAPSHOT")) {
-    Def.task { publish }
+    Def.task { publish.value }
   } else {
-    Def.task { PgpKeys.publishSigned }
+    Def.task { PgpKeys.publishSigned.value }
   }
 }
 
