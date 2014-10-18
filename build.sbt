@@ -76,3 +76,5 @@ aetherPublishBothSettings
 aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
 
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
+
+releaseSettings
