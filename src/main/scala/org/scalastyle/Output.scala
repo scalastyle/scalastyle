@@ -75,20 +75,22 @@ class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet:
     case StartFile(file) => if (verbose) println("start file " + file)
     case EndFile(file) => if (verbose) println("end file " + file)
     case StyleError(file, clazz, key, level, args, line, column, customMessage) => if (!quiet || verbose) {
-      println(messageHelper.text(level.name) + print("file", file.name) +
-        print("message", Output.findMessage(messageHelper, key, args, customMessage)) +
-        print("line", line) + print("column", column))
+      println("[" + messageHelper.text(level.name).toUpperCase + "]" + print(file.name, line, column) +
+        Output.findMessage(messageHelper, key, args, customMessage))
     }
-    case StyleException(file, clazz, message, stacktrace, line, column) => if (!quiet || verbose) {
-      println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))
+    case StyleException(file, clazz, message, stackTrace, line, column) => if (!quiet || verbose) {
+      println("[ERROR]" + print(file.name, line, column)  + message + "\n" + stackTrace)
     }
   }
 
   // scalastyle:on regex
 
-  private def print(s: String, no: Option[Int]): String = if (no.isDefined) print(s, "" + no.get) else ""
-
-  private def print(s: String, value: String): String = " " + s + "=" + value
+  private def print(file: String, line: Option[Int], column: Option[Int]): String = {
+     val l = line.getOrElse("")
+     val c = column.getOrElse("")
+     val msg = s" $file:[$l,$c] "
+     msg
+  }
 }
 
 object XmlOutput {
