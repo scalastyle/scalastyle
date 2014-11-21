@@ -23,19 +23,36 @@ import org.scalastyle.ScalastyleError
 import scalariform.lexer.Tokens.LBRACKET
 import scalariform.lexer.Tokens.NEWLINE
 import scalariform.lexer.Tokens.PLUS
-import scalariform.parser.CompilationUnit
+import scalariform.parser.ScalaParser.ExprElements
+import scalariform.parser.{InfixExpr, ExprElement, CompilationUnit}
+import VisitorHelper.visit
 
 class SpacesAfterPlusChecker extends ScalariformChecker {
   val errorKey = "spaces.after.plus"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      List(left, middle, right) <- ast.tokens.sliding(3);
-      if (middle.tokenType == PLUS && left.tokenType != LBRACKET && right.tokenType != NEWLINE && charsBetweenTokens(middle, right) == 0)
+      t <- localVisit(ast.immediateChildren(0))
+      if isInvalidPlusInfix(t)
     } yield {
-      PositionError(middle.offset)
+      PositionError(t.infixId.offset)
     }
 
     it.toList
+  }
+
+  private def isInvalidPlusInfix(infix: InfixExpr): Boolean = {
+    if (infix.infixId.tokenType == PLUS) {
+      val isLBracket = infix.left.lastOption.exists(_.tokens.lastOption.exists(_.tokenType == LBRACKET))
+      val newLineExists = infix.newlineOption.exists(_.tokenType == NEWLINE)
+      !isLBracket && !newLineExists && charsBetweenTokens(infix.infixId, infix.right.head.tokens.head) == 0
+    } else {
+      false
+    }
+  }
+
+  private def localVisit(ast: Any): List[InfixExpr] = ast match {
+    case expr: InfixExpr => List(expr)
+    case other => visit(other, localVisit)
   }
 }

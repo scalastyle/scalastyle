@@ -58,6 +58,21 @@ class Clazz[+T <: AstNode]() // ignore + within type specification
     assertErrors(List(columnError(5, 14)), source)
   }
 
+  @Test def testNoSpacesMultipleTypeParams(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |class FooBar[+A, +B]
+        |
+        |object FooBar {
+        |  type T[+R, +S] = FooBar[R, S]
+        |}
+      """.stripMargin
+
+    assertErrors(List(), source)
+  }
+
   @Test def testTwoSpaces(): Unit = {
     val source = """
 package foobar
