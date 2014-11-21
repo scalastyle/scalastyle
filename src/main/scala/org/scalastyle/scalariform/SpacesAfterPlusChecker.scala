@@ -16,16 +16,11 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
+import org.scalastyle.{PositionError, ScalariformChecker, ScalastyleError}
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.lexer.Tokens.LBRACKET
-import scalariform.lexer.Tokens.NEWLINE
-import scalariform.lexer.Tokens.PLUS
-import scalariform.parser.ScalaParser.ExprElements
-import scalariform.parser.{InfixExpr, ExprElement, CompilationUnit}
-import VisitorHelper.visit
+import scalariform.lexer.Tokens.{LBRACKET, NEWLINE, PLUS}
+import scalariform.parser.{CompilationUnit, InfixExpr}
 
 class SpacesAfterPlusChecker extends ScalariformChecker {
   val errorKey = "spaces.after.plus"
