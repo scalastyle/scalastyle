@@ -150,4 +150,9 @@
             <parameter name="tabSize" type="integer" default="2" />
         </parameters>
     </checker>
+	<checker class="org.scalastyle.scalariform.FieldNamesChecker" id="field.name" defaultLevel="warning">
+		<parameters>
+			<parameter name="regex" type="string" default="^[a-z][A-Za-z0-9]*$" />
+		</parameters>
+	</checker>
 </scalastyle-definition>

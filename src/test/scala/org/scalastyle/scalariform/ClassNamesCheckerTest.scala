@@ -18,12 +18,7 @@ package org.scalastyle.scalariform
 
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
+
 import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
@@ -215,4 +210,53 @@ class Foobar extends Bar {
   }
 
   private def defErr(line: Int, column: Int) = columnError(line, column, List("^[a-z][A-Za-z0-9]*(_=)?$"))
+}
+
+class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "field.name"
+  val classUnderTest = classOf[FieldNamesChecker]
+
+  @Test def testValidFieldNames(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |class foobar {
+        |  val myField1 = "one"
+        |  var myField2 = 2
+        |  val myField3
+        |  var myField4
+        |  val myField51; val myField52 = 52
+        |  var myField61; var myField62 = 62
+        |}
+      """.stripMargin
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testInvalidFieldNames(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |class foobar {
+        |  val MyField1 = "one"
+        |  var MyField2 = 2
+        |  val MyField3
+        |  var MyField4
+        |  val myField51; val MyField52 = 52
+        |  var myField61; var MyField62 = 62
+        |}
+      """.stripMargin
+
+    assertErrors(
+      List(
+        columnError(5, 6, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(6, 6, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(7, 6, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(8, 6, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(9, 21, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(10, 21, List("^[a-z][A-Za-z0-9]*$"))),
+      source)
+  }
 }

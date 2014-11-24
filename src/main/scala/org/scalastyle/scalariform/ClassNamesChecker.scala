@@ -20,16 +20,14 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import scalariform.lexer.Tokens.CLASS
-import scalariform.lexer.Tokens.DEF
+import scalariform.lexer.Tokens.NEWLINE
 import scalariform.lexer.Tokens.OBJECT
 import scalariform.lexer.Tokens.PACKAGE
+import scalariform.lexer.Tokens.VAL
+import scalariform.lexer.Tokens.VAR
 import scalariform.parser.CompilationUnit
 import scala.util.matching.Regex
-import scalariform.parser.FunDefOrDcl
-import scalariform.parser.AstNode
-import scalariform.parser.AccessModifier
-import scalariform.parser.Modifier
-import scalariform.parser.SimpleModifier
+import scalariform.lexer.Token
 
 // scalastyle:off multiple.string.literals
 
@@ -123,16 +121,21 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
 }
 
+class FieldNamesChecker extends ScalariformChecker {
+  val DefaultRegex = "^[a-z][A-Za-z0-9]*$"
+  val errorKey = "field.name"
 
+  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
 
+    val it = for {
+      List(left, right) <- ast.tokens.sliding(2)
+      if (left.tokenType == VAL || left.tokenType == VAR) && (regex findAllIn right.text).size == 0
+    } yield {
+      PositionError(right.offset, List(regexString))
+    }
 
-
-
-
-
-
-
-
-
-
-
+    it.toList
+  }
+}

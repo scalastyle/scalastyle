@@ -162,4 +162,9 @@
    <parameter name="tabSize"><![CDATA[2]]></parameter>
   </parameters>
  </check>
+ <check class="org.scalastyle.scalariform.FieldNamesChecker" level="warning" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
+  </parameters>
+ </check>
 </scalastyle>
