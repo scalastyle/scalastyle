@@ -73,6 +73,19 @@ class Clazz[+T <: AstNode]() // ignore + within type specification
     assertErrors(List(), source)
   }
 
+  @Test def testPlusMethodDef(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |object FooBar {
+        |  def +(): Unit = ()
+        |}
+    """.stripMargin
+
+    assertErrors(List(), source)
+  }
+
   @Test def testTwoSpaces(): Unit = {
     val source = """
 package foobar
