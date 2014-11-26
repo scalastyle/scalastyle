@@ -118,4 +118,9 @@
  <check level="warning" class="org.scalastyle.scalariform.ProcedureDefinitionChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.ForBraceChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true"/>
+ <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
+  </parameters>
+ </check>
 </scalastyle>
