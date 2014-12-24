@@ -18,14 +18,18 @@ package org.scalastyle
 
 import java.io.File
 import java.util.Date
-import scala.io.Codec;
+import scala.io.Codec
 import com.typesafe.config.ConfigFactory
 
-class Main
-case class MainConfig(error: Boolean, config: Option[String] = None, directories: List[String] = List(),
-  verbose: Boolean = false, quiet: Boolean = false,
-  warningsaserrors: Boolean = false, xmlFile: Option[String] = None,
-  xmlEncoding: Option[String] = None, inputEncoding: Option[String] = None)
+case class MainConfig(error: Boolean,
+    config: Option[String] = None,
+    directories: List[String] = List(),
+    verbose: Boolean = false,
+    quiet: Boolean = false,
+    warningsaserrors: Boolean = false,
+    xmlFile: Option[String] = None,
+    xmlEncoding: Option[String] = None,
+    inputEncoding: Option[String] = None)
 
 object Main {
   // scalastyle:off regex
