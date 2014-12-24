@@ -21,6 +21,8 @@ import scalariform.parser.Modifier
 import scalariform.parser.Param
 import scalariform.parser.ParamClauses
 import scalariform.parser.ProcFunBody
+import scalariform.parser.FullDefOrDcl
+import scalariform.parser.FunDefOrDcl
 
 case class PublicMethodsHaveTypeParameters(ignoreOverride: Boolean)
 
@@ -38,7 +40,7 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMet
         false
       case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
                            !isConstructor(t.fullDefOrDcl.defOrDcl) &&
-                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers))
+                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDef
     }
   }
 }

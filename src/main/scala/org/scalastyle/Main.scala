@@ -45,7 +45,7 @@ object Main {
 
   private def isTrue(s: String) = "true" equalsIgnoreCase s
 
-  def parseArgs(args: Array[String]) = {
+  def parseArgs(args: Array[String]): MainConfig = {
     var config = MainConfig(false)
     var i = 0
     while (i < args.length) {

@@ -33,13 +33,14 @@ import scalariform.lexer.Tokens
 abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
 
 
-  case class FullDefOrDclVisit(fullDefOrDcl: FullDefOrDcl, funDefOrDcl: FunDefOrDcl, subs: List[FullDefOrDclVisit]) extends Clazz[FullDefOrDcl]()
+  case class FullDefOrDclVisit(fullDefOrDcl: FullDefOrDcl, funDefOrDcl: FunDefOrDcl,
+      subs: List[FullDefOrDclVisit], insideDef: Boolean) extends Clazz[FullDefOrDcl]()
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val p = matchParameters()
 
     val it = for {
-      t <- localvisit(ast.immediateChildren(0));
+      t <- localvisit(false)(ast.immediateChildren(0));
       f <- traverse(t);
       if (matches(f, p))
     } yield {
@@ -55,15 +56,15 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
   protected def matches(t: FullDefOrDclVisit, parameters: T): Boolean
   protected def describeParameters(parameters: T): List[String] = Nil
 
-  private def localvisit(ast: Any): List[FullDefOrDclVisit] = ast match {
+  private def localvisit(insideDef: Boolean)(ast: Any): List[FullDefOrDclVisit] = ast match {
     case t: FullDefOrDcl => {
       t.defOrDcl match {
-        case f: FunDefOrDcl => List(FullDefOrDclVisit(t, f, localvisit(f)))
-        case _ => localvisit(t.defOrDcl)
+        case f: FunDefOrDcl => List(FullDefOrDclVisit(t, f, localvisit(true)(f), insideDef))
+        case _ => localvisit(insideDef)(t.defOrDcl)
       }
     }
-    case t: FunDefOrDcl => localvisit(t.funBodyOpt)
-    case t: Any => visit(t, localvisit)
+    case t: FunDefOrDcl => localvisit(true)(t.funBodyOpt)
+    case t: Any => visit(t, localvisit(insideDef))
   }
 
   protected def isOverride(modifiers: List[Modifier]) = modifiers.exists(_ match {
