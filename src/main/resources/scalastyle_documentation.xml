@@ -513,4 +513,17 @@ To bring consistency with how comments should be formatted, leave a space right 
  ]]>
  </example-configuration>
  </check>
+
+ <check id="field.name">
+ <justification>A consistent naming convention for field names can make code easier to read and understand</justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true">
+  <parameters>
+   <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
+  </parameters>
+ </check>
+ ]]>
+ </example-configuration>
+ </check>
 </scalastyle-documentation>
