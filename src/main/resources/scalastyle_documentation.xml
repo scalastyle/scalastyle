@@ -575,6 +575,21 @@ To bring consistency with how comments should be formatted, leave a space right 
  </example-configuration>
  </check>
 
+ <check id="package.object.name">
+ <justification>
+ The Scala style guide recommends that package object names conform to certain standards.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.PackageObjectNamesChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[a-z][A-Za-z]*$</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
  <check id="null">
  <justification>
  Scala discourages use of nulls, preferring Option.
@@ -593,6 +608,17 @@ To bring consistency with how comments should be formatted, leave a space right 
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ReturnChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="equals.hash.code">
+ <justification>
+ Defining either equals or hashCode in a class without defining the is a known source of bugs. Usually, when you define one, you should also define the other.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true" />
  ]]>
  </example-configuration>
  </check>
