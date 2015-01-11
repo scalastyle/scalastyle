@@ -526,4 +526,74 @@ To bring consistency with how comments should be formatted, leave a space right 
  ]]>
  </example-configuration>
  </check>
+
+ <check id="xml.literal">
+ <justification>Some projects prefer not to have XML literals. They could use a templating engine instead.</justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.XmlLiteralChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="line.contains.tab">
+ <justification>Some say that tabs are evil.</justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.FileTabChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="class.name">
+ <justification>
+ The Scala style guide recommends that class names conform to certain standards.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[A-Z][A-Za-z]*$</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="object.name">
+ <justification>
+ The Scala style guide recommends that object names conform to certain standards.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[A-Z][A-Za-z]*$</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="null">
+ <justification>
+ Scala discourages use of nulls, preferring Option.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="return">
+ <justification>
+ Use of return is not usually necessary in Scala. In fact, use of return can discourage a functional style of programming.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ReturnChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
 </scalastyle-documentation>

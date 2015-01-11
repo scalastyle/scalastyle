@@ -24,6 +24,8 @@ import org.scalatest.junit.AssertionsForJUnit
 import com.typesafe.config.ConfigFactory
 import java.lang.reflect.Method
 import com.google.common.reflect.ClassPath
+import scala.xml.NodeSeq
+import scala.xml.XML
 
 // scalastyle:off multiple.string.literals
 
@@ -53,6 +55,10 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
 
     assert(missing.isEmpty, "scalastyle_definition does not contain " + missing)
 
+    val scalastyleDocumentation = (XML.load(this.getClass.getClassLoader.getResource("scalastyle_documentation.xml")) \\ "check").map {
+      ns => (ns.attribute("id").get.text, Documentation(toText(ns \\ "justification"), toText(ns \\ "extra-description"), toList(ns \\ "example-configuration")))
+    }.toMap
+
     checkers.foreach { c =>
       val checker = Class.forName(c.className).newInstance().asInstanceOf[Checker[_]]
 
@@ -60,9 +66,17 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
       val errorKey = m.invoke(checker)
 
       assert(errorKey == c.id, "errorKey and id do not match for " + c.className)
+      
+      scalastyleDocumentation.get(c.id) match {
+        case Some(x) => //println(c.id + ": " + x)
+        case None => println(c.id + " " + c.className + " None")
+      }
     }
-
-
   }
+
+  private def toText(elem: NodeSeq) = if (elem.isEmpty) None else Some(elem.text.trim)
+  private def toList(elem: NodeSeq) = elem.map(_.text.trim)
+
+  case class Documentation(val justification: Option[String], val extraDescription: Option[String], val example: Seq[String])
 
 }
