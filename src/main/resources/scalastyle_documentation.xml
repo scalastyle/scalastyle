@@ -633,4 +633,28 @@ To bring consistency with how comments should be formatted, leave a space right 
  ]]>
  </example-configuration>
  </check>
- </scalastyle-documentation>
+
+ <check id="no.clone">
+ <justification>
+  The clone method is difficult to get right. You can use the copy constructor of case classes rather than implementing clone.
+  For more information on clone(), see Effective Java by Joshua Bloch pages.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="no.finalize">
+ <justification>
+ finalize() is called when the object is garbage collected, and garbage collection is not guaranteed to happen.
+ It is therefore unwise to rely on code in finalize() method.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+</scalastyle-documentation>
