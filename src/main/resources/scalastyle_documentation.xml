@@ -622,4 +622,15 @@ To bring consistency with how comments should be formatted, leave a space right 
  ]]>
  </example-configuration>
  </check>
-</scalastyle-documentation>
+
+ <check id="structural.type">
+ <justification>
+ Structural types in Scala can use reflection - this can have unexpected performance consequences.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.StructuralTypeChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+ </scalastyle-documentation>
