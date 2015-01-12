@@ -57,7 +57,11 @@ is considered to be a magic number.
  ]]>
  </example-configuration>
  </check>
+
  <check id="regex">
+ <justification>
+ Some checks can be carried out with a regular expression.
+ </justification>
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
@@ -257,6 +261,9 @@ is considered to be a magic number.
  </check>
 
  <check id="token">
+ <justification>
+ Some checks can be carried by just the presence of a particular token.
+ </justification>
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
@@ -654,6 +661,196 @@ To bring consistency with how comments should be formatted, leave a space right 
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="indentation">
+ <justification>
+ Code that is not indented consistently can be hard to read.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.IndentationChecker" enabled="true">
+      <parameters>
+        <parameter name="tabSize">2</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="whitespace.end.of.line">
+ <justification>
+ Whitespace at the end of a line can cause problems when diffing between files or between versions.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="illegal.imports">
+ <justification>
+ Use of some classes can be discouraged for a project. For instance, use of sun._ is generally discouraged because
+ they are internal to the JDK and can be changed.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="parameter.number">
+ <justification>
+ A method which has more than a certain number of parameters can be hard to understand.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
+      <parameters>
+        <parameter name="maxParameters">8</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="simplify.boolean.expression">
+ <justification>
+ A boolean expression which can be simplified can make code easier to read.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.SimplifyBooleanExpressionChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="spaces.before.plus">
+ <justification>
+ An expression with spaces around + can be easier to read
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.BeforePlusChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="spaces.after.plus">
+ <justification>
+ An expression with spaces around + can be easier to read
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="no.whitespace.before.left.bracket">
+ <justification>
+ If there is whitespace before a left bracket, this can be confusing to the reader
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="no.whitespace.after.left.bracket">
+ <justification>
+ If there is whitespace after a left bracket, this can be confusing to the reader
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="covariant.equals">
+ <justification>
+ Mistakenly defining a covariant equals() method without overriding method equals(java.lang.Object) can produce unexpected runtime behaviour.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="scaladoc">
+ <justification>
+ Scaladoc is generally considered a good thing. Within reason.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ScalaDocChecker" enabled="true" />
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="disallow.space.after.token">
+ <justification>
+ Correct formatting can help readability.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" enabled="true">
+      <parameters>
+        <parameter name="tokens">LPAREN</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="disallow.space.before.token">
+ <justification>
+ Correct formatting can help readability.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" enabled="true">
+      <parameters>
+        <parameter name="tokens">COLON, COMMA, RPAREN</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="ensure.single.space.after.token">
+ <justification>
+ Correct formatting can help readability.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" enabled="true">
+      <parameters>
+        <parameter name="tokens">COLON, IF</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="ensure.single.space.before.token">
+ <justification>
+ Correct formatting can help readability.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker" enabled="true">
+      <parameters>
+        <parameter name="tokens">LPAREN</parameter>
+      </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>

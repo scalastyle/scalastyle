@@ -55,8 +55,9 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
 
     assert(missing.isEmpty, "scalastyle_definition does not contain " + missing)
 
-    val scalastyleDocumentation = (XML.load(this.getClass.getClassLoader.getResource("scalastyle_documentation.xml")) \\ "check").map {
-      ns => (ns.attribute("id").get.text, Documentation(toText(ns \\ "justification"), toText(ns \\ "extra-description"), toList(ns \\ "example-configuration")))
+    val scalastyleDocumentation = (XML.load(this.getClass.getClassLoader.getResource("scalastyle_documentation.xml")) \\ "check").map { ns =>
+      val doc = Documentation(toText(ns \\ "justification"), toText(ns \\ "extra-description"), toList(ns \\ "example-configuration"))
+      (ns.attribute("id").get.text, doc)
     }.toMap
 
     checkers.foreach { c =>
@@ -66,11 +67,10 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
       val errorKey = m.invoke(checker)
 
       assert(errorKey == c.id, "errorKey and id do not match for " + c.className)
-      
-      scalastyleDocumentation.get(c.id) match {
-        case Some(x) => //println(c.id + ": " + x)
-        case None => println(c.id + " " + c.className + " None")
-      }
+
+      assert(scalastyleDocumentation.get(c.id).isDefined, "errorKey and id does not have documentation")
+      assert(scalastyleDocumentation.get(c.id).get.justification.size > 0, c.id + ": justification not defined")
+      assert(scalastyleDocumentation.get(c.id).get.example.size > 0, c.id + ": example not defined")
     }
   }
 
@@ -78,5 +78,4 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
   private def toList(elem: NodeSeq) = elem.map(_.text.trim)
 
   case class Documentation(val justification: Option[String], val extraDescription: Option[String], val example: Seq[String])
-
 }
