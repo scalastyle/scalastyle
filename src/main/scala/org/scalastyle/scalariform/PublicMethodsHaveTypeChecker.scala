@@ -40,7 +40,7 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMet
         false
       case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
                            !isConstructor(t.fullDefOrDcl.defOrDcl) &&
-                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDef
+                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDefOrValOrVar
     }
   }
 }

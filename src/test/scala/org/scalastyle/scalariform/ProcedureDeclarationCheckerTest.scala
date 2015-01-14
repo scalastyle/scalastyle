@@ -53,7 +53,7 @@ class OK {
 }
 """;
 
-    assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6), columnError(15, 54),
+    assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6),
                         columnError(16, 6), columnError(17, 6)), source)
   }
 
@@ -108,7 +108,7 @@ class Sub extends Foobar {
     assertErrors(List(columnError(9, 15)), source)
   }
 
-  @Test def testNestedDef(): Unit = {
+  @Test def testNestedDefInDef(): Unit = {
     val source = """
 package foobar
 
@@ -121,5 +121,37 @@ trait Foobar {
 """;
 
     assertErrors(List(columnError(5, 6)), source)
+  }
+
+  @Test def testNestedDefInVal(): Unit = {
+    val source = """
+package foobar
+
+trait Foobar {
+  val foobar = {
+    def nested1(): Int = 5
+    def nested2() = 5
+
+    nested2()
+  }
+}
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testNestedDefInVal2(): Unit = {
+    val source = """
+package foobar
+
+trait Foobar {
+  private val complexInit: Seq[Int] = {
+    def fancyStuff(x: Int) = x * 2
+    1.to(10).map(fancyStuff).toSeq
+  }
+}
+""";
+
+    assertErrors(List(), source)
   }
 }
