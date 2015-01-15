@@ -113,6 +113,11 @@ object XmlOutput {
   }
 
   private def printToFile(f: java.io.File, encoding: String)(op: java.io.PrintWriter => Unit): Unit = {
+    val parent = f.getParentFile();
+    if (!parent.exists() && !parent.mkdirs()) {
+      throw new IllegalStateException("Couldn't create dir: " + parent);
+    }
+
     val p = new java.io.PrintWriter(f, encoding)
     try {
       op(p)
