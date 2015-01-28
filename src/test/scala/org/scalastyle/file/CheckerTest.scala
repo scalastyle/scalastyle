@@ -26,6 +26,7 @@ import org.scalastyle.WarningLevel
 import org.scalastyle.ConfigurationChecker
 import org.scalastyle.FileSpec
 import org.scalastyle.ScalastyleConfiguration
+import org.scalastyle.CheckerUtils
 
 // scalastyle:off multiple.string.literals
 
@@ -41,7 +42,7 @@ trait CheckerTest {
                                             customMessage: Option[String] = None, commentFilter: Boolean = true, customId: Option[String] = None) = {
     val classes =  List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params, customMessage, customId))
     val configuration = ScalastyleConfiguration("", commentFilter, classes)
-    assertEquals(expected.mkString("\n"), Checker.verifySource(configuration, classes, NullFileSpec, source).mkString("\n"))
+    assertEquals(expected.mkString("\n"), new CheckerUtils().verifySource(configuration, classes, NullFileSpec, source).mkString("\n"))
   }
 
   protected def fileError(args: List[String] = List(), customMessage: Option[String] = None) =

@@ -37,8 +37,10 @@ class Foobar {
   }
 
   def printAst(source: String): Unit =  {
+    val cu = new CheckerUtils()
+
     val lines = Checker.parseLines(source)
-    val scalariformAst = Checker.parseScalariform(source)
+    val scalariformAst = cu.parseScalariform(source)
     scalariformAst match {
       case None => println("Parse error")
       case Some(ast) => printAst(lines, ast.ast)

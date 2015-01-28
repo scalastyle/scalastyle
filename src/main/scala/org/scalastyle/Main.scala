@@ -20,6 +20,8 @@ import java.io.File
 import java.util.Date
 import scala.io.Codec
 import com.typesafe.config.ConfigFactory
+import java.net.URLClassLoader
+import java.net.URL
 
 case class MainConfig(error: Boolean,
     config: Option[String] = None,
@@ -29,7 +31,8 @@ case class MainConfig(error: Boolean,
     warningsaserrors: Boolean = false,
     xmlFile: Option[String] = None,
     xmlEncoding: Option[String] = None,
-    inputEncoding: Option[String] = None)
+    inputEncoding: Option[String] = None,
+    externalJar: Option[String] = None)
 
 object Main {
   // scalastyle:off regex
@@ -43,6 +46,7 @@ object Main {
     println("     --xmlEncoding STRING        encoding to use for the xml file")
     println("     --inputEncoding STRING      encoding for the source files")
     println(" -w, --warnings true|false       fail if there are warnings")
+    println(" -e, --externalJar FILE          jar containing custom rules")
     System.exit(1)
   }
   // scalastyle:on regex
@@ -62,6 +66,7 @@ object Main {
           case ("--xmlOutput") => config = config.copy(xmlFile = Some(args(i + 1)))
           case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
+          case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
           case _ => config = config.copy(error = true)
         }
         i = i + 2
@@ -99,10 +104,11 @@ object Main {
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
-    val messages = new ScalastyleChecker().checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq))
+    val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI().toURL()))))
+    val messages = new ScalastyleChecker(cl).checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq))
 
     // scalastyle:off regex
-    val config = ConfigFactory.load()
+    val config = ConfigFactory.load(cl.getOrElse(this.getClass().getClassLoader()))
     val outputResult = new TextOutput(config).output(messages)
     mc.xmlFile match {
       case Some(x) => {

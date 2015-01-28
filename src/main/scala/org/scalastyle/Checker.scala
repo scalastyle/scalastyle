@@ -27,6 +27,7 @@ import java.nio.charset.MalformedInputException
 import scala.io.Codec
 import scala.collection.JavaConversions.seqAsJavaList
 import scala.collection.JavaConversions.collectionAsScalaIterable
+import scala.annotation.tailrec
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -57,10 +58,9 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 
 }
 
-class ScalastyleChecker[T <: FileSpec] {
+class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
   def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] = {
-    val checks = configuration.checks.filter(_.enabled)
-    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration, checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
+    privateCheckFiles(configuration, files).toList
   }
 
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
@@ -69,7 +69,9 @@ class ScalastyleChecker[T <: FileSpec] {
 
   private[this] def privateCheckFiles(configuration: ScalastyleConfiguration, files: Iterable[T]): Seq[Message[T]] = {
     val checks = configuration.checks.filter(_.enabled)
-    StartWork() :: files.flatMap(file => StartFile(file) :: Checker.verifyFile(configuration, checks, file) ::: List(EndFile(file))).toList ::: List(EndWork())
+    val checkerUtils = new CheckerUtils(classLoader)
+    StartWork() :: files.flatMap(file => StartFile(file) :: checkerUtils.verifyFile(configuration, checks, file) :::
+        List(EndFile(file))).toList ::: List(EndWork())
   }
 
 }
@@ -77,8 +79,12 @@ class ScalastyleChecker[T <: FileSpec] {
 case class ScalariformAst(ast: CompilationUnit, comments: List[Comment])
 
 object Checker {
-  type CheckerClass = Class[_ <: Checker[_]]
+  def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
+          case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
+        }.tail, source.charAt(source.length()-1))
+}
 
+class CheckerUtils(classLoader: Option[ClassLoader] = None) {
   private def comments(tokens: List[Token]): List[Comment] = tokens.map(t => {
     if (t.associatedWhitespaceAndComments == null) Nil else t.associatedWhitespaceAndComments.comments // scalastyle:ignore null
   }).flatten
@@ -88,10 +94,6 @@ object Checker {
 
     Some(ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), comments(tokens)))
   }
-
-  def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
-          case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
-        }.tail, source.charAt(source.length()-1))
 
   def verifySource[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
     if (source.isEmpty()) {
@@ -103,7 +105,7 @@ object Checker {
 
   private def verifySource0[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker],
                               file: T, source: String): List[Message[T]] = {
-    val lines = parseLines(source)
+    val lines = Checker.parseLines(source)
     val scalariformAst = parseScalariform(source)
 
     val commentFilters = scalariformAst match {
@@ -142,6 +144,7 @@ object Checker {
    * If there is no encoding passed, we try the default, then UTF-8, then UTF-16, then ISO-8859-1
    */
   def readFile(file: String, encoding: Option[String])(implicit codec: Codec): String = {
+    @tailrec
     def readFileWithEncoding(file: String, encodings: List[String]): Option[String] = {
       if (encodings.size == 0) {
         None
@@ -172,9 +175,12 @@ object Checker {
     }
   }
 
-  def newInstance(name: String, level: Level, parameters: Map[String, String], customMessage: Option[String], customId: Option[String]): Option[Checker[_]] = {
+  private def newInstance(name: String, level: Level, parameters: Map[String, String], customMessage: Option[String],
+      customId: Option[String]): Option[Checker[_]] = {
     try {
-      val clazz = Class.forName(name).asInstanceOf[Class[Checker[_]]]
+      val cl: ClassLoader = classLoader.getOrElse(this.getClass().getClassLoader())
+
+      val clazz = Class.forName(name, true, cl)
       val c: Checker[_] = clazz.getConstructor().newInstance().asInstanceOf[Checker[_]]
       c.setParameters(parameters)
       c.setLevel(level)
@@ -197,10 +203,10 @@ trait Checker[A] {
   var customMessage: Option[String] = None
   var customErrorKey: Option[String] = None
 
-  protected def setParameters(parameters: Map[String, String]) = this.parameters = parameters;
-  protected def setLevel(level: Level) = this.level = level;
-  protected def setCustomErrorKey(customErrorKey: Option[String]) = this.customErrorKey = customErrorKey
-  protected def setCustomMessage(customMessage: Option[String]) = this.customMessage = customMessage
+  def setParameters(parameters: Map[String, String]): Unit = this.parameters = parameters;
+  def setLevel(level: Level): Unit = this.level = level;
+  def setCustomErrorKey(customErrorKey: Option[String]): Unit = this.customErrorKey = customErrorKey
+  def setCustomMessage(customMessage: Option[String]): Unit = this.customMessage = customMessage
   protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
   protected def getString(parameter: String, defaultValue: String): String = parameters.getOrElse(parameter, defaultValue)
   protected def getBoolean(parameter: String, defaultValue: Boolean): Boolean = parameters.getOrElse(parameter, "" + defaultValue) == "true"
