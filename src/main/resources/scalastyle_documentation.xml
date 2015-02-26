@@ -560,6 +560,32 @@ To bring consistency with how comments should be formatted, leave a space right 
  </example-configuration>
  </check>
 
+ <check id="todo.comment">
+ <justification>Some projects may consider TODO comments in a code bad form.</justification>
+ <example-configuration>
+ <![CDATA[
+   <checker level="warning" class="org.scalastyle.file.TodoCommentChecker" enabled="true">
+     <parameters>
+       <parameter name="regex" type="string" default="(?i)(//|/\*|/\*\*|\*)\s?todo(:?)\s+" />
+     </parameters>
+   </checker>
+ ]]>
+ </example-configuration>
+ </check>
+
+ <check id="fixme.comment">
+ <justification>Some projects may consider FIXME comments in a code bad form.</justification>
+ <example-configuration>
+ <![CDATA[
+   <checker level="warning" class="org.scalastyle.file.FixmeCommentChecker" enabled="true">
+     <parameters>
+       <parameter name="regex" type="string" default="(?i)(//|/\*|/\*\*|\*)\s?fixme(:?)\s+" />
+     </parameters>
+   </checker>
+ ]]>
+ </example-configuration>
+ </check>
+
  <check id="line.contains.tab">
  <justification>Some say that tabs are evil.</justification>
  <example-configuration>
