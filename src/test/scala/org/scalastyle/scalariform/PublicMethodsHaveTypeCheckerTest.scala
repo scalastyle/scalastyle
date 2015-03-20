@@ -28,35 +28,56 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class ProcedureDeclarationCheckerTest extends AssertionsForJUnit with CheckerTest {
-  val key = "procedure.declaration"
-  val classUnderTest = classOf[ProcedureDeclarationChecker]
+class PublicMethodsHaveTypeCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "public.methods.have.type"
+  val classUnderTest = classOf[PublicMethodsHaveTypeChecker]
 
   @Test def testClassOK(): Unit = {
     val source = """
 package foobar
 
-abstract class OK {
+class OK {
   def c1() = 5
   def c2(): Int = 5
   def c3 = 5
+  protected def c4() = 5
+  private def c5() = 5
+  private[this] def c6() = 5
+  private val foo1 = 1
   val foo2 = 2
   def unit = {}
   def unit2 {}
-  def unit3
-  def unit4: Unit
-  def unit5(i: Int) = {}
-  def unit6(i: Int) {}
-  def unit7(i: Int)
-  def unit8(i: Int): Unit
-  val foo: Unit = new scala.collection.mutable.HashMap {def foobar() = {}}
-  def bar() = { new scala.collection.mutable.HashMap {def foobar() = {}} }
-  def bar2() = new scala.collection.mutable.HashMap {def foobar2() = {}}
-  val bar3
+  val foo = new scala.collection.mutable.HashMap {def foobar1() = {}}
+  def bar() = { new scala.collection.mutable.HashMap {def foobar2() = {}} } // not picked up because inside a def
+  def bar2() = new scala.collection.mutable.HashMap {def foobar3() = {}} // not picked up because inside a def
 }
 """;
 
-    assertErrors(List(columnError(10, 6), columnError(11, 6), columnError(14, 6), columnError(15, 6)), source)
+    assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6),
+                        columnError(16, 6), columnError(17, 6)), source)
+  }
+
+  @Test def testProc(): Unit = {
+    val source = """
+class classOK {
+  def proc1 {}
+  def proc2(): Unit = {}
+}
+
+abstract class abstractOK {
+  def proc1 {}
+  def proc2(): Unit = {}
+  def proc3()
+}
+
+trait traitOK {
+  def proc1 {}
+  def proc2(): Unit = {}
+  def proc3()
+}
+"""
+
+    assertErrors(List(), source)
   }
 
   @Test def testConstructor(): Unit = {
@@ -65,6 +86,71 @@ class ConstructorOK(a: Int) {
   def this() = this(1)
 }
 """
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testClassOverride(): Unit = {
+    val source = """
+package foobar
+
+trait Foobar {
+  def foobar: Int
+}
+
+class Sub extends Foobar {
+  override def foobar() = 5
+}
+""";
+
+    assertErrors(List(), source, Map("ignoreOverride" -> "true"))
+    assertErrors(List(columnError(9, 15)), source, Map("ignoreOverride" -> "false"))
+    assertErrors(List(columnError(9, 15)), source)
+  }
+
+  @Test def testNestedDefInDef(): Unit = {
+    val source = """
+package foobar
+
+trait Foobar {
+  def foobar() = {
+    def nested1(): Int = 5
+    def nested2() = 5
+  }
+}
+""";
+
+    assertErrors(List(columnError(5, 6)), source)
+  }
+
+  @Test def testNestedDefInVal(): Unit = {
+    val source = """
+package foobar
+
+trait Foobar {
+  val foobar = {
+    def nested1(): Int = 5
+    def nested2() = 5
+
+    nested2()
+  }
+}
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testNestedDefInVal2(): Unit = {
+    val source = """
+package foobar
+
+trait Foobar {
+  private val complexInit: Seq[Int] = {
+    def fancyStuff(x: Int) = x * 2
+    1.to(10).map(fancyStuff).toSeq
+  }
+}
+""";
 
     assertErrors(List(), source)
   }
