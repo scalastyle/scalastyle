@@ -37,7 +37,7 @@ case class LineColumn(line: Int, column: Int)
 
 case class Lines(lines: Array[Line], lastChar: Char) {
 
-  def findLineAndIndex(position:Int):Option[(Line, Int)] = {
+  def findLineAndIndex(position:Int): Option[(Line, Int)] = {
     var i = 0
 
     lines.foreach(l => {

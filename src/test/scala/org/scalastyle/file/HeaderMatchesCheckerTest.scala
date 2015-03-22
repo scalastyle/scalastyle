@@ -86,7 +86,7 @@ package foobar
   val licenceRegex = {
     def literalOK(c: Char): Boolean = c match {
       case ' '|'-'|':'|'/'|'\n' => true
-      case ld if ld.isLetterOrDigit => true
+      case ld: Any if ld.isLetterOrDigit => true
       case _ => false
     }
     (licence flatMap { c => if (literalOK(c)) c.toString else "\\" + c}).replace("2009-2010", "(?:\\d{4}-)?\\d{4}")

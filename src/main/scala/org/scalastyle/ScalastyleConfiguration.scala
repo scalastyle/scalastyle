@@ -243,15 +243,6 @@ class XmlPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step)
             // <start label + attrs + tag + content + end tag
             makeBox(ind, stg.substring(0, len2))
             makeBreak() // todo: break the rest in pieces
-            /*{ //@todo
-             val sq:Seq[String] = stg.split(" ");
-             val it = sq.iterator;
-             it.next;
-             for (c <- it) {
-               makeBox(ind+len2-2, c)
-               makeBreak()
-             }
-             }*/
             makeBox(ind, stg.substring(len2, stg.length))
             makeBreak()
             traverse(node.child.iterator, node.scope, ind + step)
