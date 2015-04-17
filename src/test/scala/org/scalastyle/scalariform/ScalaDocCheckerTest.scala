@@ -83,6 +83,24 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
+  @Test def specClass(): Unit = {
+    val specClassSource = "%sclass FooSpec"
+    val specITClassSource = "%sclass FooSpecIT"
+    val doc =
+      """
+        |/**
+        | * This is the documentation for whatever follows
+        | */
+      """.stripMargin
+
+    List(specClassSource, specITClassSource).foreach { source =>
+      assertErrors(List(lineError(1, List(Missing))), source format "")
+      assertErrors(Nil, source format doc)
+      assertErrors(Nil, source format "", Map("ignoreRegex" -> "(.+Spec$)|(.+SpecIT$)"))
+      assertErrors(Nil, source format doc, Map("ignoreRegex" -> "(.+Spec$)|(.+SpecIT$)"))
+    }
+  }
+
   @Test def typeParamsCCT(): Unit = {
     val traitSource = "%strait Foo[A, B]"
     val classSource = "%sclass Foo[A, B]"
