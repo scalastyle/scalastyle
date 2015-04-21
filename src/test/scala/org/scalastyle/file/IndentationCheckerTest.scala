@@ -50,11 +50,9 @@ class B(
       "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
     )
 
-  def longMethodWithDoubleIndentParams(
-      paramDoubleIndent: Boolean,
-      isAlsoOk: Boolean): Unit = {
-    "ab"
-  }
+  def methodWithMultilineParams(
+    paramDoubleIndent: Boolean,
+    isAlsoOk: Boolean): Unit = {}
 }
 """
   @Test def testNoErrorsDefaultTabSize(): Unit = {
@@ -128,5 +126,50 @@ class A {
 }
 """
     assertErrors(List(lineError(5)), source)
+  }
+
+  @Test def testCorrectMethodParamIndent(): Unit = {
+    val source =
+"""
+class A {
+  def longMethodWithCorrectIndentParams(
+      paramDoubleIndent: Boolean,
+      isAlsoOk: Boolean): Unit = {
+  }
+}
+"""
+
+    assertErrors(List(lineError(4)), source)
+    assertErrors(List(), source, Map("methodParamIndentSize" -> "4"))
+  }
+
+  @Test def testMethodParamUnderIndent(): Unit = {
+    val source =
+"""
+class A {
+  def longMethodWithUnderIndentedParams(
+    paramDoubleIndent: Boolean,
+    isAlsoOk: Boolean): Unit = {
+  }
+}
+"""
+
+    assertErrors(List(), source)
+    assertErrors(List(lineError(4)), source, Map("methodParamIndentSize" -> "4"))
+  }
+
+  @Test def testMethodParamOverIndent(): Unit = {
+    val source =
+"""
+class A {
+  def longMethodWithOverIndentedParams(
+        paramDoubleIndent: Boolean,
+        isAlsoOk: Boolean): Unit = {
+  }
+}
+"""
+
+    assertErrors(List(lineError(4)), source)
+    assertErrors(List(lineError(4)), source, Map("methodParamIndentSize" -> "4"))
   }
 }
