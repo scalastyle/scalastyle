@@ -49,6 +49,12 @@ class B(
       "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
       "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
     )
+
+  def longMethodWithDoubleIndentParams(
+      paramDoubleIndent: Boolean,
+      isAlsoOk: Boolean): Unit = {
+    "ab"
+  }
 }
 """
   @Test def testNoErrorsDefaultTabSize(): Unit = {

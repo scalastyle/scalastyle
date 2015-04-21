@@ -73,6 +73,8 @@ class IndentationChecker extends FileChecker {
 
   private def startsParamList(line: NormalizedLine) = line.body.matches(""".*class.*\([^\)]*""")
 
+  private def startsMethodDef(line: NormalizedLine) = line.body.matches(""".*def.*\([^\)]*""")
+
   // in multiline comments the last leading space is not part of the indent
   private def isTabAlligned(line: NormalizedLine): Boolean =
     (line.indentDepth % line.tabSize) == (if (multiLineComment(line)) 1 else 0)
@@ -84,7 +86,7 @@ class IndentationChecker extends FileChecker {
     for { line <- lines if !isTabAlligned(line) } yield line.mkError()
 
   private def verifySingleIndent(lines: Seq[NormalizedLine]) =
-    for { Seq(l1, l2) <- lines.sliding(2) if isSingleIndent(l2, l1) && !startsParamList(l1) } yield l2.mkError()
+    for { Seq(l1, l2) <- lines.sliding(2) if isSingleIndent(l2, l1) && !startsParamList(l1) && !startsMethodDef(l1) } yield l2.mkError()
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val tabSize = getInt("tabSize", DefaultTabSize)
