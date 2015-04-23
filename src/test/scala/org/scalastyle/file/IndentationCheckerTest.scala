@@ -172,4 +172,21 @@ class A {
     assertErrors(List(lineError(4)), source)
     assertErrors(List(lineError(4)), source, Map("methodParamIndentSize" -> "4"))
   }
+
+  /**
+   * Check that we don't accidentally think that val defintions are method defintions just because
+   * it includes the word def, and complain about subsequent method argument indentation
+   */
+  @Test def testValNotConsideredMethod(): Unit = {
+    val source =
+"""
+class A {
+  val defSomething = Map(
+    "ehllo" -> "world"
+  )
+}
+"""
+
+    assertErrors(List(), source, Map("methodParamIndentSize" -> "4"))
+  }
 }

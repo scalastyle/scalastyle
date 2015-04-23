@@ -71,9 +71,9 @@ class IndentationChecker extends FileChecker {
 
   private def multiLineComment(line: NormalizedLine) = line.body.startsWith("*")
 
-  private def startsParamList(line: NormalizedLine) = line.body.matches(""".*class.*\([^\)]*""")
+  private def startsParamList(line: NormalizedLine) = line.body.matches(""".*class .*\([^\)]*""")
 
-  private def startsMethodDef(line: NormalizedLine) = line.body.matches(""".*def.*\([^\)]*""")
+  private def startsMethodDef(line: NormalizedLine) = line.body.matches(""".*def .*\([^\)]*""")
 
   // in multiline comments the last leading space is not part of the indent
   private def isTabAlligned(line: NormalizedLine): Boolean =
