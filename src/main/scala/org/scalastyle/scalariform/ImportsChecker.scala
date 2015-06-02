@@ -312,7 +312,7 @@ class ImportOrderChecker extends ScalariformChecker {
     if (lastImportInGroup != null) {
       val start = lastImport.lastToken.offset + lastImport.lastToken.length
       if (countNewLines(start, offset) != 1) {
-        return Some(newError(offset, "no_empty_line"))
+        return Some(newError(offset, "noEmptyLine"))
       }
     }
     None

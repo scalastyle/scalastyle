@@ -189,6 +189,8 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
       |import java.util.Map
       |import javax.crypto.{Mac, Cipher}
       |import java.lang.{Long => JLong, Boolean => JBoolean}
+      |
+      |import java.security.Permission
       |import scala.io.Source
       |
       |
@@ -219,12 +221,13 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
         args = List("java.lang.", "javax.crypto.")),
       columnError(6, 17, errorKey = errorKey("wrongOrderInSelector"),
         args = List("Boolean", "Long")),
-      columnError(7, 0, errorKey = errorKey("missingEmptyLine"), args = List("java", "scala")),
-      columnError(11, 0, errorKey = errorKey("wrongOrderInGroup"),
+      columnError(8, 0, errorKey = errorKey("noEmptyLine")),
+      columnError(9, 0, errorKey = errorKey("missingEmptyLine"), args = List("java", "scala")),
+      columnError(13, 0, errorKey = errorKey("wrongOrderInGroup"),
         args = List("my.org.project1.MyClass", "org.apache.Foo")),
-      columnError(15, 0, errorKey = errorKey("tooManyEmptyLines"),
+      columnError(17, 0, errorKey = errorKey("tooManyEmptyLines"),
         args = List("2", "others", "project2")),
-      columnError(16, 0, errorKey = errorKey("wrongGroup"),
+      columnError(18, 0, errorKey = errorKey("wrongGroup"),
         args = List("javax.swing.JTree", "java", "project2"))
       )
 
