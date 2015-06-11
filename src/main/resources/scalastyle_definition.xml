@@ -156,4 +156,6 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.XmlLiteralChecker" id="xml.literal" defaultLevel="warning"/>
+
+    <checker class="org.scalastyle.scalariform.PatternMatchAlignChecker" id="pattern.match.align" defaultLevel="warning"/>
 </scalastyle-definition>
