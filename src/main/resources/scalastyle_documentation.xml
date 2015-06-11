@@ -871,4 +871,16 @@ To bring consistency with how comments should be formatted, leave a space right 
  ]]>
  </example-configuration>
  </check>
+
+    <check id="pattern.match.align">
+        <justification>
+            Correct formatting can help readability.
+        </justification>
+        <example-configuration>
+            <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.PatternMatchAlignChecker enabled="true">
+    </check>
+ ]]>
+        </example-configuration>
+    </check>
 </scalastyle-documentation>
