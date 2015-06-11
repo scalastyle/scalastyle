@@ -131,10 +131,10 @@ The doubleLineAllowed property allows if constructions of the type:
 
 Note: If you intend to enable only if expressions in the format below, disable the IfBraceChecker altogether.
 
-    if (bool_expression) 
+    if (bool_expression)
       expression1
-    else 
-      expression2 
+    else
+      expression2
  </extra-description>
  <example-configuration>
  <![CDATA[
@@ -889,5 +889,16 @@ To bring consistency with how comments should be formatted, leave a space right 
     </check>
  ]]>
  </example-configuration>
+ </check>
+
+ <check id="pattern.match.align">
+  <justification>
+    Correct formatting can help readability.
+  </justification>
+  <example-configuration>
+  <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.PatternMatchAlignChecker enabled="true"/>
+  ]]>
+  </example-configuration>
  </check>
 </scalastyle-documentation>

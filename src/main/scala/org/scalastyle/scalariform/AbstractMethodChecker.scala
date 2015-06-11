@@ -40,6 +40,12 @@ object VisitorHelper {
     if (matches(t)) t :: l else l
   }
 
+  protected[scalariform] def getAllRecursive[T <: AstNode](ast: Any)(implicit manifest: Manifest[T]): List[T] = {
+    def fn(t : T): List[T] = List[T](t) ++ t.immediateChildren.flatMap(child => getAllRecursive[T](child))
+
+    myVisit[T, T](manifest.runtimeClass.asInstanceOf[Class[T]], fn)(ast)
+  }
+
   protected[scalariform] def getAll[T <: AstNode](ast: Any)(implicit manifest: Manifest[T]): List[T] = {
     def fn(t : T): List[T] = List[T](t)
 
