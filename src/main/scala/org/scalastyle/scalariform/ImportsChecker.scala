@@ -271,12 +271,12 @@ class ImportOrderChecker extends ScalariformChecker {
     val names = Seq(first.contents.head.tokens.head.text) ++
       others.map( _._2.contents.head.tokens.head.text)
 
-    var last: String = null
-    for (name <- names) {
-      if (last != null && compareNames(last, name, false) > 0) {
-        errors += newError(selectors.firstToken.offset, "wrongOrderInSelector", name, last)
+    if (names.size > 1) {
+      names.sliding(2).foreach { case Seq(left, right) =>
+        if (compareNames(left, right, false) > 0) {
+          errors += newError(selectors.firstToken.offset, "wrongOrderInSelector", right, left)
+        }
       }
-      last = name
     }
 
     errors.toSeq
@@ -293,8 +293,8 @@ class ImportOrderChecker extends ScalariformChecker {
     if (lastGroup != nextGroup && lastImport != null) {
       val start = lastImport.lastToken.offset + lastImport.lastToken.length
       val separatorLines = countNewLines(start, nextGroupOffset) - 1
-        val last = groups(lastGroup)._1
-        val current = groups(nextGroup)._1
+      val last = groups(lastGroup)._1
+      val current = groups(nextGroup)._1
       if (separatorLines == 0) {
         return Some(newError(nextGroupOffset, "missingEmptyLine", last, current))
       } else if (maxBlankLines > 0 && separatorLines > maxBlankLines) {
