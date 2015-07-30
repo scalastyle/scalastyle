@@ -49,6 +49,10 @@ class B(
       "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
       "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
     )
+
+  def methodWithMultilineParams(
+    paramDoubleIndent: Boolean,
+    isAlsoOk: Boolean): Unit = {}
 }
 """
   @Test def testNoErrorsDefaultTabSize(): Unit = {
@@ -122,5 +126,67 @@ class A {
 }
 """
     assertErrors(List(lineError(5)), source)
+  }
+
+  @Test def testCorrectMethodParamIndent(): Unit = {
+    val source =
+"""
+class A {
+  def longMethodWithCorrectIndentParams(
+      paramDoubleIndent: Boolean,
+      isAlsoOk: Boolean): Unit = {
+  }
+}
+"""
+
+    assertErrors(List(lineError(4)), source)
+    assertErrors(List(), source, Map("methodParamIndentSize" -> "4"))
+  }
+
+  @Test def testMethodParamUnderIndent(): Unit = {
+    val source =
+"""
+class A {
+  def longMethodWithUnderIndentedParams(
+    paramDoubleIndent: Boolean,
+    isAlsoOk: Boolean): Unit = {
+  }
+}
+"""
+
+    assertErrors(List(), source)
+    assertErrors(List(lineError(4)), source, Map("methodParamIndentSize" -> "4"))
+  }
+
+  @Test def testMethodParamOverIndent(): Unit = {
+    val source =
+"""
+class A {
+  def longMethodWithOverIndentedParams(
+        paramDoubleIndent: Boolean,
+        isAlsoOk: Boolean): Unit = {
+  }
+}
+"""
+
+    assertErrors(List(lineError(4)), source)
+    assertErrors(List(lineError(4)), source, Map("methodParamIndentSize" -> "4"))
+  }
+
+  /**
+   * Check that we don't accidentally think that val defintions are method defintions just because
+   * it includes the word def, and complain about subsequent method argument indentation
+   */
+  @Test def testValNotConsideredMethod(): Unit = {
+    val source =
+"""
+class A {
+  val defSomething = Map(
+    "ehllo" -> "world"
+  )
+}
+"""
+
+    assertErrors(List(), source, Map("methodParamIndentSize" -> "4"))
   }
 }
