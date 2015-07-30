@@ -521,7 +521,7 @@ To bring consistency with how comments should be formatted, leave a space right 
     <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
   <parameters>
    <parameter name="regex">false</parameter>
-   <parameter name="header"><![CDATA[// Copyright (C) 2011-2012 the original author or authors.]]]]><![CDATA[></parameter>
+   <parameter name="header"><![CDATA[// Copyright \(C\) 2011-2012 the original author or authors.]]]]><![CDATA[></parameter>
   </parameters>
  </check>
  ]]>
@@ -531,7 +531,7 @@ To bring consistency with how comments should be formatted, leave a space right 
     <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
   <parameters>
    <parameter name="regex">true</parameter>
-   <parameter name="header"><![CDATA[// Copyright (C) (?:\d{4}-)?\d{4} the original author or authors.]]]]><![CDATA[></parameter>
+   <parameter name="header"><![CDATA[// Copyright \(C\) (?:\d{4}-)?\d{4} the original author or authors.]]]]><![CDATA[></parameter>
   </parameters>
  </check>
  ]]>
@@ -901,7 +901,7 @@ To bring consistency with how comments should be formatted, leave a space right 
   </justification>
   <example-configuration>
   <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.PatternMatchAlignChecker enabled="true"/>
+    <check level="warning" class="org.scalastyle.scalariform.PatternMatchAlignChecker" enabled="true"/>
   ]]>
   </example-configuration>
  </check>
