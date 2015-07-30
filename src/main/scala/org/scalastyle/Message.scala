@@ -71,8 +71,8 @@ case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Option[Class[_ <: 
                                           stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
 
 sealed abstract class ScalastyleError
-case class PositionError(position: Int, args: List[String] = List[String]()) extends ScalastyleError
-case class FileError(args: List[String] = List[String]()) extends ScalastyleError
-case class LineError(line: Int, args: List[String] = List[String]()) extends ScalastyleError
-case class ColumnError(line: Int, column: Int, args: List[String] = List[String]()) extends ScalastyleError
+case class PositionError(position: Int, args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
+case class FileError(args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
+case class LineError(line: Int, args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
+case class ColumnError(line: Int, column: Int, args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
 

@@ -177,3 +177,66 @@ object Barbar {
     assertErrors(List(), source)
   }
 }
+
+class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "import.ordering"
+  val classUnderTest = classOf[ImportOrderChecker]
+
+  @Test def testImportGrouping(): Unit = {
+    val source = """
+      |package foobar
+      |
+      |import java.util.Map
+      |import javax.crypto.{Mac, Cipher}
+      |import java.lang.{Long => JLong, Boolean => JBoolean}
+      |import java.lang._
+      |
+      |import java.security.Permission
+      |import scala.io.Source
+      |
+      |
+      |import org.apache.Foo
+      |import my.org.project1.MyClass
+      |
+      |
+      |
+      |import my.org.project2.OtherClass
+      |import javax.swing.JTree
+      |
+      |object Foobar {
+      |}
+      """.stripMargin;
+
+    val params = Map(
+      "groups" -> "java,scala,others,project2",
+      "group.java" -> "javax?\\..+",
+      "group.scala" -> "scala\\..+",
+      "group.others" -> "(?!my\\.org\\.project2\\.).*",
+      "group.project2" -> "my\\.org\\.project2\\..*",
+      "maxBlankLines" -> "2"
+      )
+
+    val expected = List(
+      columnError(5, 20, errorKey = errorKey("wrongOrderInSelector"), args = List("Cipher", "Mac")),
+      columnError(6, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("java.lang.", "javax.crypto.")),
+      columnError(6, 17, errorKey = errorKey("wrongOrderInSelector"),
+        args = List("Boolean", "Long")),
+      columnError(7, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("java.lang._", "java.lang.")),
+      columnError(9, 0, errorKey = errorKey("noEmptyLine")),
+      columnError(10, 0, errorKey = errorKey("missingEmptyLine"), args = List("java", "scala")),
+      columnError(14, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("my.org.project1.MyClass", "org.apache.Foo")),
+      columnError(18, 0, errorKey = errorKey("tooManyEmptyLines"),
+        args = List("2", "others", "project2")),
+      columnError(19, 0, errorKey = errorKey("wrongGroup"),
+        args = List("javax.swing.JTree", "java", "project2"))
+      )
+
+    assertErrors(expected, source, params = params)
+  }
+
+  private def errorKey(subkey: String): Option[String] = Some(key + "." + subkey)
+
+}

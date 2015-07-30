@@ -213,9 +213,9 @@ trait Checker[A] {
 
   protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, level: Level, lines: Lines): Message[T] = {
     val p2 = p match {
-      case PositionError(position, args) => {
+      case PositionError(position, args, errorKey) => {
         lines.toLineColumn(position) match {
-          case Some(LineColumn(line, column)) => ColumnError(line, column, args)
+          case Some(LineColumn(line, column)) => ColumnError(line, column, args, errorKey)
           case None => FileError
         }
       }
@@ -225,10 +225,10 @@ trait Checker[A] {
     val sErrorKey = customErrorKey.getOrElse(errorKey)
 
     p2 match {
-      case PositionError(position, args) => StyleError(file, this.getClass(), sErrorKey, level, args, customMessage = customMessage)
-      case FileError(args) => StyleError(file, this.getClass(), sErrorKey, level, args, None, None, customMessage)
-      case LineError(line, args) => StyleError(file, this.getClass(), sErrorKey, level, args, Some(line), None, customMessage)
-      case ColumnError(line, column, args) => StyleError(file, this.getClass(), sErrorKey, level, args, Some(line), Some(column), customMessage)
+      case PositionError(position, args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, customMessage = customMessage)
+      case FileError(args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, None, None, customMessage)
+      case LineError(line, args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, Some(line), None, customMessage)
+      case ColumnError(line, column, args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, Some(line), Some(column), customMessage)
     }
   }
 

@@ -157,4 +157,5 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.XmlLiteralChecker" id="xml.literal" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.ImportOrderChecker" id="import.ordering" defaultLevel="warning" />
 </scalastyle-definition>

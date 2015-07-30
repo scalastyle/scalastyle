@@ -872,4 +872,22 @@ To bring consistency with how comments should be formatted, leave a space right 
  ]]>
  </example-configuration>
  </check>
+
+ <check id="import.ordering">
+ <justification>
+  Consistent import ordering improves code readability and reduces unrelated changes in patches.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ImportOrderChecker" enabled="true">
+      <parameters>
+        <parameter name="groups">java,scala,others</parameter>
+        <parameter name="group.java">javax?\..+</parameter>
+        <parameter name="group.scala">scala\..+</parameter>
+        <parameter name="group.others">.+</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
 </scalastyle-documentation>
