@@ -16,8 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import scala.util.matching.Regex
-
 import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.LineError
@@ -25,8 +23,9 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.lexer.HiddenTokens
-import scalariform.lexer.Token
+import scalariform.lexer.Tokens.CLASS
+
+import scalariform.lexer.{TokenType, HiddenTokens, Token}
 import scalariform.parser.AccessModifier
 import scalariform.parser.FullDefOrDcl
 import scalariform.parser.FunDefOrDcl
@@ -51,13 +50,34 @@ import scalariform.parser.TypeParamClause
 class ScalaDocChecker extends CombinedChecker {
   protected val errorKey: String = "scaladoc"
 
+  val DefaultIgnoreRegex = "^$"
+
   val skipPrivate = true
   val skipQualifiedPrivate = false
   val skipProtected = false
   val skipQualifiedProtected = false
 
   override def verify(ast: CombinedAst): List[ScalastyleError] = {
-    localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren(0))
+    val tokens = ast.compilationUnit.tokens
+    val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex)
+
+    def trimToTokenOfType(list: List[Token], tokenType: TokenType): List[Token] = {
+      if (list.isEmpty) {
+        list
+      } else {
+        list.head match {
+          case Token(`tokenType`, _, _, _) => list
+          case _ => trimToTokenOfType(list.tail, tokenType)
+        }
+      }
+    }
+
+    val ts = trimToTokenOfType(tokens, CLASS)
+    val ignore = !ts.isEmpty && ts(1).text.matches(ignoreRegex)
+    ignore match {
+      case true => Nil
+      case false => localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren(0))
+    }
   }
 
   import ScalaDocChecker._ // scalastyle:ignore underscore.import import.grouping

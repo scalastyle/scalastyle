@@ -151,7 +151,11 @@
  <check class="org.scalastyle.scalariform.ProcedureDeclarationChecker" level="warning" enabled="true"></check>
  <check class="org.scalastyle.scalariform.ForBraceChecker" level="warning" enabled="true"></check>
  <check class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" level="warning" enabled="true"></check>
- <check class="org.scalastyle.scalariform.ScalaDocChecker" level="warning" enabled="false"></check>
+ <check class="org.scalastyle.scalariform.ScalaDocChecker" level="warning" enabled="false">
+  <parameters>
+   <parameter name="ignoreRegex"><![CDATA[^$]]></parameter>
+  </parameters>
+ </check>
  <check class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" level="warning" enabled="false"></check>
  <check class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" level="warning" enabled="false"></check>
  <check class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" level="warning" enabled="false"></check>

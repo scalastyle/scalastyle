@@ -808,7 +808,11 @@ To bring consistency with how comments should be formatted, leave a space right 
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.ScalaDocChecker" enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.ScalaDocChecker" enabled="true">
+      <parameters>
+        <parameter name="ignoreRegex">(.*Spec$)|(.*SpecIT$)</parameter>
+      </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>
