@@ -94,7 +94,7 @@ for {
 
   @Test def testNoErrorsSetTabSize(): Unit = {
     val source = cleanSource replaceAll("  ", "    ")
-    assertErrors(List(), source, Map("tabSize" -> "4"))
+    assertErrors(List(), source, Map("tabSize" -> "4", "classParamIndentSize" -> "8"))
   }
 
   @Test def testNoErrorsWithTabs(): Unit = {

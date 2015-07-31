@@ -67,11 +67,12 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
 
 class IndentationChecker extends FileChecker {
   val DefaultTabSize = 2
+  val DefaultClassParamTabSize = 4
   val errorKey = "indentation"
 
   private def multiLineComment(line: NormalizedLine) = line.body.startsWith("*")
 
-  private def startsParamList(line: NormalizedLine) = line.body.matches(""".*class .*\([^\)]*""")
+  private def startsParamList(line: NormalizedLine) = line.body.matches(""".*(class|object|trait) .*\([^\)]*""")
 
   private def startsMethodDef(line: NormalizedLine) = line.body.matches(""".*def .*\([^\)]*""")
 
@@ -97,6 +98,21 @@ class IndentationChecker extends FileChecker {
   }
 
   /**
+   * Verify parameter indentation in class/object/trait parameter lists
+   */
+  private def verifyClassIndent(lines: Seq[NormalizedLine], classParamIndentSize: Int) = {
+    def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
+      if (startsParamList(l1)) {
+        (l2.indentDepth - l1.indentDepth) != classParamIndentSize
+      } else {
+        false
+      }
+    }
+
+    for { Seq(l1, l2) <- lines.sliding(2) if isInvalid(l1, l2) } yield l2.mkError()
+  }
+
+  /**
    * Verify parameter indentation in method parameter lists
    */
   private def verifyMethodIndent(lines: Seq[NormalizedLine], methodParamIndentSize: Int) = {
@@ -113,14 +129,16 @@ class IndentationChecker extends FileChecker {
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val tabSize = getInt("tabSize", DefaultTabSize)
+    val classParamIndentSize = getInt("classParamIndentSize", DefaultClassParamTabSize)
     val methodParamIndentSize = getInt("methodParamIndentSize", tabSize)
 
     val normalizedLines = NormalizedLine.normalize(lines, tabSize) filterNot { _.isBlank }
 
     val tabErrors = verifyTabStop(normalizedLines)
     val indentErrors = verifySingleIndent(normalizedLines)
+    val classParamListErrors = verifyClassIndent(normalizedLines, classParamIndentSize)
     val methodParamListErrors = verifyMethodIndent(normalizedLines, methodParamIndentSize)
 
-    (tabErrors ++ indentErrors ++ methodParamListErrors).toList
+    (tabErrors ++ indentErrors ++ classParamListErrors ++ methodParamListErrors).toList
   }
 }
