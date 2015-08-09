@@ -25,16 +25,8 @@ import org.scalastyle.scalariform.VisitorHelper.visit
 
 import scalariform.lexer.Tokens.CLASS
 
-import scalariform.lexer.{TokenType, HiddenTokens, Token}
-import scalariform.parser.AccessModifier
-import scalariform.parser.FullDefOrDcl
-import scalariform.parser.FunDefOrDcl
-import scalariform.parser.ParamClauses
-import scalariform.parser.PatDefOrDcl
-import scalariform.parser.TmplDef
-import scalariform.parser.Type
-import scalariform.parser.TypeDefOrDcl
-import scalariform.parser.TypeParamClause
+import scalariform.lexer.{NoHiddenTokens, TokenType, HiddenTokens, Token}
+import scalariform.parser._
 
 /**
  * Checks that the ScalaDoc exists for all accessible members:
@@ -204,7 +196,7 @@ class ScalaDocChecker extends CombinedChecker {
       } yield comment
 
       // descend
-      visit(t, localVisit(skip, HiddenTokens(scalaDocs), lines))
+      visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), lines))
     case t: TmplDef      =>
       // trait Foo, trait Foo[A];
       // class Foo, class Foo[A](a: A);
@@ -220,7 +212,7 @@ class ScalaDocChecker extends CombinedChecker {
         }.getOrElse(List(LineError(line, List(Missing))))
 
       // and we descend, because we're interested in seeing members of the types
-      errors ++ visit(t, localVisit(skip, fallback, lines))
+      errors ++ visit(t, localVisit(skip, NoHiddenTokens, lines))
     case t: FunDefOrDcl  =>
       // def foo[A, B](a: Int): B = ...
       val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
@@ -257,6 +249,15 @@ class ScalaDocChecker extends CombinedChecker {
         getOrElse(List(LineError(line, List(Missing))))
       // we don't descend any further
       errors
+
+    case t: StatSeq =>
+      localVisit(skip, fallback, lines)(t.firstStatOpt) ++ (
+        for(statOpt <- t.otherStats)
+          yield localVisit(skip, statOpt._1.associatedWhitespaceAndComments, lines)(statOpt._2)
+        ).flatten
+
+    case Some(stat: Stat) =>
+      localVisit(skip, fallback, lines)(stat)
 
     case t: Any          =>
       // anything else, we descend (unless we stopped above)
