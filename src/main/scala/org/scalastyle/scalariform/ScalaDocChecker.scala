@@ -256,9 +256,6 @@ class ScalaDocChecker extends CombinedChecker {
           yield localVisit(skip, statOpt._1.associatedWhitespaceAndComments, lines)(statOpt._2)
         ).flatten
 
-    case Some(stat: Stat) =>
-      localVisit(skip, fallback, lines)(stat)
-
     case t: Any          =>
       // anything else, we descend (unless we stopped above)
       visit(t, localVisit(skip, fallback, lines))
