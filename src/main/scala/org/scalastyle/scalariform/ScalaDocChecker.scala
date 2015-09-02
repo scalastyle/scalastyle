@@ -122,8 +122,8 @@ class ScalaDocChecker extends CombinedChecker {
     val paramNames = paramClausesOpt.map(pc => params(pc.tokens)).getOrElse(Nil)
 
     val missingScalaDocParams = paramNames.filterNot(name => scalaDoc.params.exists(_.name == name))
-    val extraScalaDocParams = scalaDoc.params.filterNot(param => paramNames.exists(_ == param.name))
-    val validScalaDocParams = scalaDoc.params.filter(param => paramNames.exists(_ == param.name))
+    val extraScalaDocParams = scalaDoc.params.filterNot(param => paramNames.contains(param.name))
+    val validScalaDocParams = scalaDoc.params.filter(param => paramNames.contains(param.name))
 
     missingScalaDocParams.map(missing => LineError(line, List(missingParam(missing)))) ++
     extraScalaDocParams.map(extra => LineError(line, List(extraParam(extra.name)))) ++
@@ -152,7 +152,7 @@ class ScalaDocChecker extends CombinedChecker {
       // bad param sizes
       List(LineError(line, List(MalformedTypeParams)))
     } else {
-      if (!scalaDoc.typeParams.forall(tp => tparamNames.exists(tp.name ==))) List(LineError(line, List(MalformedTypeParams))) else Nil
+      if (!scalaDoc.typeParams.forall(tp => tparamNames.contains(tp.name))) List(LineError(line, List(MalformedTypeParams))) else Nil
     }
   }
 
