@@ -32,7 +32,8 @@ case class MainConfig(error: Boolean,
     xmlFile: Option[String] = None,
     xmlEncoding: Option[String] = None,
     inputEncoding: Option[String] = None,
-    externalJar: Option[String] = None)
+    externalJar: Option[String] = None,
+    excludedFiles: Option[String] = None)
 
 object Main {
   // scalastyle:off regex
@@ -47,6 +48,8 @@ object Main {
     println("     --inputEncoding STRING      encoding for the source files")
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
+    println(" -x, --excludedFiles STRING      regex matches file paths to exclude")
+
     System.exit(1)
   }
   // scalastyle:on regex
@@ -67,6 +70,7 @@ object Main {
           case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
+          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = Some(args(i + 1)))
           case _ => config = config.copy(error = true)
         }
         i = i + 2
@@ -105,7 +109,7 @@ object Main {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
     val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI().toURL()))))
-    val messages = new ScalastyleChecker(cl).checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq))
+    val messages = new ScalastyleChecker(cl).checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles))
 
     // scalastyle:off regex
     val config = ConfigFactory.load(cl.getOrElse(this.getClass().getClassLoader()))

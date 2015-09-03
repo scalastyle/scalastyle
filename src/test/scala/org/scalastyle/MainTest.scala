@@ -50,6 +50,12 @@ class MainTest extends AssertionsForJUnit {
     testParseArgs(Array("--xmlEncoding", "xe", "-c", "conf", "dir"), MainConfig(false, Some("conf"), List("dir"), false, false, false, None, Some("xe"), None))
     testParseArgs(Array("--inputEncoding", "ie", "-c", "conf", "dir"), MainConfig(false, Some("conf"), List("dir"), false, false, false, None, None, Some("ie")))
 
+    testParseArgs(Array("-e", "rules.jar", "-c", "conf", "dir"), MainConfig(false, Some("conf"), List("dir"), false, false, false, None, None, None, Some("rules.jar")))
+    testParseArgs(Array("--externalJar", "rules.jar", "-c", "conf", "dir"), MainConfig(false, Some("conf"), List("dir"), false, false, false, None, None, None, Some("rules.jar")))
+
+    testParseArgs(Array("-x", "foo/bar/*", "-c", "conf", "dir"), MainConfig(false, Some("conf"), List("dir"), excludedFiles = Some("foo/bar/*")))
+    testParseArgs(Array("--excludedFiles", "foo/bar/*", "-c", "conf", "dir"), MainConfig(false, Some("conf"), List("dir"), excludedFiles = Some("foo/bar/*")))
+
     testParseArgsError(Array("-c", "conf"))
     testParseArgsError(Array("dir"))
   }

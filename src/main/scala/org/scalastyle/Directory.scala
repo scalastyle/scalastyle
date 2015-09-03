@@ -32,18 +32,32 @@ object Directory {
     def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
   }
 
-  def getFilesAsJava(encoding: Option[String], files: java.util.List[File]): java.util.List[FileSpec] = {
+  def getFilesAsJava(encoding: Option[String], files: java.util.List[File], excludedFiles: Option[String] = None): java.util.List[FileSpec] = {
+    val exclusionPatterns = excludedFiles.map(createFileExclusionFilter(_))
     seqAsJavaList(privateGetFiles(encoding, collectionAsScalaIterable(files)))
   }
 
-  def getFiles(encoding: Option[String], files: Iterable[File]): List[FileSpec] = {
-    privateGetFiles(encoding, files);
+  def getFiles(encoding: Option[String], files: Iterable[File], excludedFiles: Option[String] = None): List[FileSpec] = {
+    val excludeFilter = excludedFiles.map(createFileExclusionFilter(_))
+    privateGetFiles(encoding, files, excludeFilter)
   }
 
-  private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File]): List[FileSpec] = {
+  private[this] def createFileExclusionFilter(excludedFiles: String): FileFilter = {
+    val exclusionPatterns = excludedFiles.split(";").map(_.r)
+    new FileFilter {
+      def accept(file: File): Boolean = {
+        val path = file.getAbsolutePath
+        exclusionPatterns.exists(_.findFirstMatchIn(path).isDefined)
+      }
+    }
+  }
+
+  private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File], excludeFilter: Option[FileFilter] = None): List[FileSpec] = {
     files.map(f => {
-      if (f.isDirectory) {
-        getFiles(encoding, f.listFiles)
+      if (excludeFilter.map(_.accept(f)).getOrElse(true)) {
+        List()
+      } else if (f.isDirectory) {
+        privateGetFiles(encoding, f.listFiles, excludeFilter)
       } else if (scalaFileFilter.accept(f)) {
         List(new DirectoryFileSpec(f.getAbsolutePath(), encoding, f.getAbsoluteFile()))
       } else {
@@ -51,6 +65,5 @@ object Directory {
       }
     }).flatten.toList
   }
-
 }
 
