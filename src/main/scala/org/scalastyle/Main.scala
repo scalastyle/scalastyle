@@ -48,7 +48,7 @@ object Main {
     println("     --inputEncoding STRING      encoding for the source files")
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
-    println(" -x, --excludedFiles STRING      regex matches file paths to exclude")
+    println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)")
 
     System.exit(1)
   }

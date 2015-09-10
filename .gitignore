@@ -2,7 +2,6 @@
 *.ipr
 *.iws
 target
-.DS_Store
 .idea
 .worksheet
 *.sc
