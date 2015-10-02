@@ -16,34 +16,61 @@
 
 package org.scalastyle.scalariform
 
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.Lines
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.scalariform.VisitorHelper.visit
+
+import scalariform.lexer.Token
 import scalariform.lexer.Tokens.CASE
 import scalariform.lexer.Tokens.DO
 import scalariform.lexer.Tokens.FOR
 import scalariform.lexer.Tokens.IF
 import scalariform.lexer.Tokens.VARID
 import scalariform.lexer.Tokens.WHILE
-import scalariform.lexer.Token
-import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
-class CyclomaticComplexityChecker extends AbstractMethodChecker {
+class CyclomaticComplexityChecker extends CombinedChecker {
   val errorKey = "cyclomatic.complexity"
   val DefaultMaximum = 10
   private lazy val maximum = getInt("maximum", DefaultMaximum)
   private val tokens = Set(IF, CASE, WHILE, DO, FOR)
 
-  override def params(t: BaseClazz[AstNode]): List[String] = List("" + cyclomaticComplexity(t), "" + maximum)
+  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
 
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    cyclomaticComplexity(t) > maximum
+  def verify(ast: CombinedAst): List[ScalastyleError] = {
+    val it = for {
+      t <- localvisit(ast.compilationUnit.immediateChildren.head)
+      f <- traverse(t)
+      value = matches(f, ast.lines, maximum)
+      if value > maximum
+    } yield {
+      PositionError(t.position.get, List("" + value, "" + maximum))
+    }
+
+    it.toList
   }
+
+  private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
 
   private def isLogicalOrAnd(t: Token) = t.tokenType == VARID && (t.text == "&&" || t.text == "||")
 
-  def cyclomaticComplexity(t: BaseClazz[AstNode]): Int = {
-    t match {
-      case f: FunDefOrDclClazz => f.t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t)) + 1
-      case _ => 0
-    }
+  // compute the cyclomatic complexity without the additional 1
+  private def cyclomaticComplexity(f: FunDefOrDclClazz): Int = {
+      f.t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t))
+  }
+
+  private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int) = {
+    val root = cyclomaticComplexity(t)
+    val subs = t.subs.map(cyclomaticComplexity).sum
+    root - subs + 1
+  }
+
+  private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
+    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), visit(t, localvisit)))
+    case t: Any => visit(t, localvisit)
   }
 }
