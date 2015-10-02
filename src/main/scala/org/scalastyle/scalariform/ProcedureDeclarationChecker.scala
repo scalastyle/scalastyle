@@ -29,13 +29,13 @@ class ProcedureDeclarationChecker extends AbstractSingleMethodChecker[Unit] {
   protected def matchParameters() = Unit
 
   protected def matches(t: FullDefOrDclVisit, p: Unit) = {
-    val x = t.funDefOrDcl.funBodyOpt match {
+    (t.funDefOrDcl.nameToken.text != "this") && (t.funDefOrDcl.funBodyOpt match {
       // match if we don't have a body, and there is no return type
-      case None => !t.funDefOrDcl.returnTypeOpt.isDefined
+      case None => t.funDefOrDcl.returnTypeOpt.isEmpty
       // match if we do have a body, and the first character is not equals
-      case Some(x) => (x.tokens.size > 0 && x.tokens(0).tokenType != Tokens.EQUALS)
+      case Some(x) => x.tokens.nonEmpty && x.tokens.head.tokenType != Tokens.EQUALS
       case _ => false
-    }
-    x
+    })
   }
 }
+
