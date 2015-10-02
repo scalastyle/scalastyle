@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -48,7 +42,7 @@ class foobar {
   val s = " // scalastyle:off "
   class g { }
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(14, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -74,8 +68,28 @@ class foobar {
   class barbar4 { } // scalastyle:ignore magic.number
   // scalastyle:off
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(18, 8, List("^[A-Z][A-Za-z]*$"))), source)
+  }
+}
+
+class CommentFilterMagicNumberTest extends AssertionsForJUnit with CheckerTest {
+  val key = "magic.number"
+  val classUnderTest = classOf[MagicNumberChecker]
+
+  @Test def testMagicNumberFilter(): Unit = {
+    val source =
+      """
+package foobar
+
+object Foo {
+  f(77) // scalastyle:ignore
+  f(88)
+  f(99)
+}
+"""
+
+    assertErrors(List(columnError(6, 4, List()), columnError(7, 4, List())), source)
   }
 }

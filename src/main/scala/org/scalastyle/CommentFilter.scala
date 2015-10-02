@@ -16,10 +16,9 @@
 
 package org.scalastyle
 
-import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Comment
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.collection.mutable.HashMap
 
 case class CommentFilter(id: Option[String], start: Option[LineColumn], end: Option[LineColumn])
 case class CommentInter(id: Option[String], position: Int, off: Boolean)
@@ -41,7 +40,7 @@ object CommentFilter {
 
   private[this] def checkEmpty(s:String) = if (s != "") Some(s) else None
   private[this] def splitIds(s: String, notEmpty: Boolean = false):List[String] = s.trim.split("\\s+").toList match {
-    case Nil if(notEmpty) => List("")
+    case Nil if notEmpty => List("")
     case ls: List[String] => ls
   }
 
@@ -65,8 +64,8 @@ object CommentFilter {
                           )
 
     val list = ListBuffer[CommentFilter]()
-    var inMap = new HashMap[Option[String], Boolean]()
-    var start = new HashMap[Option[String], Option[LineColumn]]()
+    val inMap = new mutable.HashMap[Option[String], Boolean]()
+    val start = new mutable.HashMap[Option[String], Option[LineColumn]]()
 
     it.foreach(ci => {
       (inMap.getOrElse(ci.id, false), ci.off) match {
@@ -93,17 +92,26 @@ object CommentFilter {
     list.toList
   }
 
-  def filterApplies[T <: FileSpec](m: Message[T], commentFilters: List[CommentFilter]): Boolean = {
+  def filterApplies[T <: FileSpec](m: Message[T], cfs: List[CommentFilter]): Boolean = {
     m match {
-      case m: StyleError[_] => {
-        val filters = commentFilters.filter(cf => !cf.id.isDefined || cf.id.get == m.key)
-        filters.find(cf => gte(m.lineNumber, cf.start) && lte(m.lineNumber, cf.end)).isEmpty
-      }
+      case se: StyleError[_] => !cfs.filter(idMatches(se.key)).exists(filterApplies(se))
       case _ => true
     }
   }
 
-  protected def gte(line1: Option[Int], lineColumn: Option[LineColumn]) = line1.isEmpty || lineColumn.isEmpty || line1.get >= lineColumn.get.line
+  private def idMatches(key: String)(cf: CommentFilter) = cf.id.isEmpty || cf.id.get == key
 
-  protected def lte(line1: Option[Int], lineColumn: Option[LineColumn]) = line1.isEmpty || lineColumn.isEmpty || line1.get <= lineColumn.get.line
+  private def filterApplies[T <: FileSpec](se: StyleError[_])(cf: CommentFilter): Boolean = {
+    if (se.lineNumber.isEmpty) {
+      true
+    } else {
+      val m = se.lineNumber.get
+      (cf.start, cf.end) match {
+        case (Some(s), Some(e)) => m >= s.line && m < e.line
+        case (Some(s), None) => m >= s.line
+        case (None, Some(e)) => false // we just have an :off, filter doesn't apply
+        case (None, None) => false // this isn't possible, say it doesn't apply
+      }
+    }
+  }
 }
