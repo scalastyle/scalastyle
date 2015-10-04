@@ -109,7 +109,7 @@ object Main {
 
     // scalastyle:off regex
     val config = ConfigFactory.load(cl.getOrElse(this.getClass().getClassLoader()))
-    val outputResult = new TextOutput(config).output(messages)
+    val outputResult = new TextOutput(config, mc.verbose, mc.quiet).output(messages)
     mc.xmlFile match {
       case Some(x) => {
         val encoding = mc.xmlEncoding.getOrElse(codec.charSet).toString
