@@ -53,17 +53,20 @@ object Directory {
   }
 
   private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File], excludeFilter: Option[FileFilter] = None): List[FileSpec] = {
-    files.map(f => {
-      if (excludeFilter.map(_.accept(f)).getOrElse(true)) {
-        List()
+    files.flatMap(f => {
+      if (excludeFilter.exists(_.accept(f))) {
+        Nil
       } else if (f.isDirectory) {
         privateGetFiles(encoding, f.listFiles, excludeFilter)
       } else if (scalaFileFilter.accept(f)) {
-        List(new DirectoryFileSpec(f.getAbsolutePath(), encoding, f.getAbsoluteFile()))
+        List(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
       } else {
-        List()
+        Nil
       }
-    }).flatten.toList
+    }).toList
   }
 }
+
+
+
 
