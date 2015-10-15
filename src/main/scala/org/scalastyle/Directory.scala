@@ -24,21 +24,20 @@ import scala.collection.JavaConversions.collectionAsScalaIterable
 class Directory
 
 class DirectoryFileSpec(name: String, encoding: Option[String], val file: java.io.File) extends RealFileSpec(name, encoding) {
-  override def toString: String = file.getAbsolutePath()
+  override def toString: String = file.getAbsolutePath
 }
 
 object Directory {
   val scalaFileFilter = new FileFilter() {
-    def accept(file: File): Boolean = file.getAbsolutePath().endsWith(".scala")
+    def accept(file: File): Boolean = file.getAbsolutePath.endsWith(".scala")
   }
 
-  def getFilesAsJava(encoding: Option[String], files: java.util.List[File], excludedFiles: Option[String] = None): java.util.List[FileSpec] = {
-    val exclusionPatterns = excludedFiles.map(createFileExclusionFilter(_))
+  def getFilesAsJava(encoding: Option[String], files: java.util.List[File]): java.util.List[FileSpec] = {
     seqAsJavaList(privateGetFiles(encoding, collectionAsScalaIterable(files)))
   }
 
   def getFiles(encoding: Option[String], files: Iterable[File], excludedFiles: Option[String] = None): List[FileSpec] = {
-    val excludeFilter = excludedFiles.map(createFileExclusionFilter(_))
+    val excludeFilter = excludedFiles.map(createFileExclusionFilter)
     privateGetFiles(encoding, files, excludeFilter)
   }
 
