@@ -171,14 +171,9 @@
    <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
   </parameters>
  </check>
- <check class="org.scalastyle.file.TodoCommentChecker" level="warning" enabled="true">
+ <check class="org.scalastyle.scalariform.TodoCommentChecker" level="warning" enabled="true">
   <parameters>
-   <parameter name="regex"><![CDATA[(?i)(//|/\*|/\*\*|\*)\s?todo(:?)\s+]]>]</parameter>
-  </parameters>
- </check>
- <check class="org.scalastyle.file.FixmeCommentChecker" level="warning" enabled="true">
-  <parameters>
-   <parameter name="regex"><![CDATA[(?i)(//|/\*|/\*\*|\*)\s?fixme(:?)\s+]]>]</parameter>
+   <parameter name="words"><![CDATA[TODO|FIXME]]></parameter>
   </parameters>
  </check>
 </scalastyle>
