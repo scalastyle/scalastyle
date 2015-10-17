@@ -33,7 +33,7 @@ case class MainConfig(error: Boolean,
     xmlEncoding: Option[String] = None,
     inputEncoding: Option[String] = None,
     externalJar: Option[String] = None,
-    excludedFiles: Option[String] = None)
+    excludedFiles: Seq[String] = Nil)
 
 object Main {
   // scalastyle:off regex
@@ -70,7 +70,7 @@ object Main {
           case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
-          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = Some(args(i + 1)))
+          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
           case _ => config = config.copy(error = true)
         }
         i = i + 2

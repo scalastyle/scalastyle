@@ -36,36 +36,36 @@ object Directory {
     seqAsJavaList(privateGetFiles(encoding, collectionAsScalaIterable(files)))
   }
 
-  def getFiles(encoding: Option[String], files: Iterable[File], excludedFiles: Option[String] = None): List[FileSpec] = {
-    val excludeFilter = excludedFiles.map(createFileExclusionFilter)
-    privateGetFiles(encoding, files, excludeFilter)
+  def getFiles(encoding: Option[String], files: Iterable[File], excludedFiles: Seq[String] = Nil): List[FileSpec] = {
+    val excludeFilter = createFileExclusionFilter(excludedFiles)
+    privateGetFiles(encoding, files, excludeFilter).toList
   }
 
-  private[this] def createFileExclusionFilter(excludedFiles: String): FileFilter = {
-    val exclusionPatterns = excludedFiles.split(";").map(_.r)
-    new FileFilter {
-      def accept(file: File): Boolean = {
-        val path = file.getAbsolutePath
-        exclusionPatterns.exists(_.findFirstMatchIn(path).isDefined)
-      }
+  private[this] def createFileExclusionFilter(excludedFiles: Seq[String]): Option[FileFilter] = {
+    if (excludedFiles.isEmpty) {
+      None
+    } else {
+      val exclusionPatterns = excludedFiles.map(_.r)
+      Some(new FileFilter {
+        def accept(file: File): Boolean = {
+          val path = file.getAbsolutePath
+          exclusionPatterns.exists(_.findFirstMatchIn(path).isDefined)
+        }
+      })
     }
   }
 
-  private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File], excludeFilter: Option[FileFilter] = None): List[FileSpec] = {
+  private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File], excludeFilter: Option[FileFilter] = None): Seq[FileSpec] = {
     files.flatMap(f => {
       if (excludeFilter.exists(_.accept(f))) {
         Nil
       } else if (f.isDirectory) {
         privateGetFiles(encoding, f.listFiles, excludeFilter)
       } else if (scalaFileFilter.accept(f)) {
-        List(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
+        Seq(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
       } else {
         Nil
       }
-    }).toList
+    }).toSeq
   }
 }
-
-
-
-

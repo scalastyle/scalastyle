@@ -22,36 +22,42 @@ import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
-class ExcludeFilesTest extends AssertionsForJUnit{
-  val XFilePath = new File("src/test/resources/testDir/dirA/X.scala").getAbsolutePath
-  val YFilePath = new File("src/test/resources/testDir/dirB/Y.scala").getAbsolutePath
-  val ZFilePath = new File("src/test/resources/testDir/dirB/Z.scala").getAbsolutePath
-  val DirA = new File("src/test/resources/testDir/dirA")
-  val DirB = new File("src/test/resources/testDir/dirB")
-  val TestDir = new File("src/test/resources/testDir")
+class ExcludeFilesTest extends AssertionsForJUnit {
+  private val base = "src/test/resources/testDir/"
+  private def toFile(s: String) = new File(base + s)
 
   @Test
   def specifyExcludedDirectory(): Unit = {
-    val files = Directory.getFiles(None, List(TestDir), Option(""".*dirA.*"""))
-    assertEquals(files.map(_.name).toSet, Set(YFilePath, ZFilePath))
+    assertFiles(List("dirB/Y.scala", "dirB/Z.scala"), List(""), List(""".*dirA.*"""))
   }
 
   @Test
   def specifyExcludedFile(): Unit = {
-    val files = Directory.getFiles(None, List(TestDir), Option(""".*Z\.scala"""))
-    assertEquals(files.map(_.name).toSet, Set(XFilePath, YFilePath))
+    assertFiles(List("dirA/X.scala", "dirB/Y.scala"), List(""), List(""".*Z\.scala"""))
   }
 
   @Test
   def specifyExcludedFileWithMultipleSources(): Unit = {
-    val files = Directory.getFiles(None, List(DirA, DirB), Option(""".*Z\.scala"""))
-    assertEquals(files.map(_.name).toSet, Set(XFilePath, YFilePath))
+    assertFiles(List("dirA/X.scala", "dirB/Y.scala"), List("dirA", "dirB"), List(""".*Z\.scala"""))
   }
 
   @Test
   def specifyMultipleExclusionRules(): Unit = {
-    val files = Directory.getFiles(None, List(DirA, DirB), Option(""".*Z\.scala;.*X\.scala"""))
-    assertEquals(files.map(_.name).toSet, Set(YFilePath))
+    assertFiles(List("dirB/Y.scala"), List("dirA", "dirB"), List(""".*Z\.scala""", """.*X\.scala"""))
   }
 
+  @Test
+  def noExclusion(): Unit = {
+    assertFiles(List("dirA/X.scala", "dirB/Y.scala", "dirB/Z.scala"), List("dirA", "dirB"), Nil)
+  }
+
+  @Test
+  def noExclusion2(): Unit = {
+    assertFiles(List("dirA/X.scala", "dirB/Y.scala", "dirB/Z.scala"), List(""), Nil)
+  }
+
+  private def assertFiles(expected: List[String], files: List[String], exclude: List[String]): Unit = {
+    val list = Directory.getFiles(None, files.map(f => toFile(f)), exclude)
+    assertEquals(expected.map(f => toFile(f).getAbsolutePath).sorted, list.map(_.name).sorted)
+  }
 }
