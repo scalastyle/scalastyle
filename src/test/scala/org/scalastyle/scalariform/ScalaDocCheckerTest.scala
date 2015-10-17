@@ -313,4 +313,63 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
+  @Test def objectAfterPackage(): Unit = {
+    val source =
+      """
+        |package org.example.test
+        |
+        |/**
+        | * Doc
+        | */
+        |object X {
+        |
+        |}
+      """.stripMargin
+
+    assertErrors(Nil, source)
+  }
+
+  @Test def severalObjects(): Unit = {
+    val source =
+      """
+        |/**
+        | * Doc X
+        | */
+        |object X
+        |
+        |/**
+        | * Doc Y
+        | */
+        |object Y""".stripMargin
+
+    assertErrors(Nil, source)
+  }
+
+  @Test def secondObjectMissingDoc(): Unit = {
+    val source =
+      """
+        |/**
+        | * Doc X
+        | */
+        |object X
+        |
+        |object Y""".stripMargin
+
+    assertErrors(List(lineError(7, List(Missing))), source)
+  }
+
+  @Test def nestedObjectMissingDoc(): Unit = {
+    val source =
+      """
+        |/**
+        | * Doc X
+        | */
+        |object X {
+        |
+        |  object Y
+        |}""".stripMargin
+
+    assertErrors(List(lineError(7, List(Missing))), source)
+  }
+
 }
