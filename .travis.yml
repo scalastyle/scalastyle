@@ -8,3 +8,7 @@ jdk:
 notifications:
   email:
     - matthew@farwell.co.uk
+before_install:
+  - pip install --user codecov
+after_success:
+  - codecov

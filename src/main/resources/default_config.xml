@@ -123,4 +123,14 @@
    <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.file.TodoCommentChecker" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[(?i)(//|/\*|/\*\*|\*)\s?todo(:?)\s+]]></parameter>
+  </parameters>
+ </check>
+ <check level="warning" class="org.scalastyle.file.FixmeCommentChecker" enabled="true">
+  <parameters>
+   <parameter name="regex"><![CDATA[(?i)(//|/\*|/\*\*|\*)\s?fixme(:?)\s+]]></parameter>
+  </parameters>
+ </check>
 </scalastyle>

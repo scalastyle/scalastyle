@@ -163,4 +163,14 @@
     <checker class="org.scalastyle.scalariform.XmlLiteralChecker" id="xml.literal" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ImportOrderChecker" id="import.ordering" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.PatternMatchAlignChecker" id="pattern.match.align" defaultLevel="warning"/>
+    <checker class="org.scalastyle.file.TodoCommentChecker" id="todo.comment" defaultLevel="warning">
+        <parameters>
+            <parameter name="regex" type="string" default="(?i)(//|/\*|/\*\*|\*)\s?todo(:?)\s+" />
+        </parameters>
+    </checker>
+    <checker class="org.scalastyle.file.FixmeCommentChecker" id="fixme.comment" defaultLevel="warning">
+        <parameters>
+            <parameter name="regex" type="string" default="(?i)(//|/\*|/\*\*|\*)\s?fixme(:?)\s+" />
+        </parameters>
+    </checker>
 </scalastyle-definition>
