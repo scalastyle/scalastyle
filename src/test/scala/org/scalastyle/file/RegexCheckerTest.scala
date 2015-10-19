@@ -32,6 +32,8 @@ package foobar
 class foobar {
 
   def aMethod: String = {
+    println("should be caught")
+    // println("should not")
     ("SHOULD NOT BE HERE")
     "TEST STRING";
   }
@@ -47,7 +49,7 @@ class foobar {
 
   @Test
   def testNoSemiColon(): Unit = {
-    assertErrors(List(columnError(9, 17, List(";"))), source,
+    assertErrors(List(columnError(11, 17, List(";"))), source,
       Map("regex" -> ";"))
   }
 
@@ -59,7 +61,7 @@ class foobar {
 
   @Test
   def testCanMatchLastCharInFile(): Unit = {
-    assertErrors(List(columnError(12, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
+    assertErrors(List(columnError(14, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
   }
 
   @Test
@@ -75,7 +77,7 @@ class foobar {
 
   @Test
   def testMultipleMatchesReportMultipleErrors(): Unit = {
-    assertErrors(List(columnError(10, 2, List("}")), columnError(12, 0, List("}"))), source,
+    assertErrors(List(columnError(12, 2, List("}")), columnError(14, 0, List("}"))), source,
       Map("regex" -> "}"))
   }
 
@@ -86,6 +88,12 @@ class foobar {
 
   @Test
   def testSingleMatchWithBoundsCheck(): Unit = {
-    assertErrors(List(columnError(12, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
+    assertErrors(List(columnError(14, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
+  }
+
+  @Test
+  def testPerLine() = {
+    assertErrors(List(columnError(8, 0, List("^[^/]+println.*$"))), source,
+      Map("regex" -> "^[^/]+println.*$", "line" -> "true"))
   }
 }

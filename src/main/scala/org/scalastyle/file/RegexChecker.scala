@@ -30,22 +30,42 @@ class RegexChecker extends FileChecker {
   def verify(lines: Lines): List[ScalastyleError] = {
     val file = (for {line <- lines.lines} yield line.text).mkString("\n")
     val regExpStr = getString("regex", DefaultRegEx)
+    val lineByLine = getBoolean("line", false)
     val regExp = new Regex(regExpStr)
-    val allMatches = regExp.findAllIn(file)
     var errorList: List[ColumnError] = Nil
 
-    while (allMatches.hasNext) {
-      val location = allMatches.start
-      allMatches.next()
-      val matchedLine = findCorrespondingLine(location, file, lines)
+    if (lineByLine){
+      for ( (line, idx) <- lines.lines.zipWithIndex ){
+        val allMatches = regExp.findAllIn(line.text)
 
-      errorList = ColumnError(matchedLine + 1, findColumnPosition(location, lines, matchedLine), List(regExpStr)) :: errorList
+        while (allMatches.hasNext) {
+
+          allMatches.next()
+
+          val matchedLine = idx
+
+          errorList = ColumnError(matchedLine + 1, allMatches.start, List(regExpStr)) :: errorList
+        }
+
+      }
+    }else{
+
+      val allMatches = regExp.findAllIn(file)
+
+      while (allMatches.hasNext) {
+        val location = allMatches.start
+        allMatches.next()
+        val matchedLine = findCorrespondingLine(location, lines)
+
+        errorList = ColumnError(matchedLine + 1, findColumnPosition(location, lines, matchedLine), List(regExpStr)) :: errorList
+      }
+
     }
 
     errorList.reverse
   }
 
-  private[this] def findCorrespondingLine(location: Int, data: String, lines: Lines): Int = {
+  private[this] def findCorrespondingLine(location: Int, lines: Lines): Int = {
     var line = 0
     var found = false
 

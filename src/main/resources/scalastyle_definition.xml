@@ -64,6 +64,7 @@
     <checker class="org.scalastyle.file.RegexChecker" id="regex" defaultLevel="warning" >
         <parameters>
             <parameter name="regex" type="string" default="" />
+            <parameter name="line" type="boolean" default="false" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.NumberOfTypesChecker" id="number.of.types" defaultLevel="warning" >
