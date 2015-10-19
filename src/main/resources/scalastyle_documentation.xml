@@ -67,6 +67,7 @@ is considered to be a magic number.
     <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
       <parameters>
         <parameter name="regex">(?m)^\s\*$(\r|)\n^\s*$(\r|)\n</parameter>
+        <parameter name="line">false</parameter>
       </parameters>
       <customMessage>No double blank lines</customMessage>
     </check>
