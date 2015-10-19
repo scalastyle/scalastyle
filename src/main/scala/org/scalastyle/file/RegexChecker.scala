@@ -16,40 +16,36 @@
 
 package org.scalastyle.file
 
-import scala.util.matching.Regex
-
 import org.scalastyle.ColumnError
 import org.scalastyle.FileChecker
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
+
+import scala.util.matching.Regex
 
 class RegexChecker extends FileChecker {
   val errorKey = "regex"
   private val DefaultRegEx = ""
 
   def verify(lines: Lines): List[ScalastyleError] = {
-    val file = (for {line <- lines.lines} yield line.text).mkString("\n")
     val regExpStr = getString("regex", DefaultRegEx)
     val lineByLine = getBoolean("line", false)
     val regExp = new Regex(regExpStr)
     var errorList: List[ColumnError] = Nil
 
-    if (lineByLine){
+    if (lineByLine) {
       for ( (line, idx) <- lines.lines.zipWithIndex ){
         val allMatches = regExp.findAllIn(line.text)
 
         while (allMatches.hasNext) {
-
           allMatches.next()
 
-          val matchedLine = idx
-
-          errorList = ColumnError(matchedLine + 1, allMatches.start, List(regExpStr)) :: errorList
+          errorList = ColumnError(idx + 1, allMatches.start, List(regExpStr)) :: errorList
         }
 
       }
-    }else{
-
+    } else {
+      val file = lines.lines.map(_.text).mkString("\n")
       val allMatches = regExp.findAllIn(file)
 
       while (allMatches.hasNext) {
@@ -59,7 +55,6 @@ class RegexChecker extends FileChecker {
 
         errorList = ColumnError(matchedLine + 1, findColumnPosition(location, lines, matchedLine), List(regExpStr)) :: errorList
       }
-
     }
 
     errorList.reverse
@@ -83,6 +78,6 @@ class RegexChecker extends FileChecker {
   }
 
   private[this] def findColumnPosition(location: Int, lines: Lines, matchedLine: Int): Int = {
-    location - (lines.lines(matchedLine).start)
+    location - lines.lines(matchedLine).start
   }
 }
