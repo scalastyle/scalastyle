@@ -24,6 +24,11 @@ fork in Test := true
 
 javaOptions in Test += "-Dfile.encoding=UTF-8"
 
+coverageHighlighting := {
+  if (scalaBinaryVersion.value == "2.10") false
+  else true
+}
+
 publishMavenStyle := true
 
 publishTo := {
