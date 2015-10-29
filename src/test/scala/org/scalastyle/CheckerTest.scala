@@ -23,14 +23,16 @@ import org.junit.Assert.assertEquals
 class CheckerTest extends CheckerTestHelper {
   val key = "file.size.limit"
   val classUnderTest = classOf[FileLengthChecker]
-  val scalastyleChecker = new ScalastyleChecker(Some(this.getClass.getClassLoader))
+  val scalastyleChecker = new ScalastyleChecker[FileSpec](Some(this.getClass.getClassLoader))
 
   @Test def testOne(): Unit = {
 
+    val config = ScalastyleConfiguration.readFromXml("src/test/resources/config/scalastyle_config.xml")
     val sourceSpec: FileSpec = new SourceSpec("somename.scala", "contents")
-    val filesAndRules: Seq[AThing[FileSpec]] = Seq(AThing(sourceSpec, ScalastyleConfiguration.readFromXml("src/test/resources/config/scalastyle_config.xml")))
-    val result = scalastyleChecker.checkFiles(filesAndRules)
+    val thing: AThing[FileSpec] = AThing(sourceSpec, config)
+    val filesAndRules: Seq[AThing[FileSpec]] = Seq(thing)
+    val result = scalastyleChecker.checkFiles2(filesAndRules)
 
-    assertEquals(1, 1);
+    assertEquals(1, 1)
   }
 }

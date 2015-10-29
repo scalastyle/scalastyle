@@ -6,7 +6,7 @@ organization := "org.scalastyle"
 
 scalaVersion := "2.10.5"
 
-scalacOptions ++= Seq("-deprecation", "-feature")
+scalacOptions ++= Seq("-deprecation", "-feature", "-explaintypes")
 
 crossScalaVersions := Seq("2.10.5", "2.11.6")
 
@@ -28,7 +28,7 @@ publishMavenStyle := true
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots") 
+  if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
   else Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 

@@ -59,7 +59,7 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 
 }
 
-case class AThing[T <: FileSpec](t: T, r: ScalastyleConfiguration)
+case class AThing[+T](t: T, r: ScalastyleConfiguration)
 
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
   def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] = {
@@ -67,7 +67,7 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
   }
 
   //todo better type here
-  def checkFiles(filesAndRules: Seq[AThing[T]]): List[Message[T]] = {
+  def checkFiles2(filesAndRules: Seq[AThing[T]]): List[Message[T]] = {
     StartWork()
 
     val results: List[Message[T]] = filesAndRules.flatMap{ case AThing(f, r) => useMeAgain(f, r) }.toList
@@ -82,7 +82,16 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
     val checks = rule.checks.filter(_.enabled)
     val checkerUtils = new CheckerUtils(classLoader)
 
-    StartFile(file) :: checkerUtils.verifyFile(rule, checks, file) ::: List(EndFile(file)).toList
+    val begin: Message[T] = StartFile(file)
+    val middle: List[Message[T]] = checkerUtils.verifyFile(rule, checks, file)
+    val end: Message[T] = EndFile(file)
+
+    val realend: List[Message[T]] = middle :+ end
+
+//    List[Message[T]](begin, realend: _*)
+
+    val v: List[Message[T]] = StartFile(file) :: checkerUtils.verifyFile(rule, checks, file) ::: List(EndFile(file))
+    v
   }
 
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
