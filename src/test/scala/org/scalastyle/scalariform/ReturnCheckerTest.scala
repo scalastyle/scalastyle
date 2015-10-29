@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number
 
@@ -27,7 +27,7 @@ import org.scalastyle.file.CheckerTest
  *
  * @author Galder Zamarreño
  */
-class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
+class ReturnCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
 
   protected val classUnderTest = classOf[ReturnChecker]
 

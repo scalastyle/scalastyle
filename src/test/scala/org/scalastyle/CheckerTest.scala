@@ -16,30 +16,21 @@
 
 package org.scalastyle
 
-// scalastyle:off magic.number multiple.string.literals
-
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.scalastyle.file.CheckerTestHelper
-import org.scalastyle.file.FileLengthChecker
+import org.scalastyle.file.{CheckerTestHelper, FileLengthChecker}
+import org.junit.Assert.assertEquals
 
-class CustomIdTest extends CheckerTestHelper {
-  val key = "this.is.custom"
+class CheckerTest extends CheckerTestHelper {
+  val key = "file.size.limit"
   val classUnderTest = classOf[FileLengthChecker]
-  val message = Some("custom")
+  val scalastyleChecker = new ScalastyleChecker(Some(this.getClass.getClassLoader))
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
 
-  object Foobar {
-}
-  object Barbar {
-}
-""";
+    val sourceSpec: FileSpec = new SourceSpec("somename.scala", "contents")
+    val filesAndRules: Seq[AThing[FileSpec]] = Seq(AThing(sourceSpec, ScalastyleConfiguration.readFromXml("src/test/resources/config/scalastyle_config.xml")))
+    val result = scalastyleChecker.checkFiles(filesAndRules)
 
-    assertErrors(List(fileError(List("5"), message)), source, Map("maxFileLength" -> "5"), message, customId = Some("this.is.custom"))
+    assertEquals(1, 1);
   }
 }

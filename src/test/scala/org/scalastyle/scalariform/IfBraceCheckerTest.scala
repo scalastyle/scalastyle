@@ -16,7 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class IfBraceCheckerTest extends AssertionsForJUnit with CheckerTest {
+class IfBraceCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
   val key = "if.brace"
   val classUnderTest = classOf[IfBraceChecker]
 

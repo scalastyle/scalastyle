@@ -18,11 +18,11 @@ package org.scalastyle.scalariform
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number multiple.string.literals
 
-class TokenCheckerTest extends AssertionsForJUnit with CheckerTest {
+class TokenCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
   protected val classUnderTest = classOf[TokenChecker]
   protected val key = "token"
 

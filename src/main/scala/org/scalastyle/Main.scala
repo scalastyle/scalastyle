@@ -25,11 +25,12 @@ import java.net.URL
 
 case class MainConfig(error: Boolean,
     config: Option[String] = None,
+    suppressions: Option[Suppressions] = None,
     directories: List[String] = List(),
     verbose: Boolean = false,
     quiet: Boolean = false,
     warningsaserrors: Boolean = false,
-    xmlFile: Option[String] = None,
+    xmlConfigFile: Option[String] = None,
     xmlEncoding: Option[String] = None,
     inputEncoding: Option[String] = None,
     externalJar: Option[String] = None,
@@ -66,7 +67,7 @@ object Main {
           case ("-v" | "--verbose") => config = config.copy(verbose = isTrue(args(i + 1)))
           case ("-q" | "--quiet") => config = config.copy(quiet = isTrue(args(i + 1)))
           case ("-w" | "--warnings") => config = config.copy(warningsaserrors = isTrue(args(i + 1)))
-          case ("--xmlOutput") => config = config.copy(xmlFile = Some(args(i + 1)))
+          case ("--xmlOutput") => config = config.copy(xmlConfigFile = Some(args(i + 1)))
           case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
@@ -108,13 +109,14 @@ object Main {
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
-    val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI().toURL()))))
-    val messages = new ScalastyleChecker(cl).checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles))
+    val classLoader = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
+    val filesToCheck = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles)
+    val messages = new ScalastyleChecker(classLoader).checkFiles(configuration, filesToCheck)
 
     // scalastyle:off regex
-    val config = ConfigFactory.load(cl.getOrElse(this.getClass().getClassLoader()))
+    val config = ConfigFactory.load(classLoader.getOrElse(this.getClass.getClassLoader))
     val outputResult = new TextOutput(config, mc.verbose, mc.quiet).output(messages)
-    mc.xmlFile match {
+    mc.xmlConfigFile match {
       case Some(x) => {
         val encoding = mc.xmlEncoding.getOrElse(codec.charSet).toString
         XmlOutput.save(config, x, encoding, messages)

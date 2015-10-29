@@ -17,12 +17,12 @@
 package org.scalastyle.scalariform
 
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
-class CyclomaticComplexityCheckerTest extends AssertionsForJUnit with CheckerTest {
+class CyclomaticComplexityCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
   val key = "cyclomatic.complexity"
   val classUnderTest = classOf[CyclomaticComplexityChecker]
 

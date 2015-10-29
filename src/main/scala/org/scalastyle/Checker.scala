@@ -22,6 +22,7 @@ import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
+import scala.collection.mutable
 import scala.io.Source
 import java.nio.charset.MalformedInputException
 import scala.io.Codec
@@ -58,9 +59,30 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 
 }
 
+case class AThing[T <: FileSpec](t: T, r: ScalastyleConfiguration)
+
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
   def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] = {
     privateCheckFiles(configuration, files).toList
+  }
+
+  //todo better type here
+  def checkFiles(filesAndRules: Seq[AThing[T]]): List[Message[T]] = {
+    StartWork()
+
+    val results: List[Message[T]] = filesAndRules.flatMap{ case AThing(f, r) => useMeAgain(f, r) }.toList
+
+    EndWork()
+
+    results
+  }
+
+  //todo use again below
+  private[this] def useMeAgain(file: T, rule: ScalastyleConfiguration): List[Message[T]] = {
+    val checks = rule.checks.filter(_.enabled)
+    val checkerUtils = new CheckerUtils(classLoader)
+
+    StartFile(file) :: checkerUtils.verifyFile(rule, checks, file) ::: List(EndFile(file)).toList
   }
 
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {

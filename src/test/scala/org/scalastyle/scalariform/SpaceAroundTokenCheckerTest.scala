@@ -16,13 +16,13 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class DisallowSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
+class DisallowSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "disallow.space.after.token"
   override protected val classUnderTest = classOf[DisallowSpaceAfterTokenChecker]
 
@@ -65,7 +65,7 @@ class DisallowSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
   }
 }
 
-class DisallowSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTest {
+class DisallowSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "disallow.space.before.token"
   override protected val classUnderTest = classOf[DisallowSpaceBeforeTokenChecker]
 
@@ -136,7 +136,7 @@ class DisallowSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTest {
   }
 }
 
-class EnsureSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
+class EnsureSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "ensure.single.space.after.token"
   override protected val classUnderTest = classOf[EnsureSingleSpaceAfterTokenChecker]
 
@@ -219,7 +219,7 @@ class EnsureSpaceAfterTokenTest extends AssertionsForJUnit with CheckerTest {
   }
 }
 
-class EnsureSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTest {
+class EnsureSpaceBeforeTokenTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "ensure.single.space.before.token"
   override protected val classUnderTest = classOf[EnsureSingleSpaceBeforeTokenChecker]
 
