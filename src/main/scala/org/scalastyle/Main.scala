@@ -106,12 +106,19 @@ object Main {
 
   private[this] def now(): Long = new Date().getTime()
 
+  //todo: comment, test, break up
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
     val classLoader = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
     val filesToCheck = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles)
-    val messages = new ScalastyleChecker(classLoader).checkFiles(configuration, filesToCheck)
+
+    val filesAndRules = if (mc.suppressions.isEmpty) {
+      filesToCheck.map(AThing(_, configuration))
+    } else {
+      throw new RuntimeException("todo")
+    }
+    val messages = new ScalastyleChecker(classLoader).checkFiles(filesAndRules)
 
     // scalastyle:off regex
     val config = ConfigFactory.load(classLoader.getOrElse(this.getClass.getClassLoader))

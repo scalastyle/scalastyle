@@ -20,19 +20,20 @@ import org.junit.Test
 import org.scalastyle.file.{CheckerTestHelper, FileLengthChecker}
 import org.junit.Assert.assertEquals
 
-class CheckerTest extends CheckerTestHelper {
-  val key = "file.size.limit"
-  val classUnderTest = classOf[FileLengthChecker]
+class CheckerTest {
   val scalastyleChecker = new ScalastyleChecker[FileSpec](Some(this.getClass.getClassLoader))
 
   @Test def testOne(): Unit = {
-
+    val source = """
+  object Foo {
+  }
+"""
     val config = ScalastyleConfiguration.readFromXml("src/test/resources/config/scalastyle_config.xml")
-    val sourceSpec: FileSpec = new SourceSpec("somename.scala", "contents")
+    val sourceSpec: FileSpec = new SourceSpec("somename.scala", source)
     val thing: AThing[FileSpec] = AThing(sourceSpec, config)
     val filesAndRules: Seq[AThing[FileSpec]] = Seq(thing)
-    val result = scalastyleChecker.checkFiles2(filesAndRules)
+    val result = scalastyleChecker.checkFiles(filesAndRules)
 
-    assertEquals(1, 1)
+    assertEquals("header.matches", result(1).asInstanceOf[StyleError[FileSpec]].key)
   }
 }
