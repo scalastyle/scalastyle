@@ -33,8 +33,10 @@ object SuppressionParser {
       fileSpec <- candidateFiles
       fileName = fileSpec.name
     } yield {
-      if (someSuppressionMatchesFile(suppressions, fileName)) {
-        rulesForFile(suppressions, configuration, fileSpec)
+      if (someSuppressionMatchesFile(suppressions.map(_.fileRegex), fileName)) {
+        //this needs to take both the file name and the suppression, and this approach won't work where we check to see if the suppression matches some file. need to loop over files, suppressions, checks, in that order.
+        val newConfig = rulesForFile(suppressions.map(_.rulesToExcludeRegex), configuration, fileSpec)
+        FileNameAndRules(fileSpec, newConfig)
       } else {
         FileNameAndRules(fileSpec, configuration.copy())
       }
@@ -42,28 +44,25 @@ object SuppressionParser {
   }
 
   def someSuppressionMatchesFile(
-    suppressions: Seq[Suppression],
+    fileSuppressionRegexes: Seq[String],
     fileName: String
   ): Boolean = {
-    suppressions.exists(_.fileRegex.r.findFirstIn(fileName).isDefined)
+    fileSuppressionRegexes.exists(_.r.findFirstIn(fileName).isDefined)
   }
 
-  //todo better scoping in this file
-  //todo comments
   def rulesForFile(
-    suppressions: Seq[Suppression],
+    ruleSuppressionRegexes: Seq[String],
     configuration: ScalastyleConfiguration,
     fileSpec: FileSpec
-  ): FileNameAndRules = {
+  ): ScalastyleConfiguration = {
     var checks = configuration.checks
-    for (suppression <- suppressions) {
-      checks = checks.filterNot { check =>
-        suppression.rulesToExcludeRegex.r.findFirstIn(check.className).isDefined
-      }
+    for (suppression <- ruleSuppressionRegexes) {
+      checks = checks.filterNot(check => suppressionMatchesCheck(suppression, check))
     }
-    FileNameAndRules(fileSpec, configuration.copy(checks = checks))
+    configuration.copy(checks = checks)
   }
 
-  //todo remove?
-  private[this] def first(nodeSeq: NodeSeq): Node = nodeSeq.iterator.toList(0)
+  private[this] def suppressionMatchesCheck(suppressionRegex: String, rule: ConfigurationChecker) =
+    suppressionRegex.r.findFirstIn(rule.className).isDefined
+
 }
