@@ -6,7 +6,7 @@ organization := "org.scalastyle"
 
 scalaVersion := "2.10.5"
 
-scalacOptions ++= Seq("-deprecation", "-feature", "-explaintypes")
+scalacOptions ++= Seq("-deprecation", "-feature")
 
 crossScalaVersions := Seq("2.10.5", "2.11.6")
 

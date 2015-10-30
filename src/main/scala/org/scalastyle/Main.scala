@@ -34,7 +34,31 @@ case class MainConfig(error: Boolean,
     xmlEncoding: Option[String] = None,
     inputEncoding: Option[String] = None,
     externalJar: Option[String] = None,
-    excludedFiles: Seq[String] = Nil)
+    excludedFiles: Seq[String] = Nil) {
+  import MainConfig._
+
+  def howToExclude: HowToExclude = {
+    if (xmlSuppressionsAndExcludes) {
+      throw new IllegalStateException("Cannot have both a suppressions file and " +
+        "a list of excluded files. See main's usage.")
+    } else if (suppressions.isDefined) {
+      SuppressionXml
+    } else if (excludedFiles.nonEmpty) {
+      ExcludeFiles
+    } else {
+      DoNotExclude
+    }
+  }
+
+  def xmlSuppressionsAndExcludes: Boolean = excludedFiles.nonEmpty && suppressions.isDefined
+}
+
+object MainConfig {
+  sealed trait HowToExclude
+  object SuppressionXml extends HowToExclude
+  object ExcludeFiles extends HowToExclude
+  object DoNotExclude extends HowToExclude
+}
 
 object Main {
   // scalastyle:off regex
@@ -49,7 +73,7 @@ object Main {
     println("     --inputEncoding STRING      encoding for the source files")
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
-    println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)")
+    println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)") //todo here
 
     System.exit(1)
   }
@@ -71,7 +95,7 @@ object Main {
           case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
-          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
+          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";")) //todo here
           case _ => config = config.copy(error = true)
         }
         i = i + 2
@@ -81,7 +105,7 @@ object Main {
       }
     }
 
-    if (!config.config.isDefined || config.directories.size == 0) {
+    if (!config.config.isDefined || config.directories.size == 0 || config.xmlSuppressionsAndExcludes) {
       config = config.copy(error = true)
     }
 
@@ -113,11 +137,14 @@ object Main {
     val classLoader = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
     val filesToCheck = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles)
 
-    val filesAndRules = if (mc.suppressions.isEmpty) {
-      filesToCheck.map(AThing(_, configuration))
-    } else {
-      throw new RuntimeException("todo")
+
+    val filesAndRules = mc.howToExclude match {
+        //todo remove repeated code. maybe use at?
+      case MainConfig.SuppressionXml => ???
+      case MainConfig.ExcludeFiles => filesToCheck.map(AThing(_, configuration))
+      case MainConfig.DoNotExclude => filesToCheck.map(AThing(_, configuration))
     }
+
     val messages = new ScalastyleChecker(classLoader).checkFiles(filesAndRules)
 
     // scalastyle:off regex

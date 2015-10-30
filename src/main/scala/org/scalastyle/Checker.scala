@@ -59,7 +59,7 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 
 }
 
-case class AThing[+T](t: T, r: ScalastyleConfiguration)
+case class AThing[+T](fileSpec: T, config: ScalastyleConfiguration)
 
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
 
