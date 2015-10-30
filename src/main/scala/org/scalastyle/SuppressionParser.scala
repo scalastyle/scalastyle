@@ -15,8 +15,9 @@ object SuppressionParser {
     val xml = scala.xml.XML.loadString(fileContents)
 
     // todo consider making better? or safer?
-    val suppressionsNode = first(xml \ "suppressions") //todo extract
-    val suppressions = suppressionsNode \ "suppress"
+    // consider making more strict
+//    val suppressionsNode = first(xml \ "suppressions") //todo extract
+    val suppressions = xml \ "suppress"
     suppressions.map { (node) =>
       Suppression(node.attribute("files").head.text, node.attribute("checks").head.text)
     }
@@ -40,26 +41,29 @@ object SuppressionParser {
     }
   }
 
-  private[this] def someSuppressionMatchesFile(
+  def someSuppressionMatchesFile(
     suppressions: Seq[Suppression],
     fileName: String
   ): Boolean = {
     suppressions.exists(_.fileRegex.r.findFirstIn(fileName).isDefined)
   }
 
-  private[this] def rulesForFile(
+  //todo better scoping in this file
+  //todo comments
+  def rulesForFile(
     suppressions: Seq[Suppression],
     configuration: ScalastyleConfiguration,
     fileSpec: FileSpec
   ): FileNameAndRules = {
     var checks = configuration.checks
     for (suppression <- suppressions) {
-      checks = checks.filter { check =>
+      checks = checks.filterNot { check =>
         suppression.rulesToExcludeRegex.r.findFirstIn(check.className).isDefined
       }
     }
     FileNameAndRules(fileSpec, configuration.copy(checks = checks))
   }
 
+  //todo remove?
   private[this] def first(nodeSeq: NodeSeq): Node = nodeSeq.iterator.toList(0)
 }
