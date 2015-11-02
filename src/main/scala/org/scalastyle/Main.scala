@@ -74,6 +74,7 @@ object Main {
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
     println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)") //todo here
+    println(" -s, --suppressionsFile STRING      TODO(mbileschi)") //todo here
 
     System.exit(1)
   }
@@ -96,7 +97,7 @@ object Main {
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
           case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
-          case ("-s" | "--suppressionsFile") => config = config.copy(suppressions = Some(SuppressionParser.parse(args(i + 1)))) //todo test
+          case ("-s" | "--suppressionsFile") => config = config.copy(suppressions = Some(SuppressionParser.parseFile(args(i + 1)))) //todo test
           case _ => config = config.copy(error = true)
         }
         i = i + 2

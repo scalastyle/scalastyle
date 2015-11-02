@@ -15,7 +15,7 @@ class SuppressionParserTest {
       "  <suppress files=\"somepath/.*.scala\" checks=\".*\"/>\n" +
       "</suppressions>"
 
-    val suppressions = SuppressionParser.parse(fileContents)
+    val suppressions = SuppressionParser.parseString(fileContents)
 
     assertEquals(1, suppressions.size)
     assertEquals("somepath/.*.scala", suppressions(0).fileRegex)
@@ -100,15 +100,15 @@ class SuppressionParserTest {
   }
 
   @Test
-  def testFilesAndRulesAfterSuppressions: Unit = {
+  def testFilesAndRulesAfterSuppressionsNoneMatch: Unit = {
     val suppressions =  Seq(Suppression(".*", "rule1"), Suppression(".*", "rule2"))
     val rule1 = ConfigurationChecker("rule1", ErrorLevel, false, Map(), None, None)
     val rule2 = ConfigurationChecker("rule2", ErrorLevel, false, Map(), None, None)
     val configuration = ScalastyleConfiguration("test", false, List(rule1, rule2))
     val actual = SuppressionParser.filesAndRulesAfterSuppressions(Seq(new SourceSpec("name", "contents")), configuration, suppressions)
-    val expected = FileNameAndRules(new SourceSpec("name", "contents"), configuration.copy(checks = List.empty))
+    val expected = Seq()
 
-    assertEquals(Seq(expected), actual)
+    assertEquals(expected, actual)
   }
 }
 

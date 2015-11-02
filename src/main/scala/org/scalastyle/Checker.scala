@@ -143,7 +143,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
       }
       verifySource(configuration, classes, file, s)
     } catch {
-      case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTrace().mkString("", "\n", "\n")))
+      case e: Exception => List(StyleException(file: T, None, message = e.getMessage() + e.getStackTraceString, stacktrace = e.getStackTrace().mkString("", "\n", "\n")))
     }
   }
 
