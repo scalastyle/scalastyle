@@ -60,6 +60,11 @@ class MainTest extends AssertionsForJUnit {
     testParseArgsError(Array("dir"))
   }
 
+  @Test def testDoesntRunOnExcludedFilesAndSuppressionsFile(): Unit = {
+    val config = Main.parseArgs(Array("-x", "foo/bar/*", "-c", "conf", "dir", "--suppressionsFile", "src/test/resources/config/scalastyle_config.xml"))
+    assertTrue(config.error)
+  }
+
   private def testParseArgs(args: Array[String], config: MainConfig) = {
     assert(Main.parseArgs(args) === config)
   }
@@ -67,4 +72,5 @@ class MainTest extends AssertionsForJUnit {
   private def testParseArgsError(args: Array[String]) = {
     assert(Main.parseArgs(args).error === true)
   }
+
 }
