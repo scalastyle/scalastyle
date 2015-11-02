@@ -1,8 +1,7 @@
 package org.scalastyle
 
 import org.junit.Test
-import org.junit.Assert.assertTrue
-import org.junit.Assert.assertEquals
+import org.junit.Assert._
 
 /**
  * Created by mbileschi on 10/30/15.
@@ -26,50 +25,41 @@ class SuppressionParserTest {
 
   @Test
   def testSuppressionMatchesSomeFileWildCard: Unit = {
-    val suppressions = List(".*")
+    val suppression = Suppression(".*", null)
 
-    assertTrue(SuppressionParser.someSuppressionMatchesFile(suppressions, "/Users/mbileschi/somename"))
+    assertTrue(SuppressionParser.suppMatchesFile(suppression, "/Users/mbileschi/somename"))
   }
 
   @Test
   def testSuppressionMatchesSomeFilePartialWildCard: Unit = {
-    val suppressions = List(".*somename.*")
+    val suppression = Suppression(".*somename.*", null)
 
-    assertTrue(SuppressionParser.someSuppressionMatchesFile(suppressions, "/Users/mbileschi/somename"))
+    assertTrue(SuppressionParser.suppMatchesFile(suppression, "/Users/mbileschi/somename"))
   }
 
   @Test
   def testSuppressionMatchesSomeFileNoWildCard: Unit = {
-    val suppressions = List("/Users/mbileschi/somename")
+    val suppression = Suppression("/Users/mbileschi/somename", null)
 
-    assertTrue(SuppressionParser.someSuppressionMatchesFile(suppressions, "/Users/mbileschi/somename"))
-  }
-
-  @Test
-  def testSuppressionMatchesSomeFileNoWildCard: Unit = {
-    val suppressions = List("/Users/mbileschi/somename")
-
-    assertTrue(SuppressionParser.someSuppressionMatchesFile(suppressions, "/Users/mbileschi/somename"))
+    assertTrue(SuppressionParser.suppMatchesFile(suppression, "/Users/mbileschi/somename"))
   }
 
   @Test
   def testRulesForFile_fileMatches_ruleMatches: Unit = {
-    val suppressions =  List(Suppression(".*", ".*"))
+    val suppressions =  Seq(Suppression(".*", ".*"))
     val rule = ConfigurationChecker("className", ErrorLevel, false, Map(), None, None)
     val configuration = ScalastyleConfiguration("test", false, List(rule))
-    val fileSpec = new SourceSpec("name", "contents")
-    val rulesForFile = SuppressionParser.rulesForFile(suppressions, configuration, fileSpec)
+    val rulesForFile = SuppressionParser.checksForSuppressions("fileName", configuration, suppressions)
 
     assertTrue(rulesForFile.checks.isEmpty)
   }
 
   @Test
   def testRulesForFile_fileMatches_ruleDoesNotMatch: Unit = {
-    val suppressions =  List(Suppression(".*", "notmatching"))
+    val suppressions =  Seq(Suppression(".*", "notmatching"))
     val rule = ConfigurationChecker("className", ErrorLevel, false, Map(), None, None)
     val configuration = ScalastyleConfiguration("test", false, List(rule))
-    val fileSpec = new SourceSpec("name", "contents")
-    val rulesForFile = SuppressionParser.rulesForFile(suppressions, configuration, fileSpec)
+    val rulesForFile = SuppressionParser.checksForSuppressions("fileName", configuration, suppressions)
 
     assertEquals(1, rulesForFile.checks.size)
     assertEquals(configuration, rulesForFile)
@@ -77,14 +67,48 @@ class SuppressionParserTest {
 
   @Test
   def testRulesForFile_fileDoesNotMatch_ruleMatches: Unit = {
-    val suppressions =  List(Suppression("nonmatching", ".*"))
+    val suppressions =  Seq(Suppression("notmatching", ".*"))
     val rule = ConfigurationChecker("className", ErrorLevel, false, Map(), None, None)
     val configuration = ScalastyleConfiguration("test", false, List(rule))
-    val fileSpec = new SourceSpec("name", "contents")
-    val rulesForFile = SuppressionParser.rulesForFile(suppressions, configuration, fileSpec)
+    val rulesForFile = SuppressionParser.checksForSuppressions("fileName", configuration, suppressions)
 
     assertEquals(1, rulesForFile.checks.size)
     assertEquals(configuration, rulesForFile)
+  }
+
+  @Test
+  def testRulesForFile_twoRules_bothMatch: Unit = {
+    val suppressions =  Seq(Suppression(".*", "rule1"), Suppression(".*", "rule2"))
+    val rule1 = ConfigurationChecker("rule1", ErrorLevel, false, Map(), None, None)
+    val rule2 = ConfigurationChecker("rule2", ErrorLevel, false, Map(), None, None)
+    val configuration = ScalastyleConfiguration("test", false, List(rule1, rule2))
+    val rulesForFile = SuppressionParser.checksForSuppressions("fileName", configuration, suppressions)
+
+    assertTrue(rulesForFile.checks.isEmpty)
+  }
+
+  @Test
+  def testRulesForFile_twoRules_oneMatches: Unit = {
+    val suppressions =  Seq(Suppression("nonMatching", "rule1"), Suppression(".*", "rule2"))
+    val rule1 = ConfigurationChecker("rule1", ErrorLevel, false, Map(), None, None)
+    val rule2 = ConfigurationChecker("rule2", ErrorLevel, false, Map(), None, None)
+    val configuration = ScalastyleConfiguration("test", false, List(rule1, rule2))
+    val rulesForFile = SuppressionParser.checksForSuppressions("fileName", configuration, suppressions)
+
+    assertEquals(1, rulesForFile.checks.size)
+    assertEquals(configuration.copy(checks = List(rule1)), rulesForFile)
+  }
+
+  @Test
+  def testFilesAndRulesAfterSuppressions: Unit = {
+    val suppressions =  Seq(Suppression(".*", "rule1"), Suppression(".*", "rule2"))
+    val rule1 = ConfigurationChecker("rule1", ErrorLevel, false, Map(), None, None)
+    val rule2 = ConfigurationChecker("rule2", ErrorLevel, false, Map(), None, None)
+    val configuration = ScalastyleConfiguration("test", false, List(rule1, rule2))
+    val actual = SuppressionParser.filesAndRulesAfterSuppressions(Seq(new SourceSpec("name", "contents")), configuration, suppressions)
+    val expected = FileNameAndRules(new SourceSpec("name", "contents"), configuration.copy(checks = List.empty))
+
+    assertEquals(Seq(expected), actual)
   }
 }
 

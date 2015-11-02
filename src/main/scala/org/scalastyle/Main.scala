@@ -25,7 +25,7 @@ import java.net.URL
 
 case class MainConfig(error: Boolean,
     config: Option[String] = None,
-    suppressions: Option[Suppressions] = None,
+    suppressions: Option[Seq[Suppression]] = None,
     directories: List[String] = List(),
     verbose: Boolean = false,
     quiet: Boolean = false,
@@ -95,7 +95,8 @@ object Main {
           case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
-          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";")) //todo here
+          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
+          case ("-s" | "--suppressionsFile") => config = config.copy(suppressions = Some(SuppressionParser.parse(args(i + 1)))) //todo test
           case _ => config = config.copy(error = true)
         }
         i = i + 2
@@ -137,12 +138,11 @@ object Main {
     val classLoader = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
     val filesToCheck = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles)
 
-
     val filesAndRules = mc.howToExclude match {
         //todo remove repeated code. maybe use at?
-      case MainConfig.SuppressionXml => ???
-      case MainConfig.ExcludeFiles => filesToCheck.map(AThing(_, configuration))
-      case MainConfig.DoNotExclude => filesToCheck.map(AThing(_, configuration))
+      case MainConfig.SuppressionXml => SuppressionParser.filesAndRulesAfterSuppressions(filesToCheck, configuration, mc.suppressions.get)
+      case MainConfig.ExcludeFiles => filesToCheck.map(FileNameAndRules(_, configuration))
+      case MainConfig.DoNotExclude => filesToCheck.map(FileNameAndRules(_, configuration))
     }
 
     val messages = new ScalastyleChecker(classLoader).checkFiles(filesAndRules)

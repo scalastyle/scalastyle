@@ -59,15 +59,13 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 
 }
 
-case class AThing[+T](fileSpec: T, config: ScalastyleConfiguration)
-
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
 
   //todo better type here
-  def checkFiles(filesAndRules: Iterable[AThing[T]]): List[Message[T]] = {
+  def checkFiles(filesAndRules: Iterable[FileNameAndRules[T]]): List[Message[T]] = {
     StartWork()
 
-    val results: List[Message[T]] = filesAndRules.flatMap{ case AThing(f, r) => useMeAgain(f, r) }.toList
+    val results: List[Message[T]] = filesAndRules.flatMap{ case FileNameAndRules(f, r) => useMeAgain(f, r) }.toList
 
     EndWork()
 
@@ -84,7 +82,7 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
 
   // todo needs assert for existence
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
-    val filesAndRules = files.map(AThing(_, configuration))
+    val filesAndRules = files.map(FileNameAndRules(_, configuration))
     seqAsJavaList(checkFiles(filesAndRules))
   }
 }
