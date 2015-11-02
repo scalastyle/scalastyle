@@ -74,7 +74,7 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
     StartFile(file) :: checkerUtils.verifyFile(rule, checks, file) ::: List(EndFile(file))
   }
 
-  // todo needs assert for existence (otherwise it looks unused, except from the maven plugin.
+  // todo needs assert for existence (otherwise it looks unused, except from the maven plugin).
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
     val filesAndRules = files.map(FileNameAndRules(_, configuration))
     seqAsJavaList(completeAllFileChecks(filesAndRules))
@@ -140,7 +140,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
       }
       verifySource(configuration, classes, file, s)
     } catch {
-      case e: Exception => List(StyleException(file: T, None, message = e.getMessage() + e.getStackTraceString, stacktrace = e.getStackTrace().mkString("", "\n", "\n")))
+      case e: Exception => List(StyleException(file: T, None, message = e.getMessage(), stacktrace = e.getStackTrace().mkString("", "\n", "\n")))
     }
   }
 

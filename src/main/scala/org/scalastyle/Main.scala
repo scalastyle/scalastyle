@@ -141,8 +141,6 @@ object Main {
   /**
    * Decide which files to check, and which checks to run on those files, and run them.
    * @param mc result of parsing the command line arguments.
-   * @param codec
-   * @return
    */
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
