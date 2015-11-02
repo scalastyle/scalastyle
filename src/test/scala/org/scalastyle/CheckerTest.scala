@@ -20,7 +20,6 @@ import org.junit.Test
 import org.scalastyle.file.{CheckerTestHelper, FileLengthChecker}
 import org.junit.Assert.assertEquals
 
-//todo clean
 class CheckerTest {
   val scalastyleChecker = new ScalastyleChecker[FileSpec](Some(this.getClass.getClassLoader))
 
@@ -29,17 +28,16 @@ class CheckerTest {
   object Foo {
   }
 """
-    val config = ScalastyleConfiguration.readFromXml("src/test/resources/config/scalastyle_config.xml")
+    val config = ScalastyleConfiguration("a name", false, List.empty)
     val sourceSpec: FileSpec = new SourceSpec("somename.scala", source)
     val thing = FileNameAndRules(sourceSpec, config)
     val filesAndRules = Seq(thing)
     val result = scalastyleChecker.checkFiles(filesAndRules)
 
-    assertEquals(5, result.size)
+    assertEquals(4, result.size)
     assertEquals(new StartWork[SourceSpec](), result(0))
     assertEquals(sourceSpec, result(1).asInstanceOf[StartFile[SourceSpec]].fileSpec)
-    assertEquals("header.matches", result(2).asInstanceOf[StyleError[FileSpec]].key)
-    assertEquals(sourceSpec, result(3).asInstanceOf[EndFile[SourceSpec]].fileSpec)
-    assertEquals(new EndWork[SourceSpec](), result(4))
+    assertEquals(sourceSpec, result(2).asInstanceOf[EndFile[SourceSpec]].fileSpec)
+    assertEquals(new EndWork[SourceSpec](), result(3))
   }
 }
