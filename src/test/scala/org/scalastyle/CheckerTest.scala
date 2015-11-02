@@ -23,7 +23,7 @@ import org.junit.Assert.assertEquals
 class CheckerTest {
   val scalastyleChecker = new ScalastyleChecker[FileSpec](Some(this.getClass.getClassLoader))
 
-  @Test def testOne(): Unit = {
+  @Test def testRunOnEmptyRuleList(): Unit = {
     val source = """
   object Foo {
   }
