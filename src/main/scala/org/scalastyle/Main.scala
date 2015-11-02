@@ -74,7 +74,13 @@ object Main {
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
     println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)") //todo here
-    println(" -s, --suppressionsFile STRING      TODO(mbileschi)") //todo here
+    println(" -s, --suppressionsFile STRING   path to checkstyle-like suppressions xml file. For example, the")
+    println("                                 following config would exclude scalastyle checks with class names")
+    println("                                 matching regex2 from being run on files matching regex1. More than")
+    println("                                 one suppress tag is allowed.")
+    println("                                   <suppressions>")
+    println("                                     <suppress files=\"regex1\" checks=\"regex2\"/>")
+    println("                                   </suppressions>")
 
     System.exit(1)
   }

@@ -12,6 +12,9 @@ class SuppressionParser {
 }
 
 object SuppressionParser {
+  //consider putting usage/dom in javadoc?
+
+
   def parseFile(fileName: String): Seq[Suppression] = {
     parseString(Source.fromFile(fileName).mkString)
   }
@@ -56,9 +59,7 @@ object SuppressionParser {
       suppression <- suppressions
       if suppMatchesFile(suppression, fileName)
     } {
-      println("supp matches file " + fileName)
       checks = checks.filterNot(checker => suppMatchesCheck(suppression, checker))
-      println("checks: " + checks)
     }
     configuration.copy(checks = checks)
   }
