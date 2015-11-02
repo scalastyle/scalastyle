@@ -21,7 +21,6 @@ import java.util.Date
 import scala.io.Codec
 import com.typesafe.config.ConfigFactory
 import java.net.URLClassLoader
-import java.net.URL
 
 case class MainConfig(error: Boolean,
     config: Option[String] = None,
@@ -73,10 +72,11 @@ object Main {
     println("     --inputEncoding STRING      encoding for the source files")
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
-    println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)") //todo here
+    println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimited by semicolons).")
+    println("                                 Cannot be used in conjunction with suppressions files.")
     println(" -s, --suppressionsFile STRING   path to checkstyle-like suppressions xml file. For example, the")
     println("                                 following config would exclude scalastyle checks with class names")
-    println("                                 matching regex2 from being run on files matching regex1. More than")
+    println("                                 containing regex2 from being run on files containing regex1. More than")
     println("                                 one suppress tag is allowed.")
     println("                                   <suppressions>")
     println("                                     <suppress files=\"regex1\" checks=\"regex2\"/>")
@@ -103,7 +103,7 @@ object Main {
           case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
           case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
-          case ("-s" | "--suppressionsFile") => config = config.copy(suppressions = Some(SuppressionParser.parseFile(args(i + 1)))) //todo test
+          case ("-s" | "--suppressionsFile") => config = parseSuppressionFileInput(config, args(i + 1))
           case _ => config = config.copy(error = true)
         }
         i = i + 2
@@ -138,7 +138,12 @@ object Main {
 
   private[this] def now(): Long = new Date().getTime()
 
-  //todo: comment, test, break up
+  /**
+   * Decide which files to check, and which checks to run on those files, and run them.
+   * @param mc result of parsing the command line arguments.
+   * @param codec
+   * @return
+   */
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
@@ -146,13 +151,12 @@ object Main {
     val filesToCheck = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles)
 
     val filesAndRules = mc.howToExclude match {
-        //todo remove repeated code. maybe use at?
       case MainConfig.SuppressionXml => SuppressionParser.filesAndRulesAfterSuppressions(filesToCheck, configuration, mc.suppressions.get)
       case MainConfig.ExcludeFiles => filesToCheck.map(FileNameAndRules(_, configuration))
       case MainConfig.DoNotExclude => filesToCheck.map(FileNameAndRules(_, configuration))
     }
 
-    val messages = new ScalastyleChecker(classLoader).checkFiles(filesAndRules)
+    val messages = new ScalastyleChecker(classLoader).completeAllFileChecks(filesAndRules)
 
     // scalastyle:off regex
     val config = ConfigFactory.load(classLoader.getOrElse(this.getClass.getClassLoader))
@@ -173,5 +177,15 @@ object Main {
     // scalastyle:on regex
 
     outputResult.errors > 0 || (mc.warningsaserrors && outputResult.warnings > 0)
+  }
+
+  // Visible for testing
+  def parseSuppressionFileInput(config: MainConfig, fileName: String): MainConfig = {
+    SuppressionParser.parseFile(fileName) match {
+      case Left(error) =>
+        System.err.println(error.moreInfo)
+        config.copy(error = true)
+      case Right(suppressions) => config.copy(suppressions = Some(suppressions))
+    }
   }
 }

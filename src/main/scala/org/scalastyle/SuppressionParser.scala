@@ -4,30 +4,45 @@ import scala.io.Source
 import scala.xml.{Node, NodeSeq}
 
 /**
- * Created by mbileschi on 10/29/15.
+ * Provides support for working with checkstyle-like suppressions files.
+ *
+ * Example:
+ * <suppressions>
+ *   <suppress files="regex1" checks="regex2"/>
+ * </suppressions>
+ *
+ * This allows us to exclude checks containing regex2 from being run on files
+ * containing regex1.
  */
-class SuppressionParser {
-
-
-}
-
 object SuppressionParser {
-  //consider putting usage/dom in javadoc?
+  case class MalformedXML(moreInfo: String)
 
+  /** Namespace for parsing suppressions XML file. */
+  object Xml {
+    val TopLevelLabel = "suppressions"
+    val InnerLabel = "suppress"
+    val SuppressFileAttr = "files"
+    val ChecksAttr = "checks"
+  }
 
-  def parseFile(fileName: String): Seq[Suppression] = {
+  def parseFile(fileName: String): Either[MalformedXML, Seq[Suppression]] = {
     parseString(Source.fromFile(fileName).mkString)
   }
 
-  //private?
-  def parseString(fileContents: String): Seq[Suppression] = {
+  //todo
+  // Visible for testing.
+  def parseString(fileContents: String): Either[MalformedXML, Seq[Suppression]] = {
     val xml = scala.xml.XML.loadString(fileContents)
-    // todo consider making better? or safer?
-    // consider making more strict
-    //    val suppressionsNode = first(xml \ "suppressions") //todo extract
-    val suppressions = xml \ "suppress"
-    suppressions.map { (node) =>
-      Suppression(node.attribute("files").head.text, node.attribute("checks").head.text)
+    if (xml.label != Xml.TopLevelLabel) {
+      Left(MalformedXML("Top level xml attribute was " + xml.label + ". Expected '" + Xml.TopLevelLabel + "'"))
+    } else {
+      val suppressionsNodeSeq = xml \ Xml.InnerLabel
+      val suppressions = suppressionsNodeSeq.map { (node) =>
+        val fileRegex = node.attribute(Xml.SuppressFileAttr).head.text
+        val rulesRegex = node.attribute(Xml.ChecksAttr).head.text
+        Suppression(fileRegex, rulesRegex)
+      }
+      Right(suppressions)
     }
   }
 

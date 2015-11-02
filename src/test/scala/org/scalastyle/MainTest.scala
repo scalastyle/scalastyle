@@ -19,6 +19,7 @@ package org.scalastyle
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.scalastyle.file.FileLengthChecker
 import org.junit.Ignore
@@ -61,7 +62,17 @@ class MainTest extends AssertionsForJUnit {
   }
 
   @Test def testDoesntRunOnExcludedFilesAndSuppressionsFile(): Unit = {
-    val config = Main.parseArgs(Array("-x", "foo/bar/*", "-c", "conf", "dir", "--suppressionsFile", "src/test/resources/config/scalastyle_config.xml"))
+    val config = Main.parseArgs(Array("-x", "foo/bar/*", "--suppressionsFile", "src/test/resources/config/suppressions.xml", "-c", "conf", "dir"))
+    assertTrue(config.error)
+  }
+
+  @Test def testParseSuppressionFileInput_success(): Unit = {
+    val config = Main.parseArgs(Array("--suppressionsFile", "src/test/resources/config/suppressions.xml", "-c", "conf", "dir"))
+    assertFalse(config.error)
+  }
+
+  @Test def testParseSuppressionFileInput_failure(): Unit = {
+    val config = Main.parseArgs(Array("--suppressionsFile", "src/test/resources/config/malformed_suppressions.xml", "-c", "conf", "dir"))
     assertTrue(config.error)
   }
 

@@ -19,7 +19,6 @@ package org.scalastyle
 import java.text.MessageFormat
 import com.typesafe.config.Config
 import java.io.FileWriter
-import scala.language.existentials //todo explain
 
 trait FileSpec {
   def name: String

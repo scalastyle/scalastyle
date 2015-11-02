@@ -22,7 +22,6 @@ import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
-import scala.collection.mutable
 import scala.io.Source
 import java.nio.charset.MalformedInputException
 import scala.io.Codec
@@ -61,26 +60,24 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
 
-  //todo better type here
-  def checkFiles(filesAndRules: Iterable[FileNameAndRules[T]]): List[Message[T]] = {
-    (StartWork() :: useMeAgainItr(filesAndRules)) :+ EndWork()
+  def completeAllFileChecks(filesAndRules: Iterable[FileNameAndRules[T]]): List[Message[T]] = {
+    (StartWork() :: runAllFileChecks(filesAndRules)) :+ EndWork()
   }
 
-  private[this] def useMeAgainItr(filesAndRules: Iterable[FileNameAndRules[T]]) =
-    filesAndRules.flatMap{ case FileNameAndRules(f, r) => useMeAgain(f, r) }.toList
+  private[this] def runAllFileChecks(filesAndRules: Iterable[FileNameAndRules[T]]) =
+    filesAndRules.flatMap{ case FileNameAndRules(f, r) => runFileCheck(f, r) }.toList
 
-  //todo use again below
-  private[this] def useMeAgain(file: T, rule: ScalastyleConfiguration): List[Message[T]] = {
+  private[this] def runFileCheck(file: T, rule: ScalastyleConfiguration): List[Message[T]] = {
     val checks = rule.checks.filter(_.enabled)
     val checkerUtils = new CheckerUtils(classLoader)
 
     StartFile(file) :: checkerUtils.verifyFile(rule, checks, file) ::: List(EndFile(file))
   }
 
-  // todo needs assert for existence
+  // todo needs assert for existence (otherwise it looks unused, except from the maven plugin.
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
     val filesAndRules = files.map(FileNameAndRules(_, configuration))
-    seqAsJavaList(checkFiles(filesAndRules))
+    seqAsJavaList(completeAllFileChecks(filesAndRules))
   }
 }
 

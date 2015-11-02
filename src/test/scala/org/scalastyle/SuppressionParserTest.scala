@@ -3,25 +3,45 @@ package org.scalastyle
 import org.junit.Test
 import org.junit.Assert._
 
+import scala.util.Either.RightProjection
+
 /**
  * Created by mbileschi on 10/30/15.
  */
 class SuppressionParserTest {
   @Test
-  def testParse: Unit = {
+  def testParse_success: Unit = {
     //todo: worry about relative paths
     val fileContents =
       "<suppressions>\n" +
       "  <suppress files=\"somepath/.*.scala\" checks=\".*\"/>\n" +
       "</suppressions>"
 
-    val suppressions = SuppressionParser.parseString(fileContents)
+    val suppressionsEither = SuppressionParser.parseString(fileContents)
 
+    assertTrue(suppressionsEither.isRight)
+
+    val suppressions = suppressionsEither.right.toOption.get
     assertEquals(1, suppressions.size)
     assertEquals("somepath/.*.scala", suppressions(0).fileRegex)
     assertEquals(".*", suppressions(0).rulesToExcludeRegex)
   }
-  // todo test failure modes? make prettier errors?
+
+  @Test
+  def testParse_badXmlFile: Unit = {
+    //todo: worry about relative paths
+    val fileContents =
+      "<wrongTag>\n" +
+        "  <suppress files=\"somepath/.*.scala\" checks=\".*\"/>\n" +
+      "</wrongTag>"
+
+    val suppressionsEither = SuppressionParser.parseString(fileContents)
+
+    assertTrue(suppressionsEither.isLeft)
+
+    val suppressions = suppressionsEither.left.toOption.get
+    assertEquals("Top level xml attribute was wrongTag. Expected 'suppressions'", suppressions.moreInfo)
+  }
 
   @Test
   def testSuppressionMatchesSomeFileWildCard: Unit = {
