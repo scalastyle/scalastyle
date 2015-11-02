@@ -35,6 +35,11 @@ class CheckerTest {
     val filesAndRules = Seq(thing)
     val result = scalastyleChecker.checkFiles(filesAndRules)
 
-    assertEquals("header.matches", result(1).asInstanceOf[StyleError[FileSpec]].key)
+    assertEquals(5, result.size)
+    assertEquals(new StartWork[SourceSpec](), result(0))
+    assertEquals(sourceSpec, result(1).asInstanceOf[StartFile[SourceSpec]].fileSpec)
+    assertEquals("header.matches", result(2).asInstanceOf[StyleError[FileSpec]].key)
+    assertEquals(sourceSpec, result(3).asInstanceOf[EndFile[SourceSpec]].fileSpec)
+    assertEquals(new EndWork[SourceSpec](), result(4))
   }
 }

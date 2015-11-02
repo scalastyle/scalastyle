@@ -63,14 +63,11 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
 
   //todo better type here
   def checkFiles(filesAndRules: Iterable[FileNameAndRules[T]]): List[Message[T]] = {
-    StartWork()
-
-    val results: List[Message[T]] = filesAndRules.flatMap{ case FileNameAndRules(f, r) => useMeAgain(f, r) }.toList
-
-    EndWork()
-
-    results
+    (StartWork() :: useMeAgainItr(filesAndRules)) :+ EndWork()
   }
+
+  private[this] def useMeAgainItr(filesAndRules: Iterable[FileNameAndRules[T]]) =
+    filesAndRules.flatMap{ case FileNameAndRules(f, r) => useMeAgain(f, r) }.toList
 
   //todo use again below
   private[this] def useMeAgain(file: T, rule: ScalastyleConfiguration): List[Message[T]] = {
