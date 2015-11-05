@@ -22,7 +22,7 @@ import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number
 
-class RedundantIfCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class RedundantIfCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   protected val classUnderTest = classOf[RedundantIfChecker]
   protected val key = "if.redundant"
 

@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class ForBraceCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ForBraceCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "for.brace"
   val classUnderTest = classOf[ForBraceChecker]
 

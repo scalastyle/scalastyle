@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class MethodLengthCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class MethodLengthCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "method.length"
   val classUnderTest = classOf[MethodLengthChecker]
 

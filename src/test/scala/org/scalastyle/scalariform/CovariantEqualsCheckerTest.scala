@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class CovariantEqualsCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class CovariantEqualsCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "covariant.equals"
   val classUnderTest = classOf[CovariantEqualsChecker]
 

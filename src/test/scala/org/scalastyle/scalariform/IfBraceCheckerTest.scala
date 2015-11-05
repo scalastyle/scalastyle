@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class IfBraceCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class IfBraceCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "if.brace"
   val classUnderTest = classOf[IfBraceChecker]
 

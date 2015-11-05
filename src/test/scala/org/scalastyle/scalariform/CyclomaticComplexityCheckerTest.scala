@@ -22,7 +22,7 @@ import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
-class CyclomaticComplexityCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class CyclomaticComplexityCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "cyclomatic.complexity"
   val classUnderTest = classOf[CyclomaticComplexityChecker]
 

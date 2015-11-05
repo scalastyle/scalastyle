@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class LowercasePatternMatchCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class LowercasePatternMatchCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "lowercase.pattern.match"
   val classUnderTest = classOf[LowercasePatternMatchChecker]
 

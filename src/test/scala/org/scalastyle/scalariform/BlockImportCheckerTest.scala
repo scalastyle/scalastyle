@@ -22,7 +22,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class BlockImportCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class BlockImportCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
 
   val key = "block.import"
   val classUnderTest = classOf[BlockImportChecker]

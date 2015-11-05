@@ -4,7 +4,7 @@ import org.junit.Test
 import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 
-class TodoCommentCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class TodoCommentCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "todo.comment"
   val text = "TODO|FIXME"
   val classUnderTest = classOf[TodoCommentChecker]

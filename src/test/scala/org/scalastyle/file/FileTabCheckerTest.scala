@@ -30,7 +30,7 @@ import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
-class FileTabCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class FileTabCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "line.contains.tab"
   val classUnderTest = classOf[FileTabChecker]
 

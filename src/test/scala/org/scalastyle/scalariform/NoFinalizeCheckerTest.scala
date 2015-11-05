@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class NoFinalizeCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NoFinalizeCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.finalize"
   val classUnderTest = classOf[NoFinalizeChecker]
 

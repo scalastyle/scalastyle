@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class NumberOfMethodsInTypeCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NumberOfMethodsInTypeCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "number.of.methods"
   val classUnderTest = classOf[NumberOfMethodsInTypeChecker]
 

@@ -21,7 +21,7 @@ import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
-class IndentationCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class IndentationCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "indentation"
   val classUnderTest = classOf[IndentationChecker]
 

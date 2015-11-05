@@ -29,7 +29,7 @@ import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
-class NoNewLineAtEofFileCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NoNewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.newline.at.eof"
   val classUnderTest = classOf[NoNewLineAtEofChecker]
 
@@ -46,7 +46,7 @@ object Foobar {
   }
 }
 
-class NewLineAtEofFileCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "newline.at.eof"
   val classUnderTest = classOf[NewLineAtEofChecker]
 

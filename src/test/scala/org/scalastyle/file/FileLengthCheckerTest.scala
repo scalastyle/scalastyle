@@ -30,7 +30,7 @@ import org.junit.Test;
 
 // scalastyle:off multiple.string.literals
 
-class FileLengthCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "file.size.limit"
   val classUnderTest = classOf[FileLengthChecker]
 

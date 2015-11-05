@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class IllegalImportsCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "illegal.imports"
   val classUnderTest = classOf[IllegalImportsChecker]
 
@@ -114,7 +114,7 @@ object Foobar {
 }
 
 
-class UnderscoreImportCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "underscore.import"
   val classUnderTest = classOf[UnderscoreImportChecker]
 
@@ -136,7 +136,7 @@ object Foobar {
   }
 }
 
-class ImportGroupingCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ImportGroupingCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "import.grouping"
   val classUnderTest = classOf[ImportGroupingChecker]
 
@@ -178,7 +178,7 @@ object Barbar {
   }
 }
 
-class ImportOrderCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "import.ordering"
   val classUnderTest = classOf[ImportOrderChecker]
 

@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class SpacesAfterPlusCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class SpacesAfterPlusCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "spaces.after.plus"
   val classUnderTest = classOf[SpacesAfterPlusChecker]
 

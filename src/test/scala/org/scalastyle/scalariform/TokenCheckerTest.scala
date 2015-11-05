@@ -22,7 +22,7 @@ import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number multiple.string.literals
 
-class TokenCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class TokenCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   protected val classUnderTest = classOf[TokenChecker]
   protected val key = "token"
 

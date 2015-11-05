@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class PublicMethodsHaveTypeCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class PublicMethodsHaveTypeCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "public.methods.have.type"
   val classUnderTest = classOf[PublicMethodsHaveTypeChecker]
 

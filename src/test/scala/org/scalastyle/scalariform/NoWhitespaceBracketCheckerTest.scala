@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class NoWhitespaceBeforeLeftBracketCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NoWhitespaceBeforeLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.whitespace.before.left.bracket"
   val classUnderTest = classOf[NoWhitespaceBeforeLeftBracketChecker]
 
@@ -65,7 +65,7 @@ class Foobar [ Barbar [T]] {
   }
 }
 
-class NoWhitespaceAfterLeftBracketCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NoWhitespaceAfterLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.whitespace.after.left.bracket"
   val classUnderTest = classOf[NoWhitespaceAfterLeftBracketChecker]
 

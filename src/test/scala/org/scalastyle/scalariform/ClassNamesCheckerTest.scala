@@ -23,7 +23,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class ClassNamesCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ClassNamesCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "class.name"
   val classUnderTest = classOf[ClassNamesChecker]
 
@@ -53,7 +53,7 @@ class foobar {
   }
 }
 
-class ObjectNamesCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "object.name"
   val classUnderTest = classOf[ObjectNamesChecker]
 
@@ -97,7 +97,7 @@ package object foobar {
 }
 
 
-class PackageObjectNamesCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class PackageObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "package.object.name"
   val classUnderTest = classOf[PackageObjectNamesChecker]
 
@@ -140,7 +140,7 @@ object foobar {
   }
 }
 
-class MethodNamesCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class MethodNamesCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "method.name"
   val classUnderTest = classOf[MethodNamesChecker]
 
@@ -212,7 +212,7 @@ class Foobar extends Bar {
   private def defErr(line: Int, column: Int) = columnError(line, column, List("^[a-z][A-Za-z0-9]*(_=)?$"))
 }
 
-class FieldNamesCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "field.name"
   val classUnderTest = classOf[FieldNamesChecker]
 

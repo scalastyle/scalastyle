@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class MultipleStringLiteralsCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class MultipleStringLiteralsCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "multiple.string.literals"
   val classUnderTest = classOf[MultipleStringLiteralsChecker]
 

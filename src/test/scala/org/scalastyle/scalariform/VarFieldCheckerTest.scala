@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class VarFieldCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class VarFieldCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "var.field"
   val classUnderTest = classOf[VarFieldChecker]
 

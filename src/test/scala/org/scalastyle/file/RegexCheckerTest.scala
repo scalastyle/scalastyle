@@ -21,7 +21,7 @@ import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
-class RegexCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class RegexCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "regex"
   val classUnderTest = classOf[RegexChecker]
 

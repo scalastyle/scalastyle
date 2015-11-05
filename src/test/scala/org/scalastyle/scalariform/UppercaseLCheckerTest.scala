@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class UppercaseLCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class UppercaseLCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "uppercase.l"
   val classUnderTest = classOf[UppercaseLChecker]
 

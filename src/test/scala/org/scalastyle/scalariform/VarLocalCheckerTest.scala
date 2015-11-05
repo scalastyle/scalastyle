@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class VarLocalCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class VarLocalCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "var.local"
   val classUnderTest = classOf[VarLocalChecker]
 

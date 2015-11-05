@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class ProcedureDeclarationCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ProcedureDeclarationCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "procedure.declaration"
   val classUnderTest = classOf[ProcedureDeclarationChecker]
 

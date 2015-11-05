@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class NoCloneCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NoCloneCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.clone"
   val classUnderTest = classOf[NoCloneChecker]
 

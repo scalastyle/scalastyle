@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class ParameterNumberCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ParameterNumberCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "parameter.number"
   val classUnderTest = classOf[ParameterNumberChecker]
 

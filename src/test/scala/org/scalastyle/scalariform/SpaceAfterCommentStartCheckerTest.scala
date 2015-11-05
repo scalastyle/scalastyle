@@ -23,7 +23,7 @@ import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
-class SpaceAfterCommentStartCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class SpaceAfterCommentStartCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "space.after.comment.start"
   override protected val classUnderTest = classOf[SpaceAfterCommentStartChecker]
 

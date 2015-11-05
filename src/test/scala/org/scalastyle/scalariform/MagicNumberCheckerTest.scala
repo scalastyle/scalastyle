@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class MagicNumberCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class MagicNumberCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "magic.number"
   val classUnderTest = classOf[MagicNumberChecker]
 

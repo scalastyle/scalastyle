@@ -27,7 +27,7 @@ import org.scalastyle.file.CheckerTestHelper
  *
  * @author Galder Zamarreño
  */
-class ReturnCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ReturnCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
 
   protected val classUnderTest = classOf[ReturnChecker]
 

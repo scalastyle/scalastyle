@@ -22,7 +22,7 @@ import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number
 
-class SimplifyBooleanExpressionCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class SimplifyBooleanExpressionCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   protected val classUnderTest = classOf[SimplifyBooleanExpressionChecker]
   protected val key = "simplify.boolean.expression"
 

@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class NullCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class NullCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "null"
   val classUnderTest = classOf[NullChecker]
 

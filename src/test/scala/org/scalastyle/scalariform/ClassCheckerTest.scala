@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class EmptyClassCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class EmptyClassCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "empty.class"
   val classUnderTest = classOf[EmptyClassChecker]
 
@@ -68,7 +68,7 @@ class Outer {
   }
 }
 
-class ClassTypeParameterCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class ClassTypeParameterCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "class.type.parameter.name"
   val classUnderTest = classOf[ClassTypeParameterChecker]
 

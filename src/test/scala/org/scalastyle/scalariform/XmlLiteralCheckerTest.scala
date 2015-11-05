@@ -22,7 +22,7 @@ import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number
 
-class XmlLiteralCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class XmlLiteralCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
 
   protected val classUnderTest = classOf[XmlLiteralChecker]
 

@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number
 
-class DeprecatedJavaCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class DeprecatedJavaCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "deprecated.java"
   val classUnderTest = classOf[DeprecatedJavaChecker]
 

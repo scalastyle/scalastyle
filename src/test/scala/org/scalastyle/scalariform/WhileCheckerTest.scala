@@ -22,7 +22,7 @@ import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number
 
-class WhileCheckerTestHelper extends AssertionsForJUnit with CheckerTestHelper {
+class WhileCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
 
   protected val classUnderTest = classOf[WhileChecker]
 
