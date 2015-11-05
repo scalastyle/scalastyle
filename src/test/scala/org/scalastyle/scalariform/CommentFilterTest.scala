@@ -17,12 +17,12 @@
 package org.scalastyle.scalariform
 
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
-class CommentFilterTest extends AssertionsForJUnit with CheckerTest {
+class CommentFilterTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "class.name"
   val classUnderTest = classOf[ClassNamesChecker]
 
@@ -74,7 +74,7 @@ class foobar {
   }
 }
 
-class CommentFilterMagicNumberTest extends AssertionsForJUnit with CheckerTest {
+class CommentFilterMagicNumberTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "magic.number"
   val classUnderTest = classOf[MagicNumberChecker]
 

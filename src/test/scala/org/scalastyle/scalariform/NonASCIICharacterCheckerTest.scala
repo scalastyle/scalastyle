@@ -17,12 +17,12 @@
 package org.scalastyle.scalariform
 
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
-class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
+class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "non.ascii.character.disallowed"
   override protected val classUnderTest = classOf[NonASCIICharacterChecker]
 

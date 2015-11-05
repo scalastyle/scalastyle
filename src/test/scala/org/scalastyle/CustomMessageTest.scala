@@ -22,10 +22,10 @@ import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalastyle.file.FileLengthChecker
 
-class CustomMessageTest extends CheckerTest {
+class CustomMessageTest extends CheckerTestHelper {
   val key = "file.size.limit"
   val classUnderTest = classOf[FileLengthChecker]
   val message = Some("custom")
