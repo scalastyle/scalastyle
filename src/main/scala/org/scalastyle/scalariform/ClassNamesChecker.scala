@@ -89,21 +89,12 @@ class PackageNamesChecker extends ScalariformChecker {
     def getPackageNames(ast: List[Token]): List[List[Token]] = {
       val startingState: StateType = (List[List[Token]](), List[Token](), NoPackage)
 
-      /* This foldLeft implements a simple state machine that processes the stream of tokens.
+      /* This foldLeft implements a simple state machine to process the stream of tokens.
        * There are three states: NoPackage, PossiblePackage, and AssemblingPackage.
-       * In NoPackage state
-       *     Transition to PossiblePackage when a PACKAGE token is found
-       *     Otherwise, stay in NoPackage
-       * In PossiblePackage state
-       *     Transition to AssemblingPackage if the token is VARID, start to accumulate varids in package name
-       *     Otherwise, go back to NoPackage
-       * In AssemblingPackage state
-       *     Stay in Assembling package if token is VARID or DOT, accumulating varids
-       *     Otherwise, add accumulated list of varids to the result set, reset, transition to NoPackage
        */
-      ast.foldLeft(startingState) {
+      val packageNameList = ast.foldLeft(startingState) {
         (currentState: StateType, nextToken: Token) => currentState match {
-          case (result, sublist, packageState) => packageState match {
+          case (result, currentPackage, currentState) => currentState match {
             case NoPackage => 
               if (nextToken.tokenType == PACKAGE) (result, Nil, PossiblePackage)
               else (result, Nil, NoPackage)
@@ -111,10 +102,12 @@ class PackageNamesChecker extends ScalariformChecker {
               if (nextToken.tokenType == VARID) (result, List(nextToken), AssemblingPackage)
               else (result, Nil, NoPackage) // We ignore `package object`
             case AssemblingPackage =>
-              if (nextToken.tokenType == VARID) (result, nextToken::sublist, AssemblingPackage)
-              else if (nextToken.tokenType == DOT) (result, sublist, AssemblingPackage)
-              else ((sublist.reverse)::result, Nil, NoPackage)
-      }}}._1.reverse
+              if (nextToken.tokenType == VARID) (result, nextToken::currentPackage, AssemblingPackage)
+              else if (nextToken.tokenType == DOT) (result, currentPackage, AssemblingPackage)
+              else ((currentPackage.reverse)::result, Nil, NoPackage)
+      }}}._1
+        
+      packageNameList.reverse   // accumulated them by adding to start of list
     }
 
     var packageNames = getPackageNames(ast.tokens)
