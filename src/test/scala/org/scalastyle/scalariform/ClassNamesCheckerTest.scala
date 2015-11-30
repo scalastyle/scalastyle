@@ -97,6 +97,69 @@ package object foobar {
 }
 
 
+class PackageNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "package.name"
+  val classUnderTest = classOf[PackageNamesChecker]
+
+  @Test def testZero(): Unit = {
+    val source = """
+package foobar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOne(): Unit = {
+    val source = """
+package FooBar
+""";
+
+    assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testTwo(): Unit = {
+    val source = """
+package abc.foobar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testThree(): Unit = {
+    val source = """
+package abc.foo_bar
+""";
+
+    assertErrors(List(columnError(2, 12, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testFour(): Unit = {
+    val source = """
+package object _zoo_bar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testFive(): Unit = {
+    val source = """
+package foo
+package Bar
+""";
+
+    assertErrors(List(columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testSix(): Unit = {
+    val source = """
+package Foo
+package Bar
+""";
+
+    assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$")), columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
+  }
+}
+
 class PackageObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "package.object.name"
   val classUnderTest = classOf[PackageObjectNamesChecker]

@@ -25,6 +25,8 @@ import scalariform.lexer.Tokens.OBJECT
 import scalariform.lexer.Tokens.PACKAGE
 import scalariform.lexer.Tokens.VAL
 import scalariform.lexer.Tokens.VAR
+import scalariform.lexer.Tokens.VARID
+import scalariform.lexer.Tokens.DOT
 import scalariform.parser.CompilationUnit
 import scala.util.matching.Regex
 import scalariform.lexer.Token
@@ -63,6 +65,65 @@ class ObjectNamesChecker extends ScalariformChecker {
       if (left.tokenType != PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.text)).size == 0)
     } yield {
       PositionError(right.offset, List(regexString))
+    }
+
+    it.toList
+  }
+}
+
+class PackageNamesChecker extends ScalariformChecker {
+  val DefaultRegex = "^[a-z][A-Za-z]*$"
+  val errorKey = "package.name"
+
+  def verify(ast: CompilationUnit): List[PositionError] = {
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
+
+    sealed trait PackageNameStatus
+    object NoPackage extends PackageNameStatus
+    object PossiblePackage extends PackageNameStatus
+    object AssemblingPackage extends PackageNameStatus
+
+    type StateType = (List[List[Token]], List[Token], PackageNameStatus)
+
+    def getPackageNames(ast: List[Token]): List[List[Token]] = {
+      val startingState: StateType = (List[List[Token]](), List[Token](), NoPackage)
+
+      /* This foldLeft implements a simple state machine that processes the stream of tokens.
+       * There are three states: NoPackage, PossiblePackage, and AssemblingPackage.
+       * In NoPackage state
+       *     Transition to PossiblePackage when a PACKAGE token is found
+       *     Otherwise, stay in NoPackage
+       * In PossiblePackage state
+       *     Transition to AssemblingPackage if the token is VARID, start to accumulate varids in package name
+       *     Otherwise, go back to NoPackage
+       * In AssemblingPackage state
+       *     Stay in Assembling package if token is VARID or DOT, accumulating varids
+       *     Otherwise, add accumulated list of varids to the result set, reset, transition to NoPackage
+       */
+      ast.foldLeft(startingState) {
+        (currentState: StateType, nextToken: Token) => currentState match {
+          case (result, sublist, packageState) => packageState match {
+            case NoPackage => 
+              if (nextToken.tokenType == PACKAGE) (result, Nil, PossiblePackage)
+              else (result, Nil, NoPackage)
+            case PossiblePackage =>
+              if (nextToken.tokenType == VARID) (result, List(nextToken), AssemblingPackage)
+              else (result, Nil, NoPackage) // We ignore `package object`
+            case AssemblingPackage =>
+              if (nextToken.tokenType == VARID) (result, nextToken::sublist, AssemblingPackage)
+              else if (nextToken.tokenType == DOT) (result, sublist, AssemblingPackage)
+              else ((sublist.reverse)::result, Nil, NoPackage)
+      }}}._1.reverse
+    }
+
+    var packageNames = getPackageNames(ast.tokens)
+
+    val it = for {
+      pkgName <- packageNames.flatten;
+      if ((regex findAllIn (pkgName.text)).size == 0)
+    } yield {
+      PositionError(pkgName.offset, List(regexString))
     }
 
     it.toList
