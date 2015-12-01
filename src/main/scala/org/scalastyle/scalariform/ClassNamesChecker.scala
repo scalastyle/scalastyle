@@ -78,39 +78,27 @@ class PackageNamesChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[PositionError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    
+    def isPartOfPackageName(t: Token): Boolean = (t.tokenType == DOT) || (t.tokenType == VARID)
 
-    sealed trait PackageNameStatus
-    object NoPackage extends PackageNameStatus
-    object PossiblePackage extends PackageNameStatus
-    object AssemblingPackage extends PackageNameStatus
-
-    type StateType = (List[List[Token]], List[Token], PackageNameStatus)
-
-    def getPackageNames(ast: List[Token]): List[List[Token]] = {
-      val startingState: StateType = (List[List[Token]](), List[Token](), NoPackage)
-
-      /* This foldLeft implements a simple state machine to process the stream of tokens.
-       * There are three states: NoPackage, PossiblePackage, and AssemblingPackage.
-       */
-      val packageNameList = ast.foldLeft(startingState) {
-        (currentState: StateType, nextToken: Token) => currentState match {
-          case (result, currentPackage, currentState) => currentState match {
-            case NoPackage => 
-              if (nextToken.tokenType == PACKAGE) (result, Nil, PossiblePackage)
-              else (result, Nil, NoPackage)
-            case PossiblePackage =>
-              if (nextToken.tokenType == VARID) (result, List(nextToken), AssemblingPackage)
-              else (result, Nil, NoPackage) // We ignore `package object`
-            case AssemblingPackage =>
-              if (nextToken.tokenType == VARID) (result, nextToken::currentPackage, AssemblingPackage)
-              else if (nextToken.tokenType == DOT) (result, currentPackage, AssemblingPackage)
-              else ((currentPackage.reverse)::result, Nil, NoPackage)
-      }}}._1
-        
-      packageNameList.reverse   // accumulated them by adding to start of list
+    @annotation.tailrec
+    def getNextPackageName(tokens: List[Token]): (List[Token], List[Token]) = tokens match {
+      case Nil => (Nil, Nil)
+      case hd :: tail if (hd.tokenType == PACKAGE) => tail.span(isPartOfPackageName(_))
+      case l => getNextPackageName(l.dropWhile(tok => tok.tokenType != PACKAGE))
     }
 
-    var packageNames = getPackageNames(ast.tokens)
+    @annotation.tailrec
+    def getPackageNameLoop(tokens: List[Token], myAccumulator: List[List[Token]]): List[List[Token]] =
+      getNextPackageName(tokens) match {
+        case (Nil, Nil) => myAccumulator.reverse  // Return the result, but reverse since we gathered backward
+        case (Nil, remainder) => getPackageNameLoop(remainder, myAccumulator) // Found package object - try again
+        case (l, remainder) =>  // add match to results, go look again
+          var pkgName = l.filter(tok => tok.tokenType != DOT)  // Strip out the dots between varids
+          getPackageNameLoop(remainder, pkgName :: myAccumulator)
+      }
+
+    var packageNames = getPackageNameLoop(ast.tokens, Nil)
 
     val it = for {
       pkgName <- packageNames.flatten;
