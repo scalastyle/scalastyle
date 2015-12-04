@@ -5,10 +5,13 @@ scala:
 jdk:
   - oraclejdk7
   - openjdk7
+sudo: false
 notifications:
   email:
     - matthew@farwell.co.uk
 before_install:
   - pip install --user codecov
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION coverage test
 after_success:
   - codecov
