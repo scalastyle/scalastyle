@@ -718,7 +718,11 @@ To bring consistency with how comments should be formatted, leave a space right 
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true" />
+    <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true">
+     <parameters>
+      <parameter name="ignoreWhitespaceLines" type="boolean" default="false" />
+     </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>

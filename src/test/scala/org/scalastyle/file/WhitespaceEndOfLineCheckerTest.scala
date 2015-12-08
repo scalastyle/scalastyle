@@ -65,4 +65,35 @@ object Foobar {
 
     assertErrors(List(columnError(2, 14), columnError(3, 13)), source)
   }
+
+  @Test def testThree(): Unit = {
+    val source = s"""
+package foobar
+
+  object Foobar {
+    val foo = "foo"
+~~
+    val bar = "bar"
+##
+  }
+""".replaceAll("~", " ").replaceAll("#", "\t");
+
+    assertErrors(List(), source, Map("ignoreWhitespaceLines" -> "true"))
+  }
+
+  @Test def testFour(): Unit = {
+    val source =
+      s"""
+package foobar
+
+  object Foobar {
+    val foo = "foo"
+~~
+    val bar = "bar"
+##
+  }
+""".replaceAll("~", " ").replaceAll("#", "\t");
+
+    assertErrors(List(columnError(6, 0), columnError(8, 0)), source, Map("ignoreWhitespaceLines" -> "false"))
+  }
 }

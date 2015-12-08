@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  scalastyle definition file. This contains the list of checkers and the parameters & types available -->
 <scalastyle-definition>
-	<checker class="org.scalastyle.file.FileTabChecker" id="line.contains.tab" defaultLevel="warning"/>
+    <checker class="org.scalastyle.file.FileTabChecker" id="line.contains.tab" defaultLevel="warning"/>
     <checker class="org.scalastyle.file.FileLengthChecker" id="file.size.limit" defaultLevel="warning">
         <parameters>
             <parameter name="maxFileLength" type="integer" default="1500"/>
@@ -13,15 +13,19 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.SpacesAfterPlusChecker" id="spaces.after.plus" defaultLevel="warning" />
-    <checker class="org.scalastyle.file.WhitespaceEndOfLineChecker" id="whitespace.end.of.line" defaultLevel="warning" />
+    <checker class="org.scalastyle.file.WhitespaceEndOfLineChecker" id="whitespace.end.of.line" defaultLevel="warning">
+        <parameters>
+            <parameter name="ignoreWhitespaceLines" type="boolean" default="false" />
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.scalariform.SpacesBeforePlusChecker" id="spaces.before.plus" defaultLevel="warning" />
-	<checker class="org.scalastyle.file.FileLineLengthChecker" id="line.size.limit" defaultLevel="warning" >
-		<parameters>
+    <checker class="org.scalastyle.file.FileLineLengthChecker" id="line.size.limit" defaultLevel="warning" >
+        <parameters>
             <parameter name="maxLineLength" type="integer" default="160" />
             <parameter name="tabSize" type="integer" default="4" />
             <parameter name="ignoreImports" type="boolean" default="false" />
-		</parameters>
-	</checker>
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.scalariform.ClassNamesChecker" id="class.name" defaultLevel="warning">
         <parameters>
             <parameter name="regex" type="string" default="^[A-Z][A-Za-z]*$" />

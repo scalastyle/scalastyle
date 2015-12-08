@@ -26,7 +26,9 @@
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="false"></check>
- <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="false"></check>
+ <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="false">
+   <parameter name="ignoreWhitespaceLines"><![CDATA[false]]></parameter>
+ </check>
  <check level="warning" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="false"></check>
  <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
   <parameters>
