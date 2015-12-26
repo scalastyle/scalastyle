@@ -66,7 +66,7 @@ is considered to be a magic number.
  <![CDATA[
     <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
       <parameters>
-        <parameter name="regex">(?m)^\s\*$(\r|)\n^\s*$(\r|)\n</parameter>
+        <parameter name="regex">(?m)^\s*$(\r|)\n^\s*$(\r|)\n</parameter>
         <parameter name="line">false</parameter>
       </parameters>
       <customMessage>No double blank lines</customMessage>
@@ -565,11 +565,11 @@ To bring consistency with how comments should be formatted, leave a space right 
  <justification>Some projects may consider TODO or FIXME comments in a code bad style. They would rather you fix the problem.</justification>
  <example-configuration>
  <![CDATA[
-   <checker level="warning" class="org.scalastyle.scalariform.TodoCommentChecker" enabled="true">
+   <check level="warning" class="org.scalastyle.scalariform.TodoCommentChecker" enabled="true">
      <parameters>
        <parameter name="words" type="string" default="TODO|FIXME" />
      </parameters>
-   </checker>
+   </check>
  ]]>
  </example-configuration>
  </check>
