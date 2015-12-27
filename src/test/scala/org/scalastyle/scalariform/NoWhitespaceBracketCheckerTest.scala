@@ -16,7 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class NoWhitespaceBeforeLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTest {
+class NoWhitespaceBeforeLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.whitespace.before.left.bracket"
   val classUnderTest = classOf[NoWhitespaceBeforeLeftBracketChecker]
 
@@ -65,7 +65,7 @@ class Foobar [ Barbar [T]] {
   }
 }
 
-class NoWhitespaceAfterLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTest {
+class NoWhitespaceAfterLeftBracketCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "no.whitespace.after.left.bracket"
   val classUnderTest = classOf[NoWhitespaceAfterLeftBracketChecker]
 

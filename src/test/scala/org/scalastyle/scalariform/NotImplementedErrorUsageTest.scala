@@ -17,12 +17,12 @@
 package org.scalastyle.scalariform
 
 import org.scalatest.junit.AssertionsForJUnit
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.junit.Test
 
 // scalastyle:off magic.number
 
-class NotImplementedErrorUsageTest extends AssertionsForJUnit with CheckerTest {
+class NotImplementedErrorUsageTest extends AssertionsForJUnit with CheckerTestHelper {
 
   val key = "not.implemented.error.usage"
   val classUnderTest = classOf[NotImplementedErrorUsage]

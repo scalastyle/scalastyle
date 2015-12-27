@@ -17,12 +17,12 @@
 package org.scalastyle.scalariform
 
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
-class PatternMatchAlignTest extends AssertionsForJUnit with CheckerTest {
+class PatternMatchAlignTest extends AssertionsForJUnit with CheckerTestHelper {
   protected val classUnderTest = classOf[PatternMatchAlignChecker]
   protected val key = "pattern.match.align"
 
