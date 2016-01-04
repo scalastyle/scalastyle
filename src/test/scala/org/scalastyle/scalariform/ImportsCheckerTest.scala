@@ -182,6 +182,33 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "import.ordering"
   val classUnderTest = classOf[ImportOrderChecker]
 
+  val params = Map(
+    "groups" -> "java,scala,others,project2",
+    "group.java" -> "javax?\\..+",
+    "group.scala" -> "scala\\..+",
+    "group.others" -> "(?!my\\.org\\.project2\\.).*",
+    "group.project2" -> "my\\.org\\.project2\\..*",
+    "maxBlankLines" -> "2"
+    )
+
+  @Test def testSubPackage(): Unit = {
+    val source = """
+      |package foobar
+      |
+      |import foobar.subpackage.Foo
+      |import foobar.Bar
+      |
+      |object Foobar {
+      |}
+      """.stripMargin;
+
+    val expected = List(
+      columnError(5, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("foobar.Bar", "foobar.subpackage.Foo")))
+
+    assertErrors(expected, source, params = params)
+  }
+
   @Test def testImportGrouping(): Unit = {
     val source = """
       |package foobar
@@ -206,15 +233,6 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
       |object Foobar {
       |}
       """.stripMargin;
-
-    val params = Map(
-      "groups" -> "java,scala,others,project2",
-      "group.java" -> "javax?\\..+",
-      "group.scala" -> "scala\\..+",
-      "group.others" -> "(?!my\\.org\\.project2\\.).*",
-      "group.project2" -> "my\\.org\\.project2\\..*",
-      "maxBlankLines" -> "2"
-      )
 
     val expected = List(
       columnError(5, 20, errorKey = errorKey("wrongOrderInSelector"), args = List("Cipher", "Mac")),
