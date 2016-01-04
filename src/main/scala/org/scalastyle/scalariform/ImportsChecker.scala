@@ -399,7 +399,7 @@ class ImportOrderChecker extends ScalariformChecker {
         if (isName1UpperCase == isName2UpperCase) {
           name1.compareToIgnoreCase(name2)
         } else {
-          if (isName1UpperCase && !isImport) 1 else -1
+          if (isName1UpperCase && !isImport) -1 else 1
         }
       }
     } else {
