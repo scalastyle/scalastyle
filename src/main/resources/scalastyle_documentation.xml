@@ -613,6 +613,21 @@ To bring consistency with how comments should be formatted, leave a space right 
  </example-configuration>
  </check>
 
+ <check id="package.name">
+ <justification>
+ The Scala style guide recommends that package names conform to certain standards.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.PackageNamesChecker" enabled="true">
+      <parameters>
+        <parameter name="regex">^[a-z][A-Za-z]*$</parameter>
+      </parameters>
+    </check>
+ ]]>
+ </example-configuration>
+ </check>
+
  <check id="package.object.name">
  <justification>
  The Scala style guide recommends that package object names conform to certain standards.

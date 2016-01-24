@@ -25,6 +25,8 @@ import scalariform.lexer.Tokens.OBJECT
 import scalariform.lexer.Tokens.PACKAGE
 import scalariform.lexer.Tokens.VAL
 import scalariform.lexer.Tokens.VAR
+import scalariform.lexer.Tokens.VARID
+import scalariform.lexer.Tokens.DOT
 import scalariform.parser.CompilationUnit
 import scala.util.matching.Regex
 import scalariform.lexer.Token
@@ -63,6 +65,46 @@ class ObjectNamesChecker extends ScalariformChecker {
       if (left.tokenType != PACKAGE && middle.tokenType == OBJECT && (regex findAllIn (right.text)).size == 0)
     } yield {
       PositionError(right.offset, List(regexString))
+    }
+
+    it.toList
+  }
+}
+
+class PackageNamesChecker extends ScalariformChecker {
+  val DefaultRegex = "^[a-z][A-Za-z]*$"
+  val errorKey = "package.name"
+
+  def verify(ast: CompilationUnit): List[PositionError] = {
+    val regexString = getString("regex", DefaultRegex)
+    val regex = regexString.r
+    
+    def isPartOfPackageName(t: Token): Boolean = (t.tokenType == DOT) || (t.tokenType == VARID)
+
+    @annotation.tailrec
+    def getNextPackageName(tokens: List[Token]): (List[Token], List[Token]) = tokens match {
+      case Nil => (Nil, Nil)
+      case hd :: tail if (hd.tokenType == PACKAGE) => tail.span(isPartOfPackageName(_))
+      case l => getNextPackageName(l.dropWhile(tok => tok.tokenType != PACKAGE))
+    }
+
+    @annotation.tailrec
+    def getPackageNameLoop(tokens: List[Token], myAccumulator: List[List[Token]]): List[List[Token]] =
+      getNextPackageName(tokens) match {
+        case (Nil, Nil) => myAccumulator.reverse  // Return the result, but reverse since we gathered backward
+        case (Nil, remainder) => getPackageNameLoop(remainder, myAccumulator) // Found package object - try again
+        case (l, remainder) =>  // add match to results, go look again
+          var pkgName = l.filter(tok => tok.tokenType != DOT)  // Strip out the dots between varids
+          getPackageNameLoop(remainder, pkgName :: myAccumulator)
+      }
+
+    var packageNames = getPackageNameLoop(ast.tokens, Nil)
+
+    val it = for {
+      pkgName <- packageNames.flatten;
+      if ((regex findAllIn (pkgName.text)).size == 0)
+    } yield {
+      PositionError(pkgName.offset, List(regexString))
     }
 
     it.toList
