@@ -16,7 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -28,7 +28,7 @@ import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
-class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTest {
+class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "illegal.imports"
   val classUnderTest = classOf[IllegalImportsChecker]
 
@@ -114,7 +114,7 @@ object Foobar {
 }
 
 
-class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTest {
+class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "underscore.import"
   val classUnderTest = classOf[UnderscoreImportChecker]
 
@@ -136,7 +136,7 @@ object Foobar {
   }
 }
 
-class ImportGroupingCheckerTest extends AssertionsForJUnit with CheckerTest {
+class ImportGroupingCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "import.grouping"
   val classUnderTest = classOf[ImportGroupingChecker]
 
@@ -178,7 +178,7 @@ object Barbar {
   }
 }
 
-class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
+class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   val key = "import.ordering"
   val classUnderTest = classOf[ImportOrderChecker]
 

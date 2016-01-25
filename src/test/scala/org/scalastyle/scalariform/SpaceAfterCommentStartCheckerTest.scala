@@ -18,12 +18,12 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.Checker
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
-class SpaceAfterCommentStartCheckerTest extends AssertionsForJUnit with CheckerTest {
+class SpaceAfterCommentStartCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   override protected val key: String = "space.after.comment.start"
   override protected val classUnderTest = classOf[SpaceAfterCommentStartChecker]
 

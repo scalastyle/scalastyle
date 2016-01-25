@@ -17,12 +17,12 @@
 package org.scalastyle.scalariform
 
 import org.scalatest.junit.AssertionsForJUnit
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 import org.junit.Test
 
 // scalastyle:off magic.number
 
-class BlockImportCheckerTest extends AssertionsForJUnit with CheckerTest {
+class BlockImportCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
 
   val key = "block.import"
   val classUnderTest = classOf[BlockImportChecker]

@@ -59,21 +59,26 @@ case class Lines(lines: Array[Line], lastChar: Char) {
 }
 
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
-  def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] = {
-    privateCheckFiles(configuration, files).toList
+
+  def completeAllFileChecks(filesAndRules: Iterable[FileNameAndRules[T]]): List[Message[T]] = {
+    (StartWork() :: runAllFileChecks(filesAndRules)) :+ EndWork()
   }
 
-  def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
-    seqAsJavaList(privateCheckFiles(configuration, collectionAsScalaIterable(files)))
-  }
+  private[this] def runAllFileChecks(filesAndRules: Iterable[FileNameAndRules[T]]) =
+    filesAndRules.flatMap{ case FileNameAndRules(f, r) => runFileCheck(f, r) }.toList
 
-  private[this] def privateCheckFiles(configuration: ScalastyleConfiguration, files: Iterable[T]): Seq[Message[T]] = {
-    val checks = configuration.checks.filter(_.enabled)
+  private[this] def runFileCheck(file: T, rule: ScalastyleConfiguration): List[Message[T]] = {
+    val checks = rule.checks.filter(_.enabled)
     val checkerUtils = new CheckerUtils(classLoader)
-    StartWork() :: files.flatMap(file => StartFile(file) :: checkerUtils.verifyFile(configuration, checks, file) :::
-        List(EndFile(file))).toList ::: List(EndWork())
+
+    StartFile(file) :: checkerUtils.verifyFile(rule, checks, file) ::: List(EndFile(file))
   }
 
+  // todo needs assert for existence (otherwise it looks unused, except from the maven plugin).
+  def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
+    val filesAndRules = files.map(FileNameAndRules(_, configuration))
+    seqAsJavaList(completeAllFileChecks(filesAndRules))
+  }
 }
 
 case class ScalariformAst(ast: CompilationUnit, comments: List[Comment])

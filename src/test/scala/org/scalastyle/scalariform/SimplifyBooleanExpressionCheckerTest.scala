@@ -18,11 +18,11 @@ package org.scalastyle.scalariform
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
-import org.scalastyle.file.CheckerTest
+import org.scalastyle.file.CheckerTestHelper
 
 // scalastyle:off magic.number
 
-class SimplifyBooleanExpressionCheckerTest extends AssertionsForJUnit with CheckerTest {
+class SimplifyBooleanExpressionCheckerTest extends AssertionsForJUnit with CheckerTestHelper {
   protected val classUnderTest = classOf[SimplifyBooleanExpressionChecker]
   protected val key = "simplify.boolean.expression"
 

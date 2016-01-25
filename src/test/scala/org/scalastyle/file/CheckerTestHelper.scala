@@ -30,7 +30,7 @@ import org.scalastyle.CheckerUtils
 
 // scalastyle:off multiple.string.literals
 
-trait CheckerTest {
+trait CheckerTestHelper {
   protected val key: String
   protected val classUnderTest: Class[_ <: Checker[_]]
 
