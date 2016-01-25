@@ -97,6 +97,90 @@ package object foobar {
 }
 
 
+class PackageNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "package.name"
+  val classUnderTest = classOf[PackageNamesChecker]
+
+  @Test def testSinglePartNoError(): Unit = {
+    val source = """
+package foobar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testSinglePartError(): Unit = {
+    val source = """
+package FooBar
+""";
+
+    assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testMultiPartNoError(): Unit = {
+    val source = """
+package abc.foobar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testMultiPartError(): Unit = {
+    val source = """
+package abc.foo_bar
+""";
+
+    assertErrors(List(columnError(2, 12, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testPackageObjectNoError(): Unit = {
+    val source = """
+package object _foo_bar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  // Check case where the package name is built up by successive package statements.
+  @Test def testMultiLinePackageNoError(): Unit = {
+    val source = """
+package foo
+package bar
+""";
+
+    assertErrors(List(), source)
+  }
+
+  // Check case where the package name is built up by successive package statements.
+  @Test def testMultiLinePackageError(): Unit = {
+    val source = """
+package foo
+package Bar
+""";
+
+    assertErrors(List(columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testMultiLinePackageMultipleError(): Unit = {
+    val source = """
+package Foo
+package Bar
+""";
+
+    assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$")), columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testPackageAndPackageObjectNoError(): Unit = {
+    val source = """
+package org.thisone
+package object _foo
+""";
+
+    assertErrors(List(), source)
+  }
+
+}
+
 class PackageObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "package.object.name"
   val classUnderTest = classOf[PackageObjectNamesChecker]
