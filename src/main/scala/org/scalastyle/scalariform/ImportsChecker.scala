@@ -351,7 +351,7 @@ class ImportOrderChecker extends ScalariformChecker {
    * The import statements can end with a dangling `.`, meaning they're the start of a
    * multi-import block.
    */
-  private def compareImports(imp1: String, imp2: String): Int = {
+  private[scalariform] def compareImports(imp1: String, imp2: String): Int = {
     val imp1Components = imp1.split("[.]")
     val imp2Components = imp2.split("[.]")
     val max = math.min(imp1Components.size, imp2Components.size)
@@ -386,9 +386,9 @@ class ImportOrderChecker extends ScalariformChecker {
    * @param isImport If true, orders names according to the import statement rules:
    *                 "_" should come before other names, and capital letters should come
    *                 before lower case ones. Otherwise, do the opposite, which are the ordering
-   *                 rules for names within a multi-import block.
+   *                 rules for names within a selector.
    */
-  private def compareNames(name1: String, name2: String, isImport: Boolean): Int = {
+  private[scalariform] def compareNames(name1: String, name2: String, isImport: Boolean): Int = {
     if (name1 != "_") {
       if (name2 == "_") {
         -1 * compareNames(name2, name1, isImport)
@@ -399,7 +399,9 @@ class ImportOrderChecker extends ScalariformChecker {
         if (isName1UpperCase == isName2UpperCase) {
           name1.compareToIgnoreCase(name2)
         } else {
-          if (isName1UpperCase && !isImport) -1 else 1
+          // Classes come before subpackages in import statements, after in selectors.
+          val order = if (isImport) -1 else 1
+          if (isName1UpperCase) order else -order
         }
       }
     } else {

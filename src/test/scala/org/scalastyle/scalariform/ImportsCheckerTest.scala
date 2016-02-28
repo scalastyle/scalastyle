@@ -191,20 +191,63 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
     "maxBlankLines" -> "2"
     )
 
+  @Test def testNameComparison(): Unit = {
+    val checker = new ImportOrderChecker()
+
+    // Rules for import statements.
+    assertTrue("import: wildcard before class", checker.compareNames("_", "Class", true) < 0)
+    assertTrue("import: wildcard before package", checker.compareNames("_", "package", true) < 0)
+    assertTrue("import: package after wildcard", checker.compareNames("package", "_", true) > 0)
+    assertTrue("import: package after class", checker.compareNames("package", "Class", true) > 0)
+    assertTrue("import: class before package", checker.compareNames("Class", "package", true) < 0)
+    assertTrue("import: classes in alphabetical order",
+      checker.compareNames("Class1", "Class2", true) < 0)
+    assertTrue("import: packages in alphabetical order",
+      checker.compareNames("package2", "package1", true) > 0)
+
+    // Rules for names inside selectors.
+    assertTrue("selector: wildcard after class", checker.compareNames("_", "Class", false) > 0)
+    assertTrue("selector: package before class",
+      checker.compareNames("package", "Class", false) < 0)
+    assertTrue("selector: class after package", checker.compareNames("Class", "package", false) > 0)
+    assertTrue("selector: classes in alphabetical order",
+      checker.compareNames("Class1", "Class2", false) < 0)
+    assertTrue("selector: packages in alphabetical order",
+      checker.compareNames("package2", "package1", false) > 0)
+  }
+
+  @Test def testImportComparison(): Unit = {
+    val checker = new ImportOrderChecker()
+
+    assertTrue("package after class", checker.compareImports("foo.package", "foo.Class") > 0)
+    assertTrue("class before package", checker.compareImports("foo.Class", "foo.package") < 0)
+    assertTrue("selector before subpackage", checker.compareImports("foo.", "foo.package") < 0)
+    assertTrue("wildcard before selector", checker.compareImports("foo._", "foo.") < 0)
+    assertTrue("wildcard before subpackage", checker.compareImports("foo._", "foo.package") < 0)
+  }
+
   @Test def testSubPackage(): Unit = {
     val source = """
-      |package foobar
-      |
       |import foobar.subpackage.Foo
       |import foobar.Bar
-      |
-      |object Foobar {
-      |}
       """.stripMargin;
 
     val expected = List(
-      columnError(5, 0, errorKey = errorKey("wrongOrderInGroup"),
+      columnError(3, 0, errorKey = errorKey("wrongOrderInGroup"),
         args = List("foobar.Bar", "foobar.subpackage.Foo")))
+
+    assertErrors(expected, source, params = params)
+  }
+
+  @Test def testInGroupOrdering(): Unit = {
+    val source = """
+      |import java.nio.ByteBuffer
+      |import java.nio.file.{Paths, Files}
+      """.stripMargin;
+
+    val expected = List(
+      columnError(3, 21, errorKey = errorKey("wrongOrderInSelector"),
+        args = List("Files", "Paths")))
 
     assertErrors(expected, source, params = params)
   }
