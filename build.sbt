@@ -75,7 +75,11 @@ buildInfoPackage := "org.scalastyle"
 
 seq(filterSettings: _*)
 
-aetherPublishBothSettings
+if (System.getProperty("scalastyle.publish-ivy-only") == "true") {
+  Seq()
+}  else {
+  Seq(aetherPublishBothSettings: _*)
+}
 
 aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
 
