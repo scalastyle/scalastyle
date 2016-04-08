@@ -189,4 +189,16 @@ class A {
 
     assertErrors(List(), source, Map("methodParamIndentSize" -> "4"))
   }
+
+  @Test def testExtendNotConsideredClassIndent(): Unit = {
+    val source =
+"""
+object A extends B(
+  a, b, c, d) {
+
+}
+"""
+
+    assertErrors(List(), source, Map("classParamIndentSize" -> "4"))
+  }
 }
