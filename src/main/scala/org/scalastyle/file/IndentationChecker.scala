@@ -102,7 +102,7 @@ class IndentationChecker extends FileChecker {
    */
   private def verifyClassIndent(lines: Seq[NormalizedLine], classParamIndentSize: Int) = {
     def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
-      if (startsParamList(l1)) {
+      if (startsParamList(l1) && !l1.normalizedText.contains(" extends ")) {
         (l2.indentDepth - l1.indentDepth) != classParamIndentSize
       } else {
         false
