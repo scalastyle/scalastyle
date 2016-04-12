@@ -410,7 +410,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
  </check>
  <check id="block.import">
  <justification>
-  Block imports can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations.
+  Block imports (e.g. `import a.{b, c}`) can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations.
  </justification>
  <example-configuration>
  <![CDATA[
