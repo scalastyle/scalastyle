@@ -372,4 +372,18 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List(lineError(7, List(Missing))), source)
   }
 
+  @Test def ignoreTokenTypes(): Unit = {
+
+    val cases = Seq(Seq("val a = 1", "var a = 2") -> "PatDefOrDcl",
+      Seq("class A", "case class A", "object A", "trait A") -> "TmplDef",
+      Seq("type B = A") -> "TypeDefOrDcl",
+      Seq("def A(): Unit") -> "FunDefOrDcl")
+
+    for ((declerations, ignoreTokenType) <- cases;
+         decleration <- declerations) {
+      assertErrors(Nil, decleration, Map("ignoreTokenTypes" -> ignoreTokenType))
+    }
+  }
+
+
 }

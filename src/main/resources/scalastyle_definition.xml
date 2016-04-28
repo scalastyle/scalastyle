@@ -152,6 +152,7 @@
     <checker class="org.scalastyle.scalariform.ScalaDocChecker" id="scaladoc" defaultLevel="warning">
         <parameters>
             <parameter name="ignoreRegex" type="string" default="^$"/>
+						<parameter name="ignoreTokenTypes" type="string" default="^$"/>
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" id="disallow.space.after.token" defaultLevel="warning"/>

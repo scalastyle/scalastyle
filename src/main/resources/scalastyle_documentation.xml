@@ -839,11 +839,15 @@ To bring consistency with how comments should be formatted, leave a space right 
  <justification>
  Scaladoc is generally considered a good thing. Within reason.
  </justification>
+ <extra-description>
+ Ignore tokens is a comma separated string that may include the following : PatDefOrDcl (variables), TmplDef (classes, traits), TypeDefOrDcl (type definitions), FunDefOrDcl (functions)
+ </extra-description>
  <example-configuration>
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ScalaDocChecker" enabled="true">
       <parameters>
         <parameter name="ignoreRegex">(.*Spec$)|(.*SpecIT$)</parameter>
+        <parameter name="ignoreTokenTypes">PatDefOrDcl,TypeDefOrDcl,FunDefOrDcl,TmplDef</parameter>
       </parameters>
     </check>
  ]]>
