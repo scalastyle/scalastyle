@@ -33,57 +33,61 @@ class ProcedureDeclarationCheckerTest extends AssertionsForJUnit with CheckerTes
   val classUnderTest = classOf[ProcedureDeclarationChecker]
 
   @Test def testClassOK(): Unit = {
-    val source = """
-package foobar
-
-abstract class OK {
-  def c1() = 5
-  def c2(): Int = 5
-  def c3 = 5
-  val foo2 = 2
-  def unit = {}
-  def unit2 {}
-  def unit3
-  def unit4: Unit
-  def unit5(i: Int) = {}
-  def unit6(i: Int) {}
-  def unit7(i: Int)
-  def unit8(i: Int): Unit
-  val foo: Unit = new scala.collection.mutable.HashMap {def foobar() = {}}
-  def bar() = { new scala.collection.mutable.HashMap {def foobar() = {}} }
-  def bar2() = new scala.collection.mutable.HashMap {def foobar2() = {}}
-  val bar3
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |abstract class OK {
+      |  def c1() = 5
+      |  def c2(): Int = 5
+      |  def c3 = 5
+      |  val foo2 = 2
+      |  def unit = {}
+      |  def unit2 {}
+      |  def unit3
+      |  def unit4: Unit
+      |  def unit5(i: Int) = {}
+      |  def unit6(i: Int) {}
+      |  def unit7(i: Int)
+      |  def unit8(i: Int): Unit
+      |  val foo: Unit = new scala.collection.mutable.HashMap {def foobar() = {}}
+      |  def bar() = { new scala.collection.mutable.HashMap {def foobar() = {}} }
+      |  def bar2() = new scala.collection.mutable.HashMap {def foobar2() = {}}
+      |  val bar3
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(10, 6), columnError(11, 6), columnError(14, 6), columnError(15, 6)), source)
   }
 
   @Test def testConstructor(): Unit = {
-    val source = """
-class ConstructorOK(a: Int) {
-  def this() = this(1)
-}
-"""
+    val source = 
+    """
+      |class ConstructorOK(a: Int) {
+      |  def this() = this(1)
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testConstructorWithBody(): Unit = {
-    val source = """
-package im.tox.tox4j
-
-final case class DhtNode(ipv4: String, ipv6: String, udpPort: Int, tcpPort: Int, dhtId: Array[Byte]) {
-
-  def this(ipv4: String, ipv6: String, udpPort: Int, tcpPort: Int, dhtId: String) {
-    this(ipv4, ipv6, udpPort, tcpPort, ToxCoreTestBase.parsePublicKey(dhtId))
-  }
-
-  def this(ipv4: String, ipv6: String, port: Int, dhtId: String) {
-    this(ipv4, ipv6, port, port, dhtId)
-  }
-
-}"""
+    val source = 
+    """
+      |package im.tox.tox4j
+      |
+      |final case class DhtNode(ipv4: String, ipv6: String, udpPort: Int, tcpPort: Int, dhtId: Array[Byte]) {
+      |
+      |  def this(ipv4: String, ipv6: String, udpPort: Int, tcpPort: Int, dhtId: String) {
+      |    this(ipv4, ipv6, udpPort, tcpPort, ToxCoreTestBase.parsePublicKey(dhtId))
+      |  }
+      |
+      |  def this(ipv4: String, ipv6: String, port: Int, dhtId: String) {
+      |    this(ipv4, ipv6, port, port, dhtId)
+      |  }
+      |
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }

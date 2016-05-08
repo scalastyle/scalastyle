@@ -33,43 +33,46 @@ class ParameterNumberCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[ParameterNumberChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int): Int = 45
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int): Int = 45
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6, List("8"))), source)
   }
 
   @Test def testOuterKOInnerKO(): Unit = {
-    val source = """
-package foobar
-
-class Outer {
-  object Inner {
-    def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
-  }
-
-  class Inner {
-    def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Outer {
+      |  object Inner {
+      |    def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
+      |  }
+      |
+      |  class Inner {
+      |    def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 8, List("8")), columnError(10, 8, List("8"))), source)
   }

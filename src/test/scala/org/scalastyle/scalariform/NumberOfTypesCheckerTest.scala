@@ -33,49 +33,52 @@ class NumberOfTypesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[NumberOfTypesChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-case class F1()
-case class F2()
-case class F3()
-case class F4()
-case class F5()
-case class F6()
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |case class F1()
+      |case class F2()
+      |case class F3()
+      |case class F4()
+      |case class F5()
+      |case class F6()
+    """.stripMargin
 
     assertErrors(List(), source, Map("maxTypes" -> "6"))
   }
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-case class F1()
-case class F2()
-case class F3()
-case class F4()
-case class F5()
-case class F6()
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |case class F1()
+      |case class F2()
+      |case class F3()
+      |case class F4()
+      |case class F5()
+      |case class F6()
+    """.stripMargin
 
     assertErrors(List(fileError(List("5"))), source, Map("maxTypes" -> "5"))
   }
 
   @Test def testInnerClasses(): Unit = {
-    val source = """
-package foobar
-
-case class F1()
-case class F2()
-case class F3()
-case class F4()
-class F5() {
-  class Foobar {
-  }
-}
-case class F6()
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |case class F1()
+      |case class F2()
+      |case class F3()
+      |case class F4()
+      |class F5() {
+      |  class Foobar {
+      |  }
+      |}
+      |case class F6()
+    """.stripMargin
 
     assertErrors(List(fileError(List("6"))), source, Map("maxTypes" -> "6"))
   }

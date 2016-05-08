@@ -33,51 +33,55 @@ class CovariantEqualsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[CovariantEqualsChecker]
 
   @Test def testClassOK(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  def equals(o: java.lang.Object): Boolean = false
-  def equals(o: java.lang.Integer): Boolean = false
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  def equals(o: java.lang.Object): Boolean = false
+      |  def equals(o: java.lang.Integer): Boolean = false
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testClassCovariantEqualsNoObjectKO(): Unit = {
-    val source = """
-package foobar
-
-class CovariantEqualsNoObjectKO {
-  def equals(o: java.lang.Integer): Boolean = false
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class CovariantEqualsNoObjectKO {
+      |  def equals(o: java.lang.Integer): Boolean = false
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6)), source)
   }
 
   @Test def testObjectOK(): Unit = {
-    val source = """
-package foobar
-
-object OK {
-  def equals(o: java.lang.Object): Boolean = false
-  def equals(o: java.lang.Integer): Boolean = false
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object OK {
+      |  def equals(o: java.lang.Object): Boolean = false
+      |  def equals(o: java.lang.Integer): Boolean = false
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testObjectCovariantEqualsNoObjectKO(): Unit = {
-    val source = """
-package foobar
-
-object CovariantEqualsNoObjectKO {
-  def equals(o: java.lang.Integer): Boolean = false
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object CovariantEqualsNoObjectKO {
+      |  def equals(o: java.lang.Integer): Boolean = false
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 7)), source)
   }

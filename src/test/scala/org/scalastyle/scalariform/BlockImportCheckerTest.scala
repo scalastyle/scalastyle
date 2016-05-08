@@ -29,73 +29,91 @@ class BlockImportCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   @Test
   def singleImportIsNoBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable.Buffer
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.Buffer
+    """.stripMargin
+
     assertErrors(Nil, source)
   }
 
   @Test
   def importAllIsNoBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable._
-      """
+    val source = 
+    """
+      |import scala.collection.mutable._
+    """.stripMargin
+
     assertErrors(Nil, source)
   }
 
   @Test
   def hideImportIsNoBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable.{Buffer => _}
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.{Buffer => _}
+    """.stripMargin
+
     assertErrors(Nil, source)
   }
 
   @Test
   def renameImportIsNoBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable.{Buffer => MB}
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.{Buffer => MB}
+    """.stripMargin
+
     assertErrors(Nil, source)
   }
 
   @Test
   def commaSeparatedImportIsBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable, mutable.Buffer, mutable.ArrayBuffer
-      """
+    val source = 
+    """
+      |import scala.collection.mutable, mutable.Buffer, mutable.ArrayBuffer
+    """.stripMargin
+
     assertErrors(List(columnError(2, 7)), source)
   }
 
   @Test
   def blockImportFound(): Unit = {
-    val source = """
-import scala.collection.mutable.{Buffer, ArrayBuffer}
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.{Buffer, ArrayBuffer}
+    """.stripMargin
+
     assertErrors(List(columnError(2, 7)), source)
   }
 
   @Test
   def wildcardImportAfterRenameImportsIsNoBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable.{Buffer => MB, ArrayBuffer => _, _}
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.{Buffer => MB, ArrayBuffer => _, _}
+    """.stripMargin
+
     assertErrors(Nil, source)
   }
 
   @Test
   def wildcardImportAfterNormalImportAndRenameImportIsBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable.{Buffer => MB, ArrayBuffer, _}
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.{Buffer => MB, ArrayBuffer, _}
+    """.stripMargin
+
     assertErrors(List(columnError(2, 7)), source)
   }
 
   @Test
   def wildcardImportAfterNormalImportIsBlockImport(): Unit = {
-    val source = """
-import scala.collection.mutable.{ArrayBuffer, _}
-      """
+    val source = 
+    """
+      |import scala.collection.mutable.{ArrayBuffer, _}
+    """.stripMargin
+
     assertErrors(List(columnError(2, 7)), source)
   }
 }

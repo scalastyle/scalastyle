@@ -33,36 +33,37 @@ class VarFieldCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[VarFieldChecker]
 
   @Test def testOne(): Unit = {
-    val source = """
-class C1 {
-  var f1 = 1
-  val f2 = 1
-  var f3
-  def m1() = {
-    var v1 = 1
-    v1
-  }
-  def m2() = {
-    val v2 = 1
-    def m3() = {
-      var v3 = 1
-      v3
-    }
-    m3()
-  }
-  val f4 = { (a: Int) =>
-    var v4 = a
-    v4
-  }
-  def m5() = {
-    var v5, v6
-    1
-  }
-}
-object O1 {
-  var f5 = 1
-}
-""";
+    val source =
+    """
+      |class C1 {
+      |  var f1 = 1
+      |  val f2 = 1
+      |  var f3
+      |  def m1() = {
+      |    var v1 = 1
+      |    v1
+      |  }
+      |  def m2() = {
+      |    val v2 = 1
+      |    def m3() = {
+      |      var v3 = 1
+      |      v3
+      |    }
+      |    m3()
+      |  }
+      |  val f4 = { (a: Int) =>
+      |    var v4 = a
+      |    v4
+      |  }
+      |  def m5() = {
+      |    var v5, v6
+      |    1
+      |  }
+      |}
+      |object O1 {
+      |  var f5 = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(3, 2), columnError(5, 2), columnError(28, 2)), source)
   }

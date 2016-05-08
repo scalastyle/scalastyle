@@ -27,30 +27,36 @@ class TokenCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val key = "token"
 
   @Test def testErrors1(): Unit = {
-    val source = """
-object foo {
-  def bar(x: Any) = x.asInstanceOf[Int]
-}"""
+    val source =
+    """
+      |object foo {
+      |  def bar(x: Any) = x.asInstanceOf[Int]
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(3, 22)), source, Map("regex" -> "^[ai]sInstanceOf$"))
   }
 
   @Test def testErrors2(): Unit = {
-    val source = """
-import collection.mutable._
-object foo {
-  def bar(x: Any) = new ArrayList[Int]()
-}"""
+    val source =
+    """
+      |import collection.mutable._
+      |object foo {
+      |  def bar(x: Any) = new ArrayList[Int]()
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(2, 18), columnError(4, 24)), source, Map("regex" -> "^ArrayList|ArrayBuffer|mutable$"))
   }
 
   @Test def testOk(): Unit = {
-    val source = """
-object foo {
-  /** asInstanceOf[Int] is not used */
-  def bar(x: Any) = 1
-}"""
+    val source =
+    """
+      |object foo {
+      |  /** asInstanceOf[Int] is not used */
+      |  def bar(x: Any) = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source, Map("regex" -> "^[ai]sInstanceOf$"))
   }

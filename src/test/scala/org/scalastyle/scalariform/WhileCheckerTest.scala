@@ -29,45 +29,48 @@ class WhileCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val key = "while"
 
   @Test def testZeroErrors(): Unit = {
-    val source = """
-class C1 {
-  def m1(n: Int) = n
-}
-""";
+    val source =
+    """
+      |class C1 {
+      |  def m1(n: Int) = n
+      |}
+    """.stripMargin
     assertErrors(List(), source)
   }
 
   @Test def testOneError(): Unit = {
-    val source = """
-class C1 {
-  def m1(n: Int) = {
-    var count = 0
-    while (count < n) {
-      count += 1
-    }
-    count
-  }
-}
-"""
+    val source =
+    """
+      |class C1 {
+      |  def m1(n: Int) = {
+      |    var count = 0
+      |    while (count < n) {
+      |      count += 1
+      |    }
+      |    count
+      |  }
+      |}
+    """.stripMargin
     assertErrors(List(columnError(5, 4)), source)
   }
 
   @Test def testTwoErrors(): Unit = {
-    val source = """
-class C1 {
-  def m1(n: Int) = {
-    var count = 0
-    while (count < n) {
-      var count2 = count
-      while (count2 < n) {
-        count2 += 1
-      }
-      count += 1
-    }
-    count
-  }
-}
-"""
+    val source =
+    """
+      |class C1 {
+      |  def m1(n: Int) = {
+      |    var count = 0
+      |    while (count < n) {
+      |      var count2 = count
+      |      while (count2 < n) {
+      |        count2 += 1
+      |      }
+      |      count += 1
+      |    }
+      |    count
+      |  }
+      |}
+    """.stripMargin
     assertErrors(List(columnError(5, 4), columnError(7, 6)), source)
   }
 }

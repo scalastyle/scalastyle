@@ -28,27 +28,30 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
 
 
   @Test def testClassOK(): Unit = {
-    val source = """
-                   |package foobar
-                   |// ~~$%
-                   |class OK {
-                   |  def -> = "something"
-                   |  val `=>` = "test"
-                   |}""".stripMargin
+    val source =
+    """
+      |package foobar
+      |// ~~$%
+      |class OK {
+      |  def -> = "something"
+      |  val `=>` = "test"
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
 
   @Test def testClassNotOk(): Unit = {
-    val source = """
-                   |package foobar
-                   |// \u2190
-                   |class NotOK {
-                   |  def \u2192 = "something"
-                   |  def `\u21d2` = "test"
-                   |}
-                   | """.stripMargin
+    val source =
+    """
+      |package foobar
+      |// \u2190
+      |class NotOK {
+      |  def \u2192 = "something"
+      |  def `\u21d2` = "test"
+      |}
+    """.stripMargin
     assertErrors(List(columnError(2, 14), columnError(5, 6), columnError(6, 6)), source)
   }
 }

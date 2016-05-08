@@ -27,130 +27,133 @@ class CyclomaticComplexityCheckerTest extends AssertionsForJUnit with CheckerTes
   val classUnderTest = classOf[CyclomaticComplexityChecker]
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  def foobar(i: Int): Int = {
-    if (i == 1) {
-      5
-    } else if (i == 2) {
-      true && false || true
-      5 match {
-        case 4 =>
-        case 5 =>
-        case _ =>
-      }
-    } else {
-      var f = 0
-      while (f > 0) {}
-      do {} while (f > 0)
-      for (t <- List())
-      3
-    }
-  }
-
-  def barbar(i: Int): Int = {
-    if (i == 1) {
-      5
-    } else if (i == 2) {
-      true && false || true
-      5 match {
-        case 4 =>
-        case 5 =>
-        case _ =>
-      }
-    } else {
-      var f = 0
-      while (f > 0) {}
-      do {} while (f > 0)
-      for (t <- List())
-      3
-    }
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  def foobar(i: Int): Int = {
+      |    if (i == 1) {
+      |      5
+      |    } else if (i == 2) {
+      |      true && false || true
+      |      5 match {
+      |        case 4 =>
+      |        case 5 =>
+      |        case _ =>
+      |      }
+      |    } else {
+      |      var f = 0
+      |      while (f > 0) {}
+      |      do {} while (f > 0)
+      |      for (t <- List())
+      |      3
+      |    }
+      |  }
+      |
+      |  def barbar(i: Int): Int = {
+      |    if (i == 1) {
+      |      5
+      |    } else if (i == 2) {
+      |      true && false || true
+      |      5 match {
+      |        case 4 =>
+      |        case 5 =>
+      |        case _ =>
+      |      }
+      |    } else {
+      |      var f = 0
+      |      while (f > 0) {}
+      |      do {} while (f > 0)
+      |      for (t <- List())
+      |      3
+      |    }
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6, List("12", "11")), columnError(24, 6, List("12", "11"))), source, Map("maximum" -> "11"))
   }
 
   @Test def testEmbeddedMethods(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  def foobar(i: Int): Int = {
-    // 1 for method, 2 for inner methods and 3 for if/elseif clause
-    def bar1(i: Int) = if (i == 1) 1 else 2
-    def bar2(i: Int) = if (i == 2) 1 else 2
-
-    if (i == 1) {
-      1
-    } else if (i == 2) {
-      2
-    } else if (i == 3) {
-      3
-    } else {
-      4
-    }
-  }
-
-  def barbar(i: Int): Int = {
-    // 1 for method, 2 for inner methods and 3 for if/elseif clause
-    def bar1(i: Int) = {
-      if (i == 1) {
-        1
-      } else if (i == 2) {
-        2
-      } else if (i == 3) {
-        3
-      } else {
-        4
-      }
-    }
-
-  }
-}
-"""
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  def foobar(i: Int): Int = {
+      |    // 1 for method, 2 for inner methods and 3 for if/elseif clause
+      |    def bar1(i: Int) = if (i == 1) 1 else 2
+      |    def bar2(i: Int) = if (i == 2) 1 else 2
+      |
+      |    if (i == 1) {
+      |      1
+      |    } else if (i == 2) {
+      |      2
+      |    } else if (i == 3) {
+      |      3
+      |    } else {
+      |      4
+      |    }
+      |  }
+      |
+      |  def barbar(i: Int): Int = {
+      |    // 1 for method, 2 for inner methods and 3 for if/elseif clause
+      |    def bar1(i: Int) = {
+      |      if (i == 1) {
+      |        1
+      |      } else if (i == 2) {
+      |        2
+      |      } else if (i == 3) {
+      |        3
+      |      } else {
+      |        4
+      |      }
+      |    }
+      |
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6, List("4", "3")), columnError(21, 6, List("4", "3"))), source, Map("maximum" -> "3"))
   }
 
   @Test def testEmbeddedClasses(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  // This is not caught by the checker. Don't know whether it should or not.
-  val f = if (i == 1) {
-    1
-  } else if (i == 2) {
-    2
-  } else if (i == 3) {
-    3
-  } else {
-    4
-  }
-
-  def foobar(i: Int): Int = {
-    // 1 for method, 2 for inner methods and 3 for if/elseif clause
-    class Foo2 {
-      def bar1(i: Int) = if (i == 1) 1 else 2
-      def bar2(i: Int) = if (i == 2) 1 else 2
-    }
-
-    if (i == 1) {
-      1
-    } else if (i == 2) {
-      2
-    } else if (i == 3) {
-      3
-    } else {
-      4
-    }
-  }
-}
-"""
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  // This is not caught by the checker. Don't know whether it should or not.
+      |  val f = if (i == 1) {
+      |    1
+      |  } else if (i == 2) {
+      |    2
+      |  } else if (i == 3) {
+      |    3
+      |  } else {
+      |    4
+      |  }
+      |
+      |  def foobar(i: Int): Int = {
+      |    // 1 for method, 2 for inner methods and 3 for if/elseif clause
+      |    class Foo2 {
+      |      def bar1(i: Int) = if (i == 1) 1 else 2
+      |      def bar2(i: Int) = if (i == 2) 1 else 2
+      |    }
+      |
+      |    if (i == 1) {
+      |      1
+      |    } else if (i == 2) {
+      |      2
+      |    } else if (i == 3) {
+      |      3
+      |    } else {
+      |      4
+      |    }
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(16, 6, List("4", "3"))), source, Map("maximum" -> "3"))
   }

@@ -33,26 +33,27 @@ class DeprecatedJavaCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[DeprecatedJavaChecker]
 
   @Test def testClassOK(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  @Deprecated
-  def noparameters(): Any = null
-
-  @Deprecated("foobar")
-  def parameters(): Any = null
-
-  @java.lang.Deprecated
-  def noparametersFull(): Any = null
-
-  @java.lang.Deprecated("foobar")
-  def parametersFull(): Any = null
-
-  @deprecated
-  def ok(): Any = null
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  @Deprecated
+      |  def noparameters(): Any = null
+      |
+      |  @Deprecated("foobar")
+      |  def parameters(): Any = null
+      |
+      |  @java.lang.Deprecated
+      |  def noparametersFull(): Any = null
+      |
+      |  @java.lang.Deprecated("foobar")
+      |  def parametersFull(): Any = null
+      |
+      |  @deprecated
+      |  def ok(): Any = null
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 2), columnError(8, 2), columnError(11, 2), columnError(14, 2)), source)
   }

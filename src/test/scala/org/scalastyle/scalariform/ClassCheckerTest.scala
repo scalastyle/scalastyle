@@ -33,36 +33,38 @@ class EmptyClassCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[EmptyClassChecker]
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-class Foobar1 {}
-class Foobar2 { /* foobar */ }
-class Foobar3 {
-      // foobar
-}
-class Foobar4 { }
-class Foobar5 {
-}
-class Foobar6 {
-  def foobar() = 4
-}
-class Foobar7
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar1 {}
+      |class Foobar2 { /* foobar */ }
+      |class Foobar3 {
+      |      // foobar
+      |}
+      |class Foobar4 { }
+      |class Foobar5 {
+      |}
+      |class Foobar6 {
+      |  def foobar() = 4
+      |}
+      |class Foobar7
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6), columnError(5, 6), columnError(6, 6), columnError(9, 6), columnError(10, 6)), source)
   }
 
   @Test def testInnerClass(): Unit = {
-    val source = """
-package foobar
-
-class Outer {
-  class Foobar1
-  class Foobar2 {}
-  trait Barbar {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Outer {
+      |  class Foobar1
+      |  class Foobar2 {}
+      |  trait Barbar {}
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 8), columnError(7, 8)), source)
   }
@@ -73,46 +75,50 @@ class ClassTypeParameterCheckerTest extends AssertionsForJUnit with CheckerTest 
   val classUnderTest = classOf[ClassTypeParameterChecker]
 
   @Test def testClass(): Unit = {
-    val source = """
-package foobar
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar1
+      |class Foobar2[T]
+      |class Foobar3[Foo] {
+      |  def foo = 4
+      |}
+      |class Foobar4[Foo[T]] {
+      |  def foo = 4
+      |}
+      |class Foobar5[+T]
+      |class Foobar6[T <: Any]
+      |class Foobar7[List[T], List[Foo], List[T]]
+      |class Foobar8[List[T], List[T], List[Foo]]
+      |class Foobar9[Foo <: Any]
+      |class Foobar0[+Foo]
+    """.stripMargin
 
-class Foobar1
-class Foobar2[T]
-class Foobar3[Foo] {
-  def foo = 4
-}
-class Foobar4[Foo[T]] {
-  def foo = 4
-}
-class Foobar5[+T]
-class Foobar6[T <: Any]
-class Foobar7[List[T], List[Foo], List[T]]
-class Foobar8[List[T], List[T], List[Foo]]
-class Foobar9[Foo <: Any]
-class Foobar0[+Foo]
-"""
     assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
   }
 
   @Test def testTrait(): Unit = {
-    val source = """
-package foobar
+    val source =
+    """
+      |package foobar
+      |
+      |trait Foobar1
+      |trait Foobar2[T]
+      |trait Foobar3[Foo] {
+      |  def foo = 4
+      |}
+      |trait Foobar4[Foo[T]] {
+      |  def foo = 4
+      |}
+      |trait Foobar5[+T]
+      |trait Foobar6[T <: Any]
+      |trait Foobar7[List[T], List[Foo], List[T]]
+      |trait Foobar8[List[T], List[T], List[Foo]]
+      |trait Foobar9[Foo <: Any]
+      |trait Foobar0[+Foo]
+    """.stripMargin
 
-trait Foobar1
-trait Foobar2[T]
-trait Foobar3[Foo] {
-  def foo = 4
-}
-trait Foobar4[Foo[T]] {
-  def foo = 4
-}
-trait Foobar5[+T]
-trait Foobar6[T <: Any]
-trait Foobar7[List[T], List[Foo], List[T]]
-trait Foobar8[List[T], List[T], List[Foo]]
-trait Foobar9[Foo <: Any]
-trait Foobar0[+Foo]
-"""
     assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
   }
 }

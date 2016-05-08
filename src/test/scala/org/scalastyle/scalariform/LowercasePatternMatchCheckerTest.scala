@@ -33,39 +33,41 @@ class LowercasePatternMatchCheckerTest extends AssertionsForJUnit with CheckerTe
   val classUnderTest = classOf[LowercasePatternMatchChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-class F1 {
-  val lc = "foobar"
-
-  def fn(a: Any) = a match {
-    case "barbar" => "barbar"
-    case s: Int => "int"
-    case List(x, y) => "list"
-    case `lc` => "lc"
-  }
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |class F1 {
+      |  val lc = "foobar"
+      |
+      |  def fn(a: Any) = a match {
+      |    case "barbar" => "barbar"
+      |    case s: Int => "int"
+      |    case List(x, y) => "list"
+      |    case `lc` => "lc"
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-class F1 {
-  val lc = "foobar"
-
-  def fn(a: Any) = a match {
-    case "barbar" => "barbar"
-    case s: Int => "int"
-    case List(x, y) => "list"
-    case lc => "lc"
-  }
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |class F1 {
+      |  val lc = "foobar"
+      |
+      |  def fn(a: Any) = a match {
+      |    case "barbar" => "barbar"
+      |    case s: Int => "int"
+      |    case List(x, y) => "list"
+      |    case lc => "lc"
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(11, 9)), source)
   }

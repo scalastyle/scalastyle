@@ -16,7 +16,7 @@
 
 package org.scalastyle.file
 
-import org.junit.Test;
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
@@ -26,67 +26,68 @@ class IndentationCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[IndentationChecker]
 
   val cleanSource =
-"""
-/**
- * Scaladoc comments should pass
- */
-class A {
-  val foo = 1
-  def bar(a: String) = {
-    a.length
-  }
-}
+  """
+    |/**
+    | * Scaladoc comments should pass
+    | */
+    |class A {
+    |  val foo = 1
+    |  def bar(a: String) = {
+    |    a.length
+    |  }
+    |}
+    |
+    |class B(
+    |    paramDoubleIndent: Boolean,
+    |    isAlsoOk: Boolean)
+    |  extends A
+    |{
+    |  override val foo = 2
+    |  val foobar =
+    |    Seq(
+    |      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    |      "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+    |      "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+    |    )
+    |
+    |  def methodWithMultilineParams(
+    |    paramDoubleIndent: Boolean,
+    |    isAlsoOk: Boolean): Unit = {}
+    |}
+  """.stripMargin
 
-class B(
-    paramDoubleIndent: Boolean,
-    isAlsoOk: Boolean)
-  extends A
-{
-  override val foo = 2
-  val foobar =
-    Seq(
-      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-      "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-      "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-    )
-
-  def methodWithMultilineParams(
-    paramDoubleIndent: Boolean,
-    isAlsoOk: Boolean): Unit = {}
-}
-"""
   @Test def testNoErrorsDefaultTabSize(): Unit = {
     assertErrors(List(), cleanSource)
   }
 
   @Test def forExpression(): Unit = {
     val source =
-"""
-val id = 50
-for {
-  a <- findA(id)
-  b =  a.b
-  c <- b.cs
-  if c.isEven
-} yield c
-"""
+    """
+      |val id = 50
+      |for {
+      |  a <- findA(id)
+      |  b =  a.b
+      |  c <- b.cs
+      |  if c.isEven
+      |} yield c
+    """.stripMargin
 
     assertErrors(Nil, source)
   }
 
   @Test def dsl(): Unit = {
     val source =
-"""
-  |val id = 123
-  |val (m, g) = (GroupMember.syntax("m"), Group.syntax("g"))
-  |val groupMember = withSQL {
-  |  select
-  |    .from(GroupMember as m)
-  |    .leftJoin(Group as g)
-  |    .on(m.groupId, g.id)
-  |    .where.eq(m.id, id)
-  |}.map(GroupMember(m, g)).single.apply()
-""".stripMargin
+    """
+      |val id = 123
+      |val (m, g) = (GroupMember.syntax("m"), Group.syntax("g"))
+      |val groupMember = withSQL {
+      |  select
+      |    .from(GroupMember as m)
+      |    .leftJoin(Group as g)
+      |    .on(m.groupId, g.id)
+      |    .where.eq(m.id, id)
+      |}.map(GroupMember(m, g)).single.apply()
+    """.stripMargin
 
     assertErrors(Nil, source)
   }
@@ -104,14 +105,15 @@ for {
 
   @Test def testErrorsIncorrectTabSize(): Unit = {
     val source =
-"""
-class A {
- val foo = 1
-   def bar(a: String) = {
-    a.length
-  }
-}
-"""
+    """
+      |class A {
+      | val foo = 1
+      |   def bar(a: String) = {
+      |    a.length
+      |  }
+      |}
+    """.stripMargin
+
     assertErrors(List(lineError(3), lineError(4)), source)
   }
 

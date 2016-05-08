@@ -30,16 +30,17 @@ class CommentFilterDisabledTest extends CheckerTest {
   val classUnderTest = classOf[FileLengthChecker]
 
   @Test def testOne(): Unit = {
-    val source = """
-
-      // scalastyle:off
-package foobar
-
-  object Foobar {
-}
-  object Barbar {
-}
-""";
+    val source =
+    """
+      |
+      |      // scalastyle:off
+      |package foobar
+      |
+      |  object Foobar {
+      |}
+      |  object Barbar {
+      |}
+    """.stripMargin
 
     assertErrors(List(fileError(List("5"))), source, Map("maxFileLength" -> "5"), commentFilter = false)
   }

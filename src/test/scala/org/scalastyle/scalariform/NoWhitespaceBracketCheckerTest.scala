@@ -33,33 +33,36 @@ class NoWhitespaceBeforeLeftBracketCheckerTest extends AssertionsForJUnit with C
   val classUnderTest = classOf[NoWhitespaceBeforeLeftBracketChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-class Foobar[T] {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar[T] {
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOneSpace(): Unit = {
-    val source = """
-package foobar
-
-class Foobar [T] {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar [T] {
+      |}
+    """.stripMargin
     assertErrors(List(columnError(4, 6)), source)
   }
 
   @Test def testTwoSpaces(): Unit = {
-    val source = """
-package foobar
-
-class Foobar [ Barbar [T]] {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar [ Barbar [T]] {
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6), columnError(4, 15)), source)
   }
@@ -70,34 +73,37 @@ class NoWhitespaceAfterLeftBracketCheckerTest extends AssertionsForJUnit with Ch
   val classUnderTest = classOf[NoWhitespaceAfterLeftBracketChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-class Foobar[T] {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar[T] {
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOneSpace(): Unit = {
-    val source = """
-package foobar
-
-class Foobar[ T] {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar[ T] {
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 12)), source)
   }
 
   @Test def testTwoSpaces(): Unit = {
-    val source = """
-package foobar
-
-class Foobar[ Barbar[ T]] {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar[ Barbar[ T]] {
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 12), columnError(4, 20)), source)
   }

@@ -33,49 +33,53 @@ class NoCloneCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[NoCloneChecker]
 
   @Test def testClassOK(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  def clone(o: java.lang.Integer): Any = null
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  def clone(o: java.lang.Integer): Any = null
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testClassCovariantEqualsNoObjectKO(): Unit = {
-    val source = """
-package foobar
-
-class CloneKO {
-  def clone(): Any = null
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class CloneKO {
+      |  def clone(): Any = null
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6)), source)
   }
 
   @Test def testObjectOK(): Unit = {
-    val source = """
-package foobar
-
-object OK {
-  def clone(o: java.lang.Integer): Any = null
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object OK {
+      |  def clone(o: java.lang.Integer): Any = null
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testObjectCovariantEqualsNoObjectKO(): Unit = {
-    val source = """
-package foobar
-
-object CloneKO {
-  def clone(): Any = null
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object CloneKO {
+      |  def clone(): Any = null
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 7)), source)
   }

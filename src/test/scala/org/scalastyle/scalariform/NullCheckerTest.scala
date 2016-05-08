@@ -33,26 +33,28 @@ class NullCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[NullChecker]
 
   @Test def testZero(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo: String = null
-  val bar: String = null
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo: String = null
+      |  val bar: String = null
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 20), columnError(6, 20)), source)
   }

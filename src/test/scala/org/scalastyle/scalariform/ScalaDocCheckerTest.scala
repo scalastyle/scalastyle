@@ -61,20 +61,20 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     val annotatedCaseClassSource = s"%scase class Foo @JpaAbomination() (@Field a: Int, @Field b: Int)"
     val annotatedCaseClassSource2 = s"""%scase class Foo @JpaAbomination(me) (@Field(a = 4, b = "foo") a: Int, @Field() b: Int)"""
     val missingParamDoc =
-      """
-        |/**
-        | * This is the documentation for whatever follows
-        | */
-      """.stripMargin
+    """
+      |/**
+      | * This is the documentation for whatever follows
+      | */
+    """.stripMargin
     val doc =
-      """
-        |/**
-        | * This is the documentation for whatever follows
-        | *
-        | * @param a the value of a
-        | * @param b the value of b
-        | */
-      """.stripMargin
+    """
+      |/**
+      | * This is the documentation for whatever follows
+      | *
+      | * @param a the value of a
+      | * @param b the value of b
+      | */
+    """.stripMargin
 
     List(classSource, caseClassSource, annotatedCaseClassSource, annotatedCaseClassSource2).foreach { source =>
       assertErrors(Nil, source format doc)
@@ -87,11 +87,11 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     val specClassSource = "%sclass FooSpec"
     val specITClassSource = "%sclass FooSpecIT"
     val doc =
-      """
-        |/**
-        | * This is the documentation for whatever follows
-        | */
-      """.stripMargin
+    """
+      |/**
+      | * This is the documentation for whatever follows
+      | */
+    """.stripMargin
 
     List(specClassSource, specITClassSource).foreach { source =>
       assertErrors(List(lineError(1, List(Missing))), source format "")
@@ -106,20 +106,20 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     val classSource = "%sclass Foo[A, B]"
     val caseClassSource = "%scase class Foo[A, B]()"
     val malformedDoc =
-      """
-        |/**
-        | * This is the documentation for whatever follows
-        | */
-      """.stripMargin
+    """
+      |/**
+      | * This is the documentation for whatever follows
+      | */
+    """.stripMargin
     val doc =
-      """
-        |/**
-        | * This is the documentation for whatever follows with tparams
-        | *
-        | * @tparam A the type A
-        | * @tparam B the type B
-        | */
-      """.stripMargin
+    """
+      |/**
+      | * This is the documentation for whatever follows with tparams
+      | *
+      | * @tparam A the type A
+      | * @tparam B the type B
+      | */
+    """.stripMargin
 
     List(traitSource, classSource, caseClassSource).foreach { source =>
       assertErrors(Nil, source format doc)
@@ -131,86 +131,86 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def publicMethodWithEverything(): Unit = {
     def al(access: String = "", checked: Boolean): Unit = {
       val fun =
-        s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B): U = ???
-          |}
-        """.stripMargin
+      s"""
+        |/**
+        | * XXX
+        | */
+        |trait X {
+        |  %s${access} def foo[A, B, U](a: A, b: B): U = ???
+        |}
+      """.stripMargin
       val annotatedFun =
-        s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[@unchecked A, @annotated B, U](@Field() a: A, @Field("b") b: B): U = ???
-          |}
-        """.stripMargin
+      s"""
+        |/**
+        | * XXX
+        | */
+        |trait X {
+        |  %s${access} def foo[@unchecked A, @annotated B, U](@Field() a: A, @Field("b") b: B): U = ???
+        |}
+      """.stripMargin
       val proc1 =
-        s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B): Unit = ()
-          |}
-        """.stripMargin
+      s"""
+        |/**
+        | * XXX
+        | */
+        |trait X {
+        |  %s${access} def foo[A, B, U](a: A, b: B): Unit = ()
+        |}
+      """.stripMargin
       val proc2 =
-        s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B) {}
-          |}
-        """.stripMargin
+      s"""
+        |/**
+        | * XXX
+        | */
+        |trait X {
+        |  %s${access} def foo[A, B, U](a: A, b: B) {}
+        |}
+      """.stripMargin
       def doc(proc: Boolean) =
-        """
-          |/**
-          | * Does foo
-          | * @param a the A
-          | * @param b the B
-          | * @tparam A the A
-          | * @tparam B the B
-          | * @tparam U the U%s
-          | */
-        """.stripMargin format (if (proc) "" else "\n * @return some u")
+      """
+        |/**
+        | * Does foo
+        | * @param a the A
+        | * @param b the B
+        | * @tparam A the A
+        | * @tparam B the B
+        | * @tparam U the U%s
+        | */
+      """.stripMargin format (if (proc) "" else "\n * @return some u")
 
       def missingTypeParamsDoc(proc: Boolean) =
-        """
-          |/**
-          | * Does foo
-          | * @param a the A
-          | * @param b the B
-          | * @tparam A the A
-          | * @tparam U the U%s
-          | */
-          | """.stripMargin format (if (proc) "" else "\n * @return some u")
+      """
+        |/**
+        | * Does foo
+        | * @param a the A
+        | * @param b the B
+        | * @tparam A the A
+        | * @tparam U the U%s
+        | */
+      """.stripMargin format (if (proc) "" else "\n * @return some u")
 
       def missingParamsDoc(proc: Boolean) =
-        """
-          |/**
-          | * Does foo
-          | * @param a the A
-          | * @tparam A the A
-          | * @tparam B the B
-          | * @tparam U the U%s
-          | */
-          | """.stripMargin format (if (proc) "" else "\n * @return some u")
+      """
+        |/**
+        | * Does foo
+        | * @param a the A
+        | * @tparam A the A
+        | * @tparam B the B
+        | * @tparam U the U%s
+        | */
+      """.stripMargin format (if (proc) "" else "\n * @return some u")
 
       val missingReturnDoc =
-        """
-          |/**
-          | * Does foo
-          | * @param a the A
-          | * @param b the b
-          | * @tparam A the A
-          | * @tparam B the B
-          | * @tparam U the U
-          | */
-          | """.stripMargin
+      """
+        |/**
+        | * Does foo
+        | * @param a the A
+        | * @param b the b
+        | * @tparam A the A
+        | * @tparam B the B
+        | * @tparam U the U
+        | */
+      """.stripMargin
 
       List(fun, annotatedFun).foreach { source =>
         assertErrors(Nil, source format doc(false))
@@ -247,30 +247,30 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   @Test def returnAsParamDescription(): Unit = {
     val source =
-      """
-        |/**
-        | * Doc
-        | */
-        |object X {
-        |
-        |  /**
-        |   * Foo does some foos. With a
-        |   *
-        |   * ```
-        |   *     code example here
-        |   * ```
-        |   * and something or other else with ``code`` and (link)[to]
-        |   *
-        |   * @param a
-        |   *   Some text for parameter A
-        |   *   More for A
-        |   * @param b B
-        |   * @param c
-        |   * @return some integer
-        |   */
-        |  def foo(a: Int, b: Int, c: Int): Int = a + b
-        |}
-      """.stripMargin
+    """
+      |/**
+      | * Doc
+      | */
+      |object X {
+      |
+      |  /**
+      |   * Foo does some foos. With a
+      |   *
+      |   * ```
+      |   *     code example here
+      |   * ```
+      |   * and something or other else with ``code`` and (link)[to]
+      |   *
+      |   * @param a
+      |   *   Some text for parameter A
+      |   *   More for A
+      |   * @param b B
+      |   * @param c
+      |   * @return some integer
+      |   */
+      |  def foo(a: Int, b: Int, c: Int): Int = a + b
+      |}
+    """.stripMargin
 
     assertErrors(List(lineError(22, List(emptyParam("c")))), source)
   }
@@ -278,24 +278,24 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def valsVarsAndTypes(): Unit = {
     def al(what: String = "", checked: Boolean): Unit = {
       val tlDoc =
-        """
-          |/**
-          | * Top-level doc
-          | */
-        """.stripMargin
+      """
+        |/**
+        | * Top-level doc
+        | */
+      """.stripMargin
       def source(container: String) =
-        s"""
-           |$tlDoc
-           |$container Foo {
-           |  %s${what}
-           |}
-        """.stripMargin
+      s"""
+         |$tlDoc
+         |$container Foo {
+         |  %s${what}
+         |}
+      """.stripMargin
       val doc =
-        """
-          |/**
-          | * This is the documentation for whatever follows with no params, no tparams, no return, no throws
-          | */
-        """.stripMargin
+      """
+        |/**
+        | * This is the documentation for whatever follows with no params, no tparams, no return, no throws
+        | */
+      """.stripMargin
 
       List(source("class"), source("case class"), source("object ")).foreach { source =>
         assertErrors(Nil, source format doc)
@@ -315,59 +315,62 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   @Test def objectAfterPackage(): Unit = {
     val source =
-      """
-        |package org.example.test
-        |
-        |/**
-        | * Doc
-        | */
-        |object X {
-        |
-        |}
-      """.stripMargin
+    """
+      |package org.example.test
+      |
+      |/**
+      | * Doc
+      | */
+      |object X {
+      |
+      |}
+    """.stripMargin
 
     assertErrors(Nil, source)
   }
 
   @Test def severalObjects(): Unit = {
     val source =
-      """
-        |/**
-        | * Doc X
-        | */
-        |object X
-        |
-        |/**
-        | * Doc Y
-        | */
-        |object Y""".stripMargin
+    """
+      |/**
+      | * Doc X
+      | */
+      |object X
+      |
+      |/**
+      | * Doc Y
+      | */
+      |object Y
+    """.stripMargin
 
     assertErrors(Nil, source)
   }
 
   @Test def secondObjectMissingDoc(): Unit = {
     val source =
-      """
-        |/**
-        | * Doc X
-        | */
-        |object X
-        |
-        |object Y""".stripMargin
+    """
+      |/**
+      | * Doc X
+      | */
+      |object X
+      |
+      |object Y
+    """.stripMargin
 
     assertErrors(List(lineError(7, List(Missing))), source)
   }
 
   @Test def nestedObjectMissingDoc(): Unit = {
     val source =
-      """
-        |/**
-        | * Doc X
-        | */
-        |object X {
-        |
-        |  object Y
-        |}""".stripMargin
+    """
+      |/**
+      | * Doc X
+      | */
+      |object X {
+      |
+      |  object Y
+      |}
+    """.stripMargin
 
     assertErrors(List(lineError(7, List(Missing))), source)
   }

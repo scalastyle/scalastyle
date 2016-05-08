@@ -22,10 +22,10 @@ import org.junit.Assert.assertTrue
 import org.scalastyle.Checker
 import org.scalastyle.StyleError
 import org.scalastyle.Message
-import java.util.Set;
+import java.util.Set
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -34,11 +34,13 @@ class NoNewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTest 
   val classUnderTest = classOf[NoNewLineAtEofChecker]
 
   @Test def testNoNewLine(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-}#""";
+    val source = 
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |}#
+    """.stripMargin.trim
 
     assertErrors(List(fileError()), source.replace('#', '\n'))
     assertErrors(List(fileError()), source.replace('#', '\r'))
@@ -51,11 +53,13 @@ class NewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[NewLineAtEofChecker]
 
   @Test def testRequireNewLineTrue(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-}#""";
+    val source = 
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |}#
+    """.stripMargin.trim
 
     assertErrors(List(), source.replace('#', '\n'))
     assertErrors(List(), source.replace('#', '\r'))

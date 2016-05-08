@@ -33,14 +33,15 @@ class ForBraceCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[ForBraceChecker]
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  for ( t <- List(1,2,3)) yield t
-  for { t <- List(1,2,3)} yield t
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  for ( t <- List(1,2,3)) yield t
+      |  for { t <- List(1,2,3)} yield t
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6)), source)
   }

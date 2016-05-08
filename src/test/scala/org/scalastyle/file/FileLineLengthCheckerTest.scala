@@ -23,10 +23,10 @@ import org.scalastyle.Checker
 import org.scalastyle.StyleError
 import org.scalastyle.Message
 
-import java.util.Set;
+import java.util.Set
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -35,36 +35,39 @@ class FileLineLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[FileLineLengthChecker]
 
   @Test def testNoMax(): Unit = {
-    val source = """
-package foobar
-
-    object Foobar {
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |    object Foobar {
+      |}
+    """.stripMargin
 
     assertErrors(List(), source, Map("maxLineLength" -> "20"))
   }
 
   @Test def testWithOneMax(): Unit = {
-    val source = """
-package foobar
-
-    object Foobar {
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |    object Foobar {
+      |}
+    """.stripMargin
 
     assertErrors(List(lineError(4, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
   @Test def testWithImports(): Unit = {
-    val source = """
-package foobar
-import org.scalastyle.file.SuperLongImportClass
-
-    object Foobar {
-      import org.scalastyle.file._
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |import org.scalastyle.file.SuperLongImportClass
+      |
+      |    object Foobar {
+      |      import org.scalastyle.file._
+      |}
+    """.stripMargin
 
     assertErrors(
       List(lineError(5, List("15"))),
@@ -79,26 +82,28 @@ import org.scalastyle.file.SuperLongImportClass
 
 
   @Test def testWithTwoMax(): Unit = {
-    val source = """
-package foobar
-
-    object Foobar {
-}
-    object Barbar {
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |    object Foobar {
+      |}
+      |    object Barbar {
+      |}
+    """.stripMargin
 
     assertErrors(List(lineError(4, List("15")), lineError(6, List("15"))), source, Map("maxLineLength" -> "15"))
   }
 
   @Test def testWithSpacesTabs(): Unit = {
-    val source = """
-package foobar
-
-import# #java.lang._
-object Barbar {
-}
-""".replaceAll("#","\t");
+    val source = 
+    """
+      |package foobar
+      |
+      |import# #java.lang._
+      |object Barbar {
+      |}
+    """.stripMargin.replaceAll("#","\t")
 
     assertErrors(List(lineError(4, List("14")), lineError(5, List("14"))), source, Map("maxLineLength" -> "14"))
   }

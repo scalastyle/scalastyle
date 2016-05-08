@@ -31,14 +31,15 @@ class CustomIdTest extends CheckerTest {
   val message = Some("custom")
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-  object Foobar {
-}
-  object Barbar {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |  object Foobar {
+      |}
+      |  object Barbar {
+      |}
+    """.stripMargin
 
     assertErrors(List(fileError(List("5"), message)), source, Map("maxFileLength" -> "5"), message, customId = Some("this.is.custom"))
   }

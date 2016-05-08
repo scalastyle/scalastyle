@@ -28,92 +28,104 @@ class SpaceAfterCommentStartCheckerTest extends AssertionsForJUnit with CheckerT
   override protected val classUnderTest = classOf[SpaceAfterCommentStartChecker]
 
   @Test def testSinglelineComments(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  //Incorrect
-  // correct comment
-  /////////////////////////////////
-  ///Invalid
-  /// Invalid
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  //Incorrect
+      |  // correct comment
+      |  /////////////////////////////////
+      |  ///Invalid
+      |  /// Invalid
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 2), columnError(8, 2), columnError(9, 2)), source)
   }
 
   @Test def testMultipleInlineComments(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  //Incorrect
-  // correct comment//not wrong//check
-  val a = 10//Incorrect
-  val b = 100 //Incorrect
-  val c = 1// Correct
-  val d = 2 // Correct
-  val e = 3
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  //Incorrect
+      |  // correct comment//not wrong//check
+      |  val a = 10//Incorrect
+      |  val b = 100 //Incorrect
+      |  val c = 1// Correct
+      |  val d = 2 // Correct
+      |  val e = 3
+      |}
+    """.stripMargin
     assertErrors(List(columnError(5, 2), columnError(7, 12), columnError(8, 14)), source)
 
   }
 
   @Test def testMultilineComments(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  /*WRONG
-  *
-  */
-  /* Correct */
-  /* Wrong*/
-  val d = 2 /*Wrong*/
-  /*
-   *Correct
-   */
-  val e = 3/* Correct */
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  /*WRONG
+      |  *
+      |  */
+      |  /* Correct */
+      |  /* Wrong*/
+      |  val d = 2 /*Wrong*/
+      |  /*
+      |   *Correct
+      |   */
+      |  val e = 3/* Correct */
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 2), columnError(9, 2), columnError(10, 12)), source)
   }
 
 
   @Test def testScaladocsComments(): Unit = {
-    val source = """
-package foobar
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  /**WRONG
+      |  *
+      |  */
+      |  /** Correct */
+      |  val d = 2 /**Wrong*/
+      |  /** Wrong*/
+      |  /**
+      |   *Correct
+      |   */
+      |  val e = 3/** Correct */
+      |}
+    """.stripMargin
 
-object Foobar {
-  /**WRONG
-  *
-  */
-  /** Correct */
-  val d = 2 /**Wrong*/
-  /** Wrong*/
-  /**
-   *Correct
-   */
-  val e = 3/** Correct */
-}"""
     assertErrors(List(columnError(5, 2), columnError(9, 12), columnError(10, 2)), source)
   }
 
   @Test def testMixedComments(): Unit = {
-    val source = """
-package foobar
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  /**WRONG
+      |  *
+      |  */
+      |  /** Correct */
+      |  val d = 2 /*Wrong*/ //Wrong
+      |  /**
+      |   *Correct
+      |   */
+      |  val e = 3/** Correct */ // Correct
+      |}
+    """.stripMargin
 
-object Foobar {
-  /**WRONG
-  *
-  */
-  /** Correct */
-  val d = 2 /*Wrong*/ //Wrong
-  /**
-   *Correct
-   */
-  val e = 3/** Correct */ // Correct
-}"""
     assertErrors(List(columnError(5, 2), columnError(9, 12), columnError(9, 22)), source)
   }
 }
