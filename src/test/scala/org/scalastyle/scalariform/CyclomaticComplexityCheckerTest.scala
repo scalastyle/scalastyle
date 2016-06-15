@@ -69,7 +69,7 @@ class Foobar {
     }
   }
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 6, List("12", "11")), columnError(24, 6, List("12", "11"))), source, Map("maximum" -> "11"))
   }

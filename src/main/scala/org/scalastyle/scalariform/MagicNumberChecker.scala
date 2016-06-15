@@ -16,22 +16,21 @@
 
 package org.scalastyle.scalariform
 
-import scala.Option.option2Iterable
-
-import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.Clazz
 
-import scalariform.lexer.Tokens.INTEGER_LITERAL
-import scalariform.lexer.Tokens.VAL
-import scalariform.lexer.Token
-import scalariform.parser.CompilationUnit
-import scalariform.parser.Expr
-import scalariform.parser.ExprElement
-import scalariform.parser.GeneralTokens
-import scalariform.parser.PatDefOrDcl
-import scalariform.parser.PrefixExprElement
+import scala.Option.option2Iterable
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.INTEGER_LITERAL
+import _root_.scalariform.lexer.Tokens.VAL
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.ExprElement
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.PrefixExprElement
 
 class MagicNumberChecker extends ScalariformChecker {
   val DefaultIgnore = "-1,0,1,2"
@@ -41,30 +40,30 @@ class MagicNumberChecker extends ScalariformChecker {
     val ignores = getString("ignore", DefaultIgnore).split(",").toSet
 
     val intList = for {
-      t <- localvisit(ast.immediateChildren(0));
-      f <- traverse(t);
-      if (matches(f, ignores))
+      t <- localvisit(ast.immediateChildren.head)
+      f <- traverse(t)
+      if matches(f, ignores)
     } yield {
       f
     }
 
     val valList = (for {
-      t <- localvisitVal(ast.immediateChildren(0));
-      f <- traverseVal(t);
+      t <- localvisitVal(ast.immediateChildren.head)
+      f <- traverseVal(t)
       g <- toOption(f)
     } yield {
       g
-    }).map( d => d match {
+    }).map {
       case Expr(List(t: Expr)) => t
-      case _ => d
-    })
+      case d: Any => d
+    }
 
-    intList.filter(t => !valList.contains(t.t)).map(t => PositionError(t.position)).toList
+    intList.filter(t => !valList.contains(t.t)).map(t => PositionError(t.position))
   }
 
   case class ExprVisit(t: Expr, position: Int, contents: List[ExprVisit]) extends Clazz[Expr]()
 
-  private def traverse(t: ExprVisit): List[ExprVisit] = t :: t.contents.map(traverse(_)).flatten
+  private def traverse(t: ExprVisit): List[ExprVisit] = t :: t.contents.flatMap(traverse)
 
   private def matches(t: ExprVisit, ignores: Set[String]) = {
     toIntegerLiteralExprElement(t.t.contents) match {
@@ -92,7 +91,7 @@ class MagicNumberChecker extends ScalariformChecker {
 
   private def toIntegerLiteralToken(list: List[Token]): Option[String] = {
     list match {
-      case List(Token(tokenType, text, start, end)) if (tokenType == INTEGER_LITERAL) => Some(text.replaceAll("[Ll]", ""))
+      case List(Token(tokenType, text, start, end)) if tokenType == INTEGER_LITERAL => Some(text.replaceAll("[Ll]", ""))
       case _ => None
     }
   }
@@ -112,11 +111,11 @@ class MagicNumberChecker extends ScalariformChecker {
     case t: Any => VisitorHelper.visit(t, localvisitVal)
   }
 
-  private def traverseVal(t: PatDefOrDclVisit): List[PatDefOrDclVisit] = t :: t.equalsClauseOption.map(traverseVal(_)).flatten
+  private def traverseVal(t: PatDefOrDclVisit): List[PatDefOrDclVisit] = t :: t.equalsClauseOption.flatMap(traverseVal)
 
   private def toOption(t: PatDefOrDclVisit): Option[Expr] = {
     t.t.equalsClauseOption match {
-      case Some((equals: Token, expr: Expr)) if (t.t.valOrVarToken.tokenType == VAL && toIntegerLiteralExprElement(expr.contents).isDefined) => Some(expr)
+      case Some((equals: Token, expr: Expr)) if t.t.valOrVarToken.tokenType == VAL && toIntegerLiteralExprElement(expr.contents).isDefined => Some(expr)
       case _ => None
     }
   }

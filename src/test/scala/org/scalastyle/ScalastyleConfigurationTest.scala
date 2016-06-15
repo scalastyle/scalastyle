@@ -16,12 +16,10 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
 import org.junit.Ignore
-import org.scalastyle.file.HeaderMatchesChecker
+import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val filename = "src/test/resources/config/scalastyle_config.xml"

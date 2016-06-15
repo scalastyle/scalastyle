@@ -24,14 +24,14 @@ import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.lexer.Token
-import scalariform.lexer.Tokens.CASE
-import scalariform.lexer.Tokens.DO
-import scalariform.lexer.Tokens.FOR
-import scalariform.lexer.Tokens.IF
-import scalariform.lexer.Tokens.VARID
-import scalariform.lexer.Tokens.WHILE
-import scalariform.parser.FunDefOrDcl
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.CASE
+import _root_.scalariform.lexer.Tokens.DO
+import _root_.scalariform.lexer.Tokens.FOR
+import _root_.scalariform.lexer.Tokens.IF
+import _root_.scalariform.lexer.Tokens.VARID
+import _root_.scalariform.lexer.Tokens.WHILE
+import _root_.scalariform.parser.FunDefOrDcl
 
 class CyclomaticComplexityChecker extends CombinedChecker {
   val errorKey = "cyclomatic.complexity"

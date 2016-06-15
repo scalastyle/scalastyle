@@ -16,17 +16,8 @@
 
 package org.scalastyle.file
 
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -40,7 +31,7 @@ package foobar
 
     object Foobar {
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -51,7 +42,7 @@ package foobar
 
 #object Foobar {
 }
-""".replaceAll("#", "\t");
+""".replaceAll("#", "\t")
 
     assertErrors(List(columnError(4, 0)), source)
   }
@@ -64,7 +55,7 @@ package foobar
 }
 #object Barbar {
 }
-""".replaceAll("#", "\t");
+""".replaceAll("#", "\t")
 
     assertErrors(List(columnError(4, 0), columnError(6, 0)), source)
   }

@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -51,7 +45,7 @@ class OK {
   def bar() = { new scala.collection.mutable.HashMap {def foobar2() = {}} } // not picked up because inside a def
   def bar2() = new scala.collection.mutable.HashMap {def foobar3() = {}} // not picked up because inside a def
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6),
                         columnError(16, 6), columnError(17, 6)), source)
@@ -101,7 +95,7 @@ trait Foobar {
 class Sub extends Foobar {
   override def foobar() = 5
 }
-""";
+"""
 
     assertErrors(List(), source, Map("ignoreOverride" -> "true"))
     assertErrors(List(columnError(9, 15)), source, Map("ignoreOverride" -> "false"))
@@ -118,7 +112,7 @@ trait Foobar {
     def nested2() = 5
   }
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 6)), source)
   }
@@ -135,7 +129,7 @@ trait Foobar {
     nested2()
   }
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -150,7 +144,7 @@ trait Foobar {
     1.to(10).map(fancyStuff).toSeq
   }
 }
-""";
+"""
 
     assertErrors(List(), source)
   }

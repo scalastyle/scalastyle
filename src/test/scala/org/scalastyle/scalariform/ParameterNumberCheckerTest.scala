@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -39,7 +33,7 @@ package foobar
 class OK {
   def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int): Int = 45
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -51,7 +45,7 @@ package foobar
 class OK {
   def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 6, List("8"))), source)
   }
@@ -69,7 +63,7 @@ class Outer {
     def method(i1: Int, i2: Int, i3: Int, i4: Int, i5: Int, i6: Int, i7: Int, i8: Int, i9: Int): Int = 45
   }
 }
-""";
+"""
 
     assertErrors(List(columnError(6, 8, List("8")), columnError(10, 8, List("8"))), source)
   }

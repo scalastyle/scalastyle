@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -49,7 +43,7 @@ class Foobar {
                  "no"
                  }
 }
-""";
+"""
 
     assertErrors(List(columnError(6, 13)), source)
   }
@@ -69,7 +63,7 @@ class Foobar {
              else
                 !true
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(8, 13), columnError(10, 13)), source)
   }
@@ -91,7 +85,7 @@ class Foobar {
                  "no"
                  }
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(6, 13)), source, Map("singleLineAllowed" -> "false"))
   }
@@ -105,7 +99,7 @@ class Foobar {
   val foo1 = if (true) "yes"
                  else "no"
 }
-""";
+"""
 
     assertErrors(List(), source, Map("doubleLineAllowed" -> "true"))
   }
@@ -126,7 +120,7 @@ class Foobar {
         "bar"
       }
 }
-""";
+"""
 
     assertErrors(List(columnError(6, 13)), source)
   }

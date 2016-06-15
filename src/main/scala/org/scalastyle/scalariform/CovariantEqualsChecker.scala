@@ -16,8 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import scala.annotation.implicitNotFound
-
 import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 

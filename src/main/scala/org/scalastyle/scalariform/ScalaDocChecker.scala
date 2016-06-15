@@ -23,10 +23,21 @@ import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.lexer.Tokens.CLASS
-
-import scalariform.lexer.{NoHiddenTokens, TokenType, HiddenTokens, Token}
-import scalariform.parser._
+import _root_.scalariform.lexer.HiddenTokens
+import _root_.scalariform.lexer.NoHiddenTokens
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.TokenType
+import _root_.scalariform.lexer.Tokens.CLASS
+import _root_.scalariform.parser.AccessModifier
+import _root_.scalariform.parser.FullDefOrDcl
+import _root_.scalariform.parser.FunDefOrDcl
+import _root_.scalariform.parser.ParamClauses
+import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.StatSeq
+import _root_.scalariform.parser.TmplDef
+import _root_.scalariform.parser.Type
+import _root_.scalariform.parser.TypeDefOrDcl
+import _root_.scalariform.parser.TypeParamClause
 
 /**
  * Checks that the ScalaDoc exists for all accessible members:
@@ -65,10 +76,10 @@ class ScalaDocChecker extends CombinedChecker {
     }
 
     val ts = trimToTokenOfType(tokens, CLASS)
-    val ignore = !ts.isEmpty && ts(1).text.matches(ignoreRegex)
+    val ignore = ts.nonEmpty && ts(1).text.matches(ignoreRegex)
     ignore match {
       case true => Nil
-      case false => localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren(0))
+      case false => localVisit(skip = false, HiddenTokens(Nil), ast.lines)(ast.compilationUnit.immediateChildren.head)
     }
   }
 
@@ -152,7 +163,7 @@ class ScalaDocChecker extends CombinedChecker {
   private def returnErrors(line: Int, returnTypeOpt: Option[(Token, Type)])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
     val needsReturn = returnTypeOpt.exists { case (_, tpe) => tpe.firstToken.text != "Unit" }
 
-    if (needsReturn && !scalaDoc.returns.isDefined) {
+    if (needsReturn && scalaDoc.returns.isEmpty) {
       List(LineError(line, List(MalformedReturn)))
     } else {
       Nil

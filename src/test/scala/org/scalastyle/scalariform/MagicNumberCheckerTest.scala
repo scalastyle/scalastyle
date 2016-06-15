@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -46,7 +40,7 @@ class Foobar {
   val foo5 = 3
   val foo6 = 4
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -64,7 +58,7 @@ class Foobar {
   var foo5 = 3
   var foo6 = 4
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(10, 13), columnError(11, 13)), source)
   }
@@ -82,7 +76,7 @@ class Foobar {
 
   def fn(i: Int, j: Int) = i + j
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 19), columnError(9, 19)), source)
   }
@@ -101,7 +95,7 @@ class Foobar {
   val foo5 = 3L
   val foo6 = 4L
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -119,7 +113,7 @@ class Foobar {
   var foo5 = 3L
   var foo6 = 4L
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(10, 13), columnError(11, 13)), source)
   }
@@ -137,7 +131,7 @@ class Foobar {
 
   def fn(i: Int, j: Int) = i + j
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 20), columnError(9, 20)), source)
   }

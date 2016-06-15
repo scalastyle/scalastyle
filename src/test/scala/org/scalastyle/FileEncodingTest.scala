@@ -16,13 +16,13 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
+import java.io.BufferedWriter
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
+
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.FileOutputStream;
+import org.scalatest.junit.AssertionsForJUnit
 
 class FileEncodingTest extends AssertionsForJUnit {
   val TestString = "foobar\u00E9\u00A8\u00E0$\u00E9\u00E8\u00E8\u00A8\u00E8\u00A8"
@@ -45,12 +45,12 @@ class FileEncodingTest extends AssertionsForJUnit {
   }
 
   private def createFile(encoding: String) = {
-    val filename = "target/test/fileEncodingTest." + encoding + ".txt";
+    val filename = "target/test/fileEncodingTest." + encoding + ".txt"
 
-    new java.io.File("target").mkdir();
-    new java.io.File("target/test").mkdir();
+    new java.io.File("target").mkdir()
+    new java.io.File("target/test").mkdir()
 
-    val out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), encoding));
+    val out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), encoding))
     out.write(TestString)
     out.close()
 

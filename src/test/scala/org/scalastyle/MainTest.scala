@@ -16,12 +16,8 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.scalastyle.file.FileLengthChecker
-import org.junit.Ignore
+import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals line.size.limit
 

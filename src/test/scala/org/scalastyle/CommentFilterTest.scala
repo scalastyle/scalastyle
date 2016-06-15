@@ -18,10 +18,9 @@ package org.scalastyle
 
 // scalastyle:off magic.number multiple.string.literals
 
-import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
 class CommentFilterTest extends AssertionsForJUnit {
   @Test def testTokens(): Unit = {
@@ -130,7 +129,7 @@ class foobar {
   class barbar4 { } // scalastyle:ignore magic.number
   // scalastyle:off
 }
-""";
+"""
   val expected = List( CommentFilter(Some("class.name"),   Some(LineColumn(6,0)), Some(LineColumn(7,0)))
                      , CommentFilter(None              ,   Some(LineColumn(10,0)), Some(LineColumn(11,0)))
                      , CommentFilter(Some("class.name"),   Some(LineColumn(14,0)), Some(LineColumn(15,0)))

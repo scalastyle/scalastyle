@@ -18,9 +18,6 @@ package org.scalastyle
 
 // scalastyle:off magic.number multiple.string.literals
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalastyle.file.FileLengthChecker
@@ -38,7 +35,7 @@ object Foobar {
   val name = "Fred"
   pfoorintln(s"Hello $name")
 }
-""";
+"""
 
     assertErrors(List(fileError(List("5"), message)), source, Map("maxFileLength" -> "5"), message, customId = Some("this.is.custom"))
   }

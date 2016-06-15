@@ -17,22 +17,22 @@
 package org.scalastyle
 
 import scala.Option.option2Iterable
-import scala.xml.NodeSeq.seqToNodeSeq
 import scala.xml.Atom
+import scala.xml.Attribute
 import scala.xml.Comment
 import scala.xml.Elem
 import scala.xml.EntityRef
 import scala.xml.Group
+import scala.xml.MinimizeMode
 import scala.xml.NamespaceBinding
 import scala.xml.Node
+import scala.xml.NodeSeq.seqToNodeSeq
 import scala.xml.PrettyPrinter
 import scala.xml.ProcInstr
 import scala.xml.Text
 import scala.xml.TextBuffer
 import scala.xml.Utility
 import scala.xml.XML
-import scala.xml.Attribute
-import scala.xml.MinimizeMode
 
 object Level {
   val Warning = "warning"

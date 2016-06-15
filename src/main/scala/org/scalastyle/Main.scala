@@ -17,11 +17,12 @@
 package org.scalastyle
 
 import java.io.File
-import java.util.Date
-import scala.io.Codec
-import com.typesafe.config.ConfigFactory
 import java.net.URLClassLoader
-import java.net.URL
+import java.util.Date
+
+import com.typesafe.config.ConfigFactory
+
+import scala.io.Codec
 
 case class MainConfig(error: Boolean,
     config: Option[String] = None,
@@ -80,7 +81,7 @@ object Main {
       }
     }
 
-    if (!config.config.isDefined || config.directories.isEmpty) {
+    if (config.config.isEmpty || config.directories.isEmpty) {
       config = config.copy(error = true)
     }
 
@@ -103,16 +104,17 @@ object Main {
     System.exit(exitVal)
   }
 
-  private[this] def now(): Long = new Date().getTime()
+  private[this] def now(): Long = new Date().getTime
 
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
-    val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI().toURL()))))
-    val messages = new ScalastyleChecker(cl).checkFiles(configuration, Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)).toSeq, excludedFiles=mc.excludedFiles))
+    val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
+    val files = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)), excludedFiles = mc.excludedFiles)
+    val messages = new ScalastyleChecker(cl).checkFiles(configuration, files)
 
     // scalastyle:off regex
-    val config = ConfigFactory.load(cl.getOrElse(this.getClass().getClassLoader()))
+    val config = ConfigFactory.load(cl.getOrElse(this.getClass.getClassLoader))
     val outputResult = new TextOutput(config, mc.verbose, mc.quiet).output(messages)
     mc.xmlFile match {
       case Some(x) => {

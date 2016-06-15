@@ -16,20 +16,21 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import scalariform.parser.CompilationUnit
-import scalariform.parser.DefOrDcl
-import scalariform.parser.FullDefOrDcl
-import scalariform.parser.FunDefOrDcl
-import VisitorHelper.{visit, Clazz}
-import scalariform.parser.SimpleModifier
-import scalariform.parser.Modifier
-import scalariform.parser.AccessModifier
-import scalariform.lexer.Tokens
-import scalariform.parser.PatDefOrDcl
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.scalariform.VisitorHelper.visit
+
+import _root_.scalariform.lexer.Tokens
+import _root_.scalariform.parser.AccessModifier
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.DefOrDcl
+import _root_.scalariform.parser.FullDefOrDcl
+import _root_.scalariform.parser.FunDefOrDcl
+import _root_.scalariform.parser.Modifier
+import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.SimpleModifier
 
 abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
 
@@ -41,17 +42,17 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
     val p = matchParameters()
 
     val it = for {
-      t <- localvisit(false)(ast.immediateChildren(0));
-      f <- traverse(t);
-      if (matches(f, p))
+      t <- localvisit(insideDefOrValOrVar = false)(ast.immediateChildren.head)
+      f <- traverse(t)
+      if matches(f, p)
     } yield {
       PositionError(f.funDefOrDcl.nameToken.offset, describeParameters(p))
     }
 
-    it.toList
+    it
   }
 
-  private def traverse(t: FullDefOrDclVisit): List[FullDefOrDclVisit] = t :: t.subs.map(traverse(_)).flatten
+  private def traverse(t: FullDefOrDclVisit): List[FullDefOrDclVisit] = t :: t.subs.flatMap(traverse)
 
   protected def matchParameters(): T
   protected def matches(t: FullDefOrDclVisit, parameters: T): Boolean
@@ -69,15 +70,15 @@ abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
     case t: Any => visit(t, localvisit(insideDefOrValOrVar))
   }
 
-  protected def isOverride(modifiers: List[Modifier]) = modifiers.exists(_ match {
-    case sm: SimpleModifier if (sm.token.text == "override") => true
+  protected def isOverride(modifiers: List[Modifier]) = modifiers.exists {
+    case sm: SimpleModifier if sm.token.text == "override" => true
     case _ => false
-  })
+  }
 
-  protected def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists( _ match {
+  protected def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists {
     case am: AccessModifier => true
     case _ => false
-  })
+  }
 
   protected def isConstructor(defOrDcl: DefOrDcl) = defOrDcl match {
     case fun: FunDefOrDcl => fun.nameToken.tokenType == Tokens.THIS

@@ -16,17 +16,8 @@
 
 package org.scalastyle.file
 
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -58,7 +49,7 @@ package foobar
 
   object Foobar {
 }
-""";
+"""
 
     assertErrors(List(), source, Map("header" -> licence))
   }
@@ -69,7 +60,7 @@ package foobar
 
   object Foobar {
 }
-""";
+"""
 
     assertErrors(List(lineError(13)), source, Map("header" -> licence))
   }
@@ -78,7 +69,7 @@ package foobar
     val source = """/**
  * Copyright (C) 2009-2010 the original author or authors.
  * See the notice.md file distributed with this work for additional
- * information regarding copyright ownership.""";
+ * information regarding copyright ownership."""
 
     assertErrors(List(lineError(4)), source, Map("header" -> licence))
   }

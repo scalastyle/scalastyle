@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -40,7 +34,7 @@ class OK {
   def equals(o: java.lang.Object): Boolean = false
   def equals(o: java.lang.Integer): Boolean = false
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -52,7 +46,7 @@ package foobar
 class CovariantEqualsNoObjectKO {
   def equals(o: java.lang.Integer): Boolean = false
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 6)), source)
   }
@@ -65,7 +59,7 @@ object OK {
   def equals(o: java.lang.Object): Boolean = false
   def equals(o: java.lang.Integer): Boolean = false
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -77,7 +71,7 @@ package foobar
 object CovariantEqualsNoObjectKO {
   def equals(o: java.lang.Integer): Boolean = false
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 7)), source)
   }

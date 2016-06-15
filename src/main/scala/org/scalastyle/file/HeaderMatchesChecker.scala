@@ -18,8 +18,8 @@ package org.scalastyle.file
 
 import org.scalastyle.Checker
 import org.scalastyle.FileChecker
-import org.scalastyle.LineError
 import org.scalastyle.FileError
+import org.scalastyle.LineError
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 

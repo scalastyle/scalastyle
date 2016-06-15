@@ -16,15 +16,10 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Assert.assertTrue
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -41,7 +36,7 @@ import java.util._
 object Foobar {
   val foo = 1
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -50,12 +45,12 @@ object Foobar {
     val source = """package foobar
 
 import java.util._
-import sun.com.foobar;
+import sun.com.foobar
 import sun._
 
 object Foobar {
 }
-""".stripMargin;
+""".stripMargin
 
     assertErrors(List(columnError(4, 0), columnError(5, 0)), source)
   }
@@ -71,7 +66,7 @@ import java.util._
 
 object Foobar {
 }
-""".stripMargin;
+""".stripMargin
 
     assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0), columnError(7, 0)), source, Map("illegalImports" -> "java.util._"))
   }
@@ -88,7 +83,7 @@ import java.util._
 
 object Foobar {
 }
-""".stripMargin;
+""".stripMargin
 
     assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0)), source,
         Map("illegalImports" -> "java.util.List, java.util.Map"))
@@ -106,7 +101,7 @@ import java.util._
 
 object Foobar {
 }
-                 """.stripMargin;
+                 """.stripMargin
 
     assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(8, 0)), source,
       Map("illegalImports" -> "java.util._", "exemptImports" -> "java.util.List"))
@@ -130,7 +125,7 @@ import java.util.{Foo => Bar, _}
 object Foobar {
   import scala._
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(10, 2)), source)
   }
@@ -157,7 +152,7 @@ import java.util.Collection
 object Barbar {
   import java.util.HashMap
 }
-""";
+"""
 
     assertErrors(List(columnError(9, 2), columnError(12, 0), columnError(15, 2)), source)
   }
@@ -172,7 +167,7 @@ object Foobar {
 
 object Barbar {
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -230,7 +225,7 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
     val source = """
       |import foobar.subpackage.Foo
       |import foobar.Bar
-      """.stripMargin;
+      """.stripMargin
 
     val expected = List(
       columnError(3, 0, errorKey = errorKey("wrongOrderInGroup"),
@@ -243,7 +238,7 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
     val source = """
       |import java.nio.ByteBuffer
       |import java.nio.file.{Paths, Files}
-      """.stripMargin;
+      """.stripMargin
 
     val expected = List(
       columnError(3, 21, errorKey = errorKey("wrongOrderInSelector"),
@@ -275,7 +270,7 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
       |
       |object Foobar {
       |}
-      """.stripMargin;
+      """.stripMargin
 
     val expected = List(
       columnError(5, 20, errorKey = errorKey("wrongOrderInSelector"), args = List("Cipher", "Mac")),

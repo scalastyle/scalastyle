@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -42,7 +36,7 @@ case class F3()
 case class F4()
 case class F5()
 case class F6()
-""";
+"""
 
     assertErrors(List(), source, Map("maxTypes" -> "6"))
   }
@@ -57,7 +51,7 @@ case class F3()
 case class F4()
 case class F5()
 case class F6()
-""";
+"""
 
     assertErrors(List(fileError(List("5"))), source, Map("maxTypes" -> "5"))
   }
@@ -75,7 +69,7 @@ class F5() {
   }
 }
 case class F6()
-""";
+"""
 
     assertErrors(List(fileError(List("6"))), source, Map("maxTypes" -> "6"))
   }

@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -39,7 +33,7 @@ package foobar
 class OK {
   def finalize(o: java.lang.Integer): Unit = {}
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -51,7 +45,7 @@ package foobar
 class CloneKO {
   def finalize(): Unit = {}
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 6)), source)
   }
@@ -63,7 +57,7 @@ package foobar
 object OK {
   def finalize(o: java.lang.Integer): Unit = {}
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -75,7 +69,7 @@ package foobar
 object CloneKO {
   def finalize(): Unit = {}
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 7)), source)
   }

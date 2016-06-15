@@ -14,33 +14,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.TreeVisit
+import org.scalastyle.scalariform.VisitorHelper.traverse
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import VisitorHelper.visit
-import VisitorHelper.traverse
-import VisitorHelper.TreeVisit
-import scalariform.lexer.Tokens.LBRACE
-import scalariform.lexer.Tokens.RBRACE
-import scalariform.parser.AstNode
-import scalariform.parser.CompilationUnit
-import scalariform.parser.TmplDef
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.TmplDef
 
 abstract class AbstractClassChecker extends ScalariformChecker {
   case class TmplClazz(t: TmplDef, subs: List[TmplClazz]) extends TreeVisit[TmplClazz]
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      f <- visit[TmplDef, TmplClazz](map)(ast.immediateChildren(0));
+      f <- visit[TmplDef, TmplClazz](map)(ast.immediateChildren.head)
       t <- traverse(f, matches)
     } yield {
       PositionError(t.t.name.offset)
     }
 
-    it.toList
+    it
   }
 
   def matches(t: TmplClazz): Boolean

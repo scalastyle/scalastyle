@@ -14,26 +14,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import VisitorHelper.visit
-import scalariform.parser.CompilationUnit
-import scalariform.parser.Refinement
-import scalariform.parser.ForExpr
-import scalariform.lexer.TokenType
-import scalariform.lexer.TokenType
-import scalariform.lexer.Tokens
+
+import _root_.scalariform.lexer.Tokens
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.ForExpr
 
 class ForBraceChecker extends ScalariformChecker {
   val errorKey = "for.brace"
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     for {
-      t <- VisitorHelper.getAll[ForExpr](ast.immediateChildren(0))
-      if (Tokens.LPAREN == t.lParenOrBrace.tokenType || Tokens.LPAREN == t.rParenOrBrace.tokenType)
+      t <- VisitorHelper.getAll[ForExpr](ast.immediateChildren.head)
+      if Tokens.LPAREN == t.lParenOrBrace.tokenType || Tokens.LPAREN == t.rParenOrBrace.tokenType
     } yield PositionError(t.lParenOrBrace.offset)
   }
 }

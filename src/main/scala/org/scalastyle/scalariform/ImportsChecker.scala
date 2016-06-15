@@ -18,46 +18,47 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
-import scala.Array.canBuildFrom
-import scala.collection.mutable.ListBuffer
-
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.lexer.MultiLineComment
-import scalariform.lexer.Token
-import scalariform.lexer.Whitespace
-import scalariform.parser.AstNode
-import scalariform.parser.BlockImportExpr
-import scalariform.parser.CompilationUnit
-import scalariform.parser.Expr
-import scalariform.parser.ExprElement
-import scalariform.parser.GeneralTokens
-import scalariform.parser.ImportClause
-import scalariform.parser.ImportSelectors
-import VisitorHelper.visit
+import scala.Array.canBuildFrom
+import scala.collection.mutable.ListBuffer
+import _root_.scalariform.lexer.MultiLineComment
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Whitespace
+import _root_.scalariform.parser.AstNode
+import _root_.scalariform.parser.BlockImportExpr
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.ExprElement
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.ImportClause
+import _root_.scalariform.parser.ImportSelectors
+
+// scalastyle:off multiple.string.literals
 
 abstract class AbstractImportChecker extends ScalariformChecker {
-  case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit]);
+  case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit])
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     init()
 
     val it = for {
-      t <- localvisit(ast.immediateChildren);
+      t <- localvisit(ast.immediateChildren)
       f <- traverse(t)
     } yield {
       PositionError(t.t.firstToken.offset)
     }
 
-    it.toList
+    it
   }
 
   protected def init(): Unit = {}
 
   private[this] def traverse(t: ImportClauseVisit): List[ImportClauseVisit] = {
-    val l = t.importExpr.map(traverse(_)).flatten ::: t.otherImportExprs.map(traverse(_)).flatten
+    val l = t.importExpr.flatMap(traverse) ::: t.otherImportExprs.flatMap(traverse)
     if (matches(t)) t :: l else l
   }
 
@@ -125,10 +126,10 @@ class ImportGroupingChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = VisitorHelper.getAll[ImportClause](ast.immediateChildren)
 
-    if (it.size == 0) {
+    if (it.isEmpty) {
       List()
     } else {
-      val importTokens = it.map(ic => ic.tokens).flatten
+      val importTokens = it.flatMap(_.tokens)
       val (min, max) = (importTokens.head.offset, importTokens.last.offset)
 
       val s = ast.tokens.find(t => t.offset >= min && t.offset <= max && !t.isNewline && !(t.text == ";") && !importTokens.contains(t))
@@ -172,10 +173,10 @@ class ImportOrderChecker extends ScalariformChecker {
   private var maxBlankLines: Int = _
 
   private var ast: AstNode = _
-  private var lastImport: AstNode = _
+  private var lastImport: Option[AstNode] = None
 
   private var currentGroup = 0
-  private var lastImportInGroup: String = _
+  private var lastImportInGroup: Option[String] = None
 
   override def setParameters(parameters: Map[String, String]): Unit = {
     // Note that any exceptions thrown here are swallowed by CheckerUtils and ignored...
@@ -203,18 +204,15 @@ class ImportOrderChecker extends ScalariformChecker {
         case _ =>
           Nil
       }
-      lastImport = n
+      lastImport = Some(n)
       result
     }
   }
 
   private def exprToText(contents: List[ExprElement]): String = {
     contents.flatMap {
-      case GeneralTokens(toks) =>
-        toks.map(_.text)
-
-      case n =>
-        throw new IllegalStateException(s"FIXME: unexpected expr child node $n")
+      case GeneralTokens(toks) => toks.map(_.text)
+      case n: Any => throw new IllegalStateException(s"FIXME: unexpected expr child node $n")
     }.mkString("")
   }
 
@@ -228,7 +226,7 @@ class ImportOrderChecker extends ScalariformChecker {
       // If a statement doesn't match the current group, there are two options:
       // - It belongs to a previous group, in which case an error is flagged.
       // - It belongs to a following group, in which case the group index moves forward.
-      for (i <- 0 to currentGroup - 1) {
+      for (i <- 0 until currentGroup) {
         if (groups(i)._2.matcher(str).matches()) {
           return Seq(newError(offset, "wrongGroup", str, groups(i)._1, groups(currentGroup)._1))
         }
@@ -245,7 +243,7 @@ class ImportOrderChecker extends ScalariformChecker {
 
       errors ++= checkGroupSeparation(currentGroup, nextGroup, offset)
       currentGroup = nextGroup
-      lastImportInGroup = null
+      lastImportInGroup = None
     } else {
       // If the statement is in the same group, make sure there is no empty line between it and
       // the previous import.
@@ -253,12 +251,12 @@ class ImportOrderChecker extends ScalariformChecker {
     }
 
     // Ensure import is in alphabetical order.
-    if (lastImportInGroup != null && compareImports(lastImportInGroup, str) > 0) {
-      errors += newError(offset, "wrongOrderInGroup", str, lastImportInGroup)
+    if (lastImportInGroup.isDefined && compareImports(lastImportInGroup.get, str) > 0) {
+      errors += newError(offset, "wrongOrderInGroup", str, lastImportInGroup.get)
     }
 
-    lastImportInGroup = str
-    errors.toSeq
+    lastImportInGroup = Some(str)
+    errors
   }
 
   /**
@@ -273,13 +271,13 @@ class ImportOrderChecker extends ScalariformChecker {
 
     if (names.size > 1) {
       names.sliding(2).foreach { case Seq(left, right) =>
-        if (compareNames(left, right, false) > 0) {
+        if (compareNames(left, right, isImport = false) > 0) {
           errors += newError(selectors.firstToken.offset, "wrongOrderInSelector", right, left)
         }
       }
     }
 
-    errors.toSeq
+    errors
   }
 
   /**
@@ -290,8 +288,8 @@ class ImportOrderChecker extends ScalariformChecker {
       lastGroup: Int,
       nextGroup: Int,
       nextGroupOffset: Int): Option[ScalastyleError] = {
-    if (lastGroup != nextGroup && lastImport != null) {
-      val start = lastImport.lastToken.offset + lastImport.lastToken.length
+    if (lastGroup != nextGroup && lastImport.isDefined) {
+      val start = lastImport.get.lastToken.offset + lastImport.get.lastToken.length
       val separatorLines = countNewLines(start, nextGroupOffset) - 1
       val last = groups(lastGroup)._1
       val current = groups(nextGroup)._1
@@ -309,8 +307,8 @@ class ImportOrderChecker extends ScalariformChecker {
    * Check that there are no empty lines between imports in the same group.
    */
   private def checkNoSeparator(offset: Int): Option[ScalastyleError] = {
-    if (lastImportInGroup != null) {
-      val start = lastImport.lastToken.offset + lastImport.lastToken.length
+    if (lastImportInGroup.isDefined) {
+      val start = lastImport.get.lastToken.offset + lastImport.get.lastToken.length
       if (countNewLines(start, offset) != 1) {
         return Some(newError(offset, "noEmptyLine"))
       }
@@ -325,7 +323,7 @@ class ImportOrderChecker extends ScalariformChecker {
     var count = 0
     ast.tokens.filter { t => t.offset >= start && t.offset < end }.foreach { t =>
       val commentsToken = t.associatedWhitespaceAndComments
-      if (commentsToken != null) {
+      if (commentsToken != null) { // scalastyle:ignore null
         var ignoreNext = false
         commentsToken.tokens.foreach {
           case c: MultiLineComment =>
@@ -334,7 +332,7 @@ class ImportOrderChecker extends ScalariformChecker {
           case w: Whitespace =>
             if (!ignoreNext) {
               // Assumes "\n" only used for new lines.
-              count += w.text.filter(_ == '\n').size
+              count += w.text.count(_ == '\n')
             }
             ignoreNext = true
           case _ =>
@@ -355,10 +353,10 @@ class ImportOrderChecker extends ScalariformChecker {
     val imp1Components = imp1.split("[.]")
     val imp2Components = imp2.split("[.]")
     val max = math.min(imp1Components.size, imp2Components.size)
-    for (i <- 0 to (max - 1)) {
+    for (i <- 0 until max) {
       val comp1 = imp1Components(i)
       val comp2 = imp2Components(i)
-      val result = compareNames(comp1, comp2, true)
+      val result = compareNames(comp1, comp2, isImport = true)
       if (result != 0) {
         return result
       }

@@ -17,13 +17,13 @@
 package org.scalastyle
 
 import java.lang.reflect.Modifier
-import scala.collection.convert.WrapAsScala.asScalaSet
-import scala.collection.convert.WrapAsScala.asScalaBuffer
+
+import com.google.common.reflect.ClassPath
+import com.typesafe.config.ConfigFactory
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import com.typesafe.config.ConfigFactory
-import java.lang.reflect.Method
-import com.google.common.reflect.ClassPath
+
+import scala.collection.convert.WrapAsScala.asScalaBuffer
 import scala.xml.NodeSeq
 import scala.xml.XML
 

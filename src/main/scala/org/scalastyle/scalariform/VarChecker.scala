@@ -19,14 +19,14 @@ package org.scalastyle.scalariform
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.lexer.Tokens.VAR
-import scalariform.parser.AnonymousFunction
-import scalariform.parser.CompilationUnit
-import scalariform.parser.FunBody
-import scalariform.parser.PatDefOrDcl
-import scalariform.parser.TemplateBody
-import VisitorHelper.visit
+import _root_.scalariform.lexer.Tokens.VAR
+import _root_.scalariform.parser.AnonymousFunction
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.FunBody
+import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.TemplateBody
 
 abstract class VarChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {

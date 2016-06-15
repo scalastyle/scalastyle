@@ -16,17 +16,15 @@
 
 package org.scalastyle.file
 
-import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-import org.scalastyle.WarningLevel
+import org.scalastyle.CheckerUtils
 import org.scalastyle.ConfigurationChecker
 import org.scalastyle.FileSpec
+import org.scalastyle.Message
 import org.scalastyle.ScalastyleConfiguration
-import org.scalastyle.CheckerUtils
+import org.scalastyle.StyleError
+import org.scalastyle.WarningLevel
 
 // scalastyle:off multiple.string.literals
 

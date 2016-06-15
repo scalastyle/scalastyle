@@ -16,16 +16,8 @@
 
 package org.scalastyle.file
 
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -38,7 +30,7 @@ class NoNewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTest 
 package foobar
 
 object Foobar {
-}#""";
+}#"""
 
     assertErrors(List(fileError()), source.replace('#', '\n'))
     assertErrors(List(fileError()), source.replace('#', '\r'))
@@ -55,7 +47,7 @@ class NewLineAtEofFileCheckerTest extends AssertionsForJUnit with CheckerTest {
 package foobar
 
 object Foobar {
-}#""";
+}#"""
 
     assertErrors(List(), source.replace('#', '\n'))
     assertErrors(List(), source.replace('#', '\r'))

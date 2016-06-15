@@ -16,9 +16,9 @@
 
 package org.scalastyle.scalariform
 
-import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
+import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
@@ -33,7 +33,7 @@ class WhileCheckerTest extends AssertionsForJUnit with CheckerTest {
 class C1 {
   def m1(n: Int) = n
 }
-""";
+"""
     assertErrors(List(), source)
   }
 

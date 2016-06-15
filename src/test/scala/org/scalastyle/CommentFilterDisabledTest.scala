@@ -18,9 +18,6 @@ package org.scalastyle
 
 // scalastyle:off magic.number multiple.string.literals
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalastyle.file.FileLengthChecker
@@ -39,7 +36,7 @@ package foobar
 }
   object Barbar {
 }
-""";
+"""
 
     assertErrors(List(fileError(List("5"))), source, Map("maxFileLength" -> "5"), commentFilter = false)
   }

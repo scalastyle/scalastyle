@@ -18,8 +18,9 @@ package org.scalastyle
 
 import java.io.File
 import java.io.FileFilter
-import scala.collection.JavaConversions.seqAsJavaList
+
 import scala.collection.JavaConversions.collectionAsScalaIterable
+import scala.collection.JavaConversions.seqAsJavaList
 
 class Directory
 

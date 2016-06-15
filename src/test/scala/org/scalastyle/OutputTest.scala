@@ -16,13 +16,12 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
+import com.typesafe.config.ConfigFactory
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
 import org.scalastyle.file.FileLengthChecker
-import org.junit.Ignore
-import com.typesafe.config.ConfigFactory
+import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -42,12 +41,12 @@ class OutputTest extends AssertionsForJUnit {
        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
    )
 
-   new java.io.File("target").mkdir();
-   new java.io.File("target/test").mkdir();
+   new java.io.File("target").mkdir()
+   new java.io.File("target/test").mkdir()
 
-   XmlOutput.save(ConfigFactory.load(), "target/test/OutputTest.xml", "UTF-8", messages);
+   XmlOutput.save(ConfigFactory.load(), "target/test/OutputTest.xml", "UTF-8", messages)
 
-   val lineSep = System.getProperty("line.separator");
+   val lineSep = System.getProperty("line.separator")
    val lines = scala.io.Source.fromFile(new java.io.File("target/test/OutputTest.xml")).getLines().mkString(lineSep)
 
    val expected = """<?xml version="1.0" encoding="UTF-8"?>
@@ -64,7 +63,7 @@ class OutputTest extends AssertionsForJUnit {
  </file>
 </checkstyle>"""
 
-   assertEquals(expected, lines);
+   assertEquals(expected, lines)
  }
 
  @Test def testXmlOutputCannotCreateFile(): Unit = {
@@ -80,10 +79,10 @@ class OutputTest extends AssertionsForJUnit {
        StyleException(barSpec, None, "noClass", "stacktrace\nstacktrace", Some(7), Some(8))
    )
 
-   new java.io.File("target").mkdir();
+   new java.io.File("target").mkdir()
 
    try {
-       XmlOutput.save(ConfigFactory.load(), "target/does.not.exist/OutputTest.xml", "UTF-8", messages);
+       XmlOutput.save(ConfigFactory.load(), "target/does.not.exist/OutputTest.xml", "UTF-8", messages)
    } catch {
      case e: java.io.FileNotFoundException => // OK
      case _: Throwable => fail("expected FileNotFoundException")

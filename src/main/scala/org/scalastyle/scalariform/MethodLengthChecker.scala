@@ -14,17 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
-import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.Lines
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.parser.FunDefOrDcl
-import VisitorHelper.visit
+import _root_.scalariform.parser.FunDefOrDcl
 
 class MethodLengthChecker extends CombinedChecker {
   val errorKey = "method.length"
@@ -36,17 +36,17 @@ class MethodLengthChecker extends CombinedChecker {
     val maxLength = getInt("maxLength", DefaultMaximumLength)
 
     val it = for {
-      t <- localvisit(ast.compilationUnit.immediateChildren(0));
-      f <- traverse(t);
-      if (matches(f, ast.lines, maxLength))
+      t <- localvisit(ast.compilationUnit.immediateChildren.head)
+      f <- traverse(t)
+      if matches(f, ast.lines, maxLength)
     } yield {
       PositionError(t.position.get, List("" + maxLength))
     }
 
-    it.toList
+    it
   }
 
-  private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.map(traverse(_)).flatten
+  private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
 
   private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int) = {
     val head = lines.toLineColumn(t.t.defToken.offset)

@@ -14,23 +14,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-
-import VisitorHelper.visit
+import scala.util.matching.Regex
 import scalariform.lexer.Tokens.LBRACE
 import scalariform.lexer.Tokens.RBRACE
 import scalariform.parser.AstNode
-import scalariform.parser.CompilationUnit
-import scalariform.parser.TmplDef
-import scalariform.parser.TypeParamClause
-import scalariform.parser.TypeParam
 import scalariform.parser.GeneralTokens
+import scalariform.parser.TypeParam
+import scalariform.parser.TypeParamClause
 import scalariform.parser.VarianceTypeElement
-import scala.util.matching.Regex
 
 class EmptyClassChecker extends AbstractClassChecker {
   val errorKey = "empty.class"
@@ -55,20 +48,20 @@ class ClassTypeParameterChecker extends AbstractClassChecker {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
-    t.contents.map(c => innermostName(c)).flatten.exists(s => !matchesRegex(regex, s))
+    t.contents.flatMap(c => innermostName(c)).exists(s => !matchesRegex(regex, s))
   }
 
-  private[this] def matchesRegex(regex: Regex, s: String) = (regex findAllIn (s)).size == 1
+  private[this] def matchesRegex(regex: Regex, s: String) = regex.findAllIn(s).size == 1
 
   private[this] def innermostName(ast: Any): Option[String] = {
     ast match {
       case typeParam: TypeParam => {
         typeParam.contents match {
-          case List(GeneralTokens(list)) => Some(list(0).text)
+          case List(GeneralTokens(list)) => Some(list.head.text)
           case List(GeneralTokens(list), TypeParamClause(x)) => innermostName(x(1))
-          case VarianceTypeElement(_) :: GeneralTokens(list) :: Nil => Some(list(0).text)
-          case GeneralTokens(list) :: tail => Some(list(0).text)
-          case VarianceTypeElement(_) :: GeneralTokens(list) :: tail => Some(list(0).text)
+          case VarianceTypeElement(_) :: GeneralTokens(list) :: Nil => Some(list.head.text)
+          case GeneralTokens(list) :: tail => Some(list.head.text)
+          case VarianceTypeElement(_) :: GeneralTokens(list) :: tail => Some(list.head.text)
           case _ => None
         }
       }

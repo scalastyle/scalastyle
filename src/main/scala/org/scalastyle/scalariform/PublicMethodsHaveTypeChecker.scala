@@ -16,13 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.AccessModifier
-import scalariform.parser.Modifier
-import scalariform.parser.Param
-import scalariform.parser.ParamClauses
 import scalariform.parser.ProcFunBody
-import scalariform.parser.FullDefOrDcl
-import scalariform.parser.FunDefOrDcl
 
 case class PublicMethodsHaveTypeParameters(ignoreOverride: Boolean)
 

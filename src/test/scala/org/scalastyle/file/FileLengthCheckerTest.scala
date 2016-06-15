@@ -16,17 +16,8 @@
 
 package org.scalastyle.file
 
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
 
 // scalastyle:off multiple.string.literals
 
@@ -40,7 +31,7 @@ package foobar
 
   object Foobar {
 }
-""";
+"""
 
     assertErrors(List(), source, Map("maxFileLength" -> "5"))
   }
@@ -53,7 +44,7 @@ package foobar
 }
   object Barbar {
 }
-""";
+"""
 
     assertErrors(List(fileError(List("5"))), source, Map("maxFileLength" -> "5"))
   }

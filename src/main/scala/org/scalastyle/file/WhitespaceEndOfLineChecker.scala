@@ -16,12 +16,12 @@
 
 package org.scalastyle.file
 
-import scala.Array.canBuildFrom
-
 import org.scalastyle.ColumnError
 import org.scalastyle.FileChecker
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
+
+import scala.Array.canBuildFrom
 
 class WhitespaceEndOfLineChecker extends FileChecker {
   val errorKey = "whitespace.end.of.line"
@@ -36,7 +36,7 @@ class WhitespaceEndOfLineChecker extends FileChecker {
     (for {
       withoutEndOfLines <- Some(sb.zipWithIndex.dropWhile{ case (c: Char, idx: Int) => endOfLines.contains(c) })
       (nextChar, eolIndex) <- withoutEndOfLines.headOption
-      if (whitespaces.contains(nextChar))
+      if whitespaces.contains(nextChar)
     } yield {
       withoutEndOfLines.dropWhile{ case (c: Char, idx: Int) =>
         whitespaces.contains(c)
@@ -53,8 +53,8 @@ class WhitespaceEndOfLineChecker extends FileChecker {
     val errors = for {
       (line, lineIndex) <- lines.lines.zipWithIndex
       (hasWhitespace, whitespaceIndex) = endsWithWhitespace(line.text)
-      if (hasWhitespace)
-      if (!ignoreWhitespaceLines || line.text.trim.size > 0)
+      if hasWhitespace
+      if !ignoreWhitespaceLines || line.text.trim.nonEmpty
     } yield {
       ColumnError(lineIndex + 1, whitespaceIndex)
     }

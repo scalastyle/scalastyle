@@ -14,20 +14,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.lexer.Token
-import org.scalastyle.ScalariformChecker
-import scalariform.parser.ParamClauses
-import scalariform.parser.TmplDef
-import org.scalastyle.ScalastyleError
-import scalariform.parser.FunDefOrDcl
-import scalariform.parser.Param
-import scalariform.parser.Type
 import org.scalastyle.PositionError
-import scalariform.parser.AstNode
-import VisitorHelper.{visit, Clazz}
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.scalariform.VisitorHelper.visit
+
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.AstNode
+import _root_.scalariform.parser.FunDefOrDcl
+import _root_.scalariform.parser.Param
+import _root_.scalariform.parser.ParamClauses
+import _root_.scalariform.parser.TmplDef
+import _root_.scalariform.parser.Type
 
 object VisitorHelper {
   class Clazz[+T <: AstNode]()
@@ -68,7 +70,7 @@ object VisitorHelper {
     case a: AstNode => visitfn(a.immediateChildren)
     case t: Token => List()
     case Some(x) => visitfn(x)
-    case xs @ (_ :: _) => xs flatMap { visitfn(_) }
+    case xs @ (_ :: _) => xs.flatMap(visitfn(_))
     case Left(x) => visitfn(x)
     case Right(x) => visitfn(x)
     case (l, r) => visitfn(l) ::: visitfn(r)
@@ -92,9 +94,9 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      t <- localvisit(ast.immediateChildren(0));
-      f <- traverse(t);
-      if (matches(f))
+      t <- localvisit(ast.immediateChildren.head)
+      f <- traverse(t)
+      if matches(f)
     } yield {
       PositionError(f.position.get, params(f))
     }

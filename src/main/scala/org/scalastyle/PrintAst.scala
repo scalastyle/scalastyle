@@ -15,8 +15,8 @@
 // limitations under the License.
 
 package org.scalastyle
-import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.lexer.Token
+import _root_.scalariform.parser.CompilationUnit
 
 // scalastyle:off regex
 

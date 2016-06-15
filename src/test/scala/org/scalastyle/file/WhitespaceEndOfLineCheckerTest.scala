@@ -16,16 +16,8 @@
 
 package org.scalastyle.file
 
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -39,7 +31,7 @@ package foobar
 
 object Foobar {
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -50,7 +42,7 @@ package foobar##
 
 object Foobar {
 }
-""".replaceAll("#", " ");
+""".replaceAll("#", " ")
 
     assertErrors(List(columnError(2, 14)), source)
   }
@@ -61,7 +53,7 @@ package foobar~
 class  foobar#
 object Foobar {
 }
-""".replaceAll("~", " ").replaceAll("#", "\t");
+""".replaceAll("~", " ").replaceAll("#", "\t")
 
     assertErrors(List(columnError(2, 14), columnError(3, 13)), source)
   }
@@ -76,7 +68,7 @@ package foobar
     val bar = "bar"
 ##
   }
-""".replaceAll("~", " ").replaceAll("#", "\t");
+""".replaceAll("~", " ").replaceAll("#", "\t")
 
     assertErrors(List(), source, Map("ignoreWhitespaceLines" -> "true"))
   }
@@ -92,7 +84,7 @@ package foobar
     val bar = "bar"
 ##
   }
-""".replaceAll("~", " ").replaceAll("#", "\t");
+""".replaceAll("~", " ").replaceAll("#", "\t")
 
     assertErrors(List(columnError(6, 0), columnError(8, 0)), source, Map("ignoreWhitespaceLines" -> "false"))
   }

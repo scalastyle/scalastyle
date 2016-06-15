@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -39,7 +33,7 @@ package foobar
 object Foobar {
   val foo = 1 + 2
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -53,7 +47,7 @@ object Foobar {
 }
 
 class Clazz[+T <: AstNode]() // ignore + within type specification
-""";
+"""
 
     assertErrors(List(columnError(5, 14)), source)
   }
@@ -93,7 +87,7 @@ package foobar
 object Foobar {
   val foo = 1 +  2
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -106,7 +100,7 @@ object Foobar {
   val someText = "f012345678901234567890123456789" +
   " some more text"
 }
-""";
+"""
 
     assertErrors(List(), source)
   }

@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -52,7 +46,7 @@ class Foobar {
   val a2 = "1"
   val b2 = "1"
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "7", "3")), columnError(12, 11, List(""""bar"""", "4", "3"))), source,
                     Map("allowed" -> "3", "ignoreRegex" -> "1"))
@@ -71,7 +65,7 @@ class Foobar {
   var a2 = ""
   var b2 = ""
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
   }
@@ -86,7 +80,7 @@ class Foobar {
   var b = ###foobar
   oop###
 }
-""".replace("###", "\"\"\"");
+""".replace("###", "\"\"\"")
 
     assertErrors(List(columnError(5, 10, List(""""foobar
   oop"""", "2", "1"))), source)
@@ -100,7 +94,7 @@ class Foobar {
   var a = ###foobar###
   var b = "foobar"
 }
-""".replace("###", "\"\"\"");
+""".replace("###", "\"\"\"")
 
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
   }

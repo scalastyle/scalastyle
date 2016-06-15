@@ -16,10 +16,9 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
 import com.typesafe.config.ConfigFactory
-import com.typesafe.config.Config
+import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
 // scalastyle:off multiple.string.literals
 

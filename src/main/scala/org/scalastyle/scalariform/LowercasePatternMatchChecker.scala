@@ -14,39 +14,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
-import org.scalastyle.FileError
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.PositionError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.parser.CompilationUnit
-import scalariform.parser.TmplDef
-import scalariform.parser.CasePattern
-import scalariform.parser.Expr
-import scalariform.parser.GeneralTokens
-import scalariform.lexer.Token
-import scalariform.lexer.Tokens.VARID
-import VisitorHelper.visit
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.VARID
+import _root_.scalariform.parser.CasePattern
+import _root_.scalariform.parser.CompilationUnit
 
 class LowercasePatternMatchChecker extends ScalariformChecker {
   val errorKey = "lowercase.pattern.match"
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      f <- visit(map)(ast.immediateChildren(0));
-      if (matches(f))
+      f <- visit(map)(ast.immediateChildren.head)
+      if matches(f)
     } yield {
       PositionError(f.pattern.firstToken.offset)
     }
 
-    it.toList
+    it
   }
 
   private def matches(t: CasePattern) = {
     t.pattern.tokens match {
-      case List(t: Token) => (t.tokenType == VARID && t.text.length() > 0 && t.text(0).isLower)
+      case List(t: Token) => t.tokenType == VARID && t.text.length() > 0 && t.text(0).isLower
       case _ => false
     }
   }

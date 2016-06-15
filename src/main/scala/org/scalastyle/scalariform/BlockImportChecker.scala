@@ -16,12 +16,20 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.{PositionError, ScalariformChecker, ScalastyleError}
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 
-import scalariform.lexer.Token
-import scalariform.lexer.Tokens.ARROW
-import scalariform.lexer.Tokens.USCORE
-import scalariform.parser.{AstNode, BlockImportExpr, CompilationUnit, Expr, GeneralTokens, ImportClause, ImportSelectors}
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.ARROW
+import _root_.scalariform.lexer.Tokens.USCORE
+import _root_.scalariform.parser.AstNode
+import _root_.scalariform.parser.BlockImportExpr
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.ImportClause
+import _root_.scalariform.parser.ImportSelectors
 
 class BlockImportChecker extends ScalariformChecker {
 

@@ -16,19 +16,21 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.CompilationUnit
-import scalariform.lexer.Tokens.VARID
-import scalariform.lexer.Tokens.TRUE
-import scalariform.lexer.Tokens.FALSE
-import scalariform.lexer.Token
+import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.PositionError
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.scalariform.VisitorHelper.visit
+
 import _root_.scalariform.parser.AstNode
 import _root_.scalariform.parser.GeneralTokens
 import _root_.scalariform.parser.InfixExpr
 import _root_.scalariform.parser.PrefixExprElement
-import VisitorHelper.{visit, Clazz}
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.FALSE
+import _root_.scalariform.lexer.Tokens.TRUE
+import _root_.scalariform.lexer.Tokens.VARID
+import _root_.scalariform.parser.CompilationUnit
 
 class SimplifyBooleanExpressionChecker extends ScalariformChecker {
   val errorKey = "simplify.boolean.expression"

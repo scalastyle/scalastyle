@@ -16,11 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.AccessModifier
-import scalariform.parser.Modifier
-import scalariform.parser.Param
-import scalariform.parser.ParamClauses
-import scalariform.parser.ProcFunBody
 import scalariform.lexer.Tokens
 
 class ProcedureDeclarationChecker extends AbstractSingleMethodChecker[Unit] {

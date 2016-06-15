@@ -20,29 +20,29 @@ import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import VisitorHelper.visit
-import scalariform.lexer.Tokens.ELSE
-import scalariform.lexer.Tokens.FALSE
-import scalariform.lexer.Tokens.TRUE
-import scalariform.lexer.Token
-import scalariform.parser.ElseClause
-import scalariform.parser.Expr
-import scalariform.parser.GeneralTokens
-import scalariform.parser.IfExpr
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.ELSE
+import _root_.scalariform.lexer.Tokens.FALSE
+import _root_.scalariform.lexer.Tokens.TRUE
+import _root_.scalariform.parser.ElseClause
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.IfExpr
 
 class RedundantIfChecker extends CombinedChecker {
   val errorKey = "if.redundant"
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val it = for {
-      t <- localvisit(ast.compilationUnit);
+      t <- localvisit(ast.compilationUnit)
       if matches(t)
     } yield {
       PositionError(t.firstToken.offset)
     }
 
-    it.toList
+    it
   }
 
   private def matches(t: IfExpr): Boolean =

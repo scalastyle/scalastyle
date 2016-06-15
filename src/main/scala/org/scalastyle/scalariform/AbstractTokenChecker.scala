@@ -16,28 +16,29 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.CompilationUnit
-import scalariform.lexer.TokenType
-import scalariform.lexer.Token
-import org.scalastyle.ScalastyleError
-import org.scalastyle.ScalariformChecker
 import org.scalastyle.PositionError
-import scalariform.lexer.Tokens.WHILE
-import scalariform.lexer.Tokens.RETURN
-import scalariform.lexer.Tokens.NULL
-import scalariform.lexer.Tokens.INTEGER_LITERAL
-import scalariform.lexer.Tokens.VARID
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.TokenType
+import _root_.scalariform.lexer.Tokens.INTEGER_LITERAL
+import _root_.scalariform.lexer.Tokens.NULL
+import _root_.scalariform.lexer.Tokens.RETURN
+import _root_.scalariform.lexer.Tokens.VARID
+import _root_.scalariform.lexer.Tokens.WHILE
+import _root_.scalariform.parser.CompilationUnit
 
 abstract class AbstractTokenChecker(val errorKey: String, tokenType: TokenType) extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      t <- ast.tokens;
-      if (t.tokenType == tokenType && matches(t))
+      t <- ast.tokens
+      if t.tokenType == tokenType && matches(t)
     } yield {
       PositionError(t.offset)
     }
 
-    it.toList
+    it
   }
 
   protected def matches(token: Token): Boolean = true
@@ -55,5 +56,5 @@ class TokenChecker extends AbstractTokenChecker("token", VARID) {
   private val DefaultRegex = "^$"
   lazy val regex = getString("regex", DefaultRegex).r
 
-  override protected def matches(t: Token) = regex.findFirstIn(t.text) != None
+  override protected def matches(t: Token) = regex.findFirstIn(t.text).isDefined
 }

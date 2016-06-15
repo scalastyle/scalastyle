@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -54,7 +48,7 @@ abstract class OK {
   def bar2() = new scala.collection.mutable.HashMap {def foobar2() = {}}
   val bar3
 }
-""";
+"""
 
     assertErrors(List(columnError(10, 6), columnError(11, 6), columnError(14, 6), columnError(15, 6)), source)
   }

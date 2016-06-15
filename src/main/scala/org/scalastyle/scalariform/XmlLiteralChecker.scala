@@ -14,15 +14,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import VisitorHelper.visit
-import scalariform.parser.CompilationUnit
-import scalariform.parser.Refinement
-import scalariform.parser.XmlExpr
+
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.XmlExpr
 
 class XmlLiteralChecker extends ScalariformChecker {
   val errorKey = "xml.literal"

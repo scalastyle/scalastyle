@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number
 
@@ -42,7 +36,7 @@ object Foobar {
   val foo3 = 3
   val foo4 = 65 + 3l
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 13), columnError(8, 18)), source)
   }

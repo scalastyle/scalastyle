@@ -16,9 +16,9 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Test
 import com.typesafe.config.ConfigFactory
+import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
 class ConfigTest extends AssertionsForJUnit{
 

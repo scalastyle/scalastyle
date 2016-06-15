@@ -19,7 +19,7 @@ package org.scalastyle.file
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
-// scalastyle:off magic.number multiple.string.literals
+// scalastyle:off magic.number multiple.string.literals regex
 
 class RegexCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "regex"
@@ -92,7 +92,7 @@ class foobar {
   }
 
   @Test
-  def testPerLine() = {
+  def testPerLine(): Unit = {
     assertErrors(List(columnError(8, 0, List("^[^/]+println.*$"))), source,
       Map("regex" -> "^[^/]+println.*$", "line" -> "true"))
   }

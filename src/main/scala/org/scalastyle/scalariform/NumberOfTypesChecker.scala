@@ -14,15 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
+package org.scalastyle.scalariform
 
 import org.scalastyle.FileError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.parser.CompilationUnit
-import scalariform.parser.TmplDef
-import VisitorHelper.visit
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.TmplDef
 
 class NumberOfTypesChecker extends ScalariformChecker {
   val errorKey = "number.of.types"

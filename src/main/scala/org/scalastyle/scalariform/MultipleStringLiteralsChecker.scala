@@ -14,15 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform;
-
-import scala.util.matching.Regex
+package org.scalastyle.scalariform
 
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import scalariform.parser.CompilationUnit
-import scalariform.lexer.Tokens.STRING_LITERAL
+
+import scala.util.matching.Regex
+import _root_.scalariform.lexer.Tokens.STRING_LITERAL
+import _root_.scalariform.parser.CompilationUnit
 
 class MultipleStringLiteralsChecker extends ScalariformChecker {
   private val DefaultAllowed = 1

@@ -16,19 +16,19 @@
 
 package org.scalastyle.file
 
-import scala.Array.canBuildFrom
-
 import org.scalastyle.ColumnError
 import org.scalastyle.FileChecker
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
+
+import scala.Array.canBuildFrom
 
 class FileTabChecker extends FileChecker {
   val errorKey = "line.contains.tab"
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val errors = for {
-      line <- lines.lines.zipWithIndex;
+      line <- lines.lines.zipWithIndex
       if line._1.text.contains('\t')
     } yield {
       ColumnError(line._2 + 1, line._1.text.indexOf('\t'))

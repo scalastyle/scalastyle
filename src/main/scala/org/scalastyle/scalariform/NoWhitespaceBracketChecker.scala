@@ -20,16 +20,16 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
-import scalariform.lexer.Tokens.LBRACKET
-import scalariform.parser.CompilationUnit
+import _root_.scalariform.lexer.Tokens.LBRACKET
+import _root_.scalariform.parser.CompilationUnit
 
 class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
   val errorKey = "no.whitespace.before.left.bracket"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      List(left, right) <- ast.tokens.sliding(2);
-      if (right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
+      List(left, right) <- ast.tokens.sliding(2)
+      if right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0
     } yield {
       PositionError(left.offset)
     }
@@ -43,8 +43,8 @@ class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0)
+      List(left, right) <- ast.tokens.sliding(2)
+      if left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0
     } yield {
       PositionError(left.offset)
     }

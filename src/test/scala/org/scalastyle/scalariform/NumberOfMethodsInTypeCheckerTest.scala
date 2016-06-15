@@ -16,15 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import java.util.Set
-import org.junit.Before
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -53,7 +47,7 @@ class F2() {
   def method3() = 1
   def method4() = 1
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 6, List("4"))), source, Map("maxMethods" -> "4"))
   }

@@ -16,10 +16,10 @@
 
 package org.scalastyle
 
-import scala.xml.Elem
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import com.typesafe.config.ConfigFactory
 import com.typesafe.config.Config
+
+import scala.collection.JavaConversions.collectionAsScalaIterable
+import scala.xml.Elem
 
 object Output {
   def findMessage(messageHelper: MessageHelper, key: String, args: List[String], customMessage: Option[String]): String = {
@@ -63,7 +63,7 @@ trait Output[T <: FileSpec] {
   def message(m: Message[T]): Unit
 }
 
-case class OutputResult(val files: Int, val errors: Int, val warnings: Int, val infos: Int)
+case class OutputResult(files: Int, errors: Int, warnings: Int, infos: Int)
 
 class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
   private val messageHelper = new MessageHelper(config)
@@ -113,9 +113,9 @@ object XmlOutput {
   }
 
   private def printToFile(f: java.io.File, encoding: String)(op: java.io.PrintWriter => Unit): Unit = {
-    val parent = f.getParentFile();
+    val parent = f.getParentFile
     if (!parent.exists() && !parent.mkdirs()) {
-      throw new IllegalStateException("Couldn't create dir: " + parent);
+      throw new IllegalStateException("Couldn't create dir: " + parent)
     }
 
     val p = new java.io.PrintWriter(f, encoding)
@@ -143,9 +143,9 @@ object XmlOutput {
       case (filename, alerts) =>
         <file name={filename}>
           {alerts.map {
-          case Alert(filename, severity, message, source, line, column) => {
+          case Alert(fn, severity, message, source, line, column) => {
             val s = source.collect {
-              case x: Class[_] => x.getName()
+              case x: Class[_] => x.getName
             }
               <error severity={severity} message={message}/> % attr("source", s) % attr("line", line) % attr("column", column)
           }

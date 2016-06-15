@@ -16,10 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
-
-import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -34,7 +33,7 @@ package foobar
 class Foobar {
   val foo = 1
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -47,7 +46,7 @@ class foobar {
   class barbar {
   }
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(5, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -64,7 +63,7 @@ package foobar
 object Foobar {
   val foo = 1
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -77,7 +76,7 @@ object foobar {
   object barbar {
   }
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 7, List("^[A-Z][A-Za-z]*$")), columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -90,7 +89,7 @@ package object foobar {
   object barbar {
   }
 }
-""";
+"""
 
     assertErrors(List(columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -104,7 +103,7 @@ class PackageNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def testSinglePartNoError(): Unit = {
     val source = """
 package foobar
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -112,7 +111,7 @@ package foobar
   @Test def testSinglePartError(): Unit = {
     val source = """
 package FooBar
-""";
+"""
 
     assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$"))), source)
   }
@@ -120,7 +119,7 @@ package FooBar
   @Test def testMultiPartNoError(): Unit = {
     val source = """
 package abc.foobar
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -128,7 +127,7 @@ package abc.foobar
   @Test def testMultiPartError(): Unit = {
     val source = """
 package abc.foo_bar
-""";
+"""
 
     assertErrors(List(columnError(2, 12, List("^[a-z][A-Za-z]*$"))), source)
   }
@@ -136,7 +135,7 @@ package abc.foo_bar
   @Test def testPackageObjectNoError(): Unit = {
     val source = """
 package object _foo_bar
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -146,7 +145,7 @@ package object _foo_bar
     val source = """
 package foo
 package bar
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -156,7 +155,7 @@ package bar
     val source = """
 package foo
 package Bar
-""";
+"""
 
     assertErrors(List(columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
   }
@@ -165,7 +164,7 @@ package Bar
     val source = """
 package Foo
 package Bar
-""";
+"""
 
     assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$")), columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
   }
@@ -174,7 +173,7 @@ package Bar
     val source = """
 package org.thisone
 package object _foo
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -192,7 +191,7 @@ package foobar
 package object foobar {
   val foo = 1
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -205,7 +204,7 @@ package object Foobar {
 }
 package object Barbar {
 }
-""";
+"""
 
     assertErrors(List(columnError(4, 15, List("^[a-z][A-Za-z]*$")), columnError(6, 15, List("^[a-z][A-Za-z]*$"))), source)
   }
@@ -218,7 +217,7 @@ object foobar {
   object barbar {
   }
 }
-""";
+"""
 
     assertErrors(List(), source)
   }
@@ -238,7 +237,7 @@ class Foobar {
 //  def foo+() = 1
   def setting_=(s: Boolean) {}
 }
-""";
+"""
 
     assertErrors(List(defErr(6, 6)), source)
   }
@@ -252,7 +251,7 @@ class Foobar {
   def +() = 1
 //  def Foo+() = 1
 }
-""";
+"""
 
     assertErrors(List(columnError(6, 6, List("^F[o*]*$"))), source, Map("regex" -> "^F[o*]*$"))
   }
@@ -267,7 +266,7 @@ class Foobar {
   def -() = 1
 //  def Foo+() = 1
 }
-""";
+"""
 
     assertErrors(List(defErr(7, 6)), source, Map("ignoreRegex" -> "^\\+$"))
   }
@@ -288,7 +287,7 @@ class Foobar extends Bar {
   override protected def -() = 1
   def bar() = 1
 }
-""";
+"""
 
     assertErrors(List(defErr(5, 6), defErr(6, 6), defErr(7, 6)), source, Map("ignoreOverride" -> "true"))
   }

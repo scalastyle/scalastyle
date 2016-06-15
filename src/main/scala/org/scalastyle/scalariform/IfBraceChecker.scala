@@ -22,11 +22,11 @@ import org.scalastyle.LineColumn
 import org.scalastyle.Lines
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scalariform.parser.BlockExpr
-import scalariform.parser.Expr
-import scalariform.parser.IfExpr
-import VisitorHelper.visit
+import _root_.scalariform.parser.BlockExpr
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.IfExpr
 
 class IfBraceChecker extends CombinedChecker {
   val DefaultSingleLineAllowed = true
@@ -38,13 +38,13 @@ class IfBraceChecker extends CombinedChecker {
     val singleLineAllowed = doubleLineAllowed || getBoolean("singleLineAllowed", DefaultSingleLineAllowed)
 
     val it = for {
-      t <- localvisit(ast.compilationUnit);
+      t <- localvisit(ast.compilationUnit)
       f <- traverse(t, ast.lines, singleLineAllowed, doubleLineAllowed)
     } yield {
       PositionError(f.position.get)
     }
 
-    it.toList
+    it
   }
 
   trait ExprTree[T] {
@@ -56,7 +56,7 @@ class IfBraceChecker extends CombinedChecker {
   }
 
   private def traverse(t: IfExprClazz, lines: Lines, singleLineAllowed: Boolean, doubleLineAllowed: Boolean): List[IfExprClazz] = {
-    val l = t.subs.map(traverse(_, lines, singleLineAllowed, doubleLineAllowed)).flatten
+    val l = t.subs.flatMap(traverse(_, lines, singleLineAllowed, doubleLineAllowed))
     if (matches(t, lines, singleLineAllowed, doubleLineAllowed)) t :: l else l
   }
 
@@ -69,7 +69,7 @@ class IfBraceChecker extends CombinedChecker {
       case None => (None, None)
     }
 
-    if (ifBodyLine.isEmpty && (elseLine.isDefined && elseBodyLine.isEmpty)) return false;
+    if (ifBodyLine.isEmpty && (elseLine.isDefined && elseBodyLine.isEmpty)) return false
 
     (ifLine, elseLine) match {
       case (Some(x), None) => if (singleLineAllowed) !sameLine(ifLine, ifBodyLine) else true
@@ -91,11 +91,11 @@ class IfBraceChecker extends CombinedChecker {
 
   /** this returns Some(x) if we are NOT BlockExpr, i.e. there are no braces */
   private[this] def firstLineOfGeneralTokens(body: Expr, lines: Lines) = {
-    if (body.contents.size > 0) {
-      body.contents(0) match {
+    if (body.contents.nonEmpty) {
+      body.contents.head match {
         case e: BlockExpr => None
         case e: IfExpr => None
-        case e: Any => lines.toLineColumn(e.tokens(0).offset)
+        case e: Any => lines.toLineColumn(e.tokens.head.offset)
       }
     } else {
       None

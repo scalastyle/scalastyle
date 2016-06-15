@@ -16,17 +16,8 @@
 
 package org.scalastyle.file
 
+import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.scalastyle.Checker
-import org.scalastyle.StyleError
-import org.scalastyle.Message
-
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -40,7 +31,7 @@ package foobar
 
     object Foobar {
 }
-""";
+"""
 
     assertErrors(List(), source, Map("maxLineLength" -> "20"))
   }
@@ -51,7 +42,7 @@ package foobar
 
     object Foobar {
 }
-""";
+"""
 
     assertErrors(List(lineError(4, List("15"))), source, Map("maxLineLength" -> "15"))
   }
@@ -64,7 +55,7 @@ import org.scalastyle.file.SuperLongImportClass
     object Foobar {
       import org.scalastyle.file._
 }
-""";
+"""
 
     assertErrors(
       List(lineError(5, List("15"))),
@@ -86,7 +77,7 @@ package foobar
 }
     object Barbar {
 }
-""";
+"""
 
     assertErrors(List(lineError(4, List("15")), lineError(6, List("15"))), source, Map("maxLineLength" -> "15"))
   }
@@ -98,7 +89,7 @@ package foobar
 import# #java.lang._
 object Barbar {
 }
-""".replaceAll("#","\t");
+""".replaceAll("#","\t")
 
     assertErrors(List(lineError(4, List("14")), lineError(5, List("14"))), source, Map("maxLineLength" -> "14"))
   }

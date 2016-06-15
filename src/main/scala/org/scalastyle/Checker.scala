@@ -16,18 +16,19 @@
 
 package org.scalastyle
 
-import _root_.scalariform.parser.CompilationUnit
+import java.nio.charset.MalformedInputException
+
+import _root_.scalariform.lexer.Comment
 import _root_.scalariform.lexer.HiddenToken
 import _root_.scalariform.lexer.ScalaLexer
-import _root_.scalariform.lexer.Comment
-import _root_.scalariform.parser.ScalaParser
 import _root_.scalariform.lexer.Token
-import scala.io.Source
-import java.nio.charset.MalformedInputException
-import scala.io.Codec
-import scala.collection.JavaConversions.seqAsJavaList
-import scala.collection.JavaConversions.collectionAsScalaIterable
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.ScalaParser
 import scala.annotation.tailrec
+import scala.collection.JavaConversions.collectionAsScalaIterable
+import scala.collection.JavaConversions.seqAsJavaList
+import scala.io.Codec
+import scala.io.Source
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -197,14 +198,14 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
 }
 
 trait Checker[A] {
-  protected val errorKey: String;
-  var parameters = Map[String, String]();
-  var level: Level = WarningLevel;
+  protected val errorKey: String
+  var parameters = Map[String, String]()
+  var level: Level = WarningLevel
   var customMessage: Option[String] = None
   var customErrorKey: Option[String] = None
 
-  def setParameters(parameters: Map[String, String]): Unit = this.parameters = parameters;
-  def setLevel(level: Level): Unit = this.level = level;
+  def setParameters(parameters: Map[String, String]): Unit = this.parameters = parameters
+  def setLevel(level: Level): Unit = this.level = level
   def setCustomErrorKey(customErrorKey: Option[String]): Unit = this.customErrorKey = customErrorKey
   def setCustomMessage(customMessage: Option[String]): Unit = this.customMessage = customMessage
   protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))

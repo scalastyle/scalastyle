@@ -17,8 +17,8 @@
 package org.scalastyle.file
 
 import org.scalastyle.FileChecker
-import org.scalastyle.LineError
 import org.scalastyle.Line
+import org.scalastyle.LineError
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
@@ -48,7 +48,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
   private def replaceTabs(s: String, tabSize: Int): String = {
     val sb = new StringBuilder(s)
     val len = sb.length
-    var i = 0;
+    var i = 0
 
     while (i < len) {
       if (sb.charAt(i) == '\t') {
@@ -58,7 +58,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
     }
 
     if (sb.endsWith("\r")) {
-      sb.setLength(sb.length-1);
+      sb.setLength(sb.length-1)
     }
 
     sb.toString

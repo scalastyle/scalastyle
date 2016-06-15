@@ -18,9 +18,15 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
-import org.scalastyle.{PositionError, ScalariformChecker, ScalastyleError}
-import scalariform.lexer.{MultiLineComment, ScalaDocComment, SingleLineComment, Token}
-import scalariform.parser.CompilationUnit
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+
+import _root_.scalariform.lexer.MultiLineComment
+import _root_.scalariform.lexer.ScalaDocComment
+import _root_.scalariform.lexer.SingleLineComment
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.parser.CompilationUnit
 
 class SpaceAfterCommentStartChecker extends ScalariformChecker {
   val errorKey: String = "space.after.comment.start"

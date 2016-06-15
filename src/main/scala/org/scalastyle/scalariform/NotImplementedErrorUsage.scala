@@ -16,10 +16,12 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.{ ScalastyleError, ScalariformChecker, PositionError }
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 
-import scalariform.lexer.Tokens.VARID
-import scalariform.parser.CompilationUnit
+import _root_.scalariform.lexer.Tokens.VARID
+import _root_.scalariform.parser.CompilationUnit
 
 class NotImplementedErrorUsage extends ScalariformChecker {
 

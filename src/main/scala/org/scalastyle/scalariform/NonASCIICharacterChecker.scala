@@ -19,10 +19,12 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
-import org.scalastyle.{PositionError, ScalariformChecker, ScalastyleError}
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 
-import scalariform.lexer.Token
-import scalariform.parser.CompilationUnit
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.parser.CompilationUnit
 
 class NonASCIICharacterChecker extends ScalariformChecker {
   val errorKey: String = "non.ascii.character.disallowed"

@@ -18,9 +18,11 @@ package org.scalastyle
 
 import java.io.File
 
-import org.junit.Assert._
+import org.junit.Assert
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
+
+// scalastyle:off multiple.string.literals
 
 class ExcludeFilesTest extends AssertionsForJUnit {
   private val base = "src/test/resources/testDir/"
@@ -58,6 +60,6 @@ class ExcludeFilesTest extends AssertionsForJUnit {
 
   private def assertFiles(expected: List[String], files: List[String], exclude: List[String]): Unit = {
     val list = Directory.getFiles(None, files.map(f => toFile(f)), exclude)
-    assertEquals(expected.map(f => toFile(f).getAbsolutePath).sorted, list.map(_.name).sorted)
+    Assert.assertEquals(expected.map(f => toFile(f).getAbsolutePath).sorted, list.map(_.name).sorted)
   }
 }

@@ -16,10 +16,11 @@
 
 package org.scalastyle
 
-import org.scalatest.junit.AssertionsForJUnit
+import java.io.File
+
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.io.File
+import org.scalatest.junit.AssertionsForJUnit
 
 class SourceFileParserTest extends AssertionsForJUnit {
 

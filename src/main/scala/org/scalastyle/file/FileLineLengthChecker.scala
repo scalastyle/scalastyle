@@ -16,12 +16,11 @@
 
 package org.scalastyle.file
 
-import scala.Array.canBuildFrom
-
 import org.scalastyle.FileChecker
-import org.scalastyle.LineError
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
+
+import scala.Array.canBuildFrom
 
 class FileLineLengthChecker extends FileChecker {
   val DefaultMaxLineLength = 160
@@ -35,8 +34,8 @@ class FileLineLengthChecker extends FileChecker {
 
     val importPattern = """^\s*import""".r
     val errors = for {
-      line <- NormalizedLine.normalize(lines, tabSize);
-      if (line.length > maxLineLength && !(ignoreImports && importPattern.findFirstIn(line.body).isDefined))
+      line <- NormalizedLine.normalize(lines, tabSize)
+      if line.length > maxLineLength && !(ignoreImports && importPattern.findFirstIn(line.body).isDefined)
     } yield {
       line.mkError(List("" + maxLineLength))
     }
