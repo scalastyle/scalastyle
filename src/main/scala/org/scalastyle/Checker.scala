@@ -146,7 +146,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
   def readFile(file: String, encoding: Option[String])(implicit codec: Codec): String = {
     @tailrec
     def readFileWithEncoding(file: String, encodings: List[String]): Option[String] = {
-      if (encodings.size == 0) {
+      if (encodings.isEmpty) {
         None
       } else {
         val encoding = encodings(0)

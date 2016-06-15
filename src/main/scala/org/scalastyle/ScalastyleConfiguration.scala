@@ -96,7 +96,7 @@ object ScalastyleConfiguration {
 
   private def contentsOf(node: Node, n: String) = {
     val ns = (node \\ n)
-    if (ns.size == 0) None else (Some(ns(0).text))
+    if (ns.isEmpty) None else (Some(ns(0).text))
   }
 
   def toCheck(node: Node): ConfigurationChecker = {

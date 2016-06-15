@@ -80,7 +80,7 @@ object Main {
       }
     }
 
-    if (!config.config.isDefined || config.directories.size == 0) {
+    if (!config.config.isDefined || config.directories.isEmpty) {
       config = config.copy(error = true)
     }
 
