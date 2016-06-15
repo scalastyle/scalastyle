@@ -25,33 +25,38 @@ import org.scalastyle.ScalastyleError
 
 class WhitespaceEndOfLineChecker extends FileChecker {
   val errorKey = "whitespace.end.of.line"
+  lazy val ignoreWhitespaceLines = getBoolean("ignoreWhitespaceLines", false)
 
   private val whitespaces = Set(' ', '\t')
   private val endOfLines = Set('\n', '\r')
 
-  private def endsWithWhitespace(s: String) = {
+  private def endsWithWhitespace(s: String): (Boolean, Int) = {
     val sb = s.reverse
 
-    var endOfLinesIndex = 0;
-    while (endOfLinesIndex < sb.length() && endOfLines(sb(endOfLinesIndex))) {
-      endOfLinesIndex += 1
-    }
-
-    var whitespaceIndex = endOfLinesIndex;
-    while (whitespaceIndex < sb.length() && whitespaces(sb(whitespaceIndex))) {
-      whitespaceIndex += 1
-    }
-
-    (whitespaceIndex != endOfLinesIndex, s.length() - whitespaceIndex)
+    (for {
+      withoutEndOfLines <- Some(sb.zipWithIndex.dropWhile{ case (c: Char, idx: Int) => endOfLines.contains(c) })
+      (nextChar, eolIndex) <- withoutEndOfLines.headOption
+      if (whitespaces.contains(nextChar))
+    } yield {
+      withoutEndOfLines.dropWhile{ case (c: Char, idx: Int) =>
+        whitespaces.contains(c)
+      }.headOption.map{ case (c: Char, idx: Int) =>
+        (true, s.length() - idx)
+      }.getOrElse {
+        if (ignoreWhitespaceLines) (false, 0)
+        else (true, 0)
+      }
+    } ).getOrElse( (false, 0) )
   }
 
   def verify(lines: Lines): List[ScalastyleError] = {
     val errors = for {
-      line <- lines.lines.zipWithIndex;
-      whitespace = endsWithWhitespace(line._1.text)
-      if (whitespace._1)
+      (line, lineIndex) <- lines.lines.zipWithIndex
+      (hasWhitespace, whitespaceIndex) = endsWithWhitespace(line.text)
+      if (hasWhitespace)
+      if (!ignoreWhitespaceLines || line.text.trim.size > 0)
     } yield {
-      ColumnError(line._2 + 1, whitespace._2)
+      ColumnError(lineIndex + 1, whitespaceIndex)
     }
 
     errors.toList
