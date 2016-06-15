@@ -25,10 +25,12 @@ import org.junit.Test
 
 class CommentFilterTest extends AssertionsForJUnit {
   @Test def testTokens(): Unit = {
-    val text = """
-// scalastyle:off
-      // another comment
-// scalastyle:on"""
+    val text =
+    """
+      |// scalastyle:off
+      |      // another comment
+      |// scalastyle:on
+    """.stripMargin
     val comments = new CheckerUtils().parseScalariform(text).get.comments
 
     val tokens = CommentFilter.findScalastyleComments(comments)
@@ -37,53 +39,63 @@ class CommentFilterTest extends AssertionsForJUnit {
   }
 
   @Test def testOffOn(): Unit = {
-    assertCommentFilter(List(CommentFilter(None, Some(LineColumn(2, 0)),Some(LineColumn(3, 0)))), """
-// scalastyle:off
-// scalastyle:on""")
+    assertCommentFilter(List(CommentFilter(None, Some(LineColumn(2, 0)),Some(LineColumn(3, 0)))),
+    """
+      |// scalastyle:off
+      |// scalastyle:on
+    """.stripMargin)
   }
 
   @Test def testOffOnVariousWhitespace(): Unit = {
-    assertCommentFilter(List(CommentFilter(None, Some(LineColumn(2, 0)),Some(LineColumn(3, 1)))), """
-//  scalastyle:off
- //  scalastyle:on """)
+    assertCommentFilter(List(CommentFilter(None, Some(LineColumn(2, 0)),Some(LineColumn(3, 1)))),
+    """
+      |//  scalastyle:off
+      | //  scalastyle:on
+    """.stripMargin)
   }
 
   @Test def testOffOnIds(): Unit = {
     assertCommentFilter(List(CommentFilter(Some("magic.number"), Some(LineColumn(2, 0)),Some(LineColumn(4, 0))),
-        CommentFilter(Some("class.name"), Some(LineColumn(3, 0)),Some(LineColumn(5, 1)))), """
-//  scalastyle:off magic.number
-//  scalastyle:off class.name
-//  scalastyle:on magic.number
- //  scalastyle:on class.name""")
+        CommentFilter(Some("class.name"), Some(LineColumn(3, 0)),Some(LineColumn(5, 1)))),
+        """
+          |//  scalastyle:off magic.number
+          |//  scalastyle:off class.name
+          |//  scalastyle:on magic.number
+          | //  scalastyle:on class.name
+        """.stripMargin)
   }
 
   @Test def testOffOnMultipleIds(): Unit = {
     assertCommentFilter(List(CommentFilter(Some("magic.number"), Some(LineColumn(2, 0)),Some(LineColumn(4, 0))),
         CommentFilter(Some("class.name"), Some(LineColumn(3, 0)),Some(LineColumn(5, 1))),
-        CommentFilter(Some("object.name"), Some(LineColumn(2, 0)), None)), """
-//  scalastyle:off magic.number object.name
-//  scalastyle:off class.name
-//  scalastyle:on magic.number
- //  scalastyle:on class.name""")
+        CommentFilter(Some("object.name"), Some(LineColumn(2, 0)), None)),
+        """
+          |//  scalastyle:off magic.number object.name
+          |//  scalastyle:off class.name
+          |//  scalastyle:on magic.number
+          | //  scalastyle:on class.name
+        """.stripMargin)
   }
 
   @Test def testOffOnOpenEnds(): Unit = {
     assertCommentFilter(List(CommentFilter(Some("magic.number"), Some(LineColumn(2, 0)),Some(LineColumn(3, 0))),
         CommentFilter(Some("object.name"), Some(LineColumn(5, 1)), None),
-        CommentFilter(Some("class.name"), Some(LineColumn(2, 0)), None)), """
-//  scalastyle:off magic.number class.name
-//  scalastyle:on magic.number
-//  scalastyle:on magic.number
- //  scalastyle:off object.name
-""")
+        CommentFilter(Some("class.name"), Some(LineColumn(2, 0)), None)),
+        """
+          |//  scalastyle:off magic.number class.name
+          |//  scalastyle:on magic.number
+          |//  scalastyle:on magic.number
+          | //  scalastyle:off object.name
+        """.stripMargin)
   }
 
   @Test def testOneLine(): Unit = {
-    val source = """
-// scalastyle:ignore
- // scalastyle:ignore test
-some code //   scalastyle:ignore
-"""
+    val source =
+    """
+      |// scalastyle:ignore
+      | // scalastyle:ignore test
+      |some code //   scalastyle:ignore
+    """.stripMargin
   val expected = List( CommentFilter(None         ,Some(LineColumn(2,0)), Some(LineColumn(3,0)) )
                      , CommentFilter(Some("test") ,Some(LineColumn(3,0)), Some(LineColumn(4,0)) )
                      , CommentFilter(None         ,Some(LineColumn(4,0)), Some(LineColumn(5,0)) )
@@ -93,13 +105,14 @@ some code //   scalastyle:ignore
 
 
   @Test def testCombination(): Unit = {
-    val source = """
-// scalastyle:off magic.number
-// scalastyle:ignore magic.number
-// scalastyle:on magic.number
-// scalastyle:ignore magic.number
-// scalastyle:off magic.number
-"""
+    val source =
+    """
+      |// scalastyle:off magic.number
+      |// scalastyle:ignore magic.number
+      |// scalastyle:on magic.number
+      |// scalastyle:ignore magic.number
+      |// scalastyle:off magic.number
+    """.stripMargin
   val expected = List(CommentFilter(Some("magic.number"), Some(LineColumn(3,0)), Some(LineColumn(4,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(5,0)), Some(LineColumn(6,0)))
                      , CommentFilter(Some("magic.number"), Some(LineColumn(2,0)), Some(LineColumn(4,0)))
@@ -110,27 +123,28 @@ some code //   scalastyle:ignore
 
 
   @Test def testCombination2(): Unit = {
-    val source = """
-package foobar
-
-class foobar {
-  // scalastyle:on class.name
-  class barbar1 { } // scalastyle:ignore class.name
-  //
-
-  // scalastyle:on
-  class barbar2 { } // scalastyle:ignore
-  // scalastyle:off
-
-  // scalastyle:on
-  class barbar3 { } // scalastyle:ignore class.name
-  // scalastyle:off
-
-  // scalastyle:on
-  class barbar4 { } // scalastyle:ignore magic.number
-  // scalastyle:off
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class foobar {
+      |  // scalastyle:on class.name
+      |  class barbar1 { } // scalastyle:ignore class.name
+      |  //
+      |
+      |  // scalastyle:on
+      |  class barbar2 { } // scalastyle:ignore
+      |  // scalastyle:off
+      |
+      |  // scalastyle:on
+      |  class barbar3 { } // scalastyle:ignore class.name
+      |  // scalastyle:off
+      |
+      |  // scalastyle:on
+      |  class barbar4 { } // scalastyle:ignore magic.number
+      |  // scalastyle:off
+      |}
+    """.stripMargin
   val expected = List( CommentFilter(Some("class.name"),   Some(LineColumn(6,0)), Some(LineColumn(7,0)))
                      , CommentFilter(None              ,   Some(LineColumn(10,0)), Some(LineColumn(11,0)))
                      , CommentFilter(Some("class.name"),   Some(LineColumn(14,0)), Some(LineColumn(15,0)))

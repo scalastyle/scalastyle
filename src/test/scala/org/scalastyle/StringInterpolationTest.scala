@@ -32,13 +32,13 @@ class StringInterpolationTest extends CheckerTest {
 
   @Test def testOne(): Unit = {
     val source = """
-package foobar
-
-object Foobar {
-  val name = "Fred"
-  pfoorintln(s"Hello $name")
-}
-""";
+      |package foobar
+      |
+      |object Foobar {
+      |  val name = "Fred"
+      |  pfoorintln(s"Hello $name")
+      |}
+    """.stripMargin
 
     assertErrors(List(fileError(List("5"), message)), source, Map("maxFileLength" -> "5"), message, customId = Some("this.is.custom"))
   }

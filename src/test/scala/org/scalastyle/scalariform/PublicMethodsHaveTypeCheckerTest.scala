@@ -33,75 +33,79 @@ class PublicMethodsHaveTypeCheckerTest extends AssertionsForJUnit with CheckerTe
   val classUnderTest = classOf[PublicMethodsHaveTypeChecker]
 
   @Test def testClassOK(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  def c1() = 5
-  def c2(): Int = 5
-  def c3 = 5
-  protected def c4() = 5
-  private def c5() = 5
-  private[this] def c6() = 5
-  private val foo1 = 1
-  val foo2 = 2
-  def unit = {}
-  def unit2 {}
-  val foo = new scala.collection.mutable.HashMap {def foobar1() = {}}
-  def bar() = { new scala.collection.mutable.HashMap {def foobar2() = {}} } // not picked up because inside a def
-  def bar2() = new scala.collection.mutable.HashMap {def foobar3() = {}} // not picked up because inside a def
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  def c1() = 5
+      |  def c2(): Int = 5
+      |  def c3 = 5
+      |  protected def c4() = 5
+      |  private def c5() = 5
+      |  private[this] def c6() = 5
+      |  private val foo1 = 1
+      |  val foo2 = 2
+      |  def unit = {}
+      |  def unit2 {}
+      |  val foo = new scala.collection.mutable.HashMap {def foobar1() = {}}
+      |  def bar() = { new scala.collection.mutable.HashMap {def foobar2() = {}} } // not picked up because inside a def
+      |  def bar2() = new scala.collection.mutable.HashMap {def foobar3() = {}} // not picked up because inside a def
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6),
                         columnError(16, 6), columnError(17, 6)), source)
   }
 
   @Test def testProc(): Unit = {
-    val source = """
-class classOK {
-  def proc1 {}
-  def proc2(): Unit = {}
-}
-
-abstract class abstractOK {
-  def proc1 {}
-  def proc2(): Unit = {}
-  def proc3()
-}
-
-trait traitOK {
-  def proc1 {}
-  def proc2(): Unit = {}
-  def proc3()
-}
-"""
+    val source =
+    """
+      |class classOK {
+      |  def proc1 {}
+      |  def proc2(): Unit = {}
+      |}
+      |
+      |abstract class abstractOK {
+      |  def proc1 {}
+      |  def proc2(): Unit = {}
+      |  def proc3()
+      |}
+      |
+      |trait traitOK {
+      |  def proc1 {}
+      |  def proc2(): Unit = {}
+      |  def proc3()
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testConstructor(): Unit = {
-    val source = """
-class ConstructorOK(a: Int) {
-  def this() = this(1)
-}
-"""
+    val source =
+    """
+      |class ConstructorOK(a: Int) {
+      |  def this() = this(1)
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testClassOverride(): Unit = {
-    val source = """
-package foobar
-
-trait Foobar {
-  def foobar: Int
-}
-
-class Sub extends Foobar {
-  override def foobar() = 5
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |trait Foobar {
+      |  def foobar: Int
+      |}
+      |
+      |class Sub extends Foobar {
+      |  override def foobar() = 5
+      |}
+    """.stripMargin
 
     assertErrors(List(), source, Map("ignoreOverride" -> "true"))
     assertErrors(List(columnError(9, 15)), source, Map("ignoreOverride" -> "false"))
@@ -109,48 +113,51 @@ class Sub extends Foobar {
   }
 
   @Test def testNestedDefInDef(): Unit = {
-    val source = """
-package foobar
-
-trait Foobar {
-  def foobar() = {
-    def nested1(): Int = 5
-    def nested2() = 5
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |trait Foobar {
+      |  def foobar() = {
+      |    def nested1(): Int = 5
+      |    def nested2() = 5
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6)), source)
   }
 
   @Test def testNestedDefInVal(): Unit = {
-    val source = """
-package foobar
-
-trait Foobar {
-  val foobar = {
-    def nested1(): Int = 5
-    def nested2() = 5
-
-    nested2()
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |trait Foobar {
+      |  val foobar = {
+      |    def nested1(): Int = 5
+      |    def nested2() = 5
+      |
+      |    nested2()
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testNestedDefInVal2(): Unit = {
-    val source = """
-package foobar
-
-trait Foobar {
-  private val complexInit: Seq[Int] = {
-    def fancyStuff(x: Int) = x * 2
-    1.to(10).map(fancyStuff).toSeq
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |trait Foobar {
+      |  private val complexInit: Seq[Int] = {
+      |    def fancyStuff(x: Int) = x * 2
+      |    1.to(10).map(fancyStuff).toSeq
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }

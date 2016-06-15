@@ -23,10 +23,10 @@ import org.scalastyle.Checker
 import org.scalastyle.StyleError
 import org.scalastyle.Message
 
-import java.util.Set;
+import java.util.Set
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -35,36 +35,39 @@ class FileTabCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[FileTabChecker]
 
   @Test def testZero(): Unit = {
-    val source = """
-package foobar
-
-    object Foobar {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |    object Foobar {
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-#object Foobar {
-}
-""".replaceAll("#", "\t");
+    val source =
+    """
+      |package foobar
+      |
+      |#object Foobar {
+      |}
+    """.stripMargin.replaceAll("#", "\t")
 
     assertErrors(List(columnError(4, 0)), source)
   }
 
   @Test def testTwo(): Unit = {
-    val source = """
-package foobar
-
-#object Foobar {
-}
-#object Barbar {
-}
-""".replaceAll("#", "\t");
+    val source =
+    """
+      |package foobar
+      |
+      |#object Foobar {
+      |}
+      |#object Barbar {
+      |}
+    """.stripMargin.replaceAll("#", "\t")
 
     assertErrors(List(columnError(4, 0), columnError(6, 0)), source)
   }

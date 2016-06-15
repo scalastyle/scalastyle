@@ -22,16 +22,18 @@ import _root_.scalariform.lexer.Token
 
 object PrintAst {
   def main(args: Array[String]): Unit = {
-    val source = """package foobar
-class Foobar {
-  def foobar() = {
-    val f1 = 5
-    val f2 = 5 :: Nil
-
-    println("it=" + it.toList)
-  }
-}
-"""
+    val source = 
+    """
+      |package foobar
+      |class Foobar {
+      |  def foobar() = {
+      |    val f1 = 5
+      |    val f2 = 5 :: Nil
+      |
+      |    println("it=" + it.toList)
+      |  }
+      |}
+    """.stripMargin.trim
 
     printAst(source)
   }

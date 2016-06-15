@@ -27,48 +27,50 @@ class CommentFilterTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[ClassNamesChecker]
 
   @Test def testOnOff(): Unit = {
-    val source = """
-package foobar
-
-class foobar {
-  // scalastyle:off
-  class barbar { }
-  // scalastyle:on
-  // scalastyle:off class.name
-  class bazbaz {}
-  // scalastyle:on class.name
-
-  // scalastyle:off object.name
-  val s = " // scalastyle:off "
-  class g { }
-}
-"""
+    val source = 
+    """
+      |package foobar
+      |
+      |class foobar {
+      |  // scalastyle:off
+      |  class barbar { }
+      |  // scalastyle:on
+      |  // scalastyle:off class.name
+      |  class bazbaz {}
+      |  // scalastyle:on class.name
+      |
+      |  // scalastyle:off object.name
+      |  val s = " // scalastyle:off "
+      |  class g { }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(14, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
 
   @Test def testOnOffIgnore(): Unit = {
-    val source = """
-package foobar
-
-class foobar {
-  // scalastyle:on class.name
-  class barbar1 { } // scalastyle:ignore class.name
-  //
-
-  // scalastyle:on
-  class barbar2 { } // scalastyle:ignore
-  // scalastyle:off
-
-  // scalastyle:on
-  class barbar3 { } // scalastyle:ignore class.name
-  // scalastyle:off
-
-  // scalastyle:on
-  class barbar4 { } // scalastyle:ignore magic.number
-  // scalastyle:off
-}
-"""
+    val source = 
+    """
+      |package foobar
+      |
+      |class foobar {
+      |  // scalastyle:on class.name
+      |  class barbar1 { } // scalastyle:ignore class.name
+      |  //
+      |
+      |  // scalastyle:on
+      |  class barbar2 { } // scalastyle:ignore
+      |  // scalastyle:off
+      |
+      |  // scalastyle:on
+      |  class barbar3 { } // scalastyle:ignore class.name
+      |  // scalastyle:off
+      |
+      |  // scalastyle:on
+      |  class barbar4 { } // scalastyle:ignore magic.number
+      |  // scalastyle:off
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(18, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -80,15 +82,15 @@ class CommentFilterMagicNumberTest extends AssertionsForJUnit with CheckerTest {
 
   @Test def testMagicNumberFilter(): Unit = {
     val source =
-      """
-package foobar
-
-object Foo {
-  f(77) // scalastyle:ignore
-  f(88)
-  f(99)
-}
-"""
+    """
+      |package foobar
+      |
+      |object Foo {
+      |  f(77) // scalastyle:ignore
+      |  f(88)
+      |  f(99)
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 4, List()), columnError(7, 4, List())), source)
   }

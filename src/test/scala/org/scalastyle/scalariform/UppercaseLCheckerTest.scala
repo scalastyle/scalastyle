@@ -33,16 +33,17 @@ class UppercaseLCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[UppercaseLChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo1 = 3l
-  val foo2 = 3L
-  val foo3 = 3
-  val foo4 = 65 + 3l
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo1 = 3l
+      |  val foo2 = 3L
+      |  val foo3 = 3
+      |  val foo4 = 65 + 3l
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 13), columnError(8, 18)), source)
   }

@@ -33,14 +33,15 @@ class StructuralTypeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[StructuralTypeChecker]
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  def string[T <: String](t: T) = {}
-  def structuralType[T <: {def close(): Unit }](t: T) = {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  def string[T <: String](t: T) = {}
+      |  def structuralType[T <: {def close(): Unit }](t: T) = {}
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 26)), source)
   }

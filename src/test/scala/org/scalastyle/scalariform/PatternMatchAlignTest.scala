@@ -27,47 +27,53 @@ class PatternMatchAlignTest extends AssertionsForJUnit with CheckerTest {
   protected val key = "pattern.match.align"
 
   @Test def testNotAligned(): Unit = {
-    val source = """
-object foo {
-  val a = Some (4)
-
-  a match {
-    case Some(_) => "yes"
-    case _ => "no"
-  }
-}"""
+    val source =
+    """
+      |object foo {
+      |  val a = Some (4)
+      |
+      |  a match {
+      |    case Some(_) => "yes"
+      |    case _ => "no"
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(7, 11)), source)
   }
 
 
   @Test def testOk(): Unit = {
-    val source = """
-object foo {
-  val a = Some (4)
-
-  a match {
-    case Some(_) => "yes"
-    case _       => "no"
-  }
-}"""
+    val source =
+    """
+      |object foo {
+      |  val a = Some (4)
+      |
+      |  a match {
+      |    case Some(_) => "yes"
+      |    case _       => "no"
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testNested(): Unit = {
-    val source = """
-object foo {
-  val a = Some (4)
-
-  a match {
-    case Some(x) => x match {
-      case 3 => "no"
-      case 4  => "yrs"
-    }
-    case _       => "no"
-  }
-}"""
+    val source =
+    """
+      |object foo {
+      |  val a = Some (4)
+      |
+      |  a match {
+      |    case Some(x) => x match {
+      |      case 3 => "no"
+      |      case 4  => "yrs"
+      |    }
+      |    case _       => "no"
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(8, 14)), source)
   }

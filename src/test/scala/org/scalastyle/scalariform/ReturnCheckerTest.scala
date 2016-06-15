@@ -34,23 +34,26 @@ class ReturnCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val key = "return"
 
   @Test def testZeroErrors(): Unit = {
-    val source = """
-         |package foobar
-         |object Foobar {
-         |}
-         """.stripMargin
+    val source = 
+    """
+      |package foobar
+      |object Foobar {
+      |}
+    """.stripMargin
+
     assertErrors(List(), source)
   }
 
   @Test def testOneError(): Unit = {
     val source = """
-         |package foobar
-         |object Foobar {
-         |   def boo: String = {
-         |      return " return here"
-         |   }
-         |}
-         """.stripMargin
+      |package foobar
+      |object Foobar {
+      |   def boo: String = {
+      |      return " return here"
+      |   }
+      |}
+    """.stripMargin
+
     assertErrors(List(columnError(5, 6)), source)
   }
 }

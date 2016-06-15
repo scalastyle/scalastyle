@@ -23,10 +23,10 @@ import org.scalastyle.Checker
 import org.scalastyle.StyleError
 import org.scalastyle.Message
 
-import java.util.Set;
+import java.util.Set
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 
 // scalastyle:off multiple.string.literals
 
@@ -35,25 +35,27 @@ class FileLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[FileLengthChecker]
 
   @Test def testZero(): Unit = {
-    val source = """
-package foobar
-
-  object Foobar {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |  object Foobar {
+      |}
+    """.stripMargin.trim
 
     assertErrors(List(), source, Map("maxFileLength" -> "5"))
   }
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-  object Foobar {
-}
-  object Barbar {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |  object Foobar {
+      |}
+      |  object Barbar {
+      |}
+    """.stripMargin
 
     assertErrors(List(fileError(List("5"))), source, Map("maxFileLength" -> "5"))
   }

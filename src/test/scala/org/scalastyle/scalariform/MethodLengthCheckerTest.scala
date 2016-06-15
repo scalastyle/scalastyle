@@ -33,37 +33,38 @@ class MethodLengthCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[MethodLengthChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-class F1() {
-  def method1() = {
-    def foobar() = { 5 }
-    2
-    3
-    4
-    5
-    6
-    7
-  }
-  def method2() = {
-    1
-    2
-    3
-    4
-    5
-    6
-  }
-  def method3() = {
-    def foobar() = { 5 }
-    2
-    3
-    4
-    5
-    6
-  }
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |class F1() {
+      |  def method1() = {
+      |    def foobar() = { 5 }
+      |    2
+      |    3
+      |    4
+      |    5
+      |    6
+      |    7
+      |  }
+      |  def method2() = {
+      |    1
+      |    2
+      |    3
+      |    4
+      |    5
+      |    6
+      |  }
+      |  def method3() = {
+      |    def foobar() = { 5 }
+      |    2
+      |    3
+      |    4
+      |    5
+      |    6
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 6, List("7"))), source, Map("maxLength" -> "7"))
   }

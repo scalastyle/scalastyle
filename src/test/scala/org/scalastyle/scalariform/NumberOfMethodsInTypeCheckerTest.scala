@@ -33,27 +33,28 @@ class NumberOfMethodsInTypeCheckerTest extends AssertionsForJUnit with CheckerTe
   val classUnderTest = classOf[NumberOfMethodsInTypeChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-class F1() {
-  def method1() = 1
-  def method2() = 1
-  def method3() = 1
-  def method4() = 1
-  def method5() = 1
-}
-
-class F2() {
-  def method1() = {
-    def foobar() = 6
-    5
-  }
-  def method2() = 1
-  def method3() = 1
-  def method4() = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class F1() {
+      |  def method1() = 1
+      |  def method2() = 1
+      |  def method3() = 1
+      |  def method4() = 1
+      |  def method5() = 1
+      |}
+      |
+      |class F2() {
+      |  def method1() = {
+      |    def foobar() = 6
+      |    5
+      |  }
+      |  def method2() = 1
+      |  def method3() = 1
+      |  def method4() = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6, List("4"))), source, Map("maxMethods" -> "4"))
   }

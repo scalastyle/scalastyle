@@ -33,74 +33,81 @@ class MultipleStringLiteralsCheckerTest extends AssertionsForJUnit with CheckerT
   val classUnderTest = classOf[MultipleStringLiteralsChecker]
 
   @Test def testParameters(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  var a = "foobar"
-  var b = "foobar"
-  var c = "foobar"
-  val d = "foobar"
-  def e = "foobar"
-  def f(f: String = "foobar") = 5
-
-  var a1 = "bar"
-  val d1 = "bar"
-  def e1 = "bar"
-  def f1(f: String = "bar") = "foobar"
-
-  val a2 = "1"
-  val b2 = "1"
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  var a = "foobar"
+      |  var b = "foobar"
+      |  var c = "foobar"
+      |  val d = "foobar"
+      |  def e = "foobar"
+      |  def f(f: String = "foobar") = 5
+      |
+      |  var a1 = "bar"
+      |  val d1 = "bar"
+      |  def e1 = "bar"
+      |  def f1(f: String = "bar") = "foobar"
+      |
+      |  val a2 = "1"
+      |  val b2 = "1"
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "7", "3")), columnError(12, 11, List(""""bar"""", "4", "3"))), source,
                     Map("allowed" -> "3", "ignoreRegex" -> "1"))
   }
 
   @Test def testDefaultParameters(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  var a = "foobar"
-  var b = "foobar"
-
-  var a1 = "bar"
-
-  var a2 = ""
-  var b2 = ""
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  var a = "foobar"
+      |  var b = "foobar"
+      |
+      |  var a1 = "bar"
+      |
+      |  var a2 = ""
+      |  var b2 = ""
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
   }
 
   @Test def testMultiLine(): Unit = {
-    val source = """
-package foobar
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  var a = ###foobar
+      |  oop###
+      |  var b = ###foobar
+      |  oop###
+      |}
+    """.stripMargin.replace("###", "\"\"\"")
 
-class Foobar {
-  var a = ###foobar
-  oop###
-  var b = ###foobar
-  oop###
-}
-""".replace("###", "\"\"\"");
-
-    assertErrors(List(columnError(5, 10, List(""""foobar
-  oop"""", "2", "1"))), source)
+    assertErrors(List(columnError(5, 10, List(
+    """
+      |"foobar
+      |  oop"
+    """.stripMargin.trim, "2", "1"))), source)
   }
 
   @Test def testMultiLineAndNormal(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  var a = ###foobar###
-  var b = "foobar"
-}
-""".replace("###", "\"\"\"");
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  var a = ###foobar###
+      |  var b = "foobar"
+      |}
+    """.stripMargin.replace("###", "\"\"\"")
 
     assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
   }

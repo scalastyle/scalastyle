@@ -27,75 +27,85 @@ class SimplifyBooleanExpressionCheckerTest extends AssertionsForJUnit with Check
   protected val key = "simplify.boolean.expression"
 
   @Test def testEquals(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b = true
-  val foo01 = (b == true)
-  val foo02 = (b != true)
-  val foo03 = (b == false)
-  val foo04 = (b != false)
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b = true
+      |  val foo01 = (b == true)
+      |  val foo02 = (b != true)
+      |  val foo03 = (b == false)
+      |  val foo04 = (b != false)
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 15), columnError(7, 15), columnError(8, 15), columnError(9, 15)), source)
   }
 
 
   @Test def testErrors(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b = true
-  val foo01 = (b == true)
-  val foo02 = !false
-  val foo03 = !true
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b = true
+      |  val foo01 = (b == true)
+      |  val foo02 = !false
+      |  val foo03 = !true
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 15), columnError(7, 14), columnError(8, 14)), source)
   }
 
   @Test def testErrors2(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b = true
-  val foo04 = b && true
-  val foo05 = true && b
-  val foo06 = b && false
-  val foo07 = false && b
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b = true
+      |  val foo04 = b && true
+      |  val foo05 = true && b
+      |  val foo06 = b && false
+      |  val foo07 = false && b
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 14), columnError(7, 14), columnError(8, 14), columnError(9, 14)), source)
   }
 
   @Test def testErrors3(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b = true
-  val foo08 = b || true
-  val foo09 = true || b
-  val foo10 = b || false
-  val foo11 = false || b
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b = true
+      |  val foo08 = b || true
+      |  val foo09 = true || b
+      |  val foo10 = b || false
+      |  val foo11 = false || b
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 14), columnError(7, 14), columnError(8, 14), columnError(9, 14)), source)
   }
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b = true
-  val foo12 = b && b // doesn't match
-  val foo13 = (b && b) || b
-  val foo14 = b && (true)
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b = true
+      |  val foo12 = b && b // doesn't match
+      |  val foo13 = (b && b) || b
+      |  val foo14 = b && (true)
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(8, 14)), source)
   }

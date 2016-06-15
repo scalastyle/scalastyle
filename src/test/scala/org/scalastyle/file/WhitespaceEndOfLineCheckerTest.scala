@@ -22,10 +22,10 @@ import org.junit.Assert.assertTrue
 import org.scalastyle.Checker
 import org.scalastyle.StyleError
 import org.scalastyle.Message
-import java.util.Set;
+import java.util.Set
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.Before
+import org.junit.Test
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -35,33 +35,33 @@ class WhitespaceEndOfLineCheckerTest extends AssertionsForJUnit with CheckerTest
 
   @Test def testZero(): Unit = {
     val source = """
-package foobar
-
-object Foobar {
-}
-""";
+      |package foobar
+      |
+      |object Foobar {
+      |}
+      |""".stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOne(): Unit = {
     val source = """
-package foobar##
-
-object Foobar {
-}
-""".replaceAll("#", " ");
+      |package foobar##
+      |
+      |object Foobar {
+      |}
+      |""".stripMargin.replaceAll("#", " ")
 
     assertErrors(List(columnError(2, 14)), source)
   }
 
   @Test def testTwo(): Unit = {
     val source = """
-package foobar~
-class  foobar#
-object Foobar {
-}
-""".replaceAll("~", " ").replaceAll("#", "\t");
+      |package foobar~
+      |class  foobar#
+      |object Foobar {
+      |}
+      |""".stripMargin.replaceAll("~", " ").replaceAll("#", "\t")
 
     assertErrors(List(columnError(2, 14), columnError(3, 13)), source)
   }

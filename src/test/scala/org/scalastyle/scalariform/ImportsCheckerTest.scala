@@ -33,80 +33,89 @@ class IllegalImportsCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[IllegalImportsChecker]
 
   @Test def testNone(): Unit = {
-    val source = """
-package foobar
-
-import java.util._
-
-object Foobar {
-  val foo = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util._
+      |
+      |object Foobar {
+      |  val foo = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testDefault(): Unit = {
-    val source = """package foobar
-
-import java.util._
-import sun.com.foobar;
-import sun._
-
-object Foobar {
-}
-""".stripMargin;
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util._
+      |import sun.com.foobar
+      |import sun._
+      |
+      |object Foobar {
+      |}
+    """.stripMargin.trim
 
     assertErrors(List(columnError(4, 0), columnError(5, 0)), source)
   }
 
   @Test def testRenamingWildcard(): Unit = {
-    val source = """package foobar
-
-import java.util.{List => JList}
-import java.lang.{Object => JObject}
-import java.util.{List,Map}
-import java.util.{_}
-import java.util._
-
-object Foobar {
-}
-""".stripMargin;
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util.{List => JList}
+      |import java.lang.{Object => JObject}
+      |import java.util.{List,Map}
+      |import java.util.{_}
+      |import java.util._
+      |
+      |object Foobar {
+      |}
+    """.stripMargin.trim
 
     assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0), columnError(7, 0)), source, Map("illegalImports" -> "java.util._"))
   }
 
   @Test def testRenamingSpecific(): Unit = {
-    val source = """package foobar
-
-import java.util.{List => JList}
-import java.lang.{Object => JObject}
-import java.util.{Iterator => JIterator, List => JList, Collection => JCollection}
-import java.util.{List, Map}
-import java.util.{_}
-import java.util._
-
-object Foobar {
-}
-""".stripMargin;
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util.{List => JList}
+      |import java.lang.{Object => JObject}
+      |import java.util.{Iterator => JIterator, List => JList, Collection => JCollection}
+      |import java.util.{List, Map}
+      |import java.util.{_}
+      |import java.util._
+      |
+      |object Foobar {
+      |}
+    """.stripMargin.trim
 
     assertErrors(List(columnError(3, 0), columnError(5, 0), columnError(6, 0)), source,
         Map("illegalImports" -> "java.util.List, java.util.Map"))
   }
 
   @Test def testWithExemptImports(): Unit = {
-    val source = """package foobar
-
-import java.util.{List => JList}
-import java.lang.{Object => JObject}
-import java.util.{Iterator => JIterator, List => JList, Collection => JCollection}
-import java.util.{List, Map}
-import java.util.{_}
-import java.util._
-
-object Foobar {
-}
-                 """.stripMargin;
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util.{List => JList}
+      |import java.lang.{Object => JObject}
+      |import java.util.{Iterator => JIterator, List => JList, Collection => JCollection}
+      |import java.util.{List, Map}
+      |import java.util.{_}
+      |import java.util._
+      |
+      |object Foobar {
+      |}
+    """.stripMargin.replaceAll("^\\s+", "")
 
     assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(8, 0)), source,
       Map("illegalImports" -> "java.util._", "exemptImports" -> "java.util.List"))
@@ -119,18 +128,19 @@ class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[UnderscoreImportChecker]
 
   @Test def testNone(): Unit = {
-    val source = """
-package foobar
-
-import java.util.List
-import java.util._
-import java.util.{_}
-import java.util.{Foo => Bar, _}
-
-object Foobar {
-  import scala._
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util.List
+      |import java.util._
+      |import java.util.{_}
+      |import java.util.{Foo => Bar, _}
+      |
+      |object Foobar {
+      |  import scala._
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(10, 2)), source)
   }
@@ -141,38 +151,40 @@ class ImportGroupingCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[ImportGroupingChecker]
 
   @Test def testKO(): Unit = {
-    val source = """
-package foobar
-
-import java.util.List;
-import java.util._ // here is a comment
-import java.util._
-
-object Foobar {
-  import java.util.Map
-}
-
-import java.util.Collection
-
-object Barbar {
-  import java.util.HashMap
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |import java.util.List
+      |import java.util._ // here is a comment
+      |import java.util._
+      |
+      |object Foobar {
+      |  import java.util.Map
+      |}
+      |
+      |import java.util.Collection
+      |
+      |object Barbar {
+      |  import java.util.HashMap
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(9, 2), columnError(12, 0), columnError(15, 2)), source)
   }
 
 
   @Test def testNone(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-}
-
-object Barbar {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |}
+      |
+      |object Barbar {
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
@@ -227,10 +239,11 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
   }
 
   @Test def testSubPackage(): Unit = {
-    val source = """
+    val source =
+    """
       |import foobar.subpackage.Foo
       |import foobar.Bar
-      """.stripMargin;
+    """.stripMargin
 
     val expected = List(
       columnError(3, 0, errorKey = errorKey("wrongOrderInGroup"),
@@ -240,10 +253,11 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
   }
 
   @Test def testInGroupOrdering(): Unit = {
-    val source = """
+    val source =
+    """
       |import java.nio.ByteBuffer
       |import java.nio.file.{Paths, Files}
-      """.stripMargin;
+    """.stripMargin
 
     val expected = List(
       columnError(3, 21, errorKey = errorKey("wrongOrderInSelector"),
@@ -253,7 +267,8 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
   }
 
   @Test def testImportGrouping(): Unit = {
-    val source = """
+    val source =
+    """
       |package foobar
       |
       |import java.util.Map
@@ -275,7 +290,7 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
       |
       |object Foobar {
       |}
-      """.stripMargin;
+    """.stripMargin
 
     val expected = List(
       columnError(5, 20, errorKey = errorKey("wrongOrderInSelector"), args = List("Cipher", "Mac")),

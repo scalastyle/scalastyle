@@ -33,27 +33,29 @@ class SpacesAfterPlusCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[SpacesAfterPlusChecker]
 
   @Test def testOK(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo = 1 + 2
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo = 1 + 2
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testNoSpaces(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo = 1 +2
-}
-
-class Clazz[+T <: AstNode]() // ignore + within type specification
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo = 1 +2
+      |}
+      |
+      |class Clazz[+T <: AstNode]() // ignore + within type specification
+    """.stripMargin
 
     assertErrors(List(columnError(5, 14)), source)
   }
@@ -81,32 +83,34 @@ class Clazz[+T <: AstNode]() // ignore + within type specification
         |object FooBar {
         |  def +(): Unit = ()
         |}
-    """.stripMargin
+      """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testTwoSpaces(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo = 1 +  2
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo = 1 +  2
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testPlusAtEndOfLine(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val someText = "f012345678901234567890123456789" +
-  " some more text"
-}
-""";
+    val source = 
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val someText = "f012345678901234567890123456789" +
+      |  " some more text"
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }

@@ -33,100 +33,105 @@ class IfBraceCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[IfBraceChecker]
 
   @Test def testDefault(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  val foo0 = if (true) "yes" else "no"
-  val foo1 = if (true)
-                 "yes"
-                 else
-                 "no"
-  val foo2 = if (true) { "yes" } else { "no" }
-  val foo3 = if (true) {
-                 "yes"
-                 } else {
-                 "no"
-                 }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  val foo0 = if (true) "yes" else "no"
+      |  val foo1 = if (true)
+      |                 "yes"
+      |                 else
+      |                 "no"
+      |  val foo2 = if (true) { "yes" } else { "no" }
+      |  val foo3 = if (true) {
+      |                 "yes"
+      |                 } else {
+      |                 "no"
+      |                 }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 13)), source)
   }
 
   @Test def testDefault2(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  val foo4 = if (true) "yes"
-                 else "no"
-  val foo5 = if (true) "yes"
-  val foo6 = if (true)
-                "yes"
-  val foo7 = if (true)
-                !false
-             else
-                !true
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  val foo4 = if (true) "yes"
+      |                 else "no"
+      |  val foo5 = if (true) "yes"
+      |  val foo6 = if (true)
+      |                "yes"
+      |  val foo7 = if (true)
+      |                !false
+      |             else
+      |                !true
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 13), columnError(8, 13), columnError(10, 13)), source)
   }
 
   @Test def testSingleLineNotAllowed(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  val foo0 = if (true) "yes" else "no"
-  val foo1 = if (true)
-                 "yes"
-                 else
-                 "no"
-  val foo2 = if (true) { "yes" } else { "no" }
-  val foo3 = if (true) {
-                 "yes"
-                 } else {
-                 "no"
-                 }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  val foo0 = if (true) "yes" else "no"
+      |  val foo1 = if (true)
+      |                 "yes"
+      |                 else
+      |                 "no"
+      |  val foo2 = if (true) { "yes" } else { "no" }
+      |  val foo3 = if (true) {
+      |                 "yes"
+      |                 } else {
+      |                 "no"
+      |                 }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 13), columnError(6, 13)), source, Map("singleLineAllowed" -> "false"))
   }
 
   @Test def testDoubleLine(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  val foo0 = if (true) "yes" else { "no" }
-  val foo1 = if (true) "yes"
-                 else "no"
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  val foo0 = if (true) "yes" else { "no" }
+      |  val foo1 = if (true) "yes"
+      |                 else "no"
+      |}
+    """.stripMargin
 
     assertErrors(List(), source, Map("doubleLineAllowed" -> "true"))
   }
 
   @Test def testElseIf(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  val foo0 = if (true) "yes" else if (true) "no" else "bar"
-  val foo1 = if (true) "yes"
-             else if (true) "no" else "bar"
-  val foo1 = if (true) {
-        "yes"
-      } else if (true) {
-        "no"
-      } else {
-        "bar"
-      }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  val foo0 = if (true) "yes" else if (true) "no" else "bar"
+      |  val foo1 = if (true) "yes"
+      |             else if (true) "no" else "bar"
+      |  val foo1 = if (true) {
+      |        "yes"
+      |      } else if (true) {
+      |        "no"
+      |      } else {
+      |        "bar"
+      |      }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 13)), source)
   }

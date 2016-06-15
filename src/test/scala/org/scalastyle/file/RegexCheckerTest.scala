@@ -25,21 +25,23 @@ class RegexCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "regex"
   val classUnderTest = classOf[RegexChecker]
 
-  private val source = """//
-package foobar
-
-
-class foobar {
-
-  def aMethod: String = {
-    println("should be caught")
-    // println("should not")
-    ("SHOULD NOT BE HERE")
-    "TEST STRING";
-  }
-
-}
-"""
+  private val source = 
+  """
+    |//
+    |package foobar
+    |
+    |
+    |class foobar {
+    |
+    |  def aMethod: String = {
+    |    println("should be caught")
+    |    // println("should not")
+    |    ("SHOULD NOT BE HERE")
+    |    "TEST STRING";
+    |  }
+    |
+    |}
+  """.stripMargin.trim
 
   @Test
   def testSimpleCheck(): Unit = {

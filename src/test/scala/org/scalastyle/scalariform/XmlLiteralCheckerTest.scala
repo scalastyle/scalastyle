@@ -29,41 +29,45 @@ class XmlLiteralCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val key = "xml.literal"
 
   @Test def testZeroErrors(): Unit = {
-    val source = """
-class C1 {
-  def m1(n: Int) = n
-}
-""";
+    val source =
+    """
+      |class C1 {
+      |  def m1(n: Int) = n
+      |}
+    """.stripMargin
     assertErrors(List(), source)
   }
 
   @Test def testOneError(): Unit = {
-    val source = """
-class C1 {
-  val f = <foobar/>
-}
-"""
+    val source =
+    """
+      |class C1 {
+      |  val f = <foobar/>
+      |}
+    """.stripMargin
     assertErrors(List(columnError(3, 10)), source)
   }
 
   @Test def testTwoErrors(): Unit = {
-    val source = """
-class C1 {
-  val f1 = <foobar/>
-  val f2 = <foobar/>
-}
-"""
+    val source =
+    """
+      |class C1 {
+      |  val f1 = <foobar/>
+      |  val f2 = <foobar/>
+      |}
+    """.stripMargin
     assertErrors(List(columnError(3, 11), columnError(4, 11)), source)
   }
 
   @Test def testMultiLine(): Unit = {
-    val source = """
-class C1 {
-  val f = <foobar>
-            <foo>&gt;</foo>
-          </foobar>
-}
-"""
+    val source =
+    """
+      |class C1 {
+      |  val f = <foobar>
+      |            <foo>&gt;</foo>
+      |          </foobar>
+      |}
+    """.stripMargin
     assertErrors(List(columnError(3, 10)), source)
   }
 }

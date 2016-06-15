@@ -29,21 +29,25 @@ class NotImplementedErrorUsageTest extends AssertionsForJUnit with CheckerTest {
 
   @Test
   def noErrors(): Unit = {
-    val source = """
-class X {
-  val x = 0
-}
-      """
+    val source =
+    """
+      |class X {
+      |  val x = 0
+      |}
+    """.stripMargin
+
     assertErrors(Nil, source)
   }
 
   @Test
   def notImplementedErrorFound(): Unit = {
-    val source = """
-class X {
-  val x = ???
-}
-      """
+    val source =
+    """
+      |class X {
+      |  val x = ???
+      |}
+    """.stripMargin
+
     assertErrors(List(columnError(3, 10)), source)
   }
 }

@@ -33,49 +33,53 @@ class NoFinalizeCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[NoFinalizeChecker]
 
   @Test def testClassOK(): Unit = {
-    val source = """
-package foobar
-
-class OK {
-  def finalize(o: java.lang.Integer): Unit = {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class OK {
+      |  def finalize(o: java.lang.Integer): Unit = {}
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testClassCovariantEqualsNoObjectKO(): Unit = {
-    val source = """
-package foobar
-
-class CloneKO {
-  def finalize(): Unit = {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class CloneKO {
+      |  def finalize(): Unit = {}
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6)), source)
   }
 
   @Test def testObjectOK(): Unit = {
-    val source = """
-package foobar
-
-object OK {
-  def finalize(o: java.lang.Integer): Unit = {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object OK {
+      |  def finalize(o: java.lang.Integer): Unit = {}
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testObjectCovariantEqualsNoObjectKO(): Unit = {
-    val source = """
-package foobar
-
-object CloneKO {
-  def finalize(): Unit = {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object CloneKO {
+      |  def finalize(): Unit = {}
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 7)), source)
   }

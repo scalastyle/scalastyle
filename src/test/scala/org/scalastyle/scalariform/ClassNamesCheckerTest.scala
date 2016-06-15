@@ -28,26 +28,28 @@ class ClassNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[ClassNamesChecker]
 
   @Test def testZero(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  val foo = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  val foo = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-class foobar {
-  class barbar {
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class foobar {
+      |  class barbar {
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(5, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -58,39 +60,42 @@ class ObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[ObjectNamesChecker]
 
   @Test def testZero(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val foo = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val foo = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-object foobar {
-  object barbar {
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object foobar {
+      |  object barbar {
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 7, List("^[A-Z][A-Za-z]*$")), columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
   }
 
   @Test def testPackageObject(): Unit = {
-    val source = """
-package foobar
-
-package object foobar {
-  object barbar {
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |package object foobar {
+      |  object barbar {
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
   }
@@ -102,79 +107,88 @@ class PackageNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[PackageNamesChecker]
 
   @Test def testSinglePartNoError(): Unit = {
-    val source = """
-package foobar
-""";
+    val source =
+    """
+      |package foobar
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testSinglePartError(): Unit = {
-    val source = """
-package FooBar
-""";
+    val source =
+    """
+      |package FooBar
+    """.stripMargin
 
     assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$"))), source)
   }
 
   @Test def testMultiPartNoError(): Unit = {
-    val source = """
-package abc.foobar
-""";
+    val source =
+    """
+      |package abc.foobar
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testMultiPartError(): Unit = {
-    val source = """
-package abc.foo_bar
-""";
+    val source =
+    """
+      |package abc.foo_bar
+    """.stripMargin
 
     assertErrors(List(columnError(2, 12, List("^[a-z][A-Za-z]*$"))), source)
   }
 
   @Test def testPackageObjectNoError(): Unit = {
-    val source = """
-package object _foo_bar
-""";
+    val source =
+    """
+      |package object _foo_bar
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   // Check case where the package name is built up by successive package statements.
   @Test def testMultiLinePackageNoError(): Unit = {
-    val source = """
-package foo
-package bar
-""";
+    val source =
+    """
+      |package foo
+      |package bar
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   // Check case where the package name is built up by successive package statements.
   @Test def testMultiLinePackageError(): Unit = {
-    val source = """
-package foo
-package Bar
-""";
+    val source =
+    """
+      |package foo
+      |package Bar
+    """.stripMargin
 
     assertErrors(List(columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
   }
 
   @Test def testMultiLinePackageMultipleError(): Unit = {
-    val source = """
-package Foo
-package Bar
-""";
+    val source =
+    """
+      |package Foo
+      |package Bar
+    """.stripMargin
 
     assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$")), columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
   }
 
   @Test def testPackageAndPackageObjectNoError(): Unit = {
-    val source = """
-package org.thisone
-package object _foo
-""";
+    val source =
+    """
+      |package org.thisone
+      |package object _foo
+    """.stripMargin
 
     assertErrors(List(), source)
   }
@@ -186,39 +200,42 @@ class PackageObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest 
   val classUnderTest = classOf[PackageObjectNamesChecker]
 
   @Test def testZero(): Unit = {
-    val source = """
-package foobar
-
-package object foobar {
-  val foo = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |package object foobar {
+      |  val foo = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
 
   @Test def testOne(): Unit = {
-    val source = """
-package foobar
-
-package object Foobar {
-}
-package object Barbar {
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |package object Foobar {
+      |}
+      |package object Barbar {
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(4, 15, List("^[a-z][A-Za-z]*$")), columnError(6, 15, List("^[a-z][A-Za-z]*$"))), source)
   }
 
   @Test def testPackageObject(): Unit = {
-    val source = """
-package foobar
-
-object foobar {
-  object barbar {
-  }
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |object foobar {
+      |  object barbar {
+      |  }
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
@@ -229,66 +246,70 @@ class MethodNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[MethodNamesChecker]
 
   @Test def testDefault(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  def foo() = 1
-  def +() = 1
-//  def foo+() = 1
-  def setting_=(s: Boolean) {}
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  def foo() = 1
+      |  def +() = 1
+      |//  def foo+() = 1
+      |  def setting_=(s: Boolean) {}
+      |}
+    """.stripMargin
 
     assertErrors(List(defErr(6, 6)), source)
   }
 
   @Test def testNonDefault(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  def Foo() = 1
-  def +() = 1
-//  def Foo+() = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  def Foo() = 1
+      |  def +() = 1
+      |//  def Foo+() = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 6, List("^F[o*]*$"))), source, Map("regex" -> "^F[o*]*$"))
   }
 
   @Test def testWithIgnoreRegex(): Unit = {
-    val source = """
-package foobar
-
-class Foobar {
-  def foo() = 1
-  def +() = 1
-  def -() = 1
-//  def Foo+() = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |class Foobar {
+      |  def foo() = 1
+      |  def +() = 1
+      |  def -() = 1
+      |//  def Foo+() = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(defErr(7, 6)), source, Map("ignoreRegex" -> "^\\+$"))
   }
 
   @Test def testIgnoreOverride(): Unit = {
-    val source = """
-package foobar
-
-trait Bar {
-  def +() = 1
-  def -() = 1
-  def &() = 1
-}
-
-class Foobar extends Bar {
-  override def +() = 1
-  protected override def &() = 1
-  override protected def -() = 1
-  def bar() = 1
-}
-""";
+    val source =
+    """
+      |package foobar
+      |
+      |trait Bar {
+      |  def +() = 1
+      |  def -() = 1
+      |  def &() = 1
+      |}
+      |
+      |class Foobar extends Bar {
+      |  override def +() = 1
+      |  protected override def &() = 1
+      |  override protected def -() = 1
+      |  def bar() = 1
+      |}
+    """.stripMargin
 
     assertErrors(List(defErr(5, 6), defErr(6, 6), defErr(7, 6)), source, Map("ignoreOverride" -> "true"))
   }

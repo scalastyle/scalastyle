@@ -27,39 +27,43 @@ class RedundantIfCheckerTest extends AssertionsForJUnit with CheckerTest {
   protected val key = "if.redundant"
 
   @Test def testErrors(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b1 = true
-  val b2 = if (b1) true else false
-  val b3 = if (!b1) false else true
-  val b4 =
-      if (b2 && b3)
-      true
-      else false
-  val b5 = if (b4) (if (b3) true else false) else b1
-  val b6 =
-      if (b1) true
-      else if (b2) true
-      else false
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b1 = true
+      |  val b2 = if (b1) true else false
+      |  val b3 = if (!b1) false else true
+      |  val b4 =
+      |      if (b2 && b3)
+      |      true
+      |      else false
+      |  val b5 = if (b4) (if (b3) true else false) else b1
+      |  val b6 =
+      |      if (b1) true
+      |      else if (b2) true
+      |      else false
+      |}
+    """.stripMargin
 
     assertErrors(List(columnError(6, 11), columnError(7, 11), columnError(9, 6), columnError(12, 20), columnError(15, 11)), source)
   }
 
   @Test def testOk(): Unit = {
-    val source = """
-package foobar
-
-object Foobar {
-  val b1 = true
-  val b2 = false
-  val b3 =
-      if (b1) true
-      else if (!b1 && b2) false
-      else !b1
-}"""
+    val source =
+    """
+      |package foobar
+      |
+      |object Foobar {
+      |  val b1 = true
+      |  val b2 = false
+      |  val b3 =
+      |      if (b1) true
+      |      else if (!b1 && b2) false
+      |      else !b1
+      |}
+    """.stripMargin
 
     assertErrors(List(), source)
   }
