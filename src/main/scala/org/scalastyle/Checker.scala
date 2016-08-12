@@ -29,6 +29,7 @@ import scala.collection.JavaConversions.collectionAsScalaIterable
 import scala.collection.JavaConversions.seqAsJavaList
 import scala.io.Codec
 import scala.io.Source
+import scala.util.matching.Regex
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -243,6 +244,15 @@ trait Checker[A] {
 
   protected def isObject(s: String) = (s == "java.lang.Object" || s == "Any")
   protected def isNotObject(s: String) = !isObject(s)
+
+  protected def matchesBasedOnCondition(regex: Regex, text: String, matchCondition: Boolean) = {
+    if (matchCondition) {
+      regex.findAllIn(text).isEmpty
+    }
+    else {
+      regex.findAllIn(text).nonEmpty
+    }
+  }
 }
 
 trait FileChecker extends Checker[Lines]
