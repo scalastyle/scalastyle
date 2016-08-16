@@ -942,4 +942,15 @@ To bring consistency with how comments should be formatted, leave a space right 
   ]]>
   </example-configuration>
  </check>
+
+ <check id="empty.interpolated.strings">
+  <justification>
+   Empty interpolated strings are harder to read and not nessescary.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check class="org.scalastyle.scalariform.EmptyInterpolatedStringChecker" level="warning" enabled="true"/>
+   ]]>
+  </example-configuration>
+ </check>
 </scalastyle-documentation>

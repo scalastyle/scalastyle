@@ -179,4 +179,5 @@
             <parameter name="words" type="string" default="TODO|FIXME" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.EmptyInterpolatedStringChecker" id="empty.interpolated.strings" defaultLevel="warning"/>
 </scalastyle-definition>
