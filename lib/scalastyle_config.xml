@@ -41,12 +41,12 @@
  </check>
  <check class="org.scalastyle.scalariform.ClassNamesChecker" level="warning" enabled="true">
   <parameters>
-   <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
+   <parameter name="regex"><![CDATA[^[A-Z][A-Za-z]*$]]></parameter>
   </parameters>
  </check>
  <check class="org.scalastyle.scalariform.ObjectNamesChecker" level="warning" enabled="true">
   <parameters>
-   <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
+   <parameter name="regex"><![CDATA[^[A-Z][A-Za-z]*$]]></parameter>
   </parameters>
  </check>
  <check class="org.scalastyle.scalariform.PackageObjectNamesChecker" level="warning" enabled="true">
