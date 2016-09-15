@@ -38,17 +38,10 @@ case class LineColumn(line: Int, column: Int)
 
 case class Lines(lines: Array[Line], lastChar: Char) {
 
-  def findLineAndIndex(position:Int): Option[(Line, Int)] = {
-    var i = 0
-
-    lines.foreach(l => {
-      i = i + 1
-      if (position >= l.start && position < l.end) {
-        return Some((l, i))
-      }
-    })
-
-    None
+  def findLineAndIndex(position: Int): Option[(Line, Int)] = {
+    lines.zipWithIndex.find {
+      case (line, _) => position >= line.start && position < line.end
+    }.map(x => x.copy(_2 = x._2 + 1))
   }
 
   def toLineColumn(position: Int): Option[LineColumn] =
@@ -226,10 +219,12 @@ trait Checker[A] {
     val sErrorKey = customErrorKey.getOrElse(errorKey)
 
     p2 match {
-      case PositionError(position, args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, customMessage = customMessage)
+      case PositionError(position, args, errorKey) =>
+        StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, customMessage = customMessage)
       case FileError(args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, None, None, customMessage)
       case LineError(line, args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, Some(line), None, customMessage)
-      case ColumnError(line, column, args, errorKey) => StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, Some(line), Some(column), customMessage)
+      case ColumnError(line, column, args, errorKey) =>
+        StyleError(file, this.getClass(), errorKey.getOrElse(sErrorKey), level, args, Some(line), Some(column), customMessage)
     }
   }
 

@@ -42,10 +42,7 @@ class WhitespaceEndOfLineChecker extends FileChecker {
         whitespaces.contains(c)
       }.headOption.map{ case (c: Char, idx: Int) =>
         (true, s.length() - idx)
-      }.getOrElse {
-        if (ignoreWhitespaceLines) (false, 0)
-        else (true, 0)
-      }
+      }.getOrElse( (!ignoreWhitespaceLines, 0) )
     } ).getOrElse( (false, 0) )
   }
 

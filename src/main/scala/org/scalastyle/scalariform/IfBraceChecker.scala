@@ -69,18 +69,20 @@ class IfBraceChecker extends CombinedChecker {
       case None => (None, None)
     }
 
-    if (ifBodyLine.isEmpty && (elseLine.isDefined && elseBodyLine.isEmpty)) return false
-
-    (ifLine, elseLine) match {
-      case (Some(x), None) => if (singleLineAllowed) !sameLine(ifLine, ifBodyLine) else true
-      case (Some(x), Some(y)) => {
-        if (!sameLine(ifLine, ifBodyLine) || !sameLine(elseLine, elseBodyLine)) {
-          true
-        } else {
-           if (sameLine(ifLine, elseLine)) !singleLineAllowed else !doubleLineAllowed
+    if (ifBodyLine.isEmpty && (elseLine.isDefined && elseBodyLine.isEmpty)) {
+      false
+    } else {
+      (ifLine, elseLine) match {
+        case (Some(x), None) => if (singleLineAllowed) !sameLine(ifLine, ifBodyLine) else true
+        case (Some(x), Some(y)) => {
+          if (!sameLine(ifLine, ifBodyLine) || !sameLine(elseLine, elseBodyLine)) {
+            true
+          } else {
+             if (sameLine(ifLine, elseLine)) !singleLineAllowed else !doubleLineAllowed
+          }
         }
+        case _ => false
       }
-      case _ => false
     }
   }
 

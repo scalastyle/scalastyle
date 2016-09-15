@@ -193,85 +193,34 @@ class ScalaDocChecker extends CombinedChecker {
       case t: FullDefOrDcl =>
         // private, private[xxx];
         // protected, protected[xxx];
+        visitFullDefOrDcl(t, fallback,lines,tokensToIgnore)
 
-        // check if we are going to include or skip depending on access modifier
-        val accessModifier = t.modifiers.find {
-          case AccessModifier(_, _) => true
-          case _ => false
-        }
-        val skip = accessModifier.exists {
-          case AccessModifier(pop, Some(_)) =>
-            if (pop.text == "private") skipQualifiedPrivate else skipQualifiedProtected
-          case AccessModifier(pop, None) =>
-            if (pop.text == "private") skipPrivate else skipProtected
-          case _ =>
-            false
-        }
-
-        // pick the ScalaDoc "attached" to the modifier, which actually means
-        // ScalaDoc of the following member
-        val scalaDocs = for {
-          token <- t.tokens
-          comment <- token.associatedWhitespaceAndComments
-          if comment.token.isScalaDocComment
-        } yield comment
-
-        // descend
-        visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), lines, tokensToIgnore))
       case t: TmplDef =>
         // trait Foo, trait Foo[A];
         // class Foo, class Foo[A](a: A);
         // case class Foo(), case class Foo[A](a: A);
         // object Foo;
-        val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
+        visitTmplDef(t, skip, fallback, lines, tokensToIgnore)
 
-        // we are checking parameters and type parameters
-        val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
-          map { scalaDoc =>
-            paramErrors(line, t.paramClausesOpt)(scalaDoc) ++
-              tparamErrors(line, t.typeParamClauseOpt)(scalaDoc)
-          }.getOrElse(List(LineError(line, List(Missing))))
-
-        // and we descend, because we're interested in seeing members of the types
-        errors ++ visit(t, localVisit(skip, NoHiddenTokens, lines, tokensToIgnore))
       case t: FunDefOrDcl =>
         // def foo[A, B](a: Int): B = ...
-        val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
+        visitFunDefOrDecl(t, skip, fallback, lines, tokensToIgnore)
 
-        // we are checking parameters, type parameters and returns
-        val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
-          map { scalaDoc =>
-            paramErrors(line, Some(t.paramClauses))(scalaDoc) ++
-              tparamErrors(line, t.typeParamClauseOpt)(scalaDoc) ++
-              returnErrors(line, t.returnTypeOpt)(scalaDoc)
-          }.
-          getOrElse(List(LineError(line, List(Missing))))
-
-        // we don't descend any further
-        errors
       case t: TypeDefOrDcl =>
         // type Foo = ...
-        val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
-
-        // error is non-existence
-        val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
-          map(_ => Nil).
-          getOrElse(List(LineError(line, List(Missing))))
-
-        // we don't descend any further
-        errors
+        visitTypeDefOrDcl(t, skip, fallback, lines, tokensToIgnore)
 
       case t: PatDefOrDcl =>
         // val a = ...
         // var a = ...
         val (_, line) = lines.findLineAndIndex(t.valOrVarToken.offset).get
-        val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
-          map(_ => Nil).
-          getOrElse(List(LineError(line, List(Missing))))
+        val errors = if (shouldSkip(t)) {
+          Nil
+        } else {
+          findScalaDoc(t.firstToken, fallback).
+            map(_ => Nil).
+            getOrElse(List(LineError(line, List(Missing))))
+        }
         // we don't descend any further
         errors
 
@@ -285,6 +234,92 @@ class ScalaDocChecker extends CombinedChecker {
         // anything else, we descend (unless we stopped above)
         visit(t, localVisit(skip, fallback, lines, tokensToIgnore))
     }
+  }
+
+  private def visitFullDefOrDcl(t: FullDefOrDcl, fallback: HiddenTokens, lines: Lines, tokensToIgnore: Set[String]) = {
+    // check if we are going to include or skip depending on access modifier
+    val accessModifier = t.modifiers.find {
+      case AccessModifier(_, _) => true
+      case _ => false
+    }
+    val skip = accessModifier.exists {
+      case AccessModifier(pop, Some(_)) =>
+        if (pop.text == "private") skipQualifiedPrivate else skipQualifiedProtected
+      case AccessModifier(pop, None) =>
+        if (pop.text == "private") skipPrivate else skipProtected
+      case _ =>
+        false
+    }
+
+    // pick the ScalaDoc "attached" to the modifier, which actually means
+    // ScalaDoc of the following member
+    val scalaDocs = for {
+      token <- t.tokens
+      comment <- token.associatedWhitespaceAndComments
+      if comment.token.isScalaDocComment
+    } yield comment
+
+    // descend
+    visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), lines, tokensToIgnore))
+  }
+
+  private def visitTmplDef(t: TmplDef, skip: Boolean, fallback: HiddenTokens, lines: Lines, tokensToIgnore: Set[String]) = {
+    def shouldSkip(node: AstNode) = skip || tokensToIgnore.contains(node.getClass.getSimpleName)
+
+    val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
+
+    // we are checking parameters and type parameters
+    val errors = if (shouldSkip(t)) {
+      Nil
+    } else {
+      findScalaDoc(t.firstToken, fallback).
+        map { scalaDoc =>
+          paramErrors(line, t.paramClausesOpt)(scalaDoc) ++
+            tparamErrors(line, t.typeParamClauseOpt)(scalaDoc)
+        }.getOrElse(List(LineError(line, List(Missing))))
+    }
+
+    // and we descend, because we're interested in seeing members of the types
+    errors ++ visit(t, localVisit(skip, NoHiddenTokens, lines, tokensToIgnore))
+  }
+
+  private def visitFunDefOrDecl(t: FunDefOrDcl, skip: Boolean, fallback: HiddenTokens, lines: Lines, tokensToIgnore: Set[String]) = {
+    def shouldSkip(node: AstNode) = skip || tokensToIgnore.contains(node.getClass.getSimpleName)
+
+    val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
+
+    // we are checking parameters, type parameters and returns
+    val errors = if (shouldSkip(t)) {
+      Nil
+    } else {
+      findScalaDoc(t.firstToken, fallback).
+        map { scalaDoc =>
+          paramErrors(line, Some(t.paramClauses))(scalaDoc) ++
+            tparamErrors(line, t.typeParamClauseOpt)(scalaDoc) ++
+            returnErrors(line, t.returnTypeOpt)(scalaDoc)
+        }.getOrElse(List(LineError(line, List(Missing))))
+    }
+
+    // we don't descend any further
+    errors
+  }
+
+  private def visitTypeDefOrDcl(t: TypeDefOrDcl, skip: Boolean, fallback: HiddenTokens, lines: Lines, tokensToIgnore: Set[String]) = {
+    def shouldSkip(node: AstNode) = skip || tokensToIgnore.contains(node.getClass.getSimpleName)
+
+    val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
+
+    // error is non-existence
+    val errors = if (shouldSkip(t)) {
+      Nil
+    } else {
+      findScalaDoc(t.firstToken, fallback).
+        map(_ => Nil).
+        getOrElse(List(LineError(line, List(Missing))))
+    }
+
+    // we don't descend any further
+    errors
   }
 
   private def assertTokensToIgnore(tokensToIgnore: Iterable[String]): Unit = {
@@ -319,10 +354,6 @@ object ScalaDocChecker {
    * Companion for the ScalaDoc object that parses its text to pick up its elements
    */
   private object ScalaDoc {
-    private val ParamRegex = "@param\\W+(\\w+)\\W+(.*)".r
-    private val TypeParamRegex = "@tparam\\W+(\\w+)\\W+(.*)".r
-    private val ReturnRegex = "@return\\W+(.*)".r
-
     private val TagRegex = """\W*[*]\W+\@(\w+)\W+(\w+)(.*)""".r
 
     sealed trait ScalaDocLine {

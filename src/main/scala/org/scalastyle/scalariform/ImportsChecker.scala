@@ -294,13 +294,15 @@ class ImportOrderChecker extends ScalariformChecker {
       val last = groups(lastGroup)._1
       val current = groups(nextGroup)._1
       if (separatorLines == 0) {
-        return Some(newError(nextGroupOffset, "missingEmptyLine", last, current))
+        Some(newError(nextGroupOffset, "missingEmptyLine", last, current))
       } else if (maxBlankLines > 0 && separatorLines > maxBlankLines) {
-        return Some(newError(nextGroupOffset, "tooManyEmptyLines", maxBlankLines, last, current))
+        Some(newError(nextGroupOffset, "tooManyEmptyLines", maxBlankLines, last, current))
+      } else {
+        None
       }
+    } else {
+      None
     }
-
-    None
   }
 
   /**
@@ -310,10 +312,13 @@ class ImportOrderChecker extends ScalariformChecker {
     if (lastImportInGroup.isDefined) {
       val start = lastImport.get.lastToken.offset + lastImport.get.lastToken.length
       if (countNewLines(start, offset) != 1) {
-        return Some(newError(offset, "noEmptyLine"))
+        Some(newError(offset, "noEmptyLine"))
+      } else {
+        None
       }
+    } else {
+      None
     }
-    None
   }
 
   /**
@@ -352,26 +357,20 @@ class ImportOrderChecker extends ScalariformChecker {
   private[scalariform] def compareImports(imp1: String, imp2: String): Int = {
     val imp1Components = imp1.split("[.]")
     val imp2Components = imp2.split("[.]")
-    val max = math.min(imp1Components.size, imp2Components.size)
-    for (i <- 0 until max) {
-      val comp1 = imp1Components(i)
-      val comp2 = imp2Components(i)
-      val result = compareNames(comp1, comp2, isImport = true)
-      if (result != 0) {
-        return result
+    imp1Components.zip(imp2Components).map {
+      case (comp1, comp2) => compareNames(comp1, comp2, isImport = true)
+    }.find(_ != 0).getOrElse {
+      // At this point, there is still a special case: where one import is a multi-import block
+      // (and, thus, has no extra components) and another is a wildcard; the wildcard should come
+      // first.
+      val diff = imp1Components.size - imp2Components.size
+      if (diff == -1 && imp1.endsWith(".") && imp2Components.last == "_") {
+        1
+      } else if (diff == 1 && imp2.endsWith(".") && imp1Components.last == "_") {
+        -1
+      } else {
+        diff
       }
-    }
-
-    // At this point, there is still a special case: where one import is a multi-import block
-    // (and, thus, has no extra components) and another is a wildcard; the wildcard should come
-    // first.
-    val diff = imp1Components.size - imp2Components.size
-    if (diff == -1 && imp1.endsWith(".") && imp2Components.last == "_") {
-      1
-    } else if (diff == 1 && imp2.endsWith(".") && imp1Components.last == "_") {
-      -1
-    } else {
-      diff
     }
   }
 
