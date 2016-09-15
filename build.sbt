@@ -98,3 +98,9 @@ val dynamicPublish = Def.taskDyn {
 }
 
 ReleaseKeys.publishArtifactsAction := dynamicPublish.value
+
+lazy val testScalastyle = taskKey[Unit]("testScalastyle")
+
+testScalastyle := org.scalastyle.sbt.ScalastylePlugin.scalastyle.in(Compile).toTask("").value
+
+(test in Test) <<= (test in Test) dependsOn testScalastyle
