@@ -71,6 +71,19 @@ case object BooleanType extends ParameterType(ParameterType.Boolean)
 case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String],
                                 customMessage: Option[String], customId: Option[String])
 
+object ConfigurationChecker {
+  def apply[A](
+    level: Level = WarningLevel,
+    enabled: Boolean = false,
+    parameters: Map[String, String] = Map.empty,
+    customMessage: Option[String] = None,
+    customId: Option[String] = None
+  )
+  (implicit ct: scala.reflect.ClassTag[A]): ConfigurationChecker = {
+    ConfigurationChecker(ct.toString, level, enabled, parameters, customMessage, customId)
+  }
+}
+
 object ScalastyleConfiguration {
   val DefaultConfiguration: String = "/default_config.xml"
   val Enabled = "enabled"
@@ -150,7 +163,7 @@ object ScalastyleConfiguration {
                new XmlPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
 }
 
-case class ScalastyleConfiguration(name: String, commentFilter: Boolean, checks: List[ConfigurationChecker])
+case class ScalastyleConfiguration(name: String, commentFilter: Boolean = true, checks: List[ConfigurationChecker] = Nil)
 
 // definition
 
