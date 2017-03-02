@@ -36,6 +36,7 @@ import _root_.scalariform.parser.ExprElement
 import _root_.scalariform.parser.GeneralTokens
 import _root_.scalariform.parser.ImportClause
 import _root_.scalariform.parser.ImportSelectors
+import scala.util.matching.Regex
 
 // scalastyle:off multiple.string.literals
 
@@ -115,9 +116,18 @@ class IllegalImportsChecker extends AbstractImportChecker {
 }
 
 class UnderscoreImportChecker extends AbstractImportChecker {
+  private val DefaultIgnoreRegex = "^$"
   val errorKey = "underscore.import"
 
-  def matches(t: ImportClauseVisit): Boolean = imports(t).exists(_.endsWith("._"))
+  private var ignoreRegex: Regex = _
+
+  override protected def init(): Unit = {
+    ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
+  }
+
+  def matches(t: ImportClauseVisit): Boolean = imports(t)
+      .filterNot((importStatement) => ignoreRegex.findFirstIn(importStatement).isDefined)
+      .exists(_.endsWith("._"))
 }
 
 class ImportGroupingChecker extends ScalariformChecker {

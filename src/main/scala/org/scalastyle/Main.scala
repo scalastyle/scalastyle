@@ -18,7 +18,6 @@ package org.scalastyle
 
 import java.io.File
 import java.net.URLClassLoader
-import java.util.Date
 
 import com.typesafe.config.ConfigFactory
 
@@ -104,7 +103,7 @@ object Main {
     System.exit(exitVal)
   }
 
-  private[this] def now(): Long = new Date().getTime
+  private[this] def now(): Long = System.currentTimeMillis()
 
   private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()

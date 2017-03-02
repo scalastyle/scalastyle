@@ -113,7 +113,7 @@ class UnderscoreImportCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "underscore.import"
   val classUnderTest = classOf[UnderscoreImportChecker]
 
-  @Test def testNone(): Unit = {
+  @Test def testWithoutExceptions(): Unit = {
     val source = """
 package foobar
 
@@ -128,6 +128,25 @@ object Foobar {
 """
 
     assertErrors(List(columnError(5, 0), columnError(6, 0), columnError(7, 0), columnError(10, 2)), source)
+  }
+
+  @Test def testWithExceptions(): Unit = {
+    val source = """
+package foobar
+
+import java.util.List
+import java.lang._
+import collection.JavaConverters._
+import scala.concurrent.duration.{DAYS, _}
+
+object Foobar {
+  import collection.JavaConverters._
+}
+"""
+    val params = Map("ignoreRegex" -> "collection\\.JavaConverters\\._|scala\\.concurrent\\.duration\\._")
+    val expected = List(columnError(5, 0))
+
+    assertErrors(expected, source, params = params)
   }
 }
 
