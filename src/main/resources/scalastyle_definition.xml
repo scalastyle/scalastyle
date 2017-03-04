@@ -164,6 +164,7 @@
         <parameters>
             <parameter name="tabSize" type="integer" default="2" />
             <parameter name="methodParamIndentSize" type="integer" default="2" />
+            <parameter name="classParamIndentSize" type="integer" default="4" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.FieldNamesChecker" id="field.name" defaultLevel="warning">
