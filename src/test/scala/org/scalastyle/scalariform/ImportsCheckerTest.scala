@@ -185,6 +185,10 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
     "group.project2" -> "my\\.org\\.project2\\..*",
     "maxBlankLines" -> "2"
     )
+  val paramsLexicographic =
+    params ++ Seq(
+      "lexicographic" -> "true"
+      )
 
   @Test def testNameComparison(): Unit = {
     val checker = new ImportOrderChecker()
@@ -197,8 +201,42 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
     assertTrue("import: class before package", checker.compareNames("Class", "package", true) < 0)
     assertTrue("import: classes in alphabetical order",
       checker.compareNames("Class1", "Class2", true) < 0)
+    assertTrue("import: classes in case-insensitive alphabetical order",
+      checker.compareNames("Classone", "ClassTwo", true) < 0)
     assertTrue("import: packages in alphabetical order",
       checker.compareNames("package2", "package1", true) > 0)
+    assertTrue("import: packages in case-insensitive alphabetical order",
+      checker.compareNames("packagelower2", "packageUpper1", true) < 0)
+
+    // Rules for names inside selectors.
+    assertTrue("selector: wildcard after class", checker.compareNames("_", "Class", false) > 0)
+    assertTrue("selector: package before class",
+      checker.compareNames("package", "Class", false) < 0)
+    assertTrue("selector: class after package", checker.compareNames("Class", "package", false) > 0)
+    assertTrue("selector: classes in alphabetical order",
+      checker.compareNames("Class1", "Class2", false) < 0)
+    assertTrue("selector: packages in alphabetical order",
+      checker.compareNames("package2", "package1", false) > 0)
+  }
+
+  @Test def testLexicographicNameComparison(): Unit = {
+    val checker = new ImportOrderChecker()
+    checker.setParameters(paramsLexicographic)
+
+    // Rules for import statements.
+    assertTrue("import: wildcard after class", checker.compareNames("_", "Class", true) > 0)
+    assertTrue("import: wildcard before package", checker.compareNames("_", "package", true) < 0)
+    assertTrue("import: package after wildcard", checker.compareNames("package", "_", true) > 0)
+    assertTrue("import: package after class", checker.compareNames("package", "Class", true) > 0)
+    assertTrue("import: class before package", checker.compareNames("Class", "package", true) < 0)
+    assertTrue("import: classes in alphabetical order",
+      checker.compareNames("Class1", "Class2", true) < 0)
+    assertTrue("import: classes in case-sensitive alphabetical order",
+      checker.compareNames("Classone", "ClassTwo", true) > 0)
+    assertTrue("import: packages in alphabetical order",
+      checker.compareNames("package2", "package1", true) > 0)
+    assertTrue("import: packages in case-sensitive alphabetical order",
+      checker.compareNames("packagelower2", "packageUpper1", true) > 0)
 
     // Rules for names inside selectors.
     assertTrue("selector: wildcard after class", checker.compareNames("_", "Class", false) > 0)
@@ -213,6 +251,17 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   @Test def testImportComparison(): Unit = {
     val checker = new ImportOrderChecker()
+
+    assertTrue("package after class", checker.compareImports("foo.package", "foo.Class") > 0)
+    assertTrue("class before package", checker.compareImports("foo.Class", "foo.package") < 0)
+    assertTrue("selector before subpackage", checker.compareImports("foo.", "foo.package") < 0)
+    assertTrue("wildcard before selector", checker.compareImports("foo._", "foo.") < 0)
+    assertTrue("wildcard before subpackage", checker.compareImports("foo._", "foo.package") < 0)
+  }
+
+  @Test def testLexicographicImportComparison(): Unit = {
+    val checker = new ImportOrderChecker()
+    checker.setParameters(paramsLexicographic)
 
     assertTrue("package after class", checker.compareImports("foo.package", "foo.Class") > 0)
     assertTrue("class before package", checker.compareImports("foo.Class", "foo.package") < 0)
@@ -291,6 +340,53 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
       )
 
     assertErrors(expected, source, params = params)
+  }
+
+  @Test def testLexicographicImportGrouping(): Unit = {
+    val source = """
+      |package foobar
+      |
+      |import java.util.Map
+      |import javax.crypto.{Mac, Cipher}
+      |import java.lang.{Long => JLong, Boolean => JBoolean}
+      |import java.lang._
+      |
+      |import java.security.Permission
+      |import scala.io.Source
+      |
+      |
+      |import org.apache.Foo
+      |import my.org.project1.MyClass
+      |import my.org.project3.Someclass
+      |import my.org.project3.SomeClass
+      |
+      |
+      |import my.org.project2.OtherClass
+      |import javax.swing.JTree
+      |
+      |object Foobar {
+      |}
+      """.stripMargin
+
+    val expected = List(
+      columnError(5, 20, errorKey = errorKey("wrongOrderInSelector"), args = List("Cipher", "Mac")),
+      columnError(6, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("java.lang.", "javax.crypto.")),
+      columnError(6, 17, errorKey = errorKey("wrongOrderInSelector"),
+        args = List("Boolean", "Long")),
+      columnError(7, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("java.lang._", "java.lang.")),
+      columnError(9, 0, errorKey = errorKey("noEmptyLine")),
+      columnError(10, 0, errorKey = errorKey("missingEmptyLine"), args = List("java", "scala")),
+      columnError(14, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("my.org.project1.MyClass", "org.apache.Foo")),
+      columnError(16, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("my.org.project3.SomeClass", "my.org.project3.Someclass")),
+      columnError(20, 0, errorKey = errorKey("wrongGroup"),
+        args = List("javax.swing.JTree", "java", "project2"))
+    )
+
+    assertErrors(expected, source, params = paramsLexicographic)
   }
 
   private def errorKey(subkey: String): Option[String] = Some(key + "." + subkey)

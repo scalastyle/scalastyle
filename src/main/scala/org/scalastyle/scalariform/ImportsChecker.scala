@@ -151,6 +151,9 @@ class ImportGroupingChecker extends ScalariformChecker {
  *                   A value less than 1 disables the blank line limit.
  *  - group.[groupName]: a regular expression that matches imports that should be in the given
  *                       group.
+ *  - lexicographic: if true, imports are ordered lexicographically (classes, wildcards, then
+ *                   packages; case-sensitive ordering within); if false, apply the original
+ *                   case-insensitive ordering (with wildcards coming first, before classes).
  *
  * For example, to check that "java" and "javax" imports are in a separate group at the top of the
  * import list, you'd use this config:
@@ -160,7 +163,8 @@ class ImportGroupingChecker extends ScalariformChecker {
  *  <parameter name="group.other">.+</parameter>
  *
  * Other non-configurable rules:
- * - Within each group, import clauses are ordered alphabetically.
+ * - Within each group, import clauses are ordered alphabetically if 'lexicographic' is
+ *   specified; else puts wildcards, then classes and packages, with case-insensitive sort.
  * - In multi-import statements, entries are ordered alphabetically, with method / packages
  *   (assumed to be any string starting with a lower case letter) coming before classes.
  *
@@ -171,6 +175,7 @@ class ImportOrderChecker extends ScalariformChecker {
 
   private var groups: Seq[(String, Pattern)] = _
   private var maxBlankLines: Int = _
+  private var lexicographic: Boolean = _
 
   private var ast: AstNode = _
   private var lastImport: Option[AstNode] = None
@@ -185,6 +190,7 @@ class ImportOrderChecker extends ScalariformChecker {
       name -> Pattern.compile(parameters(s"group.${name}"))
     }
     maxBlankLines = parameters.getOrElse("maxBlankLines", "1").toInt
+    lexicographic = parameters.get("lexicographic").map(_.toBoolean).getOrElse(false)
   }
 
   override def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -387,7 +393,9 @@ class ImportOrderChecker extends ScalariformChecker {
    *                 rules for names within a selector.
    */
   private[scalariform] def compareNames(name1: String, name2: String, isImport: Boolean): Int = {
-    if (name1 != "_") {
+    if (lexicographic && isImport) {
+      name1.compareTo(name2)
+    } else if (name1 != "_") {
       if (name2 == "_") {
         -1 * compareNames(name2, name1, isImport)
       } else {
