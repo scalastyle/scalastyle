@@ -80,9 +80,16 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
 case class ScalariformAst(ast: CompilationUnit, comments: List[Comment])
 
 object Checker {
-  def parseLines(source: String): Lines = Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
-          case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
-        }.tail, source.charAt(source.length()-1))
+  def parseLines(source: String): Lines = {
+
+    // Split lines by supported EOL sequences. Windows text files use a carriage return ("\r") immediately followed by a
+    // linefeed ("\n"), while Unix/Linux/BSD/etc. text files use just a linefeed. Other EOL sequences are currently
+    // unsupported. Note that split removes the matching regular expression, so that the array of lines excludes EOL
+    // sequences.
+    Lines(source.split("\r?\n").scanLeft(Line("", 0, 0)) {
+      case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
+    }.tail, source.charAt(source.length()-1))
+  }
 }
 
 class CheckerUtils(classLoader: Option[ClassLoader] = None) {

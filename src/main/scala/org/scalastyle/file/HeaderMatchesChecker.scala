@@ -31,7 +31,9 @@ class HeaderMatchesChecker extends FileChecker {
     val regexParameter = getBoolean("regex", false)
     val headerParameter = getString("header", DefaultHeader)
     if (regexParameter) {
-      val Regex = (headerParameter ++ "(?s:.*)").r
+
+      // Convert any Windows line termination sequences ("\r\n") to Unix/Linux/BSD style for consistency.
+      val Regex = (headerParameter.replaceAll("\r\n", "\n") ++ "(?s:.*)").r
       val fullSource = ast.lines map { _.text } mkString "\n"
       fullSource match {
         case Regex() =>
@@ -41,13 +43,13 @@ class HeaderMatchesChecker extends FileChecker {
       }
     } else {
       val header = Checker.parseLines(headerParameter)
-      val found = (0 to scala.math.min(ast.lines.size - 1, header.lines.size - 1)).find(i => !ast.lines(i).text.trim.equals(header.lines(i).text.trim))
+      val found = (0 until scala.math.min(ast.lines.length, header.lines.length)).find(i => !ast.lines(i).text.equals(header.lines(i).text))
 
       found match {
         case Some(x) => List(LineError(x + 1))
         case None => {
-          if (ast.lines.size < header.lines.size) {
-            List(LineError(ast.lines.size))
+          if (ast.lines.size < header.lines.length) {
+            List(LineError(ast.lines.length))
           } else {
             List()
           }
