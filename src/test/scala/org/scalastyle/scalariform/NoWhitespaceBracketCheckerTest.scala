@@ -96,3 +96,40 @@ class Foobar[ Barbar[ T]] {
     assertErrors(List(columnError(4, 12), columnError(4, 20)), source)
   }
 }
+
+class NoWhitespaceBeforeRightBracketCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "no.whitespace.before.right.bracket"
+  val classUnderTest = classOf[NoWhitespaceBeforeRightBracketChecker]
+
+  @Test def testOK(): Unit = {
+    val source = """
+package foobar
+
+class Foobar[T] {
+}
+"""
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testOneSpace(): Unit = {
+    val source = """
+package foobar
+
+class Foobar[T ] {
+}
+"""
+    assertErrors(List(columnError(4, 15)), source)
+  }
+
+  @Test def testTwoSpaces(): Unit = {
+    val source = """
+package foobar
+
+class Foobar[Barbar[T ] ] {
+}
+"""
+
+    assertErrors(List(columnError(4, 22), columnError(4, 24)), source)
+  }
+}

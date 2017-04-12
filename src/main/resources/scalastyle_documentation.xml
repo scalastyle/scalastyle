@@ -825,6 +825,17 @@ To bring consistency with how comments should be formatted, leave a space right 
  </example-configuration>
  </check>
 
+ <check id="no.whitespace.before.right.bracket">
+  <justification>
+   If there is whitespace before a right bracket, this can be confusing to the reader
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker" enabled="true" />
+ ]]>
+  </example-configuration>
+ </check>
+
  <check id="covariant.equals">
  <justification>
  Mistakenly defining a covariant equals() method without overriding method equals(java.lang.Object) can produce unexpected runtime behaviour.
