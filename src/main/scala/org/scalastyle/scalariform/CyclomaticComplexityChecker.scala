@@ -29,6 +29,7 @@ import _root_.scalariform.lexer.Tokens.CASE
 import _root_.scalariform.lexer.Tokens.DO
 import _root_.scalariform.lexer.Tokens.FOR
 import _root_.scalariform.lexer.Tokens.IF
+import _root_.scalariform.lexer.Tokens.MATCH
 import _root_.scalariform.lexer.Tokens.VARID
 import _root_.scalariform.lexer.Tokens.WHILE
 import _root_.scalariform.parser.FunDefOrDcl
@@ -36,8 +37,10 @@ import _root_.scalariform.parser.FunDefOrDcl
 class CyclomaticComplexityChecker extends CombinedChecker {
   val errorKey = "cyclomatic.complexity"
   val DefaultMaximum = 10
+  val DefaultCountCases = true
   private lazy val maximum = getInt("maximum", DefaultMaximum)
-  private val tokens = Set(IF, CASE, WHILE, DO, FOR)
+  private lazy val countCases = getBoolean("countCases", DefaultCountCases)
+  private val defaultTokens = Set(IF, WHILE, DO, FOR)
 
   case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
 
@@ -51,7 +54,7 @@ class CyclomaticComplexityChecker extends CombinedChecker {
       PositionError(t.position.get, List("" + value, "" + maximum))
     }
 
-    it.toList
+    it
   }
 
   private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
@@ -60,7 +63,8 @@ class CyclomaticComplexityChecker extends CombinedChecker {
 
   // compute the cyclomatic complexity without the additional 1
   private def cyclomaticComplexity(f: FunDefOrDclClazz): Int = {
-      f.t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t))
+    val tokens = defaultTokens + (if (countCases) CASE else MATCH)
+    f.t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t))
   }
 
   private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int) = {

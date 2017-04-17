@@ -84,6 +84,7 @@
     <checker class="org.scalastyle.scalariform.CyclomaticComplexityChecker" id="cyclomatic.complexity" defaultLevel="warning" >
         <parameters>
             <parameter name="maximum" type="integer" default="10" />
+            <parameter name="countCases" type="boolean" default="true" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.UppercaseLChecker" id="uppercase.l" defaultLevel="warning" />
