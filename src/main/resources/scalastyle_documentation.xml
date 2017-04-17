@@ -339,7 +339,11 @@ Note: If you intend to enable only if expressions in the format below, disable t
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.UnderscoreImportChecker" enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.UnderscoreImportChecker" enabled="true" >
+      <parameters>
+        <parameter name="ignoreRegex">collection\.JavaConverters\._|scala\.concurrent\.duration\._</parameter>
+      </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>
