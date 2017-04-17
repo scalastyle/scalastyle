@@ -64,6 +64,7 @@ artifact in (Compile, assembly) ~= { art =>
 addArtifact(artifact in (Compile, assembly), assembly)
 
 mainClass in assembly := Some("org.scalastyle.Main")
+mainClass in (Compile, run) := Some("org.scalastyle.Main")
 
 buildInfoSettings
 
