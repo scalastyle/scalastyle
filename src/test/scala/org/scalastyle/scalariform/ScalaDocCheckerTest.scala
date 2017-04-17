@@ -58,8 +58,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   @Test def classParams(): Unit = {
     val classSource = "%sclass Foo(a: Int, b: Int)"
     val caseClassSource = "%scase class Foo(a: Int, b: Int)"
-    val annotatedCaseClassSource = s"%scase class Foo @JpaAbomination() (@Field a: Int, @Field b: Int)"
-    val annotatedCaseClassSource2 = s"""%scase class Foo @JpaAbomination(me) (@Field(a = 4, b = "foo") a: Int, @Field() b: Int)"""
+    val annotatedCaseClassSource = "%scase class Foo @JpaAbomination() (@Field a: Int, @Field b: Int)"
+    val annotatedCaseClassSource2 = """%scase class Foo @JpaAbomination(me) (@Field(a = 4, b = "foo") a: Int, @Field() b: Int)"""
     val missingParamDoc =
       """
         |/**
