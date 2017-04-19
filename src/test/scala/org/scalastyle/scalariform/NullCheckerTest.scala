@@ -50,4 +50,20 @@ object Foobar {
 
     assertErrors(List(columnError(5, 20), columnError(6, 20)), source)
   }
+
+  @Test def testTwo(): Unit = {
+    val source = """
+package foobar
+
+object Foobar {
+  def bar(s: String): Int = {
+    if (s == null) 0
+    else if (s != null) 1
+    else 2
+  }
+}
+"""
+
+    assertErrors(List(), source)
+  }
 }

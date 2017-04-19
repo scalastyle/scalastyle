@@ -653,7 +653,11 @@ To bring consistency with how comments should be formatted, leave a space right 
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true">
+      <parameters>
+        <parameter name="allowNullChecks">true</parameter>
+      </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>

@@ -65,7 +65,11 @@
     <checker class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" id="no.whitespace.before.left.bracket" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" id="no.whitespace.after.left.bracket" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.ReturnChecker" id="return" defaultLevel="warning" />
-    <checker class="org.scalastyle.scalariform.NullChecker" id="null" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.NullChecker" id="null" defaultLevel="warning">
+        <parameters>
+            <parameter name="allowNullChecks" type="boolean" default="true" />
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.scalariform.NoCloneChecker" id="no.clone" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.NoFinalizeChecker" id="no.finalize" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.CovariantEqualsChecker" id="covariant.equals" defaultLevel="warning" />

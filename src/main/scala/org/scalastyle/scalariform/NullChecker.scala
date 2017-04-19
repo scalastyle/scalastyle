@@ -21,19 +21,25 @@ import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
 import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.lexer.TokenType
-import _root_.scalariform.lexer.Tokens.INTEGER_LITERAL
-import _root_.scalariform.lexer.Tokens.NULL
-import _root_.scalariform.lexer.Tokens.RETURN
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.lexer.Tokens.WHILE
 import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.ForExpr
 
-abstract class AbstractTokenChecker(val errorKey: String, tokenType: TokenType) extends ScalariformChecker {
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+class NullChecker extends ScalariformChecker {
+  val errorKey = "null"
+  val dummyToken = new Token(Tokens.NULL, "null", 0, "null")
+
+  val defaultAllowNullChecks = true
+  lazy val allowNullChecks = getBoolean("allowNullChecks", defaultAllowNullChecks)
+
+  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+    val tokenTypes: List[TokenType] = ast.tokens.map(_.tokenType)
+
     val it = for {
-      t <- ast.tokens
-      if t.tokenType == tokenType && matches(t)
+      (t, prev) <- ast.tokens.zip(dummyToken :: ast.tokens)
+      if t.tokenType == Tokens.NULL
+      if !(allowNullChecks && prev.tokenType == Tokens.VARID && (prev.text == "==" || prev.text == "!="))
     } yield {
       PositionError(t.offset)
     }
@@ -41,19 +47,4 @@ abstract class AbstractTokenChecker(val errorKey: String, tokenType: TokenType) 
     it
   }
 
-  protected def matches(token: Token): Boolean = true
-}
-
-class UppercaseLChecker extends AbstractTokenChecker("uppercase.l", INTEGER_LITERAL) {
-  override def matches(t: Token): Boolean = t.text.endsWith("l")
-}
-
-class WhileChecker extends AbstractTokenChecker("while", WHILE)
-class ReturnChecker extends AbstractTokenChecker("return", RETURN)
-
-class TokenChecker extends AbstractTokenChecker("token", VARID) {
-  private val DefaultRegex = "^$"
-  lazy val regex = getString("regex", DefaultRegex).r
-
-  override protected def matches(t: Token) = regex.findFirstIn(t.text).isDefined
 }
