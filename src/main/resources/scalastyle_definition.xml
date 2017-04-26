@@ -64,6 +64,7 @@
     </checker>
     <checker class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" id="no.whitespace.before.left.bracket" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" id="no.whitespace.after.left.bracket" defaultLevel="warning" />
+    <checker class="org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker" id="no.whitespace.before.right.bracket" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.ReturnChecker" id="return" defaultLevel="warning" />
     <checker class="org.scalastyle.scalariform.NullChecker" id="null" defaultLevel="warning">
         <parameters>

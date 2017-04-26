@@ -58,6 +58,7 @@
  </check>
  <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.ReturnChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true">
   <parameters>
