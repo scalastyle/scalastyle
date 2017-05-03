@@ -111,6 +111,12 @@
             <parameter name="ignoreOverride" type="boolean" default="false" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.MethodArgumentNamesChecker" id="method.argument.name" defaultLevel="warning" >
+        <parameters>
+            <parameter name="regex" type="string" default="^[a-z][A-Za-z0-9]*$" />
+            <parameter name="ignoreRegex" type="string" default="^$" />
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.scalariform.NumberOfMethodsInTypeChecker" id="number.of.methods" defaultLevel="warning" >
         <parameters>
             <parameter name="maxMethods" type="integer" default="30" />

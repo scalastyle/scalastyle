@@ -28,7 +28,7 @@ import _root_.scalariform.lexer.Tokens.PACKAGE
 import _root_.scalariform.lexer.Tokens.VAL
 import _root_.scalariform.lexer.Tokens.VAR
 import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.{CompilationUnit, Param, ParamClauses}
 import scala.util.matching.Regex
 
 // scalastyle:off multiple.string.literals
@@ -138,6 +138,14 @@ case class MethodNamesCheckerParameters(regexString: String, ignoreRegexString: 
   def ignoreRegex(): Regex = ignoreRegexR
 }
 
+case class MethodArgumentNamesCheckerParameters(regexString: String, ignoreRegexString: String) {
+  private val regexR = regexString.r
+  private val ignoreRegexR = ignoreRegexString.r
+
+  def regex(): Regex = regexR
+  def ignoreRegex(): Regex = ignoreRegexR
+}
+
 class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerParameters] {
   private val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
   private val DefaultIgnoreRegex = "^$"
@@ -159,6 +167,35 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   }
 
   protected override def describeParameters(p: MethodNamesCheckerParameters) = List("" + p.regex)
+
+  private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
+}
+
+class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgumentNamesCheckerParameters] {
+  private val DefaultRegex = "^[a-z][A-Za-z0-9]*$"
+  private val DefaultIgnoreRegex = "^$"
+  val errorKey: String = "method.argument.name"
+
+  def matchParameters(): MethodArgumentNamesCheckerParameters = {
+    MethodArgumentNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex))
+  }
+
+  def matches(t: FullDefOrDclVisit, p: MethodArgumentNamesCheckerParameters): Boolean = {
+    getParams(t.funDefOrDcl.paramClauses) match {
+      case List() => false
+      case params =>
+        params.exists { pc =>
+        val name = pc.id.text
+        !matches(p.ignoreRegex(), name) && !matches(p.regex(), name)
+      }
+    }
+  }
+
+  private def getParams(p: ParamClauses): List[Param] = {
+    p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
+  }
+
+  protected override def describeParameters(p: MethodArgumentNamesCheckerParameters) = List("" + p.regex)
 
   private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
 }
