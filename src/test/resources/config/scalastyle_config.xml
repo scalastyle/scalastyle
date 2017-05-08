@@ -69,5 +69,6 @@
  <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true"></check>
+ <check level="warning" class="org.scalastyle.scalariform.MethodArgumentNamesChecker" enabled="true"></check>
  <check level="warning" class="org.scalastyle.scalariform.TodoCommentChecker" enabled="true"></check>
 </scalastyle>

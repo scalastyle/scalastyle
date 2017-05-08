@@ -182,6 +182,22 @@ Note: If you intend to enable only if expressions in the format below, disable t
  </example-configuration>
  </check>
 
+ <check id="method.argument.name">
+  <justification>
+   The Scala style guide recommends that method argument names conform to certain standards.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.MethodArgumentNamesChecker enabled="true">
+      <parameters>
+        <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
+        <parameter name="ignoreRegex">^$</parameter>
+      </parameters>
+    </check>
+ ]]>
+  </example-configuration>
+ </check>
+
  <check id="number.of.methods">
  <justification>
  If a type declares too many methods, this can be an indication of bad design.

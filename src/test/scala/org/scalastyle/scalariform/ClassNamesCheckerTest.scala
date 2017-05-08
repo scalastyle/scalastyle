@@ -295,6 +295,66 @@ class Foobar extends Bar {
   private def defErr(line: Int, column: Int) = columnError(line, column, List("^[a-z][A-Za-z0-9]*(_=)?$"))
 }
 
+class MethodArgumentNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "method.argument.name"
+  val classUnderTest = classOf[MethodArgumentNamesChecker]
+
+  @Test
+  def testDefaultRegex(): Unit = {
+    val defaultRegex = "^[a-z][A-Za-z0-9]*$"
+
+    val source = """
+package foobar
+
+class Foobar {
+  def foo() = 1
+  def +() = 1
+//  def foo+() = 1
+  def setting(s: Boolean) {}
+  def fetch(Query: Boolean) {}
+  def multiple(foo: String, BAR: String) {}
+}
+"""
+
+    assertErrors(List(columnError(9, 6, List(defaultRegex)), columnError(10, 6, List(defaultRegex))), source)
+  }
+
+  @Test
+  def testProvidedRegex(): Unit = {
+    val providedRegex = "^F[o*]*$"
+
+    val source = """
+package foobar
+
+class Foobar {
+  def valid(Foo: String, Foooooooo: Int) = 1
+  def invalid1(foo: String) = 2
+  def invalid2(FOO: String) = 3
+}
+"""
+
+    assertErrors(List(columnError(6, 6, List(providedRegex)), columnError(7, 6, List(providedRegex))), source, Map("regex" -> providedRegex))
+  }
+
+  @Test
+  def testWithIgnoreRegex(): Unit = {
+    val ignoreRegex = "^M[a-zA-Z0-9]*$"
+    val defaultRegex = "^[a-z][A-Za-z0-9]*$"
+
+    val source = """
+package foobar
+
+class Foobar {
+  def ignore(Moo: String) = 1
+  def valid(validArg: String) = 1
+  def invalidArg(INVALID: String) = 1
+}
+"""
+
+    assertErrors(List(columnError(7, 6, List(defaultRegex))), source, Map("ignoreRegex" -> ignoreRegex))
+  }
+}
+
 class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "field.name"
   val classUnderTest = classOf[FieldNamesChecker]
