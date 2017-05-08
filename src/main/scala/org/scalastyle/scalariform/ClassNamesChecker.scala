@@ -84,7 +84,7 @@ class PackageNamesChecker extends ScalariformChecker {
     @annotation.tailrec
     def getNextPackageName(tokens: List[Token]): (List[Token], List[Token]) = tokens match {
       case Nil => (Nil, Nil)
-      case hd :: tail if hd.tokenType == PACKAGE => tail.span(isPartOfPackageName(_))
+      case hd :: tail if hd.tokenType == PACKAGE => tail.span(isPartOfPackageName)
       case l: Any => getNextPackageName(l.dropWhile(tok => tok.tokenType != PACKAGE))
     }
 
@@ -152,12 +152,12 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   private val DefaultIgnoreOverride = false
   val errorKey = "method.name"
 
-  protected def matchParameters() = {
+  protected def matchParameters(): MethodNamesCheckerParameters = {
     MethodNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex),
         getBoolean("ignoreOverride", DefaultIgnoreOverride))
   }
 
-  protected def matches(t: FullDefOrDclVisit, p: MethodNamesCheckerParameters) = {
+  protected def matches(t: FullDefOrDclVisit, p: MethodNamesCheckerParameters): Boolean = {
     if (p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) {
       false
     } else {
@@ -182,9 +182,8 @@ class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgum
 
   def matches(t: FullDefOrDclVisit, p: MethodArgumentNamesCheckerParameters): Boolean = {
     getParams(t.funDefOrDcl.paramClauses) match {
-      case List() => false
-      case params =>
-        params.exists { pc =>
+      case Nil => false
+      case params: List[Param] => params.exists { pc =>
         val name = pc.id.text
         !matches(p.ignoreRegex(), name) && !matches(p.regex(), name)
       }
