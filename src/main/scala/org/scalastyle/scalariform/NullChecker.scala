@@ -22,20 +22,16 @@ import org.scalastyle.ScalastyleError
 
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens
-import _root_.scalariform.lexer.TokenType
 import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.ForExpr
 
 class NullChecker extends ScalariformChecker {
   val errorKey = "null"
-  val dummyToken = new Token(Tokens.NULL, "null", 0, "null")
+  val dummyToken = Token(Tokens.NULL, "null", 0, "null")
 
   val defaultAllowNullChecks = true
-  lazy val allowNullChecks = getBoolean("allowNullChecks", defaultAllowNullChecks)
+  lazy val allowNullChecks: Boolean = getBoolean("allowNullChecks", defaultAllowNullChecks)
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val tokenTypes: List[TokenType] = ast.tokens.map(_.tokenType)
-
     val it = for {
       (t, prev) <- ast.tokens.zip(dummyToken :: ast.tokens)
       if t.tokenType == Tokens.NULL
@@ -46,5 +42,4 @@ class NullChecker extends ScalariformChecker {
 
     it
   }
-
 }

@@ -20,8 +20,6 @@ import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 
-// scalastyle:off magic.number
-
 class NullCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "null"
   val classUnderTest = classOf[NullChecker]
@@ -65,5 +63,26 @@ object Foobar {
 """
 
     assertErrors(List(), source)
+  }
+
+  @Test def testThree(): Unit = {
+    val source = """
+package foobar
+
+object Foobar {
+  def bar(s: String): Int = {
+    if (s == null) 0
+    else if (s != null) 1
+    else 2
+
+    if (null == s) 0
+    else if (null != s) 1
+    else 2
+  }
+}
+"""
+
+    assertErrors(List(columnError(6, 13), columnError(7, 18), columnError(10, 8), columnError(11, 13)), source,
+      Map("allowNullChecks" -> "false"))
   }
 }
