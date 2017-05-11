@@ -135,6 +135,7 @@
   </parameters>
  </check>
  <check class="org.scalastyle.scalariform.DeprecatedJavaChecker" level="warning" enabled="true"></check>
+ <check class="org.scalastyle.scalariform.OverrideJavaChecker" level="warning" enabled="true"></check>
  <check class="org.scalastyle.scalariform.EmptyClassChecker" level="warning" enabled="true"></check>
  <check class="org.scalastyle.scalariform.ClassTypeParameterChecker" level="warning" enabled="true">
   <parameters>

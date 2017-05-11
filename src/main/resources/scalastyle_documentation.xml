@@ -321,6 +321,17 @@ Note: If you intend to enable only if expressions in the format below, disable t
  </example-configuration>
  </check>
 
+ <check id="override.java">
+  <justification>
+   You should be using the Scala override keyword instead.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.OverrideJavaChecker enabled="true" />
+ ]]>
+  </example-configuration>
+ </check>
+
  <check id="empty.class">
  <justification>
  If a class / trait has no members, then braces are unnecessary, and can be removed.
