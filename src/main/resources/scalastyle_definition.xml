@@ -102,6 +102,7 @@
     <checker class="org.scalastyle.scalariform.MethodLengthChecker" id="method.length" defaultLevel="warning" >
         <parameters>
             <parameter name="maxLength" type="integer" default="50" />
+            <parameter name="ignoreComments" type="boolean" default="false" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.MethodNamesChecker" id="method.name" defaultLevel="warning" >

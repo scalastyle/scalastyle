@@ -158,6 +158,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
     <check level="warning" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="true">
       <parameters>
         <parameter name="maxLength">50</parameter>
+        <parameter name="ignoreComments">false</parameter>
       </parameters>
     </check>
  ]]>
