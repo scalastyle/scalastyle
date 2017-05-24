@@ -99,6 +99,7 @@ is considered to be a magic number.
     <check level="warning" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
       <parameters>
         <parameter name="maximum">10</parameter>
+        <parameter name="countCases">true</parameter>
       </parameters>
     </check>
  ]]>

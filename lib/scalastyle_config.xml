@@ -91,6 +91,7 @@
  <check class="org.scalastyle.scalariform.CyclomaticComplexityChecker" level="warning" enabled="true">
   <parameters>
    <parameter name="maximum"><![CDATA[10]]></parameter>
+   <parameter name="countCases"><![CDATA[true]]></parameter>
   </parameters>
  </check>
  <check class="org.scalastyle.scalariform.UppercaseLChecker" level="warning" enabled="true"></check>

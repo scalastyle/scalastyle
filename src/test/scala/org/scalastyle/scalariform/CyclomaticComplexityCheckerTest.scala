@@ -154,4 +154,25 @@ class Foobar {
 
     assertErrors(List(columnError(16, 6, List("4", "3"))), source, Map("maximum" -> "3"))
   }
+
+  @Test def testFlagCountCases(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  def foobar(i: Int): Int = i match {
+    case 1 => 1
+    case 2 => 2
+    case 3 => 3
+  }
+}
+"""
+
+    assertErrors(
+      List.empty,
+      source, Map("maximum" -> "3", "countCases" -> "false"))
+    assertErrors(
+      List(columnError(5, 6, List("4", "3"))),
+      source, Map("maximum" -> "3", "countCases" -> "true"))
+  }
 }
