@@ -26,7 +26,6 @@ import org.scalastyle.scalariform.VisitorHelper.visit
 import _root_.scalariform.lexer.HiddenTokens
 import _root_.scalariform.lexer.NoHiddenTokens
 import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.TokenType
 import _root_.scalariform.lexer.Tokens.CLASS
 import _root_.scalariform.parser.AccessModifier
 import _root_.scalariform.parser.AstNode
@@ -34,6 +33,7 @@ import _root_.scalariform.parser.FullDefOrDcl
 import _root_.scalariform.parser.FunDefOrDcl
 import _root_.scalariform.parser.ParamClauses
 import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.SimpleModifier
 import _root_.scalariform.parser.StatSeq
 import _root_.scalariform.parser.TmplDef
 import _root_.scalariform.parser.Type
@@ -56,6 +56,7 @@ class ScalaDocChecker extends CombinedChecker {
 
   val DefaultIgnoreRegex = "^$"
   val DefaultIgnoreTokenTypes = ""
+  val DefaultIgnoreOverride = false
 
   val skipPrivate = true
   val skipQualifiedPrivate = false
@@ -67,26 +68,16 @@ class ScalaDocChecker extends CombinedChecker {
 
     val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex)
     val tokensToIgnore = getString("ignoreTokenTypes", DefaultIgnoreTokenTypes).split(",").filterNot(_.isEmpty).toSet
+    val ignoreOverride = getBoolean("ignoreOverride", DefaultIgnoreOverride)
 
     assertTokensToIgnore(tokensToIgnore)
 
-    def trimToTokenOfType(list: List[Token], tokenType: TokenType): List[Token] = {
-      if (list.isEmpty) {
-        list
-      } else {
-        list.head match {
-          case Token(`tokenType`, _, _, _) => list
-          case _ => trimToTokenOfType(list.tail, tokenType)
-        }
-      }
-    }
-
-    val ts = trimToTokenOfType(tokens, CLASS)
+    val ts = tokens.dropWhile(_.tokenType != CLASS)
     val ignore = ts.nonEmpty && ts(1).text.matches(ignoreRegex)
-    ignore match {
-      case true => Nil
-      case false => localVisit(skip = false, HiddenTokens(Nil), ast.lines, tokensToIgnore)(ast.compilationUnit.immediateChildren.head)
-    }
+    if (ignore)
+      Nil
+    else
+      localVisit(skip = false, HiddenTokens(Nil), ignoreOverride, ast.lines, tokensToIgnore)(ast.compilationUnit.immediateChildren.head)
   }
 
   import ScalaDocChecker._ // scalastyle:ignore underscore.import import.grouping
@@ -185,7 +176,7 @@ class ScalaDocChecker extends CombinedChecker {
    *
    * we do not bother descending down any further
    */
-  private def localVisit(skip: Boolean, fallback: HiddenTokens, lines: Lines, tokensToIgnore: Set[String])(ast: Any): List[ScalastyleError] = {
+  private def localVisit(skip: Boolean, fallback: HiddenTokens, ignoreOverride: Boolean, lines: Lines, tokensToIgnore: Set[String])(ast: Any): List[ScalastyleError] = {
 
     def shouldSkip(node: AstNode) = skip || tokensToIgnore.contains(node.getClass.getSimpleName)
 
@@ -194,16 +185,14 @@ class ScalaDocChecker extends CombinedChecker {
         // private, private[xxx];
         // protected, protected[xxx];
 
-        // check if we are going to include or skip depending on access modifier
-        val accessModifier = t.modifiers.find {
-          case AccessModifier(_, _) => true
-          case _ => false
-        }
-        val skip = accessModifier.exists {
+        // check if we are going to include or skip depending on access or override modifiers
+        val skip = t.modifiers.exists {
           case AccessModifier(pop, Some(_)) =>
             if (pop.text == "private") skipQualifiedPrivate else skipQualifiedProtected
           case AccessModifier(pop, None) =>
             if (pop.text == "private") skipPrivate else skipProtected
+          case SimpleModifier(token) if ignoreOverride && token.text == "override" =>
+            true
           case _ =>
             false
         }
@@ -217,7 +206,7 @@ class ScalaDocChecker extends CombinedChecker {
         } yield comment
 
         // descend
-        visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), lines, tokensToIgnore))
+        visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), ignoreOverride, lines, tokensToIgnore))
       case t: TmplDef =>
         // trait Foo, trait Foo[A];
         // class Foo, class Foo[A](a: A);
@@ -234,7 +223,7 @@ class ScalaDocChecker extends CombinedChecker {
           }.getOrElse(List(LineError(line, List(Missing))))
 
         // and we descend, because we're interested in seeing members of the types
-        errors ++ visit(t, localVisit(skip, NoHiddenTokens, lines, tokensToIgnore))
+        errors ++ visit(t, localVisit(skip, NoHiddenTokens, ignoreOverride, lines, tokensToIgnore))
       case t: FunDefOrDcl =>
         // def foo[A, B](a: Int): B = ...
         val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
@@ -276,14 +265,14 @@ class ScalaDocChecker extends CombinedChecker {
         errors
 
       case t: StatSeq =>
-        localVisit(skip, fallback, lines, tokensToIgnore)(t.firstStatOpt) ++ (
+        localVisit(skip, fallback, ignoreOverride, lines, tokensToIgnore)(t.firstStatOpt) ++ (
           for (statOpt <- t.otherStats)
-            yield localVisit(skip, statOpt._1.associatedWhitespaceAndComments, lines, tokensToIgnore)(statOpt._2)
+            yield localVisit(skip, statOpt._1.associatedWhitespaceAndComments, ignoreOverride, lines, tokensToIgnore)(statOpt._2)
           ).flatten
 
       case t: Any =>
         // anything else, we descend (unless we stopped above)
-        visit(t, localVisit(skip, fallback, lines, tokensToIgnore))
+        visit(t, localVisit(skip, fallback, ignoreOverride, lines, tokensToIgnore))
     }
   }
 

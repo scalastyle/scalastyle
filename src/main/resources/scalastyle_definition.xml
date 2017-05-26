@@ -165,6 +165,7 @@
         <parameters>
             <parameter name="ignoreRegex" type="string" default="^$"/>
 						<parameter name="ignoreTokenTypes" type="string" default="^$"/>
+            <parameter name="ignoreOverride" type="boolean" default="false"/>
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" id="disallow.space.after.token" defaultLevel="warning"/>
