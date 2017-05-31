@@ -128,6 +128,31 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
+  @Test def typeParamsWithBounds(): Unit = {
+    val source = "class Foo[@foo A <: B[C], @foo(b) B <: C, C <% D, D: E with A]"
+    val malformedDoc =
+      """
+        |/**
+        | * This is the documentation for whatever follows
+        | */
+      """.stripMargin
+    val doc =
+      """
+        |/**
+        | * This is the documentation for whatever follows with tparams
+        | *
+        | * @tparam A the type A
+        | * @tparam B the type B
+        | * @tparam C the type C
+        | * @tparam D the type D
+        | */
+      """.stripMargin
+
+    assertErrors(Nil, doc + source)
+    assertErrors(List(lineError(1, List(Missing))), source)
+    assertErrors(List(lineError(5, List(MalformedTypeParams))), malformedDoc + source)
+  }
+
   @Test def publicMethodWithEverything(): Unit = {
     def al(access: String = "", checked: Boolean): Unit = {
       val fun =
