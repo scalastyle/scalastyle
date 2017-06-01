@@ -23,14 +23,13 @@ import org.scalastyle.ScalastyleError
 import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.{Annotation => ParserAnnotation}
 
-class DeprecatedJavaChecker extends ScalariformChecker {
-  val errorKey = "deprecated.java"
-  val deprecatedTokens = List("Deprecated", "java.lang.Deprecated")
+abstract class JavaAnnotationChecker extends ScalariformChecker {
+  val invalidTokens: List[String]
 
   final def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
       t <- VisitorHelper.getAll[ParserAnnotation](ast.immediateChildren.head)
-      if isDeprecated(t)
+      if isValid(t)
     } yield {
       PositionError(t.firstToken.offset)
     }
@@ -38,8 +37,18 @@ class DeprecatedJavaChecker extends ScalariformChecker {
     it
   }
 
-  private def isDeprecated(t: ParserAnnotation) = {
+  def isValid(t: ParserAnnotation): Boolean = {
     val text = t.annotationType.tokens.foldLeft("")((x, y) => x + y.text)
-    t.annotationType.tokens.nonEmpty && deprecatedTokens.contains(text)
+    t.annotationType.tokens.nonEmpty && invalidTokens.contains(text)
   }
+}
+
+class DeprecatedJavaChecker extends JavaAnnotationChecker {
+  val errorKey = "deprecated.java"
+  val invalidTokens = List("Deprecated", "java.lang.Deprecated")
+}
+
+class OverrideJavaChecker extends JavaAnnotationChecker {
+  val errorKey = "override.java"
+  val invalidTokens = List("Override", "java.lang.Override")
 }

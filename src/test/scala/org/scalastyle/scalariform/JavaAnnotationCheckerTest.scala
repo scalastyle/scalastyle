@@ -20,8 +20,6 @@ import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 
-// scalastyle:off magic.number
-
 class DeprecatedJavaCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "deprecated.java"
   val classUnderTest = classOf[DeprecatedJavaChecker]
@@ -49,5 +47,28 @@ class OK {
 """
 
     assertErrors(List(columnError(5, 2), columnError(8, 2), columnError(11, 2), columnError(14, 2)), source)
+  }
+}
+
+class OverrideJavaCheckerTest extends AssertionsForJUnit with CheckerTest {
+  val key = "override.java"
+  val classUnderTest = classOf[OverrideJavaChecker]
+
+  @Test def testClassOK(): Unit = {
+    val source = """
+package foobar
+
+class FooBar {
+  @Override
+  def fun() = 1
+
+  @java.lang.Override
+  def fun2() = 2
+
+  override def fun3() = 3
+}
+"""
+
+    assertErrors(List(columnError(5, 2), columnError(8, 2)), source)
   }
 }
