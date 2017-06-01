@@ -897,6 +897,7 @@ To bring consistency with how comments should be formatted, leave a space right 
       <parameters>
         <parameter name="ignoreRegex">(.*Spec$)|(.*SpecIT$)</parameter>
         <parameter name="ignoreTokenTypes">PatDefOrDcl,TypeDefOrDcl,FunDefOrDcl,TmplDef</parameter>
+        <parameter name="ignoreOverride" type="boolean" default="false" />
       </parameters>
     </check>
  ]]>

@@ -385,5 +385,19 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     }
   }
 
+  @Test def ignoreOverridden(): Unit = {
+    val source =
+      """/***/
+        |class c {
+        |  override def f() = {}
+        |  override val v = 1
+        |}""".stripMargin
+
+    assertErrors(List.empty, source,
+      Map("ignoreOverride" -> "true"))
+    assertErrors(List(lineError(3, List(Missing)), lineError(4, List(Missing))), source,
+      Map("ignoreOverride" -> "false"))
+  }
+
 
 }
