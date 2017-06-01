@@ -27,6 +27,7 @@ import _root_.scalariform.lexer.HiddenTokens
 import _root_.scalariform.lexer.NoHiddenTokens
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens.CLASS
+import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.parser.AccessModifier
 import _root_.scalariform.parser.AstNode
 import _root_.scalariform.parser.FullDefOrDcl
@@ -135,24 +136,46 @@ class ScalaDocChecker extends CombinedChecker {
 
   // parse the type parameters and report errors for the parameters (constructor or method)
   private def tparamErrors(line: Int, tparamClausesOpt: Option[TypeParamClause])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
-    def tparams(xs: List[Token]): List[String] = xs match {
-      // [@foo A, @bar(b) B]
-      case Token(_, "@", _, _)::Token(_, annotation, _, _)::
-        Token(tokenType, paramName, _, _)::t  if tokenType.name == "VARID"   => paramName :: tparams(t)
-      // [A, B]
-      case Token(tokenType, paramName, _, _)::t if tokenType.name == "VARID" => paramName :: tparams(t)
-      // any other token
-      case _::t => tparams(t)
-      case Nil  => Nil
-    }
+    def tparams(xs: List[Token], bracketDepth: Int): List[String] =
+      if (bracketDepth > 1)
+        //skip nested type params
+        xs match {
+          case Token(Tokens.RBRACKET, _, _, _) :: t => tparams(t, bracketDepth - 1)
+          case _ :: t => tparams(t, bracketDepth)
+          case Nil => Nil
+        }
+      else
+        xs match {
+          // [... @foo A ...]
+          case Token(Tokens.AT, _, _, _) :: Token(Tokens.VARID, _, _, _) :: Token(Tokens.VARID, paramName, _, _) :: t =>
+            paramName :: tparams(t, bracketDepth)
+          // [... @foo(...) A ...]
+          case Token(Tokens.RPAREN, _, _, _) :: Token(Tokens.VARID, paramName, _, _) :: t =>
+            paramName :: tparams(t, bracketDepth)
+          // [..., A ...]
+          case Token(Tokens.COMMA, _, _, _) :: Token(Tokens.VARID, paramName, _, _) :: t =>
+            paramName :: tparams(t, bracketDepth)
+          // [A ...]
+          case Token(Tokens.LBRACKET, _, _, _) :: Token(Tokens.VARID, paramName, _, _) :: t if bracketDepth == 0 =>
+            paramName :: tparams(t, bracketDepth + 1)
+          // [...]
+          case Token(Tokens.LBRACKET, _, _, _) :: t =>
+            tparams(t, bracketDepth + 1)
+          // any other token
+          case _ :: t => tparams(t, bracketDepth)
+          case Nil => Nil
+        }
 
-    val tparamNames = tparamClausesOpt.map(tc => tparams(tc.tokens)).getOrElse(Nil)
+    val tparamNames = tparamClausesOpt.map(tc => tparams(tc.tokens, 0)).getOrElse(Nil)
 
     if (tparamNames.size != scalaDoc.typeParams.size) {
       // bad param sizes
       List(LineError(line, List(MalformedTypeParams)))
     } else {
-      if (!scalaDoc.typeParams.forall(tp => tparamNames.contains(tp.name))) List(LineError(line, List(MalformedTypeParams))) else Nil
+      if (!scalaDoc.typeParams.forall(tp => tparamNames.contains(tp.name)))
+        List(LineError(line, List(MalformedTypeParams)))
+      else
+        Nil
     }
   }
 
