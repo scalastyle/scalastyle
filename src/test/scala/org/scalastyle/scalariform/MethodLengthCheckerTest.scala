@@ -61,4 +61,101 @@ class F1() {
 
     assertErrors(List(columnError(5, 6, List("7"))), source, Map("maxLength" -> "7"))
   }
+
+  @Test def testIgnoreComments(): Unit = {
+    val source =
+      """
+package foobar
+
+class F2() {
+  def method1() = {
+    1
+    2
+    /** (3)
+     *  (4)
+     */ (5)
+    3   (6)
+    4   (7)
+    5   (8)
+  }
+  def method2() = {
+    // (1)
+    1  (2)
+    2  (3)
+    // (4)
+    // (5)
+    3  (6)
+    4  (7)
+    5  (8)
+  }
+}
+"""
+
+    assertErrors(List(), source, Map("maxLength" -> "5", "ignoreComments" -> "true"))
+  }
+
+  @Test def testNotIgnoreComments(): Unit = {
+    val source =
+      """
+package foobar
+
+class F2() {
+  def method1() = {
+    1
+    2
+    /** (3)
+     *  (4)
+     */ (5)
+    3   (6)
+  }
+  def method2() = {
+    // (1)
+    1  (2)
+    2  (3)
+    // (4)
+    // (5)
+    3  (6)
+  }
+}
+"""
+
+    assertErrors(
+      List(columnError(5, 6, List("5")), columnError(13, 6, List("5"))),
+      source,
+      Map("maxLength" -> "5", "ignoreComments" -> "false")
+    )
+  }
+
+
+  @Test def testIgnoreCommentsComplicated(): Unit = {
+    val source = """
+class F3() {
+  def method1() = {
+    1 //
+    (2) /*  */
+    2
+    3
+    (4) /*
+         *  (5)
+         */ (6)
+    4 (7)
+    5 (8)
+  }
+  def method2() = {
+    // /* (1)
+    1     (2)
+    2     (3)
+    3     (5)
+    4     (6)
+    5     (7)
+    6     (8)
+  }
+}
+"""
+    assertErrors(
+      List(columnError(14, 6, List("5"))),
+      source,
+      Map("maxLength" -> "5", "ignoreComments" -> "true")
+    )
+  }
 }
