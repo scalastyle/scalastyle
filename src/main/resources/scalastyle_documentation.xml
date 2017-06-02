@@ -899,6 +899,7 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
         <parameter name="ignoreRegex">(.*Spec$)|(.*SpecIT$)</parameter>
         <parameter name="ignoreTokenTypes">PatDefOrDcl,TypeDefOrDcl,FunDefOrDcl,TmplDef</parameter>
         <parameter name="ignoreOverride" type="boolean" default="false" />
+        <parameter name="indentStyle" type="string" default=""/>
       </parameters>
     </check>
  ]]>
