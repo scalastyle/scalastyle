@@ -20,20 +20,17 @@ libraryDependencies ++= Seq(
                         "com.google.guava" % "guava" % "17.0" % "test",
                         "org.scalatest" %% "scalatest" % "2.2.2" % "test")
 
-fork in Test := true
+fork in (Test, run) := true
 
 javaOptions in Test += "-Dfile.encoding=UTF-8"
 
-coverageHighlighting := {
-  if (scalaBinaryVersion.value == "2.10") false
-  else true
-}
+coverageHighlighting := scalaBinaryVersion.value != "2.10"
 
 publishMavenStyle := true
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots") 
+  if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
   else Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
@@ -41,8 +38,7 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"
 
 pomIncludeRepository := { _ => false }
 
-pomExtra := (
-  <url>http://www.scalastyle.org</url>
+pomExtra := <url>http://www.scalastyle.org</url>
   <scm>
     <url>scm:git:git@github.com:scalastyle/scalastyle.git</url>
     <connection>scm:git:git@github.com:scalastyle/scalastyle.git</connection>
@@ -53,7 +49,7 @@ pomExtra := (
       <name>Matthew Farwell</name>
       <url>http://www.farwell.co.uk</url>
     </developer>
-  </developers>)
+  </developers>
 
 assemblySettings
 
@@ -99,3 +95,14 @@ val dynamicPublish = Def.taskDyn {
 }
 
 ReleaseKeys.publishArtifactsAction := dynamicPublish.value
+
+val createRulesMarkdown = taskKey[Unit]("deploy to a server")
+
+val createRulesMarkdownDyn = Def.taskDyn {
+  val t = (target.value / "rules-dev.markdown").getAbsolutePath
+  Def.task {
+    (runMain in Compile).toTask(" org.scalastyle.util.CreateRulesMarkdown " + t).value
+  }
+}
+
+createRulesMarkdown := createRulesMarkdownDyn.value

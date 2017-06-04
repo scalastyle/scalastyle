@@ -190,7 +190,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
   </justification>
   <example-configuration>
    <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.MethodArgumentNamesChecker enabled="true">
+    <check level="warning" class="org.scalastyle.scalariform.MethodArgumentNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
         <parameter name="ignoreRegex">^$</parameter>
@@ -329,7 +329,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
   </justification>
   <example-configuration>
    <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.OverrideJavaChecker enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.OverrideJavaChecker" enabled="true" />
  ]]>
   </example-configuration>
  </check>
