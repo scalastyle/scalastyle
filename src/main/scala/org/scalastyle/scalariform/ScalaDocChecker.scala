@@ -58,11 +58,14 @@ class ScalaDocChecker extends CombinedChecker {
   val DefaultIgnoreRegex = "^$"
   val DefaultIgnoreTokenTypes = ""
   val DefaultIgnoreOverride = false
+  val DefaultIndentStyle = ""
 
   val skipPrivate = true
   val skipQualifiedPrivate = false
   val skipProtected = false
   val skipQualifiedProtected = false
+
+  import ScalaDocChecker._ // scalastyle:ignore underscore.import import.grouping
 
   override def verify(ast: CombinedAst): List[ScalastyleError] = {
     val tokens = ast.compilationUnit.tokens
@@ -70,6 +73,7 @@ class ScalaDocChecker extends CombinedChecker {
     val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex)
     val tokensToIgnore = getString("ignoreTokenTypes", DefaultIgnoreTokenTypes).split(",").filterNot(_.isEmpty).toSet
     val ignoreOverride = getBoolean("ignoreOverride", DefaultIgnoreOverride)
+    val indentStyle = getStyleFrom(getString("indentStyle", DefaultIndentStyle))
 
     assertTokensToIgnore(tokensToIgnore)
 
@@ -78,10 +82,8 @@ class ScalaDocChecker extends CombinedChecker {
     if (ignore)
       Nil
     else
-      localVisit(skip = false, HiddenTokens(Nil), ignoreOverride, ast.lines, tokensToIgnore)(ast.compilationUnit.immediateChildren.head)
+      localVisit(skip = false, HiddenTokens(Nil), ignoreOverride, indentStyle, ast.lines, tokensToIgnore)(ast.compilationUnit.immediateChildren.head)
   }
-
-  import ScalaDocChecker._ // scalastyle:ignore underscore.import import.grouping
 
   /*
    * Finds the ScalaDoc hidden in the ``token``, falling back on ``fallback`` if ``token``
@@ -102,10 +104,20 @@ class ScalaDocChecker extends CombinedChecker {
    * finds its way to us here in ``fallback``.
    */
   private def findScalaDoc(token: Token, fallback: HiddenTokens): Option[ScalaDoc] = {
-    def toScalaDoc(ht: HiddenTokens): Option[ScalaDoc] = ht.rawTokens.find(_.isScalaDocComment).map(ScalaDoc.apply)
+    def toScalaDoc(ht: HiddenTokens): Option[ScalaDoc] = ht.rawTokens.find(_.isScalaDocComment).map(commentToken => {
+      val commentOffset = HiddenTokens(ht.tokens.takeWhile(_.token != commentToken))
+          .rawText.split("\n").lastOption.fold(0)(_.length)
+      ScalaDoc.apply(commentToken, commentOffset)
+    })
 
     toScalaDoc(token.associatedWhitespaceAndComments).orElse(toScalaDoc(fallback))
   }
+
+  private def indentErrors(line: Int, style: DocIndentStyle)(scalaDoc: ScalaDoc): List[ScalastyleError] =
+    if (style == AnyDocStyle || style == scalaDoc.indentStyle)
+      Nil
+    else
+      List(LineError(line, List(InvalidDocStyle)))
 
   // parse the parameters and report errors for the parameters (constructor or method)
   private def paramErrors(line: Int, paramClausesOpt: Option[ParamClauses])(scalaDoc: ScalaDoc): List[ScalastyleError] = {
@@ -199,7 +211,8 @@ class ScalaDocChecker extends CombinedChecker {
    *
    * we do not bother descending down any further
    */
-  private def localVisit(skip: Boolean, fallback: HiddenTokens, ignoreOverride: Boolean, lines: Lines, tokensToIgnore: Set[String])(ast: Any): List[ScalastyleError] = {
+  private def localVisit(skip: Boolean, fallback: HiddenTokens, ignoreOverride: Boolean,
+      indentStyle: DocIndentStyle, lines: Lines, tokensToIgnore: Set[String])(ast: Any): List[ScalastyleError] = {
 
     def shouldSkip(node: AstNode) = skip || tokensToIgnore.contains(node.getClass.getSimpleName)
 
@@ -229,7 +242,7 @@ class ScalaDocChecker extends CombinedChecker {
         } yield comment
 
         // descend
-        visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), ignoreOverride, lines, tokensToIgnore))
+        visit(t, localVisit(skip, HiddenTokens(fallback.tokens ++ scalaDocs), ignoreOverride, indentStyle, lines, tokensToIgnore))
       case t: TmplDef =>
         // trait Foo, trait Foo[A];
         // class Foo, class Foo[A](a: A);
@@ -242,11 +255,12 @@ class ScalaDocChecker extends CombinedChecker {
         else findScalaDoc(t.firstToken, fallback).
           map { scalaDoc =>
             paramErrors(line, t.paramClausesOpt)(scalaDoc) ++
-              tparamErrors(line, t.typeParamClauseOpt)(scalaDoc)
+              tparamErrors(line, t.typeParamClauseOpt)(scalaDoc) ++
+              indentErrors(line, indentStyle)(scalaDoc)
           }.getOrElse(List(LineError(line, List(Missing))))
 
         // and we descend, because we're interested in seeing members of the types
-        errors ++ visit(t, localVisit(skip, NoHiddenTokens, ignoreOverride, lines, tokensToIgnore))
+        errors ++ visit(t, localVisit(skip, NoHiddenTokens, ignoreOverride, indentStyle, lines, tokensToIgnore))
       case t: FunDefOrDcl =>
         // def foo[A, B](a: Int): B = ...
         val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
@@ -257,7 +271,8 @@ class ScalaDocChecker extends CombinedChecker {
           map { scalaDoc =>
             paramErrors(line, Some(t.paramClauses))(scalaDoc) ++
               tparamErrors(line, t.typeParamClauseOpt)(scalaDoc) ++
-              returnErrors(line, t.returnTypeOpt)(scalaDoc)
+              returnErrors(line, t.returnTypeOpt)(scalaDoc) ++
+              indentErrors(line, indentStyle)(scalaDoc)
           }.
           getOrElse(List(LineError(line, List(Missing))))
 
@@ -267,10 +282,10 @@ class ScalaDocChecker extends CombinedChecker {
         // type Foo = ...
         val (_, line) = lines.findLineAndIndex(t.firstToken.offset).get
 
-        // error is non-existence
+        // no params here
         val errors = if (shouldSkip(t)) Nil
         else findScalaDoc(t.firstToken, fallback).
-          map(_ => Nil).
+          map(scalaDoc => indentErrors(line, indentStyle)(scalaDoc)).
           getOrElse(List(LineError(line, List(Missing))))
 
         // we don't descend any further
@@ -282,20 +297,20 @@ class ScalaDocChecker extends CombinedChecker {
         val (_, line) = lines.findLineAndIndex(t.valOrVarToken.offset).get
         val errors = if (shouldSkip(t)) Nil
         else findScalaDoc(t.firstToken, fallback).
-          map(_ => Nil).
+          map(scalaDoc => indentErrors(line, indentStyle)(scalaDoc)).
           getOrElse(List(LineError(line, List(Missing))))
         // we don't descend any further
         errors
 
       case t: StatSeq =>
-        localVisit(skip, fallback, ignoreOverride, lines, tokensToIgnore)(t.firstStatOpt) ++ (
+        localVisit(skip, fallback, ignoreOverride, indentStyle, lines, tokensToIgnore)(t.firstStatOpt) ++ (
           for (statOpt <- t.otherStats)
-            yield localVisit(skip, statOpt._1.associatedWhitespaceAndComments, ignoreOverride, lines, tokensToIgnore)(statOpt._2)
+            yield localVisit(skip, statOpt._1.associatedWhitespaceAndComments, ignoreOverride, indentStyle, lines, tokensToIgnore)(statOpt._2)
           ).flatten
 
       case t: Any =>
         // anything else, we descend (unless we stopped above)
-        visit(t, localVisit(skip, fallback, ignoreOverride, lines, tokensToIgnore))
+        visit(t, localVisit(skip, fallback, ignoreOverride, indentStyle, lines, tokensToIgnore))
     }
   }
 
@@ -326,6 +341,19 @@ object ScalaDocChecker {
   def emptyParam(name: String): String = "Missing text for @param " + name
   val MalformedTypeParams = "Malformed @tparams"
   val MalformedReturn = "Malformed @return"
+  val InvalidDocStyle = "Invalid doc style"
+
+  sealed trait DocIndentStyle
+  object ScalaDocStyle extends DocIndentStyle
+  object JavaDocStyle extends DocIndentStyle
+  object AnyDocStyle extends DocIndentStyle
+  object UndefinedDocStyle extends DocIndentStyle
+
+  def getStyleFrom(name: String): DocIndentStyle = name match {
+    case "scaladoc" => ScalaDocStyle
+    case "javadoc" => JavaDocStyle
+    case _ => AnyDocStyle
+  }
 
   /**
    * Companion for the ScalaDoc object that parses its text to pick up its elements
@@ -351,10 +379,36 @@ object ScalaDocChecker {
     /**
      * Take the ``raw`` and parse an instance of ``ScalaDoc``
      * @param raw the token containing the ScalaDoc
+     * @param offset column number of scaladoc's first string
      * @return the parsed instance
      */
-    def apply(raw: Token): ScalaDoc = {
-      val lines = raw.rawText.split("\\n").toList.flatMap(x => x.trim match {
+    def apply(raw: Token, offset: Int): ScalaDoc = {
+      val strings = raw.rawText.split("\\n").toList
+
+      val indentStyle = {
+        def getStyle(xs: List[String], style: DocIndentStyle): DocIndentStyle = xs match {
+          case x :: tail =>
+            val prefixSizeDiff = if (x.trim.head == '*') x.substring(0, x.indexOf("*")).length - offset else -1
+            val lineStyle = prefixSizeDiff match {
+              case 1 => JavaDocStyle
+              case 2 => ScalaDocStyle
+              case _ => AnyDocStyle
+            }
+            style match {
+              case ScalaDocStyle | JavaDocStyle =>
+                if (lineStyle == style) getStyle(tail, style) else AnyDocStyle
+              case AnyDocStyle =>
+                AnyDocStyle
+              case UndefinedDocStyle =>
+                getStyle(tail, lineStyle)
+            }
+          case Nil => if (style == UndefinedDocStyle) AnyDocStyle else style
+        }
+
+        getStyle(strings.tail, UndefinedDocStyle)
+      }
+
+      val lines = strings.flatMap(x => x.trim match {
         case TagRegex(tag, ref, rest) => Some(TagSclaDocLine(tag, ref, rest))
         case "/**"                    => None
         case "*/"                     => None
@@ -373,7 +427,7 @@ object ScalaDocChecker {
       val typeParams = combineScalaDocFor(lines, "tparam", ScalaDocParameter)
       val returns = combineScalaDocFor(lines, "return", _ + _).headOption
 
-      ScalaDoc(raw.rawText, params, typeParams, returns, None)
+      ScalaDoc(raw.rawText, params, typeParams, returns, None, indentStyle)
     }
   }
 
@@ -391,8 +445,9 @@ object ScalaDocChecker {
    * @param typeParams the type parameters
    * @param returns the returns clause, if present
    * @param throws the throws clause, if present
+   * @param indentStyle doc indent style
    */
   private case class ScalaDoc(text: String, params: List[ScalaDocParameter], typeParams: List[ScalaDocParameter],
-                      returns: Option[String], throws: Option[String])
+                      returns: Option[String], throws: Option[String], indentStyle: DocIndentStyle)
 }
 
