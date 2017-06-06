@@ -20,6 +20,8 @@ import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 
+// scalastyle:off magic.number
+
 class NullCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "null"
   val classUnderTest = classOf[NullChecker]
