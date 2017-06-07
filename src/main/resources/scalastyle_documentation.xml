@@ -997,11 +997,27 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
 
  <check id="empty.interpolated.strings">
   <justification>
-   Empty interpolated strings are harder to read and not nessescary.
+   Empty interpolated strings are harder to read and not necessary.
   </justification>
   <example-configuration>
    <![CDATA[
     <check class="org.scalastyle.scalariform.EmptyInterpolatedStringChecker" level="warning" enabled="true"/>
+   ]]>
+  </example-configuration>
+ </check>
+
+ <check id="named.argument">
+  <justification>
+   Nameless literals make code harder to understand (consider `updateEntity(1, true)` and `updateEntity(id = 1, enabled = true)`).
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.NamedArgumentChecker" enabled="true">
+      <parameters>
+        <parameter name="checkString">false</parameter>
+        <parameter name="ignoreMethod">^set.+$</parameter>
+      </parameters>
+    </check>
    ]]>
   </example-configuration>
  </check>

@@ -197,4 +197,10 @@
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.EmptyInterpolatedStringChecker" id="empty.interpolated.strings" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.NamedArgumentChecker" id="named.argument" defaultLevel="warning">
+        <parameters>
+            <parameter name="checkString" type="boolean" default="false" />
+            <parameter name="ignoreMethod" type="string" default="^set.+$" />
+        </parameters>
+    </checker>
 </scalastyle-definition>
