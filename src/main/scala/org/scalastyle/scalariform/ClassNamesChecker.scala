@@ -23,12 +23,13 @@ import org.scalastyle.ScalastyleError
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens.CLASS
 import _root_.scalariform.lexer.Tokens.DOT
+import _root_.scalariform.lexer.Tokens.LPAREN
 import _root_.scalariform.lexer.Tokens.OBJECT
 import _root_.scalariform.lexer.Tokens.PACKAGE
 import _root_.scalariform.lexer.Tokens.VAL
 import _root_.scalariform.lexer.Tokens.VAR
 import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.{CompilationUnit, Param, ParamClauses}
+import _root_.scalariform.parser.{ CompilationUnit, FullDefOrDcl, GeneralTokens, Param, ParamClauses, PatDefOrDcl, TemplateBody, TmplDef }
 import scala.util.matching.Regex
 
 // scalastyle:off multiple.string.literals
@@ -201,19 +202,40 @@ class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgum
 
 class FieldNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z0-9]*$"
+  val DefaultObjectFieldRegex = "^[A-Z][A-Za-z0-9]*$"
   val errorKey = "field.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val regexString = getString("regex", DefaultRegex)
-    val regex = regexString.r
+    val regex = getString("regex", DefaultRegex).r
+    val objectFieldRegex = getString("objectFieldRegex", DefaultObjectFieldRegex).r
 
-    val it = for {
-      List(left, right) <- ast.tokens.sliding(2)
-      if (left.tokenType == VAL || left.tokenType == VAR) && regex.findAllIn(right.text).isEmpty
-    } yield {
-      PositionError(right.offset, List(regexString))
-    }
+    localVisit(regex, objectFieldRegex, inValDef = false)(ast.immediateChildren.head)
+  }
 
-    it.toList
+  private def localVisit(regex: Regex, objectFieldRegex: Regex, inValDef: Boolean)
+                        (ast: Any): List[ScalastyleError] = ast match {
+    //object Name { ... }
+    case TmplDef(List(Token(OBJECT, _, _, _)), _, _, _, _, _, _, Some(TemplateBody(_, _, stats, _))) =>
+      //go through all first-level val declarations and apply objectFieldRegex
+      stats.immediateChildren.flatMap(stat => stat match {
+        case FullDefOrDcl(_, _, PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _)) if tokenType == VAL || tokenType == VAR =>
+          VisitorHelper.visit(expr, localVisit(objectFieldRegex, objectFieldRegex, inValDef = true))
+        case t =>
+          VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
+      })
+
+    //val ... =
+    case PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _) if tokenType == VAL || tokenType == VAR =>
+      VisitorHelper.visit(expr, localVisit(regex, objectFieldRegex, inValDef = true))
+
+    //destructuring start - val name(...
+    case GeneralTokens(List(Token(VARID, _, _, _), Token(LPAREN, _, _, _))) if inValDef => Nil
+
+    //actual name check
+    case GeneralTokens(List(Token(VARID, name, offset, _))) if inValDef && regex.findAllIn(name).isEmpty =>
+      List(PositionError(offset, List(regex.toString)))
+
+    case t =>
+      VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
   }
 }
