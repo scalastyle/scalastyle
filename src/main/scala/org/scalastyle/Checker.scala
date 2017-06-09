@@ -86,8 +86,10 @@ object Checker {
     // linefeed ("\n"), while Unix/Linux/BSD/etc. text files use just a linefeed. Other EOL sequences are currently
     // unsupported. Note that split removes the matching regular expression, so that the array of lines excludes EOL
     // sequences.
-    Lines(source.split("\r?\n").scanLeft(Line("", 0, 0)) {
-      case (pl, t) => Line(t, pl.end, pl.end + t.length + 1)
+    Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
+      case (pl, t) =>
+        val text = if (t.endsWith("\r")) t.init else t
+        Line(text, pl.end, pl.end + t.length + 1)
     }.tail, source.charAt(source.length()-1))
   }
 }
