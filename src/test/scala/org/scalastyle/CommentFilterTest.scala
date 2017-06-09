@@ -28,7 +28,7 @@ class CommentFilterTest extends AssertionsForJUnit {
 // scalastyle:off
       // another comment
 // scalastyle:on"""
-    val comments = new CheckerUtils().parseScalariform(text).get.comments
+    val comments = new CheckerUtils().parseScalariform(text).comments
 
     val tokens = CommentFilter.findScalastyleComments(comments)
 
@@ -142,7 +142,7 @@ class foobar {
   }
 
   private[this] def assertCommentFilter(expected: List[CommentFilter], text: String) = {
-    val hiddenTokenInfo = new CheckerUtils().parseScalariform(text).get.comments
+    val hiddenTokenInfo = new CheckerUtils().parseScalariform(text).comments
     val lines = Checker.parseLines(text)
     assertEquals(expected.mkString("\n"), CommentFilter.findCommentFilters(hiddenTokenInfo, lines).mkString("\n"))
   }
