@@ -86,4 +86,17 @@ class Foobar {
 """
     assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(8, 13)), source)
   }
+
+  @Test def testRaw(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  val foo = s"foo"
+  val bar = raw"test"
+}
+"""
+    assertErrors(List(columnError(5, 13)), source)
+
+  }
 }

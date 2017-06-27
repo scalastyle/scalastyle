@@ -24,11 +24,13 @@ import _root_.scalariform.parser.CompilationUnit
 class EmptyInterpolatedStringChecker extends ScalariformChecker {
   val errorKey = "empty.interpolated.strings"
   val interpolationRegex = """.*\$""".r
+  val typesSupportingVariables = Set("s", "f")
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val it = for {
         List(left, right) <- ast.tokens.sliding(2)
-        if left.tokenType == INTERPOLATION_ID && interpolationRegex.findFirstIn(right.text).isEmpty
+        if left.tokenType == INTERPOLATION_ID && typesSupportingVariables.contains(left.text) &&
+          interpolationRegex.findFirstIn(right.text).isEmpty
       } yield {
         PositionError(right.offset)
       }
