@@ -186,6 +186,7 @@
     <checker class="org.scalastyle.scalariform.FieldNamesChecker" id="field.name" defaultLevel="warning">
         <parameters>
             <parameter name="regex" type="string" default="^[a-z][A-Za-z0-9]*$" />
+            <parameter name="objectFieldRegex" type="string" default="^[A-Z][A-Za-z0-9]*$" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.XmlLiteralChecker" id="xml.literal" defaultLevel="warning"/>

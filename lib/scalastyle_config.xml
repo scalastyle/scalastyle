@@ -176,6 +176,7 @@
  <check class="org.scalastyle.scalariform.FieldNamesChecker" level="warning" enabled="false">
   <parameters>
    <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
+   <parameter name="objectFieldRegex"><![CDATA[^[A-Z][A-Za-z]*$]]></parameter>
   </parameters>
  </check>
  <check class="org.scalastyle.scalariform.TodoCommentChecker" level="warning" enabled="true">
