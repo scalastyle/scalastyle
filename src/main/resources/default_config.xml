@@ -150,4 +150,10 @@
    <parameter name="words"><![CDATA[TODO|FIXME]]></parameter>
   </parameters>
  </check>
+ <check level="warning" class="org.scalastyle.scalariform.NamedArgumentChecker" enabled="true">
+  <parameters>
+   <parameter name="checkString"><![CDATA[false]]></parameter>
+   <parameter name="ignoreMethod"><![CDATA[^set.+$]]></parameter>
+  </parameters>
+ </check>
 </scalastyle>
