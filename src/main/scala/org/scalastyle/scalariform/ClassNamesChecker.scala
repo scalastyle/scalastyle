@@ -35,15 +35,17 @@ import scala.util.matching.Regex
 
 class ClassNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
+  val DefaultMatchCondition = true
   val errorKey = "class.name"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    val matchCondition = getBoolean("match", DefaultMatchCondition)
 
     val it = for {
       List(left, right) <- ast.tokens.sliding(2)
-      if left.tokenType == CLASS && regex.findAllIn(right.text).isEmpty
+      if left.tokenType == CLASS && matchesBasedOnCondition(regex, right.text, matchCondition)
     } yield {
       PositionError(right.offset, List(regexString))
     }
@@ -54,15 +56,18 @@ class ClassNamesChecker extends ScalariformChecker {
 
 class ObjectNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
+  val DefaultMatchCondition = true
   val errorKey = "object.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    val matchCondition = getBoolean("match", DefaultMatchCondition)
 
     val it = for {
       List(left, middle, right) <- ast.tokens.sliding(3)
-      if left.tokenType != PACKAGE && middle.tokenType == OBJECT && regex.findAllIn(right.text).isEmpty
+      if left.tokenType != PACKAGE && middle.tokenType == OBJECT &&
+        matchesBasedOnCondition(regex, right.text, matchCondition)
     } yield {
       PositionError(right.offset, List(regexString))
     }
@@ -73,11 +78,13 @@ class ObjectNamesChecker extends ScalariformChecker {
 
 class PackageNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z]*$"
+  val DefaultMatchCondition = true
   val errorKey = "package.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    val matchCondition = getBoolean("match", DefaultMatchCondition)
 
     def isPartOfPackageName(t: Token): Boolean = (t.tokenType == DOT) || (t.tokenType == VARID)
 
@@ -102,7 +109,7 @@ class PackageNamesChecker extends ScalariformChecker {
 
     val it = for {
       pkgName <- packageNames.flatten
-      if regex.findAllIn(pkgName.text).isEmpty
+      if matchesBasedOnCondition(regex, pkgName.text, matchCondition)
     } yield {
       PositionError(pkgName.offset, List(regexString))
     }
@@ -113,15 +120,18 @@ class PackageNamesChecker extends ScalariformChecker {
 
 class PackageObjectNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z]*$"
+  val DefaultMatchCondition = true
   val errorKey = "package.object.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    val matchCondition = getBoolean("match", DefaultMatchCondition)
 
     val it = for {
       List(left, middle, right) <- ast.tokens.sliding(3)
-      if left.tokenType == PACKAGE && middle.tokenType == OBJECT && regex.findAllIn(right.text).isEmpty
+      if left.tokenType == PACKAGE && middle.tokenType == OBJECT &&
+        matchesBasedOnCondition(regex, right.text, matchCondition)
     } yield {
       PositionError(right.offset, List(regexString))
     }
@@ -130,7 +140,8 @@ class PackageObjectNamesChecker extends ScalariformChecker {
   }
 }
 
-case class MethodNamesCheckerParameters(regexString: String, ignoreRegexString: String, ignoreOverride: Boolean) {
+case class MethodNamesCheckerParameters(regexString: String, ignoreRegexString: String, ignoreOverride: Boolean,
+                                        matchCondition: Boolean) {
   private val regexR = regexString.r
   private val ignoreRegexR = ignoreRegexString.r
 
@@ -150,11 +161,12 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   private val DefaultRegex = "^[a-z][A-Za-z0-9]*(_=)?$"
   private val DefaultIgnoreRegex = "^$"
   private val DefaultIgnoreOverride = false
+  private val DefaultMatchCondition = true
   val errorKey = "method.name"
 
   protected def matchParameters(): MethodNamesCheckerParameters = {
     MethodNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex),
-        getBoolean("ignoreOverride", DefaultIgnoreOverride))
+        getBoolean("ignoreOverride", DefaultIgnoreOverride), getBoolean("match", DefaultMatchCondition))
   }
 
   protected def matches(t: FullDefOrDclVisit, p: MethodNamesCheckerParameters): Boolean = {
@@ -162,13 +174,14 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
       false
     } else {
       val name = t.funDefOrDcl.nameToken.text
-      !matches(p.regex(), name) && !matches(p.ignoreRegex(), name)
+      !matches(p.regex(), name, p.matchCondition) && !matches(p.ignoreRegex(), name, p.matchCondition)
     }
   }
 
   protected override def describeParameters(p: MethodNamesCheckerParameters) = List("" + p.regex)
 
-  private def matches(regex: Regex, s: String) = regex.findFirstIn(s).isDefined
+  private def matches(regex: Regex, s: String, matchCondition: Boolean) =
+    regex.findFirstIn(s).isDefined && matchCondition
 }
 
 class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgumentNamesCheckerParameters] {
@@ -202,14 +215,16 @@ class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgum
 class FieldNamesChecker extends ScalariformChecker {
   val DefaultRegex = "^[a-z][A-Za-z0-9]*$"
   val errorKey = "field.name"
+  val DefaultMatchCondition = true
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
+    val matchCondition = getBoolean("match", DefaultMatchCondition)
 
     val it = for {
       List(left, right) <- ast.tokens.sliding(2)
-      if (left.tokenType == VAL || left.tokenType == VAR) && regex.findAllIn(right.text).isEmpty
+      if (left.tokenType == VAL || left.tokenType == VAR) && matchesBasedOnCondition(regex, right.text, matchCondition)
     } yield {
       PositionError(right.offset, List(regexString))
     }

@@ -50,6 +50,18 @@ class foobar {
 
     assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(5, 8, List("^[A-Z][A-Za-z]*$"))), source)
   }
+
+  @Test def testNotMatch(): Unit = {
+    val source = """
+package foobar
+
+class FooUtil {
+  val one = 1
+}
+"""
+
+    assertErrors(List(columnError(4, 6, List("^*Util*$"))), source, Map("match" -> "false", "regex" -> "^*Util*$"))
+  }
 }
 
 class ObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
@@ -92,6 +104,18 @@ package object foobar {
 """
 
     assertErrors(List(columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
+  }
+
+  @Test def testNotMatch(): Unit = {
+    val source = """
+package foobar
+
+object FooUtil {
+  val foo = 1
+}
+"""
+
+    assertErrors(List(columnError(4, 7, List("^*Util*$"))), source, Map("match" -> "false", "regex" -> "^*Util*$"))
   }
 }
 
@@ -178,6 +202,13 @@ package object _foo
     assertErrors(List(), source)
   }
 
+  @Test def testNotMatch(): Unit = {
+    val source = """
+package foobar
+"""
+
+    assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$"))), source, Map("match" -> "false"))
+  }
 }
 
 class PackageObjectNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
@@ -221,6 +252,18 @@ object foobar {
 
     assertErrors(List(), source)
   }
+
+  @Test def testNotMatch(): Unit = {
+    val source = """
+package foobar
+
+package object foobar {
+  val foo = 1
+}
+"""
+
+    assertErrors(List(columnError(4, 15, List("^[a-z][A-Za-z]*$"))), source, Map("match" -> "false"))
+  }
 }
 
 class MethodNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
@@ -240,6 +283,18 @@ class Foobar {
 """
 
     assertErrors(List(defErr(6, 6)), source)
+  }
+
+  @Test def testNoErrors(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  def foo() = 1
+}
+"""
+
+    assertErrors(List(), source)
   }
 
   @Test def testNonDefault(): Unit = {
@@ -290,6 +345,18 @@ class Foobar extends Bar {
 """
 
     assertErrors(List(defErr(5, 6), defErr(6, 6), defErr(7, 6)), source, Map("ignoreOverride" -> "true"))
+  }
+
+  @Test def testNotMatch(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  def foo() = 1
+}
+"""
+
+    assertErrors(List(defErr(5, 6)), source, Map("match" -> "false"))
   }
 
   private def defErr(line: Int, column: Int) = columnError(line, column, List("^[a-z][A-Za-z0-9]*(_=)?$"))
@@ -401,5 +468,18 @@ class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
         columnError(9, 21, List("^[a-z][A-Za-z0-9]*$")),
         columnError(10, 21, List("^[a-z][A-Za-z0-9]*$"))),
       source)
+  }
+
+  @Test def testNotMatch(): Unit = {
+    val source =
+      """
+        |package foobar
+        |
+        |class foobar {
+        |  val myField1 = "one"
+        |}
+      """.stripMargin
+
+    assertErrors(List(columnError(5, 6, List("^[a-z][A-Za-z0-9]*$"))), source, Map("match" -> "false"))
   }
 }
