@@ -12,7 +12,8 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License
+// limitations under the License.
+
 
 package org.scalastyle.util
 
@@ -27,7 +28,10 @@ import org.scalastyle.DefinitionChecker
 import org.scalastyle.ScalastyleDefinition
 import org.scalastyle.XmlPrettyPrinter
 
-import scala.xml._
+import scala.xml.Elem
+import scala.xml.NodeSeq
+import scala.xml.PrettyPrinter
+import scala.xml.XML
 
 // scalastyle:off magic.number
 
@@ -126,7 +130,8 @@ object CreateRulesMarkdown {
     val config = ConfigFactory.load()
 
     val scalastyleDocumentation = (XML.load(sdocStream) \\ "check").map{
-      ns => (ns.attribute("id").get.text, Documentation(toText(ns \\ "justification"), toText(ns \\ "extra-description"), toList(ns \\ "example-configuration")))
+      ns => (ns.attribute("id").get.text, Documentation(toText(ns \\ "justification"),
+        toText(ns \\ "extra-description"), toList(ns \\ "example-configuration")))
     }.toMap
 
     val fileHeader = List("---",
@@ -150,7 +155,7 @@ object CreateRulesMarkdown {
   }
 
   private def generateToFile(file: String): Unit = {
-    println("writing to " + file)
+    println("writing to " + file) // scalastyle:ignore println
     val contents = generate().mkString("\n")
     Files.write(Paths.get(file), contents.getBytes(StandardCharsets.UTF_8))
   }
