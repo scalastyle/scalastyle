@@ -76,13 +76,14 @@ object CreateRulesMarkdown {
         "|[" + c.className + "](#" + id(c.className) + ")|" + desc + "|"
       })
 
-    List("""| Checker        | Description  |""", """| ------------- | ------------- |""") ::: cs
+    List("""| Checker | Description |""", """| ------------- | ------------- |""") ::: cs ::: List("")
   }
 
   private def checker(c: DefinitionChecker, doc: Documentation, config: Config): List[String] = {
     val desc = config.getString(c.id + ".description").replaceAll("''\\[''", "'\\\\['")
 
     val header = List(s"""<a name="${id(c.className)}" />""",
+    "",
     s"""### ${c.className} - ${desc}""",
     "",
     " * id - " + c.id,
