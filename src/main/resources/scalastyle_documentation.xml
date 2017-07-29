@@ -236,7 +236,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.file.NewlineAtEofChecker" enabled="true"/>
+    <check level="warning" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"/>
  ]]>
  </example-configuration>
  </check>
@@ -247,7 +247,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.file.NoNewlineAtEofChecker" enabled="true"/>
+    <check level="warning" class="org.scalastyle.file.NoNewLineAtEofChecker" enabled="true"/>
  ]]>
  </example-configuration>
  </check>
@@ -826,7 +826,7 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
  </justification>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.BeforePlusChecker" enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true" />
  ]]>
  </example-configuration>
  </check>
