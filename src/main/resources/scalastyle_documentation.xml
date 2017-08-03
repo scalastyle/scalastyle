@@ -892,6 +892,7 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
  </justification>
  <extra-description>
  Ignore tokens is a comma separated string that may include the following : PatDefOrDcl (variables), TmplDef (classes, traits), TypeDefOrDcl (type definitions), FunDefOrDcl (functions)
+ Supported indentation styles are "scaladoc" (for ScalaDoc-style comments, with two spaces before the asterisk), "javadoc" (for JavaDoc-style comments, with a single space before the asterisk) or "anydoc" to support any style (any number of spaces before the asterisk). For backwards compatibility, if left empty, "anydoc" will be assumed.
  </extra-description>
  <example-configuration>
  <![CDATA[
@@ -899,8 +900,8 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
       <parameters>
         <parameter name="ignoreRegex">(.*Spec$)|(.*SpecIT$)</parameter>
         <parameter name="ignoreTokenTypes">PatDefOrDcl,TypeDefOrDcl,FunDefOrDcl,TmplDef</parameter>
-        <parameter name="ignoreOverride" type="boolean" default="false" />
-        <parameter name="indentStyle" type="string" default=""/>
+        <parameter name="ignoreOverride">false</parameter>
+        <parameter name="indentStyle">anydoc</parameter>
       </parameters>
     </check>
  ]]>
