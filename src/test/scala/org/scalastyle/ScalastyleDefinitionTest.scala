@@ -87,7 +87,6 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
           val list = ns \\ "parameters" \\ "parameter"
           assert (list.size > 0, "if we have parameters, then we should have a list of parameter")
         }
-        println("params=" + params)
       }
     }
   }

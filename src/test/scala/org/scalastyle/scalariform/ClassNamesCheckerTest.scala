@@ -418,6 +418,24 @@ class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
       columnError(2, 18, List("^[a-z][A-Za-z0-9]*$"))), badSource)
   }
 
+  @Test def testDestructuringWithTypesOK(): Unit = {
+    val source =
+      """val (foo: Foo, bar: Bar) = baz
+        |""".stripMargin
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testDestructuringWithTypesKO(): Unit = {
+    val source =
+      """val (BBB: Foo, AAA: Bar) = baz
+        |""".stripMargin
+
+    assertErrors(List(
+      columnError(1, 5, List("^[a-z][A-Za-z0-9]*$")),
+      columnError(1, 15, List("^[a-z][A-Za-z0-9]*$"))), source)
+  }
+
   @Test def testObjectConst(): Unit = {
     val source = """object O {
                    |  val Name = 1

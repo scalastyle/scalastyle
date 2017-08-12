@@ -29,8 +29,16 @@ import _root_.scalariform.lexer.Tokens.PACKAGE
 import _root_.scalariform.lexer.Tokens.VAL
 import _root_.scalariform.lexer.Tokens.VAR
 import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.{ CompilationUnit, FullDefOrDcl, GeneralTokens, Param, ParamClauses, PatDefOrDcl, TemplateBody, TmplDef }
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.FullDefOrDcl
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.Param
+import _root_.scalariform.parser.ParamClauses
+import _root_.scalariform.parser.PatDefOrDcl
+import _root_.scalariform.parser.TemplateBody
+import _root_.scalariform.parser.TmplDef
 import scala.util.matching.Regex
+import scalariform.parser.TypeExprElement
 
 // scalastyle:off multiple.string.literals
 
@@ -213,29 +221,34 @@ class FieldNamesChecker extends ScalariformChecker {
   }
 
   private def localVisit(regex: Regex, objectFieldRegex: Regex, inValDef: Boolean)
-                        (ast: Any): List[ScalastyleError] = ast match {
-    //object Name { ... }
-    case TmplDef(List(Token(OBJECT, _, _, _)), _, _, _, _, _, _, Some(TemplateBody(_, _, stats, _))) =>
-      //go through all first-level val declarations and apply objectFieldRegex
-      stats.immediateChildren.flatMap(stat => stat match {
-        case FullDefOrDcl(_, _, PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _)) if tokenType == VAL || tokenType == VAR =>
-          VisitorHelper.visit(expr, localVisit(objectFieldRegex, objectFieldRegex, inValDef = true))
-        case t =>
-          VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
-      })
+                        (ast: Any): List[ScalastyleError] = {
+    ast match {
+      //object Name { ... }
+      case TmplDef(List(Token(OBJECT, _, _, _)), _, _, _, _, _, _, Some(TemplateBody(_, _, stats, _))) =>
+        //go through all first-level val declarations and apply objectFieldRegex
+        stats.immediateChildren.flatMap(stat => stat match {
+          case FullDefOrDcl(_, _, PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _)) if tokenType == VAL || tokenType == VAR =>
+            VisitorHelper.visit(expr, localVisit(objectFieldRegex, objectFieldRegex, inValDef = true))
+          case t =>
+            VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
+        })
 
-    //val ... =
-    case PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _) if tokenType == VAL || tokenType == VAR =>
-      VisitorHelper.visit(expr, localVisit(regex, objectFieldRegex, inValDef = true))
+      //val ... =
+      case PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _) if tokenType == VAL || tokenType == VAR =>
+        VisitorHelper.visit(expr, localVisit(regex, objectFieldRegex, inValDef = true))
 
-    //destructuring start - val name(...
-    case GeneralTokens(List(Token(VARID, _, _, _), Token(LPAREN, _, _, _))) if inValDef => Nil
+      // don't descend into type elements
+      case tee: TypeExprElement => Nil
 
-    //actual name check
-    case GeneralTokens(List(Token(VARID, name, offset, _))) if inValDef && regex.findAllIn(name).isEmpty =>
-      List(PositionError(offset, List(regex.toString)))
+      //destructuring start - val name(...
+      case GeneralTokens(List(Token(VARID, _, _, _), Token(LPAREN, _, _, _))) if inValDef => Nil
 
-    case t =>
-      VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
+      //actual name check
+      case GeneralTokens(List(Token(VARID, name, offset, _))) if inValDef && regex.findAllIn(name).isEmpty =>
+        List(PositionError(offset, List(regex.toString)))
+
+      case t: Any =>
+        VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
+    }
   }
 }
