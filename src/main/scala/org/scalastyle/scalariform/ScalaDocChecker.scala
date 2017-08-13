@@ -349,10 +349,11 @@ object ScalaDocChecker {
   object AnyDocStyle extends DocIndentStyle
   object UndefinedDocStyle extends DocIndentStyle
 
-  def getStyleFrom(name: String): DocIndentStyle = name match {
+  def getStyleFrom(name: String): DocIndentStyle = name.toLowerCase match {
     case "scaladoc" => ScalaDocStyle
     case "javadoc" => JavaDocStyle
-    case _ => AnyDocStyle
+    case "anydoc" | "" => AnyDocStyle
+    case _ => throw new RuntimeException(s"Unsupported ScalaDocChecker indentStyle: '$name'")
   }
 
   /**
