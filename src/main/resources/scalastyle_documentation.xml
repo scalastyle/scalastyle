@@ -22,9 +22,9 @@
  <![CDATA[
  <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
   <parameters>
-   <parameter name="maxLineLength" type="integer" default="100" />
-   <parameter name="tabSize" type="integer" default="2" />
-   <parameter name="ignoreImports" type="boolean" default="true" />
+   <parameter name="maxLineLength">100</parameter>
+   <parameter name="tabSize">2</parameter>
+   <parameter name="ignoreImports">true</parameter>
   </parameters>
  </check>
  ]]>
