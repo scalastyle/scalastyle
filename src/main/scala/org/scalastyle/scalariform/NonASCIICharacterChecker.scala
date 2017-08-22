@@ -16,7 +16,6 @@
 
 package org.scalastyle.scalariform
 
-
 import java.util.regex.Pattern
 
 import org.scalastyle.PositionError
@@ -28,13 +27,12 @@ import _root_.scalariform.parser.CompilationUnit
 
 class NonASCIICharacterChecker extends ScalariformChecker {
   val errorKey: String = "non.ascii.character.disallowed"
+  private val asciiPattern = Pattern.compile("""\p{ASCII}+""", Pattern.DOTALL)
 
   override def verify(ast: CompilationUnit): List[ScalastyleError] = {
     ast.tokens.filter(hasNonAsciiChars).map(x => PositionError(x.offset))
   }
 
   private def hasNonAsciiChars(x: Token) =
-    x.text.trim.nonEmpty && !Pattern.compile( """\p{ASCII}+""", Pattern.DOTALL)
-      .matcher(x.text.trim).matches()
-
+    x.rawText.trim.nonEmpty && !asciiPattern.matcher(x.rawText.trim).matches()
 }
