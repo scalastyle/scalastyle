@@ -92,6 +92,9 @@ object Checker {
         Line(text, pl.end, pl.end + t.length + 1)
     }.tail, source.charAt(source.length()-1))
   }
+
+  def isObject(s: String): Boolean = s == "java.lang.Object" || s == "Any" || s == "scala.Any" || s == "Object"
+  def isNotObject(s: String): Boolean = !isObject(s)
 }
 
 class CheckerUtils(classLoader: Option[ClassLoader] = None) {
@@ -236,10 +239,6 @@ trait Checker[A] {
   }
 
   def verify(ast: A): List[ScalastyleError]
-
-  protected def isObject(s: String): Boolean =
-    s == "java.lang.Object" || s == "Any" || s == "scala.Any" || s == "Object"
-  protected def isNotObject(s: String): Boolean = !isObject(s)
 }
 
 trait FileChecker extends Checker[Lines]

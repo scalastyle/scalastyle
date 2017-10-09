@@ -14,22 +14,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.scalastyle.scalariform
+package org.scalastyle
 
-import org.scalastyle.Checker
+import org.junit.Test
+import org.scalatest.junit.AssertionsForJUnit
 
-import scalariform.parser.AstNode
-import scalariform.parser.FunDefOrDcl
+class CheckerObjectTest extends AssertionsForJUnit {
+  @Test def testIsObject(): Unit = {
+    assert(Checker.isObject("Any") === true)
+    assert(Checker.isObject("scala.Any") === true)
+    assert(Checker.isObject("Object") === true)
+    assert(Checker.isObject("java.lang.Object") === true)
 
-class CovariantEqualsChecker extends AbstractMethodChecker {
-  val errorKey = "covariant.equals"
-
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    val equalsObject = t.subs.exists(matchFunDefOrDcl(_, isEqualsObject))
-    val equalsOther = t.subs.exists(matchFunDefOrDcl(_, isEqualsOther))
-
-    !equalsObject && equalsOther
+    assert(Checker.isNotObject("Foobar") === true)
   }
-
-  private def isEqualsOther(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(Checker.isNotObject) _)(t)
 }

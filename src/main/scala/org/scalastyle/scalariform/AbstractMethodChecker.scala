@@ -16,6 +16,7 @@
 
 package org.scalastyle.scalariform
 
+import org.scalastyle.Checker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
@@ -132,6 +133,6 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
 
   protected def singleParameter(fn: String => Boolean)(params: List[String]) = params.size == 1 && fn(params(0))
   protected def noParameter()(params: List[String]) = params.size == 0
-  protected def isEqualsObject(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(isObject) _)(t)
+  protected def isEqualsObject(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(Checker.isObject) _)(t)
 }
 
