@@ -39,8 +39,18 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List(), source)
   }
 
+  @Test def testStringOK(): Unit = {
+    val source = """
+                   |package foobar
+                   |// non-ascii in string via unicode escape - ok
+                   |class OK {
+                   |  val s = "%s"
+                   |}""".stripMargin.format("\\ud83c\\udf4e")
 
-  @Test def testClassNotOk(): Unit = {
+    assertErrors(List(), source)
+  }
+
+  @Test def testClassNotOK(): Unit = {
     val source = """
                    |package foobar
                    |// \u2190
@@ -49,6 +59,18 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
                    |  def `\u21d2` = "test"
                    |}
                    | """.stripMargin
+
     assertErrors(List(columnError(2, 14), columnError(5, 6), columnError(6, 6)), source)
+  }
+
+  @Test def testStringNotOK(): Unit = {
+    val source = """
+                   |package foobar
+                   |// non-ascii literal in string - not ok
+                   |class NotOK {
+                   |  val s = "\ud83c\udf4e"
+                   |}""".stripMargin
+
+    assertErrors(List(columnError(5, 10)), source)
   }
 }
