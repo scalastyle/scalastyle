@@ -22,17 +22,32 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.{Token, Tokens}
 import _root_.scalariform.parser.CompilationUnit
 
 class NonASCIICharacterChecker extends ScalariformChecker {
   val errorKey: String = "non.ascii.character.disallowed"
   private val asciiPattern = Pattern.compile("""\p{ASCII}+""", Pattern.DOTALL)
+  private val stringLiteralsPattern = Pattern.compile(
+    """[\p{Alnum}\p{Punct}\p{Sc}\p{Space}]+""", Pattern.UNICODE_CHARACTER_CLASS)
+
+  val defaultAllowStringLiterals = false
+  lazy val allowStringLiterals: Boolean =
+    getBoolean("allowStringLiterals", defaultAllowStringLiterals)
 
   override def verify(ast: CompilationUnit): List[ScalastyleError] = {
     ast.tokens.filter(hasNonAsciiChars).map(x => PositionError(x.offset))
   }
 
-  private def hasNonAsciiChars(x: Token) =
-    x.rawText.trim.nonEmpty && !asciiPattern.matcher(x.rawText.trim).matches()
+  private def hasNonAsciiChars(x: Token) = {
+    x.rawText.trim.nonEmpty &&
+      !validStringLiteral(x) &&
+      !asciiPattern.matcher(x.rawText.trim).matches
+  }
+
+  private def validStringLiteral(x: Token) = {
+    allowStringLiterals &&
+      x.tokenType == Tokens.STRING_LITERAL &&
+      stringLiteralsPattern.matcher(x.rawText.trim).matches
+  }
 }

@@ -26,7 +26,6 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
   override protected val key: String = "non.ascii.character.disallowed"
   override protected val classUnderTest = classOf[NonASCIICharacterChecker]
 
-
   @Test def testClassOK(): Unit = {
     val source = """
                    |package foobar
@@ -48,6 +47,17 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
                    |}""".stripMargin.format("\\ud83c\\udf4e")
 
     assertErrors(List(), source)
+  }
+
+  @Test def testNonAsciiScriptsOK(): Unit = {
+    val source = """
+                   |package foobar
+                   |// white listed chars in string literals - ok
+                   |class OK {
+                   |  val s = "olá, €5!"
+                   |}""".stripMargin
+
+    assertErrors(List(), source, Map("allowStringLiterals" -> "true"))
   }
 
   @Test def testClassNotOK(): Unit = {
@@ -72,5 +82,16 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
                    |}""".stripMargin
 
     assertErrors(List(columnError(5, 10)), source)
+  }
+
+  @Test def testNonAsciiScriptsNotOK(): Unit = {
+    val source = """
+                   |package foobar
+                   |// non-ascii chars in string literals - not ok
+                   |class OK {
+                   |  val s = "😊"
+                   |}""".stripMargin
+
+    assertErrors(List(columnError(5, 10)), source, Map("allowStringLiterals" -> "true"))
   }
 }
