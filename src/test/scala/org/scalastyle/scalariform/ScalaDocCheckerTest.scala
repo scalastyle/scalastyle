@@ -465,4 +465,30 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List.empty, source,
       Map("indentStyle" -> "javadoc"))
   }
+
+  @Test def indentImplicitDefScalaOrJavaDoc(): Unit = {
+    // refer: https://github.com/scalastyle/scalastyle/issues/277
+    val sourceScalaDoc =
+      """
+        | object X {
+        |   /**
+        |     *
+        |     */
+        |   implicit def test = 1
+        | }
+      """.stripMargin
+    assertErrors(List.empty, sourceScalaDoc, Map("indentStyle" -> "scaladoc"))
+
+    val sourceJavaDoc =
+      """
+        | object X {
+        |   /**
+        |    *
+        |    */
+        |   implicit def test = 1
+        | }
+      """.stripMargin
+
+    assertErrors(List.empty, sourceJavaDoc, Map("indentStyle" -> "javadoc"))
+  }
 }

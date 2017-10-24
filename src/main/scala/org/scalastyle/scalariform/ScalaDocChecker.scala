@@ -103,10 +103,9 @@ class ScalaDocChecker extends CombinedChecker {
    * ``FullDefOrDcl`` -> ``PatDefOrDcl``, with the ScalaDoc attached to the ``FulDefOrDcl``, which
    * finds its way to us here in ``fallback``.
    */
-  private def findScalaDoc(token: Token, fallback: HiddenTokens): Option[ScalaDoc] = {
+  private def findScalaDoc(token: Token, lines: Lines, fallback: HiddenTokens): Option[ScalaDoc] = {
     def toScalaDoc(ht: HiddenTokens): Option[ScalaDoc] = ht.rawTokens.find(_.isScalaDocComment).map(commentToken => {
-      val commentOffset = HiddenTokens(ht.tokens.takeWhile(_.token != commentToken))
-          .rawText.split("\n").lastOption.fold(0)(_.length)
+      val commentOffset = lines.toLineColumn(commentToken.offset).map(_.column).getOrElse(0)
       ScalaDoc.apply(commentToken, commentOffset)
     })
 
@@ -252,7 +251,7 @@ class ScalaDocChecker extends CombinedChecker {
 
         // we are checking parameters and type parameters
         val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
+        else findScalaDoc(t.firstToken, lines, fallback).
           map { scalaDoc =>
             paramErrors(line, t.paramClausesOpt)(scalaDoc) ++
               tparamErrors(line, t.typeParamClauseOpt)(scalaDoc) ++
@@ -267,7 +266,7 @@ class ScalaDocChecker extends CombinedChecker {
 
         // we are checking parameters, type parameters and returns
         val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
+        else findScalaDoc(t.firstToken, lines, fallback).
           map { scalaDoc =>
             paramErrors(line, Some(t.paramClauses))(scalaDoc) ++
               tparamErrors(line, t.typeParamClauseOpt)(scalaDoc) ++
@@ -284,7 +283,7 @@ class ScalaDocChecker extends CombinedChecker {
 
         // no params here
         val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
+        else findScalaDoc(t.firstToken, lines, fallback).
           map(scalaDoc => indentErrors(line, indentStyle)(scalaDoc)).
           getOrElse(List(LineError(line, List(Missing))))
 
@@ -296,7 +295,7 @@ class ScalaDocChecker extends CombinedChecker {
         // var a = ...
         val (_, line) = lines.findLineAndIndex(t.valOrVarToken.offset).get
         val errors = if (shouldSkip(t)) Nil
-        else findScalaDoc(t.firstToken, fallback).
+        else findScalaDoc(t.firstToken, lines, fallback).
           map(scalaDoc => indentErrors(line, indentStyle)(scalaDoc)).
           getOrElse(List(LineError(line, List(Missing))))
         // we don't descend any further
