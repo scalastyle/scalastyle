@@ -518,31 +518,35 @@ To bring consistency with how comments should be formatted, leave a space right 
 </example-configuration>
 
 </check>
-    <check id="non.ascii.character.disallowed">
-        <justification>
-            Scala allows unicode characters as operators and some editors misbehave when they see non-ascii character.
-            In a project collaborated by a community of developers. This check can be helpful in such situations.
+<check id="non.ascii.character.disallowed">
+  <justification>
+    Scala allows unicode characters as operators and some editors misbehave when they see non-ascii character.
+    In a project collaborated by a community of developers. This check can be helpful in such situations.
 
 
-            "value".match {
-            case "value" => println("matched")
-            ...
-            }
+    "value".match {
+    case "value" => println("matched")
+    ...
+    }
 
-            is preferred to
+    is preferred to
 
-            "value".match {
-            case "value" ⇒ println("matched")
-            ...
-            }
+    "value".match {
+    case "value" ⇒ println("matched")
+    ...
+    }
 
-            To fix it, replace the (unicode operator)⇒ with =>.
-        </justification>
-        <example-configuration>
-            <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true" />
-]]>
-        </example-configuration>
+    To fix it, replace the (unicode operator)⇒ with =>.
+  </justification>
+  <example-configuration>
+    <![CDATA[
+      <check level="warning" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true">
+        <parameters>
+         <parameter name="allowStringLiterals">true</parameter>
+        </parameters>
+      </check>
+    ]]>
+  </example-configuration>
 </check>
 
 <check id="header.matches">

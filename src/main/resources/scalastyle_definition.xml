@@ -175,7 +175,11 @@
     <checker class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" id="disallow.space.before.token" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" id="ensure.single.space.after.token" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker" id="ensure.single.space.before.token" defaultLevel="warning"/>
-    <checker class="org.scalastyle.scalariform.NonASCIICharacterChecker" id="non.ascii.character.disallowed" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.NonASCIICharacterChecker" id="non.ascii.character.disallowed" defaultLevel="warning">
+        <parameters>
+            <parameter name="allowStringLiterals" type="boolean" default="false"/>
+        </parameters>
+    </checker>
     <checker class="org.scalastyle.file.IndentationChecker" id="indentation" defaultLevel="warning">
         <parameters>
             <parameter name="tabSize" type="integer" default="2" />
