@@ -487,9 +487,18 @@ Note: If you intend to enable only if expressions in the format below, disable t
 
   To fix it, replace the () with {}. And then remove the ; at the end of the lines.
  </justification>
+ <extra-description>
+ The singleLineAllowed property allows for constructions of the type:
+
+    for (i &lt;- List(1,2,3)) println(i)
+ </extra-description>
  <example-configuration>
  <![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.ForBraceChecker" enabled="true" />
+    <check level="warning" class="org.scalastyle.scalariform.ForBraceChecker" enabled="true">
+      <parameters>
+        <parameter name="singleLineAllowed">true</parameter>
+      </parameters>
+    </check>
  ]]>
  </example-configuration>
  </check>

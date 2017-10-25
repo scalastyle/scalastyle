@@ -16,21 +16,36 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
+import org.scalastyle.{CombinedAst, CombinedChecker, Lines, PositionError, ScalastyleError}
 
 import _root_.scalariform.lexer.Tokens
-import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.ForExpr
 
-class ForBraceChecker extends ScalariformChecker {
+class ForBraceChecker extends CombinedChecker {
   val errorKey = "for.brace"
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  val defaultSingleLineAllowed = false
+  lazy val singleLineAllowed: Boolean = getBoolean("singleLineAllowed", defaultSingleLineAllowed)
+
+  final def verify(ast: CombinedAst): List[ScalastyleError] = {
     for {
-      t <- VisitorHelper.getAll[ForExpr](ast.immediateChildren.head)
-      if Tokens.LPAREN == t.lParenOrBrace.tokenType || Tokens.LPAREN == t.rParenOrBrace.tokenType
+      t <- VisitorHelper.getAll[ForExpr](ast.compilationUnit.immediateChildren.head)
+      if !validSingleLine(t, ast.lines) && (
+        Tokens.LPAREN == t.lParenOrBrace.tokenType ||
+        Tokens.LPAREN == t.rParenOrBrace.tokenType
+      )
     } yield PositionError(t.lParenOrBrace.offset)
+  }
+
+  private def validSingleLine(t: ForExpr, lines: Lines) = {
+    singleLineAllowed && {
+      val singleLine = for {
+        start <- lines.toLineColumn(t.forToken.offset)
+        end <- lines.toLineColumn(t.tokens.last.offset)
+        if start.line == end.line
+      } yield ()
+
+      singleLine.isDefined
+    }
   }
 }
