@@ -26,7 +26,7 @@ class ForBraceCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "for.brace"
   val classUnderTest = classOf[ForBraceChecker]
 
-  @Test def testKO(): Unit = {
+  @Test def testOK(): Unit = {
     val source = """
 package foobar
 
@@ -36,6 +36,47 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 6)), source)
+    assertErrors(List(), source, Map("singleLineAllowed" -> "true"))
+  }
+
+  @Test def testKOEnabled(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  for ( t <- List(1,2,3)) yield t
+  for (
+    t <- List(1,2,3)
+  ) yield t
+  for (
+    t <- List(1,2,3);
+    s <- List(4,5,6)
+  ) yield t++s
+  for { t <- List(1,2,3)} yield t
+}
+"""
+
+    assertErrors(List(columnError(6, 6), columnError(9, 6)),
+      source, Map("singleLineAllowed" -> "true"))
+  }
+
+  @Test def testKODisabled(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  for ( t <- List(1,2,3)) yield t
+  for (
+    t <- List(1,2,3)
+  ) yield t
+  for (
+    t <- List(1,2,3);
+    s <- List(4,5,6)
+  ) yield t++s
+  for { t <- List(1,2,3)} yield t
+}
+"""
+
+    assertErrors(List(columnError(5, 6), columnError(6, 6), columnError(9, 6)), source)
   }
 }
