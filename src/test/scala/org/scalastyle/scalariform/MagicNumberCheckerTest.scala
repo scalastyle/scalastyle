@@ -135,4 +135,19 @@ class Foobar {
 
     assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 20), columnError(9, 20)), source)
   }
+
+  @Test def testIgnoreParamShouldTolerateSpaces(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+
+  var fooOk: Long = 1
+  var fooFail: Long = 100L
+}
+                 """
+
+    assertErrors(List(), source, params = Map("ignore" -> "-1,0,1,2,100 "))
+  }
+
 }

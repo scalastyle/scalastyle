@@ -37,7 +37,7 @@ class MagicNumberChecker extends ScalariformChecker {
   val errorKey = "magic.number"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val ignores = getString("ignore", DefaultIgnore).split(",").toSet
+    val ignores = getString("ignore", DefaultIgnore).split(",").map(_.trim).toSet
 
     val intList = for {
       t <- localvisit(ast.immediateChildren.head)
