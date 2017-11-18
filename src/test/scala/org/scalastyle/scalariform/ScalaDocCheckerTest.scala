@@ -20,7 +20,7 @@ import org.junit.Test
 import org.scalastyle.file.CheckerTest
 import org.scalatest.junit.AssertionsForJUnit
 
-// scalastyle:off magic.number multiple.string.literals
+// scalastyle:off magic.number multiple.string.literals method.length
 
 class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "scaladoc"
