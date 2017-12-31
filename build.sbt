@@ -64,13 +64,13 @@ mainClass in (Compile, run) := Some("org.scalastyle.Main")
 
 buildInfoSettings
 
-sourceGenerators in Compile <+= buildInfo
+sourceGenerators in Compile += buildInfo
 
 buildInfoKeys := Seq[BuildInfoKey](organization, name, version, scalaVersion, sbtVersion)
 
 buildInfoPackage := "org.scalastyle"
 
-seq(filterSettings: _*)
+filterSettings
 
 if (System.getProperty("scalastyle.publish-ivy-only") == "true") {
   Seq()
