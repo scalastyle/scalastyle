@@ -16,7 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.ProcFunBody
+import scalariform.parser.{Expr, ExprFunBody, New, ProcFunBody}
 
 case class PublicMethodsHaveTypeParameters(ignoreOverride: Boolean)
 
@@ -32,6 +32,7 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMet
         // When funBodyOpt is None, it is assumed to be a declaration of a procedure.
         // Unit return type is not required.
         false
+      case Some(ExprFunBody(_, _, Expr(New(_, _) :: _))) => false
       case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
                            !isConstructor(t.fullDefOrDcl.defOrDcl) &&
                            !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDefOrValOrVar

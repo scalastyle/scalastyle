@@ -48,7 +48,7 @@ class OK {
 """
 
     assertErrors(List(columnError(5, 6), columnError(7, 6), columnError(13, 6),
-                        columnError(16, 6), columnError(17, 6)), source)
+                        columnError(16, 6)), source)
   }
 
   @Test def testProc(): Unit = {
@@ -56,6 +56,7 @@ class OK {
 class classOK {
   def proc1 {}
   def proc2(): Unit = {}
+  def proc3() = new scala.collection.mutable.HashMap()
 }
 
 abstract class abstractOK {
