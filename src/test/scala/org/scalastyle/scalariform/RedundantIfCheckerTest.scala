@@ -43,9 +43,16 @@ object Foobar {
       if (b1) true
       else if (b2) true
       else false
+  val b7 =
+      if (b1) {
+       true
+      }
+      else {
+       false
+      }
 }"""
 
-    assertErrors(List(columnError(6, 11), columnError(7, 11), columnError(9, 6), columnError(12, 20), columnError(15, 11)), source)
+    assertErrors(List(columnError(6, 11), columnError(7, 11), columnError(9, 6), columnError(12, 20), columnError(15, 11), columnError(18, 6)), source)
   }
 
   @Test def testOk(): Unit = {
@@ -59,6 +66,7 @@ object Foobar {
       if (b1) true
       else if (!b1 && b2) false
       else !b1
+  if (b1) { someStatement(); }
 }"""
 
     assertErrors(List(), source)
