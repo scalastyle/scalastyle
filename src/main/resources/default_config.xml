@@ -137,7 +137,7 @@
  <check level="warning" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true" />
  <check level="warning" class="org.scalastyle.scalariform.BlockImportChecker" enabled="false"/>
- <check level="warning" class="org.scalastyle.scalariform.ProcedureDefinitionChecker" enabled="true"/>
+ <check level="warning" class="org.scalastyle.scalariform.ProcedureDeclarationChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.ForBraceChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true"/>
  <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true">
