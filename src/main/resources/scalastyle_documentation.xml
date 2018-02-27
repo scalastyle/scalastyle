@@ -160,6 +160,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
       <parameters>
         <parameter name="maxLength">50</parameter>
         <parameter name="ignoreComments">false</parameter>
+        <parameter name="ignoreEmpty">false</parameter>
       </parameters>
     </check>
  ]]>
