@@ -18,6 +18,8 @@ package org.scalastyle
 
 import java.nio.charset.MalformedInputException
 
+import org.scalameta.logger
+
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.lexer.HiddenToken
 import _root_.scalariform.lexer.ScalaLexer
@@ -28,7 +30,10 @@ import scala.annotation.tailrec
 import scala.collection.JavaConversions.collectionAsScalaIterable
 import scala.collection.JavaConversions.seqAsJavaList
 import scala.io.Codec
-import scala.io.Source
+import scala.meta.Source
+import scala.meta.Tree
+import scala.meta._
+import org.scalameta.logger
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -108,12 +113,21 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
     ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), comments(tokens))
   }
 
+  def parseScalameta(source: String): Tree = {
+    val tree = source.parse[Source].get
+    logger.elem(tree.syntax)
+    logger.elem(tree.structure)
+
+    tree
+  }
+
   def verifySource[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
     if (source.isEmpty) {
       Nil
     } else {
       val lines = Checker.parseLines(source)
       val scalariformAst = parseScalariform(source)
+      val scalametaTree = parseScalameta(source)
 
       val commentFilters = if (configuration.commentFilter) {
         CommentFilter.findCommentFilters(scalariformAst.comments, lines)
@@ -125,6 +139,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
         case c: FileChecker => c.verify(file, c.level, lines, lines)
         case c: ScalariformChecker => c.verify(file, c.level, scalariformAst.ast, lines)
         case c: CombinedChecker => c.verify(file, c.level, CombinedAst(scalariformAst.ast, lines), lines)
+        case c: ScalametaChecker => c.verify(file, c.level, scalametaTree, lines)
         case _ => Nil
       }).filter(m => CommentFilter.filterApplies(m, commentFilters))
     }
@@ -154,7 +169,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
       } else {
         val encoding = encodings.head
         try {
-          Some(Source.fromFile(file)(encoding).mkString)
+          Some(scala.io.Source.fromFile(file)(encoding).mkString)
         } catch {
           case _: MalformedInputException =>
             // printxxln("caught MalFormedInputException with " + (if (encoding.isDefined) encoding.get else "default (" + codec.charSet + ")") + " encoding")
@@ -244,6 +259,8 @@ trait Checker[A] {
 trait FileChecker extends Checker[Lines]
 
 trait ScalariformChecker extends Checker[CompilationUnit]
+
+trait ScalametaChecker extends Checker[Tree]
 
 case class CombinedAst(compilationUnit: CompilationUnit, lines: Lines)
 

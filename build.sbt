@@ -4,21 +4,23 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-scalaVersion := "2.10.6"
+scalaVersion := "2.11.12"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
 
-crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
+crossScalaVersions := Seq("2.11.12", "2.12.2")
 
 description := "Scalastyle style checker for Scala"
 
 libraryDependencies ++= Seq(
                         "org.scalariform" %% "scalariform" % "0.2.0",
                         "com.typesafe" % "config" % "1.2.0",
+                        "org.scalameta" %% "scalameta" % "3.4.0",
                         "junit" % "junit" % "4.11" % "test",
                         "com.novocode" % "junit-interface" % "0.10" % "test",
                         "com.google.guava" % "guava" % "17.0" % "test",
-                        "org.scalatest" %% "scalatest" % "3.0.3" % "test")
+                        "org.scalatest" %% "scalatest" % "3.0.3" % "test"
+)
 
 fork in (Test, run) := true
 

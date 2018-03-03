@@ -16,17 +16,26 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.langmeta.inputs.Position
+import org.scalastyle.ColumnError
+import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.XmlExpr
+import scala.meta.Term
+import scala.meta.Tree
 
-class XmlLiteralChecker extends ScalariformChecker {
+class XmlLiteralChecker extends ScalametaChecker {
   val errorKey = "xml.literal"
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    VisitorHelper.getAll[XmlExpr](ast.immediateChildren(0)).map(t => PositionError(t.firstToken.offset))
+  final def verify(ast: Tree): List[ScalastyleError] = {
+    VisitorHelper.getAllSm[Term.Xml](ast.children.head).map(t => toError(t.pos))
+  }
+
+  private def toError(p: Position): ScalastyleError = {
+    p match {
+      case Position.None => ???
+      case r: Position.Range => ColumnError(r.startLine+1, r.startColumn)
+
+    }
   }
 }
