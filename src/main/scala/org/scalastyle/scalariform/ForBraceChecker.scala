@@ -30,15 +30,17 @@ class ForBraceChecker extends CombinedChecker {
   final def verify(ast: CombinedAst): List[ScalastyleError] = {
     for {
       t <- VisitorHelper.getAll[ForExpr](ast.compilationUnit.immediateChildren.head)
-      if !loop(t) && !validSingleLine(t, ast.lines) && (
+      if requireBraces(t, ast.lines) && (
         Tokens.LPAREN == t.lParenOrBrace.tokenType ||
         Tokens.LPAREN == t.rParenOrBrace.tokenType
       )
     } yield PositionError(t.lParenOrBrace.offset)
   }
 
-  private def loop(t: ForExpr) = {
-    t.yieldOption.isEmpty
+  private def requireBraces(t: ForExpr, lines: Lines) = {
+    t.yieldOption.nonEmpty && (
+      t.enumerators.tokens.exists(_.tokenType == Tokens.SEMI ) || !validSingleLine(t, lines)
+      )
   }
 
   private def validSingleLine(t: ForExpr, lines: Lines) = {

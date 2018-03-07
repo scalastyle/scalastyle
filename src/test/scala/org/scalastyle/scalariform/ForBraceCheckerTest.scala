@@ -82,4 +82,17 @@ class Foobar {
 
     assertErrors(List(columnError(5, 6), columnError(6, 6), columnError(9, 6)), source)
   }
+
+  @Test def testMultipleExpressions(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  for ( t <- List(1,2,3); y <- List(2,4,6) ) yield (t, y)
+}
+"""
+
+    assertErrors(List(columnError(5, 6)),
+      source, Map("singleLineAllowed" -> "true"))
+  }
 }
