@@ -33,6 +33,9 @@ package foobar
 class Foobar {
   for ( t <- List(1,2,3)) yield t
   for { t <- List(1,2,3)} yield t
+  for ( t <- List(1,2,3)) {
+    printf("(%d)", t)
+  }
 }
 """
 
