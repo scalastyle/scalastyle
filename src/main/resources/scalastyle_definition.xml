@@ -166,6 +166,7 @@
             <parameter name="singleLineAllowed" type="boolean" default="false"/>
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.ForLoopChecker" id="for.loop" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" id="space.after.comment.start" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ScalaDocChecker" id="scaladoc" defaultLevel="warning">
         <parameters>
