@@ -1036,4 +1036,15 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
    ]]>
   </example-configuration>
  </check>
+
+ <check id="while.brace">
+  <justification>
+   While cannot be used in a pure-functional manner, that's why it's recommended to never omit braces according to Scala Style Guide.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.WhileBraceChecker" enabled="true"/>
+   ]]>
+  </example-configuration>
+ </check>
 </scalastyle-documentation>
