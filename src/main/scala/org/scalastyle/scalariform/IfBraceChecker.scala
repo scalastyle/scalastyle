@@ -41,7 +41,7 @@ class IfBraceChecker extends CombinedChecker {
       t <- localvisit(ast.compilationUnit)
       f <- traverse(t, ast.lines, singleLineAllowed, doubleLineAllowed)
     } yield {
-      PositionError(f.position.get)
+      PositionError(f.position)
     }
 
     it
@@ -51,7 +51,7 @@ class IfBraceChecker extends CombinedChecker {
     def subs: List[T]
   }
 
-  case class IfExprClazz(t: IfExpr, position: Option[Int], body: List[IfExprClazz], elseClause: List[IfExprClazz]) extends ExprTree[IfExprClazz] {
+  case class IfExprClazz(t: IfExpr, position: Int, body: List[IfExprClazz], elseClause: List[IfExprClazz]) extends ExprTree[IfExprClazz] {
     def subs: List[IfExprClazz] = body ::: elseClause
   }
 
@@ -103,7 +103,7 @@ class IfBraceChecker extends CombinedChecker {
   }
 
   private def localvisit(ast: Any): List[IfExprClazz] = ast match {
-    case t: IfExpr => List(IfExprClazz(t, Some(t.ifToken.offset), localvisit(t.body), localvisit(t.elseClause)))
+    case t: IfExpr => List(IfExprClazz(t, t.ifToken.offset, localvisit(t.body), localvisit(t.elseClause)))
     case t: Any => visit(t, localvisit)
   }
 }
