@@ -30,6 +30,7 @@ class MethodLengthChecker extends CombinedChecker {
   val errorKey = "method.length"
   val DefaultMaximumLength = 50
   val DefaultIgnoreComments = false
+  val DefaultIgnoreEmpty = false
 
   private val SinglelineComment = "//"
   private val MultilineCommentsOpener = "/*"
@@ -40,11 +41,12 @@ class MethodLengthChecker extends CombinedChecker {
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val maxLength = getInt("maxLength", DefaultMaximumLength)
     val ignoreComments = getBoolean("ignoreComments", DefaultIgnoreComments)
+    val ignoreEmpty = getBoolean("ignoreEmpty", DefaultIgnoreEmpty)
 
     val it = for {
       t <- localvisit(ast.compilationUnit.immediateChildren.head)
       f <- traverse(t)
-      if matches(f, ast.lines, maxLength, ignoreComments)
+      if matches(f, ast.lines, maxLength, ignoreComments, ignoreEmpty)
     } yield {
       PositionError(t.position.get, List("" + maxLength))
     }
@@ -54,7 +56,7 @@ class MethodLengthChecker extends CombinedChecker {
 
   private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
 
-  private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int, ignoreComments: Boolean) = {
+  private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int, ignoreComments: Boolean, ignoreEmpty: Boolean) = {
     if (ignoreComments) {
       val count = for {
         (_, start) <- lines.findLineAndIndex(t.t.defToken.offset)
@@ -64,9 +66,11 @@ class MethodLengthChecker extends CombinedChecker {
         var multilineComment = false
 
         // do not count deftoken line and end block line
-        for (i <- (start + 1) until (end - 1)) {
-          val lineText = lines.lines(i).text.trim
-          if (lineText.startsWith(SinglelineComment)) {
+        for (i <- (start + 1) until end) {
+          val lineText = lines.lines(i - 1).text.trim     // zero based index, therefore "-1" when accessing the line
+          if (ignoreEmpty && lineText.isEmpty) {
+            // do nothing
+          } else if (lineText.startsWith(SinglelineComment)) {
             // do nothing
           } else {
             if (lineText.contains(MultilineCommentsOpener)) {
@@ -90,9 +94,15 @@ class MethodLengthChecker extends CombinedChecker {
       }
       count.get > maxLines
     } else {
-      val head = lines.toLineColumn(t.t.defToken.offset)
-      val tail = lines.toLineColumn(t.t.tokens.last.offset)
-      tail.get.line - head.get.line > maxLines
+      val head = lines.toLineColumn(t.t.defToken.offset).get.line + 1
+      val tail = lines.toLineColumn(t.t.tokens.last.offset).get.line - 1
+      val emptyLines = if (ignoreEmpty) {
+        lines.lines.slice(head - 1, tail)   // extract actual method content
+          .count(_.text.isEmpty)            // count empty lines
+      } else {
+        0
+      }
+      (tail - head + 1) - emptyLines > maxLines
     }
   }
 
