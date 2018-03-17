@@ -491,7 +491,7 @@ Note: If you intend to enable only if expressions in the format below, disable t
  <extra-description>
  The singleLineAllowed property allows for constructions of the type:
 
-    for (i &lt;- List(1,2,3)) println(i)
+    for (i &lt;- List(1,2,3)) yield i
  </extra-description>
  <example-configuration>
  <![CDATA[
@@ -503,6 +503,30 @@ Note: If you intend to enable only if expressions in the format below, disable t
  ]]>
  </example-configuration>
  </check>
+<check id="for.loop">
+<justification>
+   For-comprehensions which lack a yield clause is actually a loop rather than a functional comprehension and it is usually
+   more readable to string the generators together between parentheses rather than using the syntactically-confusing } { construct:
+
+   for (x &lt;- board.rows; y &lt;- board.files) {
+     printf("(%d, %d)", x, y)
+   }
+
+   is preferred to
+
+   for {
+     x &lt;- board.rows
+     y &lt;- board.files
+   } {
+     printf("(%d, %d)", x, y)
+   }
+</justification>
+<example-configuration>
+ <![CDATA[
+  <check level="warning" class="org.scalastyle.scalariform.ForLoopChecker" enabled="true" />
+]]>
+</example-configuration>
+</check>
 <check id="space.after.comment.start">
 <justification>
 To bring consistency with how comments should be formatted, leave a space right after the beginning of the comment.
