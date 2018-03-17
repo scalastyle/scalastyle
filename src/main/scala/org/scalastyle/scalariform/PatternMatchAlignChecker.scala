@@ -30,7 +30,7 @@ class PatternMatchAlignChecker extends CombinedChecker {
   val errorKey = "pattern.match.align"
 
   final def verify(ast: CombinedAst): List[ScalastyleError] = {
-    val allBlockExprs = getAllRecursive[BlockExpr](ast.compilationUnit)
+    val allBlockExprs = VisitorHelper.getAll[BlockExpr](ast.compilationUnit)
     val unaligned = allBlockExprs.filter(matches(_, ast.lines))
     unaligned.map { badBlock =>
       PositionError(badBlock.caseClausesOrStatSeq.left.get.caseClauses(1).casePattern.arrow.offset)

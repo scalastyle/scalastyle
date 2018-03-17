@@ -16,24 +16,30 @@
 
 package org.scalastyle.scalariform
 
+import org.scalastyle.{CombinedAst, PositionError, ScalariformChecker, ScalastyleError}
+import org.scalastyle.scalariform.VisitorHelper.getAll
+
 import scala.util.matching.Regex
 import scalariform.lexer.Tokens.LBRACE
 import scalariform.lexer.Tokens.RBRACE
-import scalariform.parser.AstNode
-import scalariform.parser.GeneralTokens
-import scalariform.parser.TypeParam
-import scalariform.parser.TypeParamClause
-import scalariform.parser.VarianceTypeElement
+import scalariform.parser._
 
-class EmptyClassChecker extends AbstractClassChecker {
+class EmptyClassChecker extends ScalariformChecker {
   val errorKey = "empty.class"
+
+  override def verify(ast: CompilationUnit): List[ScalastyleError] = {
+    for {
+      cls <- getAll[TmplDef](ast)
+      if matches(cls)
+    } yield PositionError(cls.name.offset)
+  }
 
   private def isEmptyBlock(ast: AstNode): Boolean = {
     ast.tokens.size == 2 && ast.tokens(0).tokenType == LBRACE && ast.tokens(1).tokenType == RBRACE
   }
 
-  def matches(t: TmplClazz): Boolean = {
-    t.t.templateBodyOption match {
+  def matches(t: TmplDef): Boolean = {
+    t.templateBodyOption match {
       case None => false
       case Some(tbo) => isEmptyBlock(tbo)
     }

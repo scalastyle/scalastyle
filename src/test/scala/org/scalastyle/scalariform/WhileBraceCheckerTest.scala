@@ -55,6 +55,22 @@ class Foobar {
     assertErrors(Nil, source)
   }
 
+  @Test def testOkMultiline2(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  var acc = 1
+  while (acc < 10)
+  {
+    acc += acc
+    acc -= 1
+  }
+}
+"""
+    assertErrors(Nil, source)
+  }
+
   @Test def testFail(): Unit = {
     val source = """
 package foobar
@@ -66,5 +82,20 @@ class Foobar {
 }
 """
     assertErrors(List(columnError(7, 4)), source)
+  }
+
+  @Test def testFail2(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  var acc = 1
+  while (acc < 10)
+    while (hhh > 4)
+      acc += acc
+
+}
+"""
+    assertErrors(List(columnError(7, 4), columnError(8, 6)), source)
   }
 }

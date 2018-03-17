@@ -39,7 +39,7 @@ object VisitorHelper {
   }
 
   protected[scalariform] def traverse[T <: TreeVisit[T]](t: T, matches: T => Boolean): List[T] = {
-    val l = t.subs.map(traverse(_, matches)).flatten
+    val l = t.subs.flatMap(traverse(_, matches))
     if (matches(t)) t :: l else l
   }
 
@@ -60,8 +60,8 @@ object VisitorHelper {
   }
 
   private[this] def myVisit[T <: AstNode, X](clazz: Class[T], fn: T => List[X])(ast: Any): List[X] = {
-    if (ast.getClass().equals(clazz)) {
-      fn(ast.asInstanceOf[T])
+    if (ast.getClass.equals(clazz)) {
+      fn(ast.asInstanceOf[T]) ::: visit(ast, myVisit(clazz, fn))
     } else {
       visit(ast, myVisit(clazz, fn))
     }
@@ -106,7 +106,7 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
   }
 
   private def traverse(t: BaseClazz[AstNode]): ListType = {
-    val l = t.subs.map(traverse(_)).flatten
+    val l = t.subs.flatMap(traverse)
     if (matches(t)) t :: l else l
   }
 
@@ -124,15 +124,15 @@ abstract class AbstractMethodChecker extends ScalariformChecker {
     case t: Any => visit(t, localvisit)
   }
 
-  protected def getParamTypes(pc: ParamClauses) = getParams(pc).map(p => typename(p.paramTypeOpt.get._2))
+  protected def getParamTypes(pc: ParamClauses): List[String] = getParams(pc).map(p => typename(p.paramTypeOpt.get._2))
 
-  protected def matchFunDefOrDcl(t: BaseClazz[AstNode], fn: FunDefOrDcl => Boolean) = t match { case f: FunDefOrDclClazz => fn(f.t); case _ => false }
+  protected def matchFunDefOrDcl(t: BaseClazz[AstNode], fn: FunDefOrDcl => Boolean): Boolean = t match { case f: FunDefOrDclClazz => fn(f.t); case _ => false }
 
-  protected def methodMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: FunDefOrDcl) =
+  protected def methodMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: FunDefOrDcl): Boolean =
     t.nameToken.text == name && paramTypesMatch(getParamTypes(t.paramClauses))
 
-  protected def singleParameter(fn: String => Boolean)(params: List[String]) = params.size == 1 && fn(params(0))
-  protected def noParameter()(params: List[String]) = params.size == 0
-  protected def isEqualsObject(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(Checker.isObject) _)(t)
+  protected def singleParameter(fn: String => Boolean)(params: List[String]): Boolean = params.size == 1 && fn(params(0))
+  protected def noParameter()(params: List[String]): Boolean = params.isEmpty
+  protected def isEqualsObject(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(Checker.isObject))(t)
 }
 
