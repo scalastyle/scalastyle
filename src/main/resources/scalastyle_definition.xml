@@ -212,4 +212,5 @@
             <parameter name="ignoreMethod" type="string" default="^set.+$" />
         </parameters>
     </checker>
+    <checker class="org.scalastyle.scalariform.WhileBraceChecker" id="while.brace" defaultLevel="warning"/>
 </scalastyle-definition>
