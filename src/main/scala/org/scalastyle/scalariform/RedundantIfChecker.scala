@@ -30,6 +30,8 @@ import _root_.scalariform.parser.ElseClause
 import _root_.scalariform.parser.Expr
 import _root_.scalariform.parser.GeneralTokens
 import _root_.scalariform.parser.IfExpr
+import _root_.scalariform.parser.BlockExpr
+import _root_.scalariform.parser.StatSeq
 
 class RedundantIfChecker extends CombinedChecker {
   val errorKey = "if.redundant"
@@ -54,12 +56,13 @@ class RedundantIfChecker extends CombinedChecker {
   }
   private def isBoolean(t: Expr): Boolean = t match {
     case Expr(List(GeneralTokens(List(a)))) => isBoolean(a)
+    case Expr(List(BlockExpr(_, Right(StatSeq(None, Some(Expr(List(GeneralTokens(List(a))))) , List())), _))) => isBoolean(a)
     case _ => false
   }
   private def isBoolean(t: Token): Boolean = Set(TRUE, FALSE).contains(t.tokenType)
 
   private def localvisit(ast: Any): List[IfExpr] = ast match {
-    case t: IfExpr if matches(t) => List(t)
+    case t: IfExpr => List(t) ++ localvisit(t.body) ++ localvisit(t.elseClause.map(_.elseBody))
     case t: Any => visit(t, localvisit)
   }
 }
