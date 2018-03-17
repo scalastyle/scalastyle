@@ -1072,4 +1072,15 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
    ]]>
   </example-configuration>
  </check>
+
+ <check id="disallow.case.brace">
+  <justification>
+   Braces aren't required in case clauses. They should be omitted according to Scala Style Guide.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check class="org.scalastyle.scalariform.CaseBraceChecker" level="warning" enabled="true"/>
+   ]]>
+  </example-configuration>
+ </check>
 </scalastyle-documentation>
