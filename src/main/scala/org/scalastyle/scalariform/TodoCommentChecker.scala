@@ -18,30 +18,29 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Tokens
+import scala.meta.tokens.Token
 
 /**
  * comment check for line comment style TODO or FIXME
  */
-class TodoCommentChecker extends CombinedChecker {
+class TodoCommentChecker extends CombinedMetaChecker {
   val errorKey = "todo.comment"
   val defaultWords = "TODO|FIXME"
 
-  def verify(ast: CombinedAst): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val words = getString("words", defaultWords)
     val split = words.split("\\|").map(Pattern.quote).mkString("|")
     val regex = ("""(?i)(//|/\*|/\*\*|\*)\s?(""" + split + """)(:?)\s+""").r
 
-    for {
-      t <- ast.compilationUnit.tokens
-      at <- t.associatedWhitespaceAndComments
-      if Tokens.COMMENTS.contains(at.token.tokenType)
-      if at.text.split("\n").exists(s => regex.findFirstIn(s).isDefined)
-    } yield PositionError(at.token.offset, List(words))
+    (for {
+      t <- ast.tree.tokens.tokens
+      if t.getClass == classOf[Token.Comment]
+      if t.text.split("\n").exists(s => regex.findFirstIn(s).isDefined)
+    } yield PositionError(t.start, List(words))).toList
   }
 }

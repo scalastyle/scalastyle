@@ -21,9 +21,9 @@ import scalariform.lexer.Tokens
 class ProcedureDeclarationChecker extends AbstractSingleMethodChecker[Unit] {
   val errorKey = "procedure.declaration"
 
-  protected def matchParameters() = Unit
+  protected def matchParameters(): Unit = Unit
 
-  protected def matches(t: FullDefOrDclVisit, p: Unit) = {
+  protected def matches(t: FullDefOrDclVisit, p: Unit): Boolean = {
     (t.funDefOrDcl.nameToken.text != "this") && (t.funDefOrDcl.funBodyOpt match {
       // match if we don't have a body, and there is no return type
       case None => t.funDefOrDcl.returnTypeOpt.isEmpty

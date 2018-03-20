@@ -16,8 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import org.langmeta.inputs.Position
-import org.scalastyle.ColumnError
 import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
 
@@ -28,14 +26,6 @@ class XmlLiteralChecker extends ScalametaChecker {
   val errorKey = "xml.literal"
 
   final def verify(ast: Tree): List[ScalastyleError] = {
-    VisitorHelper.getAllSm[Term.Xml](ast.children.head).map(t => toError(t.pos))
-  }
-
-  private def toError(p: Position): ScalastyleError = {
-    p match {
-      case Position.None => ???
-      case r: Position.Range => ColumnError(r.startLine+1, r.startColumn)
-
-    }
+    VisitorHelper.getAllSm[Term.Xml](ast.children.head).map(toError)
   }
 }

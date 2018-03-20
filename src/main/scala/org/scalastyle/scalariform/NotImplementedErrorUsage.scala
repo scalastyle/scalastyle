@@ -16,20 +16,19 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Tree
+import scala.meta.tokens.Token
 
-class NotImplementedErrorUsage extends ScalariformChecker {
-
+class NotImplementedErrorUsage extends ScalametaChecker {
   val errorKey = "not.implemented.error.usage"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] =
+  def verify(ast: Tree): Seq[ScalastyleError] = {
     for {
-      t <- ast.tokens
-      if t.tokenType == VARID && t.text == "???"
-    } yield PositionError(t.offset)
+      t <- getAllTokens[Token.Ident](ast)
+      if t.text == "???"
+    } yield toError(t)
+  }
 }

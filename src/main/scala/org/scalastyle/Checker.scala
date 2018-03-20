@@ -18,14 +18,14 @@ package org.scalastyle
 
 import java.nio.charset.MalformedInputException
 
-import org.scalameta.logger
-
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.lexer.HiddenToken
 import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.ScalaParser
+import org.langmeta.inputs.Position
+
 import scala.annotation.tailrec
 import scala.collection.JavaConversions.collectionAsScalaIterable
 import scala.collection.JavaConversions.seqAsJavaList
@@ -140,6 +140,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
         case c: ScalariformChecker => c.verify(file, c.level, scalariformAst.ast, lines)
         case c: CombinedChecker => c.verify(file, c.level, CombinedAst(scalariformAst.ast, lines), lines)
         case c: ScalametaChecker => c.verify(file, c.level, scalametaTree, lines)
+        case c: CombinedMetaChecker => c.verify(file, c.level, CombinedMeta(scalametaTree, lines), lines)
         case _ => Nil
       }).filter(m => CommentFilter.filterApplies(m, commentFilters))
     }
@@ -249,19 +250,42 @@ trait Checker[A] {
 
   def charsBetweenTokens(left: Token, right: Token): Int = right.offset - (left.offset + left.length)
 
-  def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] = {
+  def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): Seq[Message[T]] = {
     verify(ast).map(p => toStyleError(file, p, level, lines))
   }
 
-  def verify(ast: A): List[ScalastyleError]
+  def verify(ast: A): Seq[ScalastyleError]
 }
 
 trait FileChecker extends Checker[Lines]
 
 trait ScalariformChecker extends Checker[CompilationUnit]
 
-trait ScalametaChecker extends Checker[Tree]
+trait ScalametaChecker extends Checker[Tree] {
+  protected def toError(p: Position): ScalastyleError = {
+    p match {
+      case Position.None => ???
+      case r: Position.Range => ColumnError(r.startLine + 1, r.startColumn)
+    }
+  }
+
+  protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos)
+  protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos)
+
+  protected def getAllTokens[T <: scala.meta.tokens.Token](tree: Tree)(implicit manifest: Manifest[T]): Seq[scala.meta.tokens.Token] = {
+    for {
+      t <- tree.tokens.tokens
+      if t.getClass == manifest.runtimeClass
+    } yield t
+  }
+
+}
 
 case class CombinedAst(compilationUnit: CompilationUnit, lines: Lines)
 
 trait CombinedChecker extends Checker[CombinedAst]
+
+case class CombinedMeta(tree: Tree, lines: Lines)
+
+trait CombinedMetaChecker extends Checker[CombinedMeta]
+
