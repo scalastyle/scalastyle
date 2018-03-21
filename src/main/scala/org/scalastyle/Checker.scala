@@ -115,8 +115,8 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
 
   def parseScalameta(source: String): Tree = {
     val tree = source.parse[Source].get
-    logger.elem(tree.syntax)
-    logger.elem(tree.structure)
+    //logger.elem(tree.syntax)
+    //logger.elem(tree.structure)
 
     tree
   }
@@ -126,8 +126,8 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
       Nil
     } else {
       val lines = Checker.parseLines(source)
-      val scalariformAst = parseScalariform(source)
-      val scalametaTree = parseScalameta(source)
+      lazy val scalariformAst = parseScalariform(source)
+      lazy val scalametaTree = parseScalameta(source)
 
       val commentFilters = if (configuration.commentFilter) {
         CommentFilter.findCommentFilters(scalariformAst.comments, lines)

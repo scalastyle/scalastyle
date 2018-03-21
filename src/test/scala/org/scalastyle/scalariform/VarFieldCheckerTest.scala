@@ -31,7 +31,7 @@ class VarFieldCheckerTest extends AssertionsForJUnit with CheckerTest {
 class C1 {
   var f1 = 1
   val f2 = 1
-  var f3
+  var f3: Int = _
   def m1() = {
     var v1 = 1
     v1
@@ -49,7 +49,7 @@ class C1 {
     v4
   }
   def m5() = {
-    var v5, v6
+    var v5, v6: Int = _
     1
   }
 }

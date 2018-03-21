@@ -31,8 +31,6 @@ import _root_.scalariform.parser.Param
 import _root_.scalariform.parser.ParamClauses
 import _root_.scalariform.parser.TmplDef
 import _root_.scalariform.parser.Type
-import scala.meta.Ref
-import scala.meta.Source
 import scala.meta.Tree
 
 object VisitorHelper {
@@ -58,12 +56,6 @@ object VisitorHelper {
     myVisit[T, T](manifest.runtimeClass.asInstanceOf[Class[T]], fn)(ast)
   }
 
-  protected[scalariform] def getAllSm[T <: Tree](ast: Any)(implicit manifest: Manifest[T]): List[T] = {
-    def fn(t : T): List[T] = List[T](t)
-
-    mySmVisit[T, T](manifest.runtimeClass.asInstanceOf[Class[T]], fn)(ast)
-  }
-
   protected[scalariform] def visit[T <: AstNode, X](fn: T => List[X])(ast: Any)(implicit manifest: Manifest[T]): List[X] = {
     myVisit[T, X](manifest.runtimeClass.asInstanceOf[Class[T]], fn)(ast)
   }
@@ -76,28 +68,9 @@ object VisitorHelper {
     }
   }
 
-  private[this] def mySmVisit[T <: Tree, X](clazz: Class[T], fn: T => List[X])(ast: Any): List[X] = {
-    if (clazz.isAssignableFrom(ast.getClass)) {
-      fn(ast.asInstanceOf[T])
-    } else {
-      smVisit(ast, mySmVisit(clazz, fn))
-    }
-  }
-
   protected[scalariform] def visit[T](ast: Any, visitfn: (Any) => List[T]): List[T] = ast match {
     case a: AstNode => visitfn(a.immediateChildren)
     case t: Token => List()
-    case Some(x) => visitfn(x)
-    case xs @ (_ :: _) => xs.flatMap(visitfn(_))
-    case Left(x) => visitfn(x)
-    case Right(x) => visitfn(x)
-    case (l, r) => visitfn(l) ::: visitfn(r)
-    case (x, y, z) => visitfn(x) ::: visitfn(y) ::: visitfn(z)
-    case true | false | Nil | None => List()
-  }
-
-  protected[scalariform] def smVisit[T](ast: Any, visitfn: (Any) => List[T]): List[T] = ast match {
-    case a: Tree => visitfn(a.children)
     case Some(x) => visitfn(x)
     case xs @ (_ :: _) => xs.flatMap(visitfn(_))
     case Left(x) => visitfn(x)

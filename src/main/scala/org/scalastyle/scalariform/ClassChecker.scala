@@ -16,63 +16,39 @@
 
 package org.scalastyle.scalariform
 
+import scala.meta.Defn
+import scala.meta.Type
 import scala.util.matching.Regex
-import scalariform.lexer.Tokens.LBRACE
-import scalariform.lexer.Tokens.RBRACE
-import scalariform.parser.AstNode
-import scalariform.parser.GeneralTokens
-import scalariform.parser.TypeParam
-import scalariform.parser.TypeParamClause
-import scalariform.parser.VarianceTypeElement
 
 class EmptyClassChecker extends AbstractClassChecker {
   val errorKey = "empty.class"
 
-  private def isEmptyBlock(ast: AstNode): Boolean = {
-    ast.tokens.size == 2 && ast.tokens(0).tokenType == LBRACE && ast.tokens(1).tokenType == RBRACE
-  }
-
-  def matches(t: TmplClazz): Boolean = {
-    t.t.templateBodyOption match {
-      case None => false
-      case Some(tbo) => isEmptyBlock(tbo)
-    }
-  }
+  def matches(t: Defn.Class): Boolean = t.templ.stats.isEmpty && t.templ.tokens.length > 0
+  def matches(t: Defn.Trait): Boolean = t.templ.stats.isEmpty && t.templ.tokens.length > 0
 }
 
 class ClassTypeParameterChecker extends AbstractClassChecker {
   val DefaultRegex = "^[A-Z_]$"
   val errorKey = "class.type.parameter.name"
 
-  private[this] def matches(t: TypeParamClause): Boolean = {
+  private[this] def matches(t: Type.Param): Boolean = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
-    t.contents.flatMap(c => innermostName(c)).exists(s => !matchesRegex(regex, s))
+    innermostNames(t).exists(s => !matchesRegex(regex, s))
   }
 
   private[this] def matchesRegex(regex: Regex, s: String) = regex.findAllIn(s).size == 1
 
-  private[this] def innermostName(ast: Any): Option[String] = {
-    ast match {
-      case typeParam: TypeParam => {
-        typeParam.contents match {
-          case List(GeneralTokens(list)) => Some(list.head.text)
-          case List(GeneralTokens(list), TypeParamClause(x)) => innermostName(x(1))
-          case VarianceTypeElement(_) :: GeneralTokens(list) :: Nil => Some(list.head.text)
-          case GeneralTokens(list) :: tail => Some(list.head.text)
-          case VarianceTypeElement(_) :: GeneralTokens(list) :: tail => Some(list.head.text)
-          case _ => None
-        }
-      }
-      case _ => None
+  private[this] def innermostNames(tp: Type.Param): List[String] = {
+    if (tp.tparams.isEmpty) {
+      List(tp.name.value)
+    } else {
+      tp.tparams.flatMap(innermostNames)
     }
   }
 
-  def matches(t: TmplClazz): Boolean = {
-    t.t.typeParamClauseOpt match {
-      case None => false
-      case Some(tbo) => matches(tbo)
-    }
-  }
+  def matches(t: Defn.Class): Boolean = t.tparams.exists(matches)
+  def matches(t: Defn.Trait): Boolean = t.tparams.exists(matches)
+
 }

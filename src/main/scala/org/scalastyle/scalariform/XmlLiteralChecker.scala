@@ -26,6 +26,6 @@ class XmlLiteralChecker extends ScalametaChecker {
   val errorKey = "xml.literal"
 
   final def verify(ast: Tree): List[ScalastyleError] = {
-    VisitorHelper.getAllSm[Term.Xml](ast.children.head).map(toError)
+    SmVisitor.getAll[Term.Xml](ast.children.head).map(toError)
   }
 }

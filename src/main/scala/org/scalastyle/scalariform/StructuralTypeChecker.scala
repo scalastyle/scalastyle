@@ -26,6 +26,6 @@ class StructuralTypeChecker extends ScalametaChecker {
   val errorKey = "structural.type"
 
   final def verify(ast: Tree): List[ScalastyleError] = {
-    VisitorHelper.getAllSm[Refine](ast).map(toError)
+    SmVisitor.getAll[Refine](ast).map(toError)
   }
 }

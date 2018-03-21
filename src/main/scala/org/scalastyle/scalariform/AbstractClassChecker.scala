@@ -16,31 +16,25 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.TreeVisit
-import org.scalastyle.scalariform.VisitorHelper.traverse
-import org.scalastyle.scalariform.VisitorHelper.visit
+import org.scalastyle.scalariform.SmVisitor.TreeVisit
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.TmplDef
+import scala.meta.Defn
+import scala.meta.Member
+import scala.meta.Tree
 
-abstract class AbstractClassChecker extends ScalariformChecker {
-  case class TmplClazz(t: TmplDef, subs: List[TmplClazz]) extends TreeVisit[TmplClazz]
+abstract class AbstractClassChecker extends ScalametaChecker {
+  case class TmplClazz(t: Member.Type, subs: List[TmplClazz]) extends TreeVisit[TmplClazz]
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for {
-      f <- visit[TmplDef, TmplClazz](map)(ast.immediateChildren.head)
-      t <- traverse(f, matches)
-    } yield {
-      PositionError(t.t.name.offset)
-    }
+  final def verify(ast: Tree): List[ScalastyleError] = {
 
-    it
+    val classErrors = SmVisitor.getAll[Defn.Class](ast).filter(matches).map(_.name)
+    val traitErrors = SmVisitor.getAll[Defn.Trait](ast).filter(matches).map(_.name)
+
+    (classErrors ::: traitErrors).map(toError)
   }
 
-  def matches(t: TmplClazz): Boolean
-
-  private def map(t: TmplDef): List[TmplClazz] = List(TmplClazz(t, visit(map)(t.templateBodyOption)))
+  def matches(t: Defn.Class): Boolean
+  def matches(t: Defn.Trait): Boolean
 }
