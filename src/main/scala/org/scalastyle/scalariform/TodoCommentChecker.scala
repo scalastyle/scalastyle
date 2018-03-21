@@ -22,6 +22,7 @@ import org.scalastyle.CombinedMeta
 import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.SmVisitor.filterTokens
 
 import scala.meta.tokens.Token
 
@@ -32,15 +33,13 @@ class TodoCommentChecker extends CombinedMetaChecker {
   val errorKey = "todo.comment"
   val defaultWords = "TODO|FIXME"
 
-  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): Seq[ScalastyleError] = {
     val words = getString("words", defaultWords)
     val split = words.split("\\|").map(Pattern.quote).mkString("|")
     val regex = ("""(?i)(//|/\*|/\*\*|\*)\s?(""" + split + """)(:?)\s+""").r
 
-    (for {
-      t <- ast.tree.tokens.tokens
-      if t.getClass == classOf[Token.Comment]
-      if t.text.split("\n").exists(s => regex.findFirstIn(s).isDefined)
-    } yield PositionError(t.start, List(words))).toList
+    def matches(t: Token.Comment): Boolean = t.text.split("\n").exists(s => regex.findFirstIn(s).isDefined)
+
+    filterTokens[Token.Comment](ast.tree.tokens, matches).map(t => PositionError(t.start, List(words)))
   }
 }

@@ -17,11 +17,21 @@
 package org.scalastyle.scalariform
 
 import scala.meta.Tree
+import scala.meta.tokens.Token
+import scala.meta.tokens.Tokens
 
 object SmVisitor {
   class Clazz[+T <: Tree]()
   trait TreeVisit[T] {
     def subs: List[T]
+  }
+
+  protected[scalariform] def filterTokens[T <: Token](tokens: Tokens, matches: T => Boolean)(implicit manifest: Manifest[T]): Seq[T] = {
+    for {
+      t <- tokens
+      if manifest.runtimeClass.isAssignableFrom(t.getClass)
+      if matches(t.asInstanceOf[T])
+    } yield t.asInstanceOf[T]
   }
 
   protected[scalariform] def traverse[T <: TreeVisit[T]](t: T, matches: T => Boolean): List[T] = {
