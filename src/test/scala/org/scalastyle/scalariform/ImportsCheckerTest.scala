@@ -208,6 +208,10 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
     params ++ Seq(
       "lexicographic" -> "true"
       )
+  val paramsIntellij =
+    params ++ Seq(
+      "intellij" -> "true"
+      )
 
   @Test def testNameComparison(): Unit = {
     val checker = new ImportOrderChecker()
@@ -378,6 +382,8 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
       |import my.org.project1.MyClass
       |import my.org.project3.Someclass
       |import my.org.project3.SomeClass
+      |import second.org.{MyClass}
+      |import second.org.subpackage.MyClass
       |
       |
       |import my.org.project2.OtherClass
@@ -401,11 +407,57 @@ class ImportOrderCheckerTest extends AssertionsForJUnit with CheckerTest {
         args = List("my.org.project1.MyClass", "org.apache.Foo")),
       columnError(16, 0, errorKey = errorKey("wrongOrderInGroup"),
         args = List("my.org.project3.SomeClass", "my.org.project3.Someclass")),
-      columnError(20, 0, errorKey = errorKey("wrongGroup"),
+      columnError(22, 0, errorKey = errorKey("wrongGroup"),
         args = List("javax.swing.JTree", "java", "project2"))
     )
 
     assertErrors(expected, source, params = paramsLexicographic)
+  }
+
+  @Test def testIntellijImportGrouping(): Unit = {
+    val source = """
+      |package foobar
+      |
+      |import java.util.Map
+      |import javax.crypto.{Mac, Cipher}
+      |import java.lang.{Long => JLong, Boolean => JBoolean}
+      |import java.lang._
+      |
+      |import java.security.Permission
+      |import scala.io.Source
+      |
+      |
+      |import org.apache.Foo
+      |import my.org.project1.MyClass
+      |import my.org.project3.Someclass
+      |import my.org.project3.SomeClass
+      |import second.org.{MyClass}
+      |import second.org.subpackage.MyClass
+      |
+      |
+      |import my.org.project2.OtherClass
+      |import javax.swing.JTree
+      |
+      |object Foobar {
+      |}
+      """.stripMargin
+
+    val expected = List(
+      columnError(5, 20, errorKey = errorKey("wrongOrderInSelector"), args = List("Cipher", "Mac")),
+      columnError(6, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("java.lang.{Long, Boolean}", "javax.crypto.{Mac, Cipher}")),
+      columnError(6, 17, errorKey = errorKey("wrongOrderInSelector"),
+        args = List("Boolean", "Long")),
+      columnError(7, 0, errorKey = errorKey("wrongOrderInGroup"),
+        args = List("java.lang._", "java.lang.{Long, Boolean}")),
+      columnError(9, 0, errorKey = errorKey("noEmptyLine")),
+      columnError(10, 0, errorKey = errorKey("missingEmptyLine"), args = List("java", "scala")),
+      columnError(14, 0, errorKey = errorKey("wrongOrderInGroup"), args = List("my.org.project1.MyClass", "org.apache.Foo")),
+      columnError(18, 0, errorKey = errorKey("wrongOrderInGroup"), args = List("second.org.subpackage.MyClass", "second.org.{MyClass}")),
+      columnError(22, 0, errorKey = errorKey("wrongGroup"), args = List("javax.swing.JTree", "java", "project2"))
+    )
+
+    assertErrors(expected, source, params = paramsIntellij)
   }
 
   private def errorKey(subkey: String): Option[String] = Some(key + "." + subkey)

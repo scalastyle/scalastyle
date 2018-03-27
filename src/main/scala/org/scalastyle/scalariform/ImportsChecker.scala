@@ -164,6 +164,7 @@ class ImportGroupingChecker extends ScalariformChecker {
  *  - lexicographic: if true, imports are ordered lexicographically (classes, wildcards, then
  *                   packages; case-sensitive ordering within); if false, apply the original
  *                   case-insensitive ordering (with wildcards coming first, before classes).
+ *  - intellij: if true, imports are ordered in Intellij-style.
  *
  * For example, to check that "java" and "javax" imports are in a separate group at the top of the
  * import list, you'd use this config:
@@ -179,6 +180,8 @@ class ImportGroupingChecker extends ScalariformChecker {
  *   (assumed to be any string starting with a lower case letter) coming before classes.
  *
  * Currently, this checker only looks at the top-level list of imports.
+ *
+ * Setting both lexicographic and intellij to true has unspecified behavior.
  */
 class ImportOrderChecker extends ScalariformChecker {
   val errorKey: String = "import.ordering"
@@ -186,6 +189,7 @@ class ImportOrderChecker extends ScalariformChecker {
   private var groups: Seq[(String, Pattern)] = _
   private var maxBlankLines: Int = _
   private var lexicographic: Boolean = _
+  private var intellij: Boolean = _
 
   private var ast: AstNode = _
   private var lastImport: Option[AstNode] = None
@@ -201,6 +205,7 @@ class ImportOrderChecker extends ScalariformChecker {
     }
     maxBlankLines = parameters.getOrElse("maxBlankLines", "1").toInt
     lexicographic = parameters.get("lexicographic").map(_.toBoolean).getOrElse(false)
+    intellij = parameters.get("intellij").map(_.toBoolean).getOrElse(false)
   }
 
   override def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -210,11 +215,11 @@ class ImportOrderChecker extends ScalariformChecker {
     statements.immediateChildren.flatMap { n =>
       val result = n match {
         case ImportClause(_, BlockImportExpr(prefix, selectors), _) =>
-          val text = exprToText(prefix.contents)
+          val text = exprToText(prefix.contents, Some(selectors))
           checkImport(text, n.firstToken.offset) ++ checkSelectors(selectors)
 
         case ImportClause(_, Expr(contents), _) =>
-          val text = exprToText(contents)
+          val text = exprToText(contents, None)
           checkImport(text, n.firstToken.offset)
 
         case _ =>
@@ -225,10 +230,19 @@ class ImportOrderChecker extends ScalariformChecker {
     }
   }
 
-  private def exprToText(contents: List[ExprElement]): String = {
+  private def exprToText(contents: List[ExprElement], selectors: Option[ImportSelectors]): String = {
     contents.flatMap {
       case GeneralTokens(toks) => toks.map(_.text)
       case n: Any => throw new IllegalStateException(s"FIXME: unexpected expr child node $n")
+    }.mkString("") ++ selectors.flatMap { selectors =>
+      if (intellij) {
+        // Use the import selectors like Intellij Idea does.
+        val ImportSelectors(_, first, others, _) = selectors
+        val tokens = first.contents.head.tokens.head.text :: others.map(_._2.contents.head.tokens.head.text)
+        Some("{" + tokens.mkString(", ") + "}")
+      } else {
+        None
+      }
     }.mkString("")
   }
 
