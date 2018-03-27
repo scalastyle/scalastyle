@@ -16,7 +16,7 @@
 
 package org.scalastyle.file
 
-import org.junit.Assert.assertEquals
+import org.junit.Assert.{assertEquals, fail}
 import org.scalastyle.Checker
 import org.scalastyle.CheckerUtils
 import org.scalastyle.ConfigurationChecker
@@ -40,7 +40,21 @@ trait CheckerTest {
                                             customMessage: Option[String] = None, commentFilter: Boolean = true, customId: Option[String] = None) = {
     val classes =  List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params, customMessage, customId))
     val configuration = ScalastyleConfiguration("", commentFilter, classes)
-    assertEquals(expected.mkString("\n"), new CheckerUtils().verifySource(configuration, classes, NullFileSpec, source).mkString("\n"))
+    val errors = new CheckerUtils().verifySource(configuration, classes, NullFileSpec, source)
+
+    @annotation.tailrec
+    def assertErrorsCheck[T <: FileSpec](expected: List[Message[T]], found: List[Message[T]]): Unit  = {
+      (expected.headOption, found.headOption) match {
+        case (Some(missing), None) => fail(s"Missing expected message $missing.")
+        case (None, Some(extra)) => fail(s"Found additional message $extra.")
+        case (Some(e), Some(f)) =>
+          assertEquals(e, f)
+          assertErrorsCheck(expected.tail, found.tail)
+        case (None, None) => assertEquals(true, true)
+      }
+    }
+
+    assertErrorsCheck(expected, errors)
   }
 
   protected def fileError(args: List[String] = List(), customMessage: Option[String] = None) =
