@@ -262,15 +262,16 @@ trait FileChecker extends Checker[Lines]
 trait ScalariformChecker extends Checker[CompilationUnit]
 
 trait ScalametaChecker extends Checker[Tree] {
-  protected def toError(p: Position): ScalastyleError = {
+  protected def toError(p: Position, args: List[String]): ColumnError = {
     p match {
       case Position.None => ???
-      case r: Position.Range => ColumnError(r.startLine + 1, r.startColumn)
+      case r: Position.Range => ColumnError(r.startLine + 1, r.startColumn, args)
     }
   }
 
-  protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos)
-  protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos)
+  protected def toError(t: scala.meta.Tree, args: List[String]): ColumnError = toError(t.pos, args)
+  protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos, Nil)
+  protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos, Nil)
 
   protected def getAllTokens[T <: scala.meta.tokens.Token](tree: Tree)(implicit manifest: Manifest[T]): Seq[scala.meta.tokens.Token] = {
     for {

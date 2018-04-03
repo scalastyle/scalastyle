@@ -48,8 +48,42 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 10, List(""""foobar"""", "7", "3")), columnError(12, 11, List(""""bar"""", "4", "3"))), source,
+    assertErrors(List(columnError(5, 10, List("foobar", "7", "3")), columnError(12, 11, List("bar", "4", "3"))), source,
                     Map("allowed" -> "3", "ignoreRegex" -> "1"))
+  }
+
+  @Test def testParametersStringInterpolation(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  Logger.info("foo $msg")
+  Logger.info("foo ")
+  Logger.info("foo ")
+  Logger.info(s"foo $msg")
+  Logger.info(s"bar $msg")
+  Logger.info(s"baz $msg")
+}
+"""
+
+    assertErrors(List(), source, Map("allowed" -> "2"))
+  }
+
+  @Test def testParametersStringInterpolationMax1(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  Logger.info("foo $msg")
+  Logger.info("foo ")
+  Logger.info("foo ")
+  Logger.info(s"foo $msg")
+  Logger.info(s"bar $msg")
+  Logger.info(s"baz $msg")
+}
+"""
+
+    assertErrors(List(columnError(5, 14, List("foo $msg", "2", "1")), columnError(6, 14, List("foo ", "2", "1"))), source, Map("allowed" -> "1"))
   }
 
   @Test def testDefaultParameters(): Unit = {
@@ -67,7 +101,7 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
+    assertErrors(List(columnError(5, 10, List("foobar", "2", "1")), columnError(10, 11, List("", "2", "1"))), source)
   }
 
   @Test def testMultiLine(): Unit = {
@@ -82,8 +116,8 @@ class Foobar {
 }
 """.replace("###", "\"\"\"")
 
-    assertErrors(List(columnError(5, 10, List(""""foobar
-  oop"""", "2", "1"))), source)
+    assertErrors(List(columnError(5, 10, List("""foobar
+  oop""", "2", "1"))), source)
   }
 
   @Test def testMultiLineAndNormal(): Unit = {
@@ -96,6 +130,6 @@ class Foobar {
 }
 """.replace("###", "\"\"\"")
 
-    assertErrors(List(columnError(5, 10, List(""""foobar"""", "2", "1"))), source)
+    assertErrors(List(columnError(5, 10, List("foobar", "2", "1"))), source)
   }
 }
