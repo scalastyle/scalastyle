@@ -16,42 +16,34 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.Lines
-import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.Clazz
-import org.scalastyle.scalariform.VisitorHelper.visit
+import org.scalastyle.scalariform.SmVisitor.Clazz
 
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.CASE
-import _root_.scalariform.lexer.Tokens.DO
-import _root_.scalariform.lexer.Tokens.FOR
-import _root_.scalariform.lexer.Tokens.IF
-import _root_.scalariform.lexer.Tokens.MATCH
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.lexer.Tokens.WHILE
-import _root_.scalariform.parser.FunDefOrDcl
+import scala.meta.Defn
+import scala.meta.tokens.Token
+import scala.meta.tokens.Token.Ident
 
-class CyclomaticComplexityChecker extends CombinedChecker {
+class CyclomaticComplexityChecker extends CombinedMetaChecker {
   val errorKey = "cyclomatic.complexity"
   val DefaultMaximum = 10
   val DefaultCountCases = true
   private lazy val maximum = getInt("maximum", DefaultMaximum)
   private lazy val countCases = getBoolean("countCases", DefaultCountCases)
-  private val defaultTokens = Set(IF, WHILE, DO, FOR)
+  private val defaultTokens: Set[Class[_ <: Token]] = Set(classOf[Token.KwIf], classOf[Token.KwWhile], classOf[Token.KwDo], classOf[Token.KwFor])
 
-  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
+  case class FunDefOrDclClazz(t: Defn.Def, subs: List[FunDefOrDclClazz]) extends Clazz[Defn.Def]()
 
-  def verify(ast: CombinedAst): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      t <- localvisit(ast.compilationUnit.immediateChildren.head)
+      t <- localvisit(ast.tree.children.head)
       f <- traverse(t)
       value = matches(f, ast.lines, maximum)
       if value > maximum
     } yield {
-      PositionError(t.position.get, List("" + value, "" + maximum))
+      toError(t.t.name, List("" + value, "" + maximum))
     }
 
     it
@@ -59,12 +51,12 @@ class CyclomaticComplexityChecker extends CombinedChecker {
 
   private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
 
-  private def isLogicalOrAnd(t: Token) = t.tokenType == VARID && (t.text == "&&" || t.text == "||")
+  private def isLogicalOrAnd(t: Token): Boolean = t.getClass == classOf[Ident] && (t.text == "&&" || t.text == "||")
 
   // compute the cyclomatic complexity without the additional 1
   private def cyclomaticComplexity(f: FunDefOrDclClazz): Int = {
-    val tokens = defaultTokens + (if (countCases) CASE else MATCH)
-    f.t.tokens.count(t => tokens.contains(t.tokenType) || isLogicalOrAnd(t))
+    val tokens = defaultTokens + (if (countCases) classOf[Token.KwCase] else classOf[Token.KwMatch])
+    getAllTokens[Token](f.t).count(t => tokens.contains(t.getClass) || isLogicalOrAnd(t))
   }
 
   private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int) = {
@@ -74,7 +66,7 @@ class CyclomaticComplexityChecker extends CombinedChecker {
   }
 
   private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
-    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), visit(t, localvisit)))
-    case t: Any => visit(t, localvisit)
+    case t: Defn.Def => List(FunDefOrDclClazz(t, SmVisitor.visit(t, localvisit)))
+    case t: Any => SmVisitor.visit(t, localvisit)
   }
 }

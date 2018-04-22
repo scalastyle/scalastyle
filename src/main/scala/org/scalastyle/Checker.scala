@@ -261,7 +261,7 @@ trait FileChecker extends Checker[Lines]
 
 trait ScalariformChecker extends Checker[CompilationUnit]
 
-trait ScalametaChecker extends Checker[Tree] {
+trait PositionErrorTrait {
   protected def toError(p: Position, args: List[String]): ColumnError = {
     p match {
       case Position.None => ???
@@ -273,14 +273,15 @@ trait ScalametaChecker extends Checker[Tree] {
   protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos, Nil)
   protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos, Nil)
 
-  protected def getAllTokens[T <: scala.meta.tokens.Token](tree: Tree)(implicit manifest: Manifest[T]): Seq[scala.meta.tokens.Token] = {
+  protected def getAllTokens[T <: scala.meta.tokens.Token](tree: Tree)(implicit manifest: Manifest[T]): Seq[T] = {
     for {
-      t <- tree.tokens.tokens
-      if t.getClass == manifest.runtimeClass
-    } yield t
+      t <- tree.tokens
+      if (manifest.runtimeClass.isAssignableFrom(t.getClass))
+    } yield t.asInstanceOf[T]
   }
-
 }
+
+trait ScalametaChecker extends Checker[Tree] with PositionErrorTrait
 
 case class CombinedAst(compilationUnit: CompilationUnit, lines: Lines)
 
@@ -288,5 +289,5 @@ trait CombinedChecker extends Checker[CombinedAst]
 
 case class CombinedMeta(tree: Tree, lines: Lines)
 
-trait CombinedMetaChecker extends Checker[CombinedMeta]
+trait CombinedMetaChecker extends Checker[CombinedMeta] with PositionErrorTrait
 
