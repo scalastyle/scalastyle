@@ -18,43 +18,42 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.MultiLineComment
-import _root_.scalariform.lexer.ScalaDocComment
-import _root_.scalariform.lexer.SingleLineComment
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Tree
+import scala.meta.tokens.Token
 
-class SpaceAfterCommentStartChecker extends ScalariformChecker {
+class SpaceAfterCommentStartChecker extends ScalametaChecker {
+  private val MLC1 = Pattern.compile("""/\*\S+.*""", Pattern.DOTALL)
+  private val MLC2 = Pattern.compile("""/\*.*\S\*/""", Pattern.DOTALL)
+  private val SD1 = Pattern.compile("""/\*\*\S+.*""", Pattern.DOTALL)
+  private val SD2 = Pattern.compile("""/\*\*.*\S\*/""", Pattern.DOTALL)
+  private val SLC1 = Pattern.compile("""//\S+.*""")
+  private val SLC2 = Pattern.compile("""///+""")
+
   val errorKey: String = "space.after.comment.start"
 
-  override def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    ast.tokens
-      .filter(hasComment)
-      .map {
-      _.associatedWhitespaceAndComments.comments.map {
-        case x: SingleLineComment if singleLineCommentRegex(x.token.text.trim) => Some(x.token.offset)
-        case x: MultiLineComment if multiLineCommentRegex(x.token) => Some(x.token.offset)
-        case x: ScalaDocComment if scalaDocPatternRegex(x.token) => Some(x.token.offset)
-        case _ => None
-      }.flatten
-    }.flatten.map(PositionError(_))
+  override def verify(ast: Tree): List[ScalastyleError] = {
+    val it = for {
+      t <- ast.tokens.tokens
+      if t.isInstanceOf[Token.Comment]
+      if matches(t.asInstanceOf[Token.Comment])
+    } yield toError(t.asInstanceOf[Token.Comment])
+
+    it.toList
   }
 
-  private def multiLineCommentRegex(comment: Token) =
-    Pattern.compile("""/\*\S+.*""", Pattern.DOTALL).matcher(comment.text.trim).matches() ||
-      Pattern.compile("""/\*.*\S\*/""", Pattern.DOTALL).matcher(comment.text.trim).matches()
+  private def matches(c: Token.Comment): Boolean = {
+    val text = c.text.trim
+    if (text.startsWith("/**")) {
+      scalaDocPatternRegex(text)
+    } else {
+      multiLineCommentRegex(text) || singleLineCommentRegex(text)
+    }
+  }
 
-  private def scalaDocPatternRegex(comment: Token) =
-    Pattern.compile("""/\*\*\S+.*""", Pattern.DOTALL).matcher(comment.text.trim).matches() ||
-      Pattern.compile("""/\*\*.*\S\*/""", Pattern.DOTALL).matcher(comment.text.trim).matches()
-
-  private def singleLineCommentRegex(comment: String): Boolean =
-    comment.matches("""//\S+.*""") && !comment.matches("""///+""")
-
-  private def hasComment(x: Token) =
-    x.associatedWhitespaceAndComments != null && !x.associatedWhitespaceAndComments.comments.isEmpty // scalastyle:ignore null
+  private def multiLineCommentRegex(s: String): Boolean = MLC1.matcher(s).matches() || MLC2.matcher(s).matches()
+  private def scalaDocPatternRegex(text: String): Boolean = SD1.matcher(text).matches() || SD2.matcher(text).matches()
+  private def singleLineCommentRegex(s: String): Boolean = SLC1.matcher(s).matches() && !SLC2.matcher(s).matches()
 }
