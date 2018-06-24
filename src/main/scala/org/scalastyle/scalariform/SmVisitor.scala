@@ -72,4 +72,9 @@ object SmVisitor {
     }
   }
 
+  def charsBetweenTokens(left: Token, right: Token): Int = {
+    println("right=" + right + " left=" + left + " " + (right.start ) + " " + left.end)
+    right.start - left.end
+  }
+
 }

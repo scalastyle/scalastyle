@@ -16,26 +16,32 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Tokens.LBRACKET
-import _root_.scalariform.lexer.Tokens.NEWLINE
-import _root_.scalariform.lexer.Tokens.PLUS
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Tree
+import scala.meta.tokens.Token
 
-class SpacesBeforePlusChecker extends ScalariformChecker {
+class SpacesBeforePlusChecker extends ScalametaChecker {
   val errorKey = "spaces.before.plus"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  def verify(ast: Tree): Seq[ScalastyleError] = {
     val it = for {
-      List(left, middle, right) <- ast.tokens.sliding(3)
-      if middle.tokenType == PLUS && left.tokenType != LBRACKET && left.tokenType != NEWLINE && charsBetweenTokens(left, middle) == 0
+      Array(left, right) <- ast.tokens.tokens.sliding(2)
+      if isIdent(right, "+") && !isLeftBracket(left) && !isLF(left) && !isSpace(left)
     } yield {
-      PositionError(middle.offset)
+      toError(right)
     }
 
     it.toList
   }
+
+  private def isIdent(ident: Token, text: String): Boolean = ident match {
+    case i: Token.Ident => i.text == text
+    case _ => false
+  }
+
+  private def isLF(token: Token): Boolean = token.isInstanceOf[Token.LF]
+  private def isSpace(token: Token): Boolean = token.isInstanceOf[Token.Space]
+  private def isLeftBracket(token: Token): Boolean = token.isInstanceOf[Token.LeftBracket]
 }
