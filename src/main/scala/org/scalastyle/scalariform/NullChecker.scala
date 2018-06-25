@@ -16,30 +16,34 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalametaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Lit
+import scala.meta.Term
+import scala.meta.Tree
+import scala.meta.tokens.Token
 
-class NullChecker extends ScalariformChecker {
+class NullChecker extends ScalametaChecker {
   val errorKey = "null"
-  val dummyToken = Token(Tokens.NULL, "null", 0, "null")
+  val dummyToken: Option[Token] = None
 
   val defaultAllowNullChecks = true
   lazy val allowNullChecks: Boolean = getBoolean("allowNullChecks", defaultAllowNullChecks)
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  final def verify(ast: Tree): List[ScalastyleError] = {
     val it = for {
-      (t, prev) <- ast.tokens.zip(dummyToken :: ast.tokens)
-      if t.tokenType == Tokens.NULL
-      if !(allowNullChecks && prev.tokenType == Tokens.VARID && (prev.text == "==" || prev.text == "!="))
-    } yield {
-      PositionError(t.offset)
-    }
+      n <- SmVisitor.getAll[Lit.Null](ast)
+      if !allowNullChecks || !isCheck(n.parent)
+    } yield toError(n)
 
     it
+  }
+
+  def isCheck(prev: Option[Tree]): Boolean = {
+    prev match {
+      case Some(x: Term.ApplyInfix) if x.op.value == "==" || x.op.value == "!=" => true
+      case _ => false
+    }
   }
 }
