@@ -19,8 +19,7 @@ package org.scalastyle
 import java.io.File
 import java.io.FileFilter
 
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConverters._
 
 class Directory
 
@@ -34,7 +33,7 @@ object Directory {
   }
 
   def getFilesAsJava(encoding: Option[String], files: java.util.List[File]): java.util.List[FileSpec] = {
-    seqAsJavaList(privateGetFiles(encoding, collectionAsScalaIterable(files)))
+    privateGetFiles(encoding, files.asScala).asJava
   }
 
   def getFiles(encoding: Option[String], files: Iterable[File], excludedFiles: Seq[String] = Nil): List[FileSpec] = {
