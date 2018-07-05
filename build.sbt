@@ -4,11 +4,11 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-scalaVersion := "2.10.6"
+scalaVersion := "2.10.7"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
 
-crossScalaVersions := Seq("2.10.6", "2.11.11", "2.12.2")
+crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.6")
 
 description := "Scalastyle style checker for Scala"
 
