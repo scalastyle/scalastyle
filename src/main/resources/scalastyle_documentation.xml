@@ -1,69 +1,66 @@
 <scalastyle-documentation>
  <check id="file.size.limit">
- <justification>
- Files which are too long can be hard to read and understand.
- </justification>
- <example-configuration>
- <![CDATA[
- <check level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
-  <parameters>
-   <parameter name="maxFileLength">800</parameter>
-  </parameters>
- </check>
- ]]>
- </example-configuration>
+  <justification>Files which are too long can be hard to read and understand.</justification>
+  <example-configuration>
+   <![CDATA[
+     <check level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
+       <parameters>
+         <parameter name="maxFileLength">800</parameter>
+       </parameters>
+     </check>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="line.size.limit">
- <justification>
- Lines that are too long can be hard to read and horizontal scrolling is annoying.
- </justification>
- <example-configuration>
- <![CDATA[
- <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
-  <parameters>
-   <parameter name="maxLineLength">100</parameter>
-   <parameter name="tabSize">2</parameter>
-   <parameter name="ignoreImports">true</parameter>
-  </parameters>
- </check>
- ]]>
- </example-configuration>
+  <justification>
+   Lines that are too long can be hard to read and horizontal scrolling is annoying.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
+     <parameters>
+      <parameter name="maxLineLength">100</parameter>
+      <parameter name="tabSize">2</parameter>
+      <parameter name="ignoreImports">true</parameter>
+     </parameters>
+    </check>
+   ]]>
+  </example-configuration>
  </check>
 
 
  <check id="magic.number">
- <justification>
- Replacing a magic number with a named constant can make code easier to read and understand, and can avoid some subtle bugs.
- </justification>
- <extra-description>
- A simple assignment to a val is not considered to be a magic number, for example:
+  <justification>
+   Replacing a magic number with a named constant can make code easier to read and understand,
+   and can avoid some subtle bugs.
+  </justification>
+  <extra-description>
+   A simple assignment to a val is not considered to be a magic number, for example:
 
-    val foo = 4
+     val foo = 4
 
-is not a magic number, but
+   is not a magic number, but
 
-    var foo = 4
+     var foo = 4
 
-is considered to be a magic number.
- </extra-description>
- <example-configuration>
- <![CDATA[
- <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
-  <parameters>
-   <parameter name="ignore">-1,0,1,2,3</parameter>
-  </parameters>
- </check>
- ]]>
- </example-configuration>
+   is considered to be a magic number.
+  </extra-description>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
+     <parameters>
+      <parameter name="ignore">-1,0,1,2,3</parameter>
+     </parameters>
+    </check>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="regex">
- <justification>
- Some checks can be carried out with a regular expression.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Some checks can be carried out with a regular expression.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.file.RegexChecker" enabled="true">
       <parameters>
         <parameter name="regex">(?m)^\s*$(\r|)\n^\s*$(\r|)\n</parameter>
@@ -71,91 +68,85 @@ is considered to be a magic number.
       </parameters>
       <customMessage>No double blank lines</customMessage>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="number.of.types">
- <justification>
- If there are too many classes/objects defined in a single file, this can cause the code to be difficult to understand.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   If there are too many classes/objects defined in a single file, this can cause the code to be difficult
+   to understand.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NumberOfTypesChecker" enabled="true">
       <parameters>
         <parameter name="maxTypes">20</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="cyclomatic.complexity">
- <justification>
- If the code is too complex, then this can make code hard to read.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>If the code is too complex, then this can make code hard to read.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
       <parameters>
         <parameter name="maximum">10</parameter>
         <parameter name="countCases">true</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="uppercase.l">
- <justification>
- A lowercase L (l) can look similar to a number 1 with some fonts.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>A lowercase L (l) can look similar to a number 1 with some fonts.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.UppercaseLChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="if.brace">
- <justification>
- Some people find if clauses with braces easier to read.
- </justification>
- <extra-description>
- The singleLineAllowed property allows if constructions of the type:
+  <justification>Some people find if clauses with braces easier to read.</justification>
+  <extra-description>
+   The `singleLineAllowed` property allows if constructions of the type:
 
-    if (bool_expression) expression1 else expression2
+     if (bool_expression) expression1 else expression2
 
-The doubleLineAllowed property allows if constructions of the type:
+   The `doubleLineAllowed` property allows if constructions of the type:
 
-    if (bool_expression) expression1
-    else expression2
+     if (bool_expression) expression1
+     else expression2
 
-Note: If you intend to enable only if expressions in the format below, disable the IfBraceChecker altogether.
+   Note: If you intend to enable only if expressions in the format below, disable the `IfBraceChecker`
+   altogether.
 
-    if (bool_expression)
-      expression1
-    else
-      expression2
- </extra-description>
- <example-configuration>
- <![CDATA[
+     if (bool_expression)
+     expression1
+     else
+     expression2
+  </extra-description>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.IfBraceChecker" enabled="true">
       <parameters>
         <parameter name="singleLineAllowed">true</parameter>
         <parameter name="doubleLineAllowed">false</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="method.length">
- <justification>
- Long methods can be hard to read and understand.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Long methods can be hard to read and understand.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.MethodLengthChecker" enabled="true">
       <parameters>
         <parameter name="maxLength">50</parameter>
@@ -163,17 +154,18 @@ Note: If you intend to enable only if expressions in the format below, disable t
         <parameter name="ignoreEmpty">false</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="method.name">
- <justification>
- The Scala style guide recommends that method names conform to certain standards. If the methods are overriding another method, and the overridden method
- cannot be changed, then use the ignoreOverride parameter.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The Scala style guide recommends that method names conform to certain standards. If the methods are
+   overriding another method, and the overridden method cannot be changed, then use the `ignoreOverride`
+   parameter.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.MethodNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[A-Za-z]*$</parameter>
@@ -181,8 +173,8 @@ Note: If you intend to enable only if expressions in the format below, disable t
         <parameter name="ignoreOverride">false</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="method.argument.name">
@@ -197,603 +189,612 @@ Note: If you intend to enable only if expressions in the format below, disable t
         <parameter name="ignoreRegex">^$</parameter>
       </parameters>
     </check>
- ]]>
+   ]]>
   </example-configuration>
  </check>
 
  <check id="number.of.methods">
- <justification>
- If a type declares too many methods, this can be an indication of bad design.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>If a type declares too many methods, this can be an indication of bad design.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NumberOfMethodsInTypeChecker" enabled="true">
       <parameters>
         <parameter name="maxMethods">30</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="public.methods.have.type">
- <justification>
- A public method declared on a type is effectively an API declaration. Explicitly declaring a return type means that other code which depends on that type won't break unexpectedly.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   A public method declared on a type is effectively an API declaration. Explicitly declaring a return type
+   means that other code which depends on that type won't break unexpectedly.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true">
       <parameters>
         <parameter name="ignoreOverride">false</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="newline.at.eof">
- <justification>
- Some version control systems don't cope well with files which don't end with a newline character.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Some version control systems don't cope well with files which don't end with a newline character.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="no.newline.at.eof">
- <justification>
- Because Mirco Dotta wanted it.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Because Mirco Dotta wanted it.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.file.NoNewLineAtEofChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="while">
- <justification>
- while loops are deprecated if you're using a strict functional style
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>While loops are deprecated if you're using a strict functional style.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.WhileChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="var.field">
- <justification>
- var (mutable fields) are deprecated if you're using a strict functional style
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   var (mutable fields) are deprecated if you're using a strict functional style.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.VarFieldChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="var.local">
- <justification>
- vars (mutable local variables) loops are deprecated if you're using a strict functional style
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   vars (mutable local variables) loops are deprecated if you're using a strict functional style.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.VarLocalChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="if.redundant">
- <justification>
- If expressions with boolean constants in both branches can be eliminated without affecting readability. Prefer simply `cond` to `if (cond) true else false` and `!cond` to `if (cond) false else true`.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   If expressions with boolean constants in both branches can be eliminated without affecting readability.
+   Prefer simply `cond` to `if (cond) true else false` and `!cond` to `if (cond) false else true`.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.RedundantIfChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="token">
- <justification>
- Some checks can be carried by just the presence of a particular token.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Some checks can be carried by just the presence of a particular token.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[ai]sInstanceOf$</parameter>
       </parameters>
       <customMessage>Avoid casting.</customMessage>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="deprecated.java">
- <justification>
- You should be using the Scala @deprecated instead.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>You should be using the Scala `@deprecated` instead.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="override.java">
-  <justification>
-   You should be using the Scala override keyword instead.
-  </justification>
+  <justification>You should be using the Scala override keyword instead.</justification>
   <example-configuration>
    <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.OverrideJavaChecker" enabled="true" />
- ]]>
+   ]]>
   </example-configuration>
  </check>
 
  <check id="empty.class">
- <justification>
- If a class / trait has no members, then braces are unnecessary, and can be removed.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   If a class / trait has no members, then braces are unnecessary, and can be removed.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.EmptyClassChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="class.type.parameter.name">
- <justification>
- Scala generic type names are generally single upper case letters. This check checks for classes and traits.
-
- Note that this check only checks the innermost type parameter, to allow for List\[T\].
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Scala generic type names are generally single upper case letters. This check checks for classes and traits.
+   Note that this check only checks the innermost type parameter, to allow for `List[T]`.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ClassTypeParameterChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[A-Z_]$</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="underscore.import">
- <justification>
-  Importing all classes from a package or static members from a class leads to tight coupling between packages or classes and might lead to problems when a new version of a library introduces name clashes.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Importing all classes from a package or static members from a class leads to tight coupling between
+   packages or classes and might lead to problems when a new version of a library introduces name clashes.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.UnderscoreImportChecker" enabled="true" >
       <parameters>
         <parameter name="ignoreRegex">collection\.JavaConverters\._|scala\.concurrent\.duration\._</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="lowercase.pattern.match">
- <justification>
-  A lower case pattern match clause with no other tokens is the same as \_; this is not true for patterns which start with an upper
-  case letter. This can cause confusion, and may not be what was intended:
+  <justification>
+   A lower case pattern match clause with no other tokens is the same as `_`; this is not true for patterns
+   which start with an upper case letter. This can cause confusion, and may not be what was intended:
 
-    val foo = "foo"
-    val Bar = "bar"
-    "bar" match { case Bar => "we got bar" }   // result = "we got bar"
-    "bar" match { case foo => "we got foo" }   // result = "we got foo"
-    "bar" match { case `foo` => "we got foo" } // result = MatchError
+     val foo = "foo"
+     val Bar = "bar"
+     "bar" match { case Bar => "we got bar" } // result = "we got bar"
+     "bar" match { case foo => "we got foo" } // result = "we got foo"
+     "bar" match { case `foo` => "we got foo" } // result = MatchError
 
-  This checker raises a warning with the second match. To fix it, use an identifier which starts with an upper case letter (best), use case \_ or,
-  if you wish to refer to the value, add a type `: Any`
+   This checker raises a warning with the second match. To fix it, use an identifier which starts with an
+   upper case letter (best), use `case _` or, if you wish to refer to the value, add a type `: Any`:
 
-    val lc = "lc"
-    "something" match { case lc: Any => "lc" } // result = "lc"
-    "something" match { case _ => "lc" } // result = "lc"
-
- </justification>
- <example-configuration>
- <![CDATA[
+     val lc = "lc"
+     "something" match { case lc: Any => "lc" } // result = "lc"
+     "something" match { case _ => "lc" } // result = "lc"
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.LowercasePatternMatchChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="multiple.string.literals">
- <justification>
-  Code duplication makes maintenance more difficult, so it can be better to replace the multiple occurrences with a constant.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Code duplication makes maintenance more difficult, so it can be better to replace the multiple occurrences
+   with a constant.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.MultipleStringLiteralsChecker" enabled="true">
       <parameters>
         <parameter name="allowed">1</parameter>
         <parameter name="ignoreRegex">^\"\"$</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
-
  <check id="import.grouping">
- <justification>
-  If imports are spread throughout the file, knowing what is in scope at any one place can be difficult to work out.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   If imports are spread throughout the file, knowing what is in scope at any one place can be difficult to
+   work out.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ImportGroupingChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="not.implemented.error.usage">
- <justification>
-  The ??? operator denotes that an implementation is missing. This rule helps to avoid potential runtime errors because of not implemented code.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The `???` operator denotes that an implementation is missing. This rule helps to avoid potential runtime
+   errors because of not implemented code.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
+
  <check id="block.import">
- <justification>
-  Block imports (e.g. `import a.{b, c}`) can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports are used in order to minimize merge errors in import declarations.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Block imports (e.g. `import a.{b, c}`) can lead to annoying merge errors in large code bases that are
+   maintained by lot of developers. This rule allows to ensure that only single imports are used in order to
+   minimize merge errors in import declarations.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.BlockImportChecker" enabled="true"/>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="procedure.declaration">
- <justification>
-  A procedure style declaration can cause confusion - the developer may have simply forgotten to add a '=', and now their method returns Unit rather than the inferred type:
+  <justification>
+   A procedure style declaration can cause confusion - the developer may have simply forgotten to add a `=`,
+   and now their method returns Unit rather than the inferred type:
 
-    def foo() { println("hello"); 5 }
-    def foo() = { println("hello"); 5 }
+     def foo() { println("hello"); 5 }
+     def foo() = { println("hello"); 5 }
 
-  This checker raises a warning with the first line. To fix it, use an explicit return type, or add a '=' before the body.
-
- </justification>
- <example-configuration>
- <![CDATA[
+   This checker raises a warning with the first line. To fix it, use an explicit return type, or add a `=`
+   before the body.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ProcedureDeclarationChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="for.brace">
- <justification>
-  Usage of braces (rather than parentheses) within a for comprehension mean that you don't have to specify a semi-colon at the end of every line:
+  <justification>
+   Usage of braces (rather than parentheses) within a for comprehension mean that you don't have to specify
+   a semi-colon at the end of every line:
 
-    for {      // braces
-      t &lt;- List(1,2,3)
-      if (i % 2 == 0)
-    } yield t
+     for { // braces
+       t &lt;- List(1,2,3)
+       if (i % 2 == 0)
+     } yield t
 
-  is preferred to
+   is preferred to
 
-    for (      // parentheses
-      t &lt;- List(1,2,3);
-      if (i % 2 == 0)
-    ) yield t
+     for ( // parentheses
+       t &lt;- List(1,2,3);
+       if (i % 2 == 0)
+     ) yield t
 
-  To fix it, replace the () with {}. And then remove the ; at the end of the lines.
- </justification>
- <extra-description>
- The singleLineAllowed property allows for constructions of the type:
+   To fix it, replace the `()` with `{}`. And then remove the `;` at the end of the lines.
+  </justification>
+  <extra-description>
+   The `singleLineAllowed` property allows for constructions of the type:
 
-    for (i &lt;- List(1,2,3)) yield i
- </extra-description>
- <example-configuration>
- <![CDATA[
+     for (i &lt;- List(1,2,3)) yield i
+  </extra-description>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ForBraceChecker" enabled="true">
       <parameters>
         <parameter name="singleLineAllowed">true</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
-<check id="for.loop">
-<justification>
-   For-comprehensions which lack a yield clause is actually a loop rather than a functional comprehension and it is usually
-   more readable to string the generators together between parentheses rather than using the syntactically-confusing } { construct:
 
-   for (x &lt;- board.rows; y &lt;- board.files) {
-     printf("(%d, %d)", x, y)
-   }
+ <check id="for.loop">
+  <justification>
+   For-comprehensions which lack a yield clause is actually a loop rather than a functional comprehension
+   and it is usually more readable to string the generators together between parentheses rather than using
+   the syntactically-confusing `} {` construct:
+
+     for (x &lt;- board.rows; y &lt;- board.files) {
+       printf("(%d, %d)", x, y)
+     }
 
    is preferred to
 
-   for {
-     x &lt;- board.rows
-     y &lt;- board.files
-   } {
-     printf("(%d, %d)", x, y)
-   }
-</justification>
-<example-configuration>
- <![CDATA[
-  <check level="warning" class="org.scalastyle.scalariform.ForLoopChecker" enabled="true" />
-]]>
-</example-configuration>
-</check>
-<check id="space.after.comment.start">
-<justification>
-To bring consistency with how comments should be formatted, leave a space right after the beginning of the comment.
-
-    package foobar
-
-    object Foobar {
-    /**WRONG
-    *
-    */
-    /** Correct*/
-    val d = 2 /*Wrong*/ //Wrong
-    /**
-    *Correct
-    */
-    val e = 3/** Correct*/ // Correct
-    }
-</justification>
-<example-configuration>
-<![CDATA[
-    <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true" />
-]]>
-</example-configuration>
-
-</check>
-<check id="non.ascii.character.disallowed">
-  <justification>
-    Scala allows unicode characters as operators and some editors misbehave when they see non-ascii character.
-    In a project collaborated by a community of developers. This check can be helpful in such situations.
-
-
-    "value".match {
-    case "value" => println("matched")
-    ...
-    }
-
-    is preferred to
-
-    "value".match {
-    case "value" ⇒ println("matched")
-    ...
-    }
-
-    To fix it, replace the (unicode operator)⇒ with =>.
+     for {
+       x &lt;- board.rows
+       y &lt;- board.files
+     } {
+       printf("(%d, %d)", x, y)
+     }
   </justification>
   <example-configuration>
-    <![CDATA[
-      <check level="warning" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true">
-        <parameters>
-         <parameter name="allowStringLiterals">true</parameter>
-        </parameters>
-      </check>
-    ]]>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.ForLoopChecker" enabled="true" />
+   ]]>
   </example-configuration>
-</check>
+ </check>
 
-<check id="header.matches">
- <justification>
-  A lot of projects require a header with a copyright notice, or they require a license in each file. This does a simple text comparison between the header and the first lines of the file.
-  You can have multiple lines, but make sure you surround the text with a CDATA section. You can also specify a regular expression, as long as you set the regex parameter to true.
- </justification>
- <example-configuration>
- <![CDATA[
-    <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
-  <parameters>
-   <parameter name="regex">false</parameter>
-   <parameter name="header"><![CDATA[// Copyright \(C\) 2011-2012 the original author or authors.]]]]><![CDATA[></parameter>
-  </parameters>
+ <check id="space.after.comment.start">
+  <justification>
+   To bring consistency with how comments should be formatted, leave a space right after the beginning of
+   the comment.
+
+     package foobar
+
+     object Foobar {
+       /**WRONG
+       *
+       */
+       /** Correct*/
+       val d = 2 /*Wrong*/ //Wrong
+       /**
+       *Correct
+       */
+       val e = 3/** Correct*/ // Correct
+     }
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true" />
+   ]]>
+  </example-configuration>
  </check>
- ]]>
- </example-configuration>
- <example-configuration>
- <![CDATA[
-    <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
-  <parameters>
-   <parameter name="regex">true</parameter>
-   <parameter name="header"><![CDATA[// Copyright \(C\) (?:\d{4}-)?\d{4} the original author or authors.]]]]><![CDATA[></parameter>
-  </parameters>
+
+ <check id="non.ascii.character.disallowed">
+  <justification>
+   Scala allows unicode characters as operators and some editors misbehave when they see non-ascii character.
+   In a project collaborated by a community of developers. This check can be helpful in such situations.
+
+     "value" match {
+       case "value" => println("matched")
+       ...
+     }
+
+   is preferred to
+
+     "value" match {
+       case "value" ⇒ println("matched")
+       ...
+     }
+
+   To fix it, replace the (unicode operator)⇒ with =>.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+   <check level="warning" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true">
+     <parameters>
+      <parameter name="allowStringLiterals">true</parameter>
+     </parameters>
+   </check>
+   ]]>
+  </example-configuration>
  </check>
- ]]>
- </example-configuration>
+
+ <check id="header.matches">
+  <justification>
+   A lot of projects require a header with a copyright notice, or they require a license in each file.
+   This does a simple text comparison between the header and the first lines of the file.
+   You can have multiple lines, but make sure you surround the text with a CDATA section. You can also
+   specify a regular expression, as long as you set the regex parameter to true.
+  </justification>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
+     <parameters>
+      <parameter name="regex">false</parameter>
+      <parameter name="header"><![CDATA[// Copyright \(C\) 2011-2012 the original author or authors.]]  ]]>
+      <![CDATA[></parameter>
+     </parameters>
+    </check>
+   ]]>
+  </example-configuration>
+  <example-configuration>
+   <![CDATA[
+    <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
+     <parameters>
+      <parameter name="regex">true</parameter>
+      <parameter name="header"><![CDATA[// Copyright \(C\) (?:\d{4}-)?\d{4} the original author or authors.]]  ]]>
+      <![CDATA[></parameter>
+     </parameters>
+    </check>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="field.name">
- <justification>A consistent naming convention for field names can make code easier to read and understand</justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   A consistent naming convention for field names can make code easier to read and understand.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true">
-  <parameters>
-   <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
-   <parameter name="objectFieldRegex">^[A-Z][A-Za-z0-9]*$</parameter>
-  </parameters>
- </check>
- ]]>
- </example-configuration>
+     <parameters>
+      <parameter name="regex">^[a-z][A-Za-z0-9]*$</parameter>
+      <parameter name="objectFieldRegex">^[A-Z][A-Za-z0-9]*$</parameter>
+     </parameters>
+    </check>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="xml.literal">
- <justification>Some projects prefer not to have XML literals. They could use a templating engine instead.</justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Some projects prefer not to have XML literals. They could use a templating engine instead.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.XmlLiteralChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="todo.comment">
- <justification>Some projects may consider TODO or FIXME comments in a code bad style. They would rather you fix the problem.</justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Some projects may consider TODO or FIXME comments in a code bad style.
+   They would rather you fix the problem.
+  </justification>
+  <example-configuration>
+   <![CDATA[
    <check level="warning" class="org.scalastyle.scalariform.TodoCommentChecker" enabled="true">
      <parameters>
        <parameter name="words" type="string" default="TODO|FIXME" />
      </parameters>
    </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="line.contains.tab">
- <justification>Some say that tabs are evil.</justification>
- <example-configuration>
- <![CDATA[
+  <justification>Some say that tabs are evil.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.file.FileTabChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="class.name">
- <justification>
- The Scala style guide recommends that class names conform to certain standards.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The Scala style guide recommends that class names conform to certain standards.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[A-Z][A-Za-z]*$</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="object.name">
- <justification>
- The Scala style guide recommends that object names conform to certain standards.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The Scala style guide recommends that object names conform to certain standards.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[A-Z][A-Za-z]*$</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="package.name">
- <justification>
- The Scala style guide recommends that package names conform to certain standards.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The Scala style guide recommends that package names conform to certain standards.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.PackageNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[a-z][A-Za-z]*$</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="package.object.name">
- <justification>
- The Scala style guide recommends that package object names conform to certain standards.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The Scala style guide recommends that package object names conform to certain standards.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.PackageObjectNamesChecker" enabled="true">
       <parameters>
         <parameter name="regex">^[a-z][A-Za-z]*$</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="null">
- <justification>
- Scala discourages use of nulls, preferring Option.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Scala discourages use of nulls, preferring `Option`.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true">
       <parameters>
         <parameter name="allowNullChecks">true</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="return">
- <justification>
- Use of return is not usually necessary in Scala. In fact, use of return can discourage a functional style of programming.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Use of `return` is not usually necessary in Scala. In fact, use of return can discourage a functional
+   style of programming.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ReturnChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="equals.hash.code">
- <justification>
- Defining either equals or hashCode in a class without defining the is a known source of bugs. Usually, when you define one, you should also define the other.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Defining either equals or hashCode in a class without defining the is a known source of bugs.
+   Usually, when you define one, you should also define the other.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="structural.type">
- <justification>
- Structural types in Scala can use reflection - this can have unexpected performance consequences.
-Warning: This check can also wrongly pick up type lamdbas and other such constructs. This checker should be used with care. You always have the alternative of the scalac checking for structural types.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Structural types in Scala can use reflection - this can have unexpected performance consequences.
+   Warning: This check can also wrongly pick up type lamdbas and other such constructs. This checker should
+   be used with care. You always have the alternative of the scalac checking for structural types.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.StructuralTypeChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="no.clone">
- <justification>
-  The clone method is difficult to get right. You can use the copy constructor of case classes rather than implementing clone.
-  For more information on clone(), see Effective Java by Joshua Bloch pages.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   The `clone()` method is difficult to get right. You can use the copy constructor of case classes rather
+   than implementing it. For more information on `clone()`, see Effective Java by Joshua Bloch pages.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="no.finalize">
- <justification>
- finalize() is called when the object is garbage collected, and garbage collection is not guaranteed to happen.
- It is therefore unwise to rely on code in finalize() method.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   `finalize()` is called when the object is garbage collected, and garbage collection is not guaranteed to
+   happen. It is therefore unwise to rely on code in `finalize()` method.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="indentation">
- <justification>
- Code that is not indented consistently can be hard to read.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Code that is not indented consistently can be hard to read.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.file.IndentationChecker" enabled="true">
       <parameters>
         <parameter name="tabSize">2</parameter>
@@ -801,139 +802,136 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
         <parameter name="classParamIndentSize">4</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="whitespace.end.of.line">
- <justification>
- Whitespace at the end of a line can cause problems when diffing between files or between versions.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Whitespace at the end of a line can cause problems when diffing between files or between versions.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true">
      <parameters>
       <parameter name="ignoreWhitespaceLines" type="boolean" default="false" />
      </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="illegal.imports">
- <justification>
- Use of some classes can be discouraged for a project. For instance, use of sun._ is generally discouraged because
- they are internal to the JDK and can be changed.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Use of some classes can be discouraged for a project. For instance, use of `sun._` is generally
+   discouraged because they are internal to the JDK and can be changed.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="parameter.number">
- <justification>
- A method which has more than a certain number of parameters can be hard to understand.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   A method which has more than a certain number of parameters can be hard to understand.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
       <parameters>
         <parameter name="maxParameters">8</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="simplify.boolean.expression">
- <justification>
- A boolean expression which can be simplified can make code easier to read.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>A boolean expression which can be simplified can make code easier to read.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.SimplifyBooleanExpressionChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="spaces.before.plus">
- <justification>
- An expression with spaces around + can be easier to read
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>An expression with spaces around `+` can be easier to read.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="spaces.after.plus">
- <justification>
- An expression with spaces around + can be easier to read
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>An expression with spaces around `+` can be easier to read.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="no.whitespace.before.left.bracket">
- <justification>
- If there is whitespace before a left bracket, this can be confusing to the reader
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   If there is whitespace before a left bracket, this can be confusing to the reader.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="no.whitespace.after.left.bracket">
- <justification>
- If there is whitespace after a left bracket, this can be confusing to the reader
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   If there is whitespace after a left bracket, this can be confusing to the reader.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="no.whitespace.before.right.bracket">
   <justification>
-   If there is whitespace before a right bracket, this can be confusing to the reader
+   If there is whitespace before a right bracket, this can be confusing to the reader.
   </justification>
   <example-configuration>
    <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker" enabled="true" />
- ]]>
+   ]]>
   </example-configuration>
  </check>
 
  <check id="covariant.equals">
- <justification>
- Mistakenly defining a covariant equals() method without overriding method equals(java.lang.Object) can produce unexpected runtime behaviour.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Mistakenly defining a covariant `equals()` method without overriding method `equals(java.lang.Object)`
+   can produce unexpected runtime behaviour.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true" />
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="scaladoc">
- <justification>
- Scaladoc is generally considered a good thing. Within reason.
- </justification>
- <extra-description>
- Ignore tokens is a comma separated string that may include the following : PatDefOrDcl (variables), TmplDef (classes, traits), TypeDefOrDcl (type definitions), FunDefOrDcl (functions)
- Supported indentation styles are "scaladoc" (for ScalaDoc-style comments, with two spaces before the asterisk), "javadoc" (for JavaDoc-style comments, with a single space before the asterisk) or "anydoc" to support any style (any number of spaces before the asterisk). For backwards compatibility, if left empty, "anydoc" will be assumed.
- </extra-description>
- <example-configuration>
- <![CDATA[
+  <justification>Scaladoc is generally considered a good thing. Within reason.</justification>
+  <extra-description>
+   Ignore tokens is a comma separated string that may include the following: `PatDefOrDcl` (variables),
+   `TmplDef` (classes, traits), `TypeDefOrDcl` (type definitions), `FunDefOrDcl` (functions).
+   Supported indentation styles are "scaladoc" (for ScalaDoc-style comments, with two spaces before the
+   asterisk), "javadoc" (for JavaDoc-style comments, with a single space before the asterisk) or "anydoc"
+   to support any style (any number of spaces before the asterisk). For backwards compatibility, if left
+   empty, "anydoc" will be assumed.
+  </extra-description>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ScalaDocChecker" enabled="true">
       <parameters>
         <parameter name="ignoreRegex">(.*Spec$)|(.*SpecIT$)</parameter>
@@ -942,76 +940,68 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
         <parameter name="indentStyle">anydoc</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="disallow.space.after.token">
- <justification>
- Correct formatting can help readability.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Correct formatting can help readability.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.DisallowSpaceAfterTokenChecker" enabled="true">
       <parameters>
         <parameter name="tokens">LPAREN</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="disallow.space.before.token">
- <justification>
- Correct formatting can help readability.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Correct formatting can help readability.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.DisallowSpaceBeforeTokenChecker" enabled="true">
       <parameters>
         <parameter name="tokens">COLON, COMMA, RPAREN</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="ensure.single.space.after.token">
- <justification>
- Correct formatting can help readability.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Correct formatting can help readability.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.EnsureSingleSpaceAfterTokenChecker" enabled="true">
       <parameters>
         <parameter name="tokens">COLON, IF</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="ensure.single.space.before.token">
- <justification>
- Correct formatting can help readability.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>Correct formatting can help readability.</justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.EnsureSingleSpaceBeforeTokenChecker" enabled="true">
       <parameters>
         <parameter name="tokens">LPAREN</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="import.ordering">
- <justification>
-  Consistent import ordering improves code readability and reduces unrelated changes in patches.
- </justification>
- <example-configuration>
- <![CDATA[
+  <justification>
+   Consistent import ordering improves code readability and reduces unrelated changes in patches.
+  </justification>
+  <example-configuration>
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.ImportOrderChecker" enabled="true">
       <parameters>
         <parameter name="groups">java,scala,others</parameter>
@@ -1020,25 +1010,21 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
         <parameter name="group.others">.+</parameter>
       </parameters>
     </check>
- ]]>
- </example-configuration>
+   ]]>
+  </example-configuration>
  </check>
 
  <check id="pattern.match.align">
-  <justification>
-    Correct formatting can help readability.
-  </justification>
+  <justification>Correct formatting can help readability.</justification>
   <example-configuration>
-  <![CDATA[
+   <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.PatternMatchAlignChecker" enabled="true"/>
-  ]]>
+   ]]>
   </example-configuration>
  </check>
 
  <check id="empty.interpolated.strings">
-  <justification>
-   Empty interpolated strings are harder to read and not necessary.
-  </justification>
+  <justification>Empty interpolated strings are harder to read and not necessary.</justification>
   <example-configuration>
    <![CDATA[
     <check class="org.scalastyle.scalariform.EmptyInterpolatedStringChecker" level="warning" enabled="true"/>
@@ -1048,7 +1034,8 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
 
  <check id="named.argument">
   <justification>
-   Nameless literals make code harder to understand (consider `updateEntity(1, true)` and `updateEntity(id = 1, enabled = true)`).
+   Nameless literals make code harder to understand (consider `updateEntity(1, true)` and
+   `updateEntity(id = 1, enabled = true)`).
   </justification>
   <example-configuration>
    <![CDATA[
@@ -1064,7 +1051,8 @@ Warning: This check can also wrongly pick up type lamdbas and other such constru
 
  <check id="while.brace">
   <justification>
-   While cannot be used in a pure-functional manner, that's why it's recommended to never omit braces according to Scala Style Guide.
+   While cannot be used in a pure-functional manner, that's why it's recommended to never omit braces
+   according to Scala Style Guide.
   </justification>
   <example-configuration>
    <![CDATA[
