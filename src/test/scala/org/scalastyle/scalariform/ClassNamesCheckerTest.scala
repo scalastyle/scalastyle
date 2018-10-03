@@ -452,4 +452,27 @@ class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
     assertErrors(List(), source)
     assertErrors(List(columnError(2, 6, List("^[A-Z][A-Za-z0-9]*$"))), badSource)
   }
+  
+  @Test def testValidConstructorParamsOK(): Unit = {
+    val source =
+      """
+        |class foobar(val myArg1: String, var myArg2: Int)  {
+        |}
+      """.stripMargin
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testInValidConstructorParamsKO(): Unit = {
+    val source =
+      """
+        |class foobar(val MyArg1: String, var MyArg2: Int)  {
+        |}
+      """.stripMargin
+
+    assertErrors(List(
+      columnError(2, 17, List("^[a-z][A-Za-z0-9]*$")),
+      columnError(2, 37, List("^[a-z][A-Za-z0-9]*$"))
+    ), source)
+  }
 }
