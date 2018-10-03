@@ -243,6 +243,10 @@ class FieldNamesChecker extends ScalariformChecker {
       //destructuring start - val name(...
       case GeneralTokens(List(Token(VARID, _, _, _), Token(LPAREN, _, _, _))) if inValDef => Nil
 
+      // check constructor parameters
+      case Param(_, _, _, Token(tokenType, name, offset, _), _, _) if regex.findAllIn(name).isEmpty =>
+          List(PositionError(offset, List(regex.toString)))
+ 
       //actual name check
       case GeneralTokens(List(Token(VARID, name, offset, _))) if inValDef && regex.findAllIn(name).isEmpty =>
         List(PositionError(offset, List(regex.toString)))
