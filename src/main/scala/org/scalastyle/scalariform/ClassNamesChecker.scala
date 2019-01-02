@@ -16,16 +16,8 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.CLASS
-import _root_.scalariform.lexer.Tokens.DOT
 import _root_.scalariform.lexer.Tokens.LPAREN
 import _root_.scalariform.lexer.Tokens.OBJECT
-import _root_.scalariform.lexer.Tokens.PACKAGE
 import _root_.scalariform.lexer.Tokens.VAL
 import _root_.scalariform.lexer.Tokens.VAR
 import _root_.scalariform.lexer.Tokens.VARID
@@ -37,64 +29,74 @@ import _root_.scalariform.parser.ParamClauses
 import _root_.scalariform.parser.PatDefOrDcl
 import _root_.scalariform.parser.TemplateBody
 import _root_.scalariform.parser.TmplDef
-import scala.util.matching.Regex
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+import scalariform.lexer.{Token => SToken}
 import scalariform.parser.TypeExprElement
+
+import scala.meta.tokens.Token
+import scala.util.matching.Regex
 
 // scalastyle:off multiple.string.literals
 
-class ClassNamesChecker extends ScalariformChecker {
+class ClassNamesChecker extends CombinedMetaChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
   val errorKey = "class.name"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
     val it = for {
-      List(left, right) <- ast.tokens.sliding(2)
-      if left.tokenType == CLASS && regex.findAllIn(right.text).isEmpty
+      tokens <- ast.tree.tokens.sliding(3).toSeq
+      if tokens(0).isInstanceOf[Token.KwClass] && regex.findAllIn(tokens(2).text).isEmpty
     } yield {
-      PositionError(right.offset, List(regexString))
+      toError(tokens(2), List(regexString))
     }
 
     it.toList
   }
 }
 
-class ObjectNamesChecker extends ScalariformChecker {
+class ObjectNamesChecker extends CombinedMetaChecker {
   val DefaultRegex = "^[A-Z][A-Za-z]*$"
   val errorKey = "object.name"
 
-  def verify(ast: CompilationUnit): List[PositionError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
     val it = for {
-      List(left, middle, right) <- ast.tokens.sliding(3)
-      if left.tokenType != PACKAGE && middle.tokenType == OBJECT && regex.findAllIn(right.text).isEmpty
+      tokens <- ast.tree.tokens.sliding(5).toSeq
+      if !tokens(0).isInstanceOf[Token.KwPackage] && tokens(2).isInstanceOf[Token.KwObject] && regex.findAllIn(tokens(4).text).isEmpty
     } yield {
-      PositionError(right.offset, List(regexString))
+      toError(tokens(4), List(regexString))
     }
 
     it.toList
   }
 }
 
-class PackageNamesChecker extends ScalariformChecker {
+class PackageNamesChecker extends CombinedMetaChecker {
   val DefaultRegex = "^[a-z][A-Za-z]*$"
   val errorKey = "package.name"
 
-  def verify(ast: CompilationUnit): List[PositionError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
-    def isPartOfPackageName(t: Token): Boolean = (t.tokenType == DOT) || (t.tokenType == VARID)
+    def isPartOfPackageName(t: Token): Boolean = t.isInstanceOf[Token.Dot] || t.isInstanceOf[Token.Ident]
 
     @annotation.tailrec
-    def getNextPackageName(tokens: List[Token]): (List[Token], List[Token]) = tokens match {
-      case Nil => (Nil, Nil)
-      case hd :: tail if hd.tokenType == PACKAGE => tail.span(isPartOfPackageName)
-      case l: Any => getNextPackageName(l.dropWhile(tok => tok.tokenType != PACKAGE))
+    def getNextPackageName(tokens: List[Token]): (List[Token], List[Token]) = {
+      tokens match {
+        case Nil => (Nil, Nil)
+        case hd :: space :: tail if hd.isInstanceOf[Token.KwPackage] => tail.span(isPartOfPackageName)
+        case l: Any => getNextPackageName(l.dropWhile(tok => !tok.isInstanceOf[Token.KwPackage]))
+      }
     }
 
     @annotation.tailrec
@@ -103,36 +105,36 @@ class PackageNamesChecker extends ScalariformChecker {
         case (Nil, Nil) => myAccumulator.reverse  // Return the result, but reverse since we gathered backward
         case (Nil, remainder) => getPackageNameLoop(remainder, myAccumulator) // Found package object - try again
         case (l, remainder) =>  // add match to results, go look again
-          val pkgName = l.filter(tok => tok.tokenType != DOT) // Strip out the dots between varids
+          val pkgName = l.filter(tok => !tok.isInstanceOf[Token.Dot]) // Strip out the dots between varids
           getPackageNameLoop(remainder, pkgName :: myAccumulator)
       }
 
-    val packageNames = getPackageNameLoop(ast.tokens, Nil)
+    val packageNames = getPackageNameLoop(ast.tree.tokens.toList, Nil)
 
     val it = for {
       pkgName <- packageNames.flatten
       if regex.findAllIn(pkgName.text).isEmpty
     } yield {
-      PositionError(pkgName.offset, List(regexString))
+      toError(pkgName, List(regexString))
     }
 
     it
   }
 }
 
-class PackageObjectNamesChecker extends ScalariformChecker {
+class PackageObjectNamesChecker extends CombinedMetaChecker {
   val DefaultRegex = "^[a-z][A-Za-z]*$"
   val errorKey = "package.object.name"
 
-  def verify(ast: CompilationUnit): List[PositionError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val regexString = getString("regex", DefaultRegex)
     val regex = regexString.r
 
     val it = for {
-      List(left, middle, right) <- ast.tokens.sliding(3)
-      if left.tokenType == PACKAGE && middle.tokenType == OBJECT && regex.findAllIn(right.text).isEmpty
+      tokens <- ast.tree.tokens.sliding(5).toSeq
+      if tokens(0).isInstanceOf[Token.KwPackage] && tokens(2).isInstanceOf[Token.KwObject] && regex.findAllIn(tokens(4).text).isEmpty
     } yield {
-      PositionError(right.offset, List(regexString))
+      toError(tokens(4), List(regexString))
     }
 
     it.toList
@@ -224,27 +226,27 @@ class FieldNamesChecker extends ScalariformChecker {
                         (ast: Any): List[ScalastyleError] = {
     ast match {
       //object Name { ... }
-      case TmplDef(List(Token(OBJECT, _, _, _)), _, _, _, _, _, _, Some(TemplateBody(_, _, stats, _))) =>
+      case TmplDef(List(SToken(OBJECT, _, _, _)), _, _, _, _, _, _, Some(TemplateBody(_, _, stats, _))) =>
         //go through all first-level val declarations and apply objectFieldRegex
         stats.immediateChildren.flatMap(stat => stat match {
-          case FullDefOrDcl(_, _, PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _)) if tokenType == VAL || tokenType == VAR =>
+          case FullDefOrDcl(_, _, PatDefOrDcl(SToken(tokenType, _, _, _), expr, _, _, _)) if tokenType == VAL || tokenType == VAR =>
             VisitorHelper.visit(expr, localVisit(objectFieldRegex, objectFieldRegex, inValDef = true))
           case t =>
             VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
         })
 
       //val ... =
-      case PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _) if tokenType == VAL || tokenType == VAR =>
+      case PatDefOrDcl(SToken(tokenType, _, _, _), expr, _, _, _) if tokenType == VAL || tokenType == VAR =>
         VisitorHelper.visit(expr, localVisit(regex, objectFieldRegex, inValDef = true))
 
       // don't descend into type elements
       case tee: TypeExprElement => Nil
 
       //destructuring start - val name(...
-      case GeneralTokens(List(Token(VARID, _, _, _), Token(LPAREN, _, _, _))) if inValDef => Nil
+      case GeneralTokens(List(SToken(VARID, _, _, _), SToken(LPAREN, _, _, _))) if inValDef => Nil
 
       //actual name check
-      case GeneralTokens(List(Token(VARID, name, offset, _))) if inValDef && regex.findAllIn(name).isEmpty =>
+      case GeneralTokens(List(SToken(VARID, name, offset, _))) if inValDef && regex.findAllIn(name).isEmpty =>
         List(PositionError(offset, List(regex.toString)))
 
       case t: Any =>

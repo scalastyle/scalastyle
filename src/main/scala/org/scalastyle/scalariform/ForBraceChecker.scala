@@ -16,10 +16,13 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.{CombinedAst, CombinedChecker, Lines, PositionError, ScalastyleError}
-
 import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.parser.ForExpr
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.Lines
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
 
 class ForBraceChecker extends CombinedChecker {
   val errorKey = "for.brace"

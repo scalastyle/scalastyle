@@ -272,6 +272,7 @@ trait PositionErrorTrait {
   protected def toError(t: scala.meta.Tree, args: List[String]): ColumnError = toError(t.pos, args)
   protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos, Nil)
   protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos, Nil)
+  protected def toError(t: scala.meta.tokens.Token, args: List[String]): ScalastyleError = toError(t.pos, args)
 
   protected def getAllTokens[T <: scala.meta.tokens.Token](tree: Tree)(implicit manifest: Manifest[T]): Seq[T] = {
     for {
