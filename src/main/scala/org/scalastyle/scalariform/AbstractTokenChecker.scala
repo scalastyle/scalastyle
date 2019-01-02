@@ -16,44 +16,38 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.TokenType
-import _root_.scalariform.lexer.Tokens.INTEGER_LITERAL
-import _root_.scalariform.lexer.Tokens.NULL
-import _root_.scalariform.lexer.Tokens.RETURN
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.lexer.Tokens.WHILE
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.tokens.Token
+import scala.util.matching.Regex
 
-abstract class AbstractTokenChecker(val errorKey: String, tokenType: TokenType) extends ScalariformChecker {
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+abstract class AbstractTokenChecker[T <: Token](val errorKey: String, tokenType: Class[T]) extends CombinedMetaChecker {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      t <- ast.tokens
-      if t.tokenType == tokenType && matches(t)
+      t <- ast.tree.tokens
+      if t.getClass.isAssignableFrom(tokenType) && matches(t)
     } yield {
-      PositionError(t.offset)
+      toError(t)
     }
 
-    it
+    it.toList
   }
 
   protected def matches(token: Token): Boolean = true
 }
 
-class UppercaseLChecker extends AbstractTokenChecker("uppercase.l", INTEGER_LITERAL) {
+class UppercaseLChecker extends AbstractTokenChecker("uppercase.l", classOf[Token.Constant.Long]) {
   override def matches(t: Token): Boolean = t.text.endsWith("l")
 }
 
-class WhileChecker extends AbstractTokenChecker("while", WHILE)
-class ReturnChecker extends AbstractTokenChecker("return", RETURN)
+class WhileChecker extends AbstractTokenChecker("while", classOf[Token.KwWhile])
+class ReturnChecker extends AbstractTokenChecker("return", classOf[Token.KwReturn])
 
-class TokenChecker extends AbstractTokenChecker("token", VARID) {
+class TokenChecker extends AbstractTokenChecker("token", classOf[Token.Ident]) {
   private val DefaultRegex = "^$"
-  lazy val regex = getString("regex", DefaultRegex).r
+  lazy val regex: Regex = getString("regex", DefaultRegex).r
 
-  override protected def matches(t: Token) = regex.findFirstIn(t.text).isDefined
+  override protected def matches(t: Token): Boolean = regex.findFirstIn(t.text).isDefined
 }
