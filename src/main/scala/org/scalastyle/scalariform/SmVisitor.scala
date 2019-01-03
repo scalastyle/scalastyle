@@ -16,6 +16,9 @@
 
 package org.scalastyle.scalariform
 
+import org.scalastyle.CombinedMeta
+
+import scala.meta.Dialect
 import scala.meta.Tree
 import scala.meta.tokens.Token
 import scala.meta.tokens.Tokens
@@ -77,4 +80,15 @@ object SmVisitor {
     right.start - left.end
   }
 
+  def sliding2(tree: Tree)(implicit dialect: Dialect): Iterator[(Token, Token)] = {
+    tree.tokens.sliding(2).map(l => (l(0), l(1)))
+  }
+
+  def sliding3(tree: Tree)(implicit dialect: Dialect): Iterator[(Token, Token, Token)] = {
+    tree.tokens.sliding(3).map(l => (l(0), l(1), l(2)))
+  }
+
+  def sliding5(tree: Tree)(implicit dialect: Dialect): Iterator[(Token, Token, Token, Token, Token)] = {
+    tree.tokens.sliding(5).map(l => (l(0), l(1), l(2), l(3), l(4))) // scalastyle:ignore magic.number
+  }
 }

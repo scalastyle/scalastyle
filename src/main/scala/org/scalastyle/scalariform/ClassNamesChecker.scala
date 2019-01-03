@@ -34,6 +34,8 @@ import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.SmVisitor.sliding3
+import org.scalastyle.scalariform.SmVisitor.sliding5
 import scalariform.lexer.{Token => SToken}
 import scalariform.parser.TypeExprElement
 
@@ -51,10 +53,10 @@ class ClassNamesChecker extends CombinedMetaChecker {
     val regex = regexString.r
 
     val it = for {
-      tokens <- ast.tree.tokens.sliding(3).toSeq
-      if tokens(0).isInstanceOf[Token.KwClass] && regex.findAllIn(tokens(2).text).isEmpty
+      (left, _, right) <- sliding3(ast.tree)
+      if left.isInstanceOf[Token.KwClass] && regex.findAllIn(right.text).isEmpty
     } yield {
-      toError(tokens(2), List(regexString))
+      toError(right, List(regexString))
     }
 
     it.toList
@@ -70,10 +72,10 @@ class ObjectNamesChecker extends CombinedMetaChecker {
     val regex = regexString.r
 
     val it = for {
-      tokens <- ast.tree.tokens.sliding(5).toSeq
-      if !tokens(0).isInstanceOf[Token.KwPackage] && tokens(2).isInstanceOf[Token.KwObject] && regex.findAllIn(tokens(4).text).isEmpty
+      (left, _, middle, _, right) <- sliding5(ast.tree)
+      if !left.isInstanceOf[Token.KwPackage] && middle.isInstanceOf[Token.KwObject] && regex.findAllIn(right.text).isEmpty
     } yield {
-      toError(tokens(4), List(regexString))
+      toError(right, List(regexString))
     }
 
     it.toList
@@ -131,10 +133,10 @@ class PackageObjectNamesChecker extends CombinedMetaChecker {
     val regex = regexString.r
 
     val it = for {
-      tokens <- ast.tree.tokens.sliding(5).toSeq
-      if tokens(0).isInstanceOf[Token.KwPackage] && tokens(2).isInstanceOf[Token.KwObject] && regex.findAllIn(tokens(4).text).isEmpty
+      (left, _, middle, _, right) <- sliding5(ast.tree)
+      if left.isInstanceOf[Token.KwPackage] && middle.isInstanceOf[Token.KwObject] && regex.findAllIn(right.text).isEmpty
     } yield {
-      toError(tokens(4), List(regexString))
+      toError(right, List(regexString))
     }
 
     it.toList
