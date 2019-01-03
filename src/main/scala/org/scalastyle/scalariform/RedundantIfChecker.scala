@@ -16,50 +16,29 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
-import org.scalastyle.PositionError
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.ELSE
-import _root_.scalariform.lexer.Tokens.FALSE
-import _root_.scalariform.lexer.Tokens.TRUE
-import _root_.scalariform.parser.ElseClause
-import _root_.scalariform.parser.Expr
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.IfExpr
+import scala.meta.Lit
+import scala.meta.Term
 
-class RedundantIfChecker extends CombinedChecker {
+class RedundantIfChecker extends CombinedMetaChecker {
   val errorKey = "if.redundant"
 
-  def verify(ast: CombinedAst): List[ScalastyleError] = {
-    val it = for {
-      t <- localvisit(ast.compilationUnit)
-      if matches(t)
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    for {
+      t <- SmVisitor.getAll[Term.If](ast.tree).filter(matches)
     } yield {
-      PositionError(t.firstToken.offset)
+      toError(t)
     }
-
-    it
   }
 
-  private def matches(t: IfExpr): Boolean =
-    isBoolean(t.body) && isBoolean(t.elseClause)
+  private def matches(t: Term.If): Boolean = isBoolean(t.thenp) && isBoolean(t.elsep)
 
-  private def isBoolean(t: Option[ElseClause]): Boolean = t match {
-    case Some(ElseClause(None, tok, expr)) => tok.tokenType == ELSE && isBoolean(expr)
-    case _ => false
-  }
-  private def isBoolean(t: Expr): Boolean = t match {
-    case Expr(List(GeneralTokens(List(a)))) => isBoolean(a)
-    case _ => false
-  }
-  private def isBoolean(t: Token): Boolean = Set(TRUE, FALSE).contains(t.tokenType)
-
-  private def localvisit(ast: Any): List[IfExpr] = ast match {
-    case t: IfExpr if matches(t) => List(t)
-    case t: Any => visit(t, localvisit)
+  private def isBoolean(t: Any): Boolean = t match {
+    case Lit.Boolean(_)       => true
+    case t @ Term.If(_, _, _) => matches(t)
+    case _                    => false
   }
 }
