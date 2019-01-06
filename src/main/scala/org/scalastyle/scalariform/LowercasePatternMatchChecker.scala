@@ -16,36 +16,29 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.CasePattern
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Case
+import scala.meta.Pat
 
-class LowercasePatternMatchChecker extends ScalariformChecker {
+class LowercasePatternMatchChecker extends CombinedMetaChecker {
   val errorKey = "lowercase.pattern.match"
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for {
-      f <- visit(map)(ast.immediateChildren.head)
-      if matches(f)
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    for {
+      f <- SmVisitor.getAll[Case](ast.tree)
+      v <- matches(f)
     } yield {
-      PositionError(f.pattern.firstToken.offset)
-    }
-
-    it
-  }
-
-  private def matches(t: CasePattern) = {
-    t.pattern.tokens match {
-      case List(t: Token) => t.tokenType == VARID && t.text.length() > 0 && t.text(0).isLower
-      case _ => false
+      toError(v)
     }
   }
 
-  private def map(t: CasePattern): List[CasePattern] = List(t) ::: visit(map)(t.pattern) ::: visit(map)(t.guardOption)
+  private def matches(t: Case): Option[Pat.Var] = {
+    t.pat match {
+      case v: Pat.Var => if (t.pat.toString.head.isLower) Some(v) else None
+      case _          => None
+    }
+  }
 }
