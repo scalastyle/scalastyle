@@ -16,31 +16,27 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.{Annotation => ParserAnnotation}
+import scala.meta.Mod
 
-abstract class JavaAnnotationChecker extends ScalariformChecker {
+abstract class JavaAnnotationChecker extends CombinedMetaChecker {
   val invalidTokens: List[String]
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      t <- VisitorHelper.getAll[ParserAnnotation](ast.immediateChildren.head)
-      if isValid(t)
+      t <- SmVisitor.getAll[Mod.Annot](ast.tree)
+      if matches(t)
     } yield {
-      PositionError(t.firstToken.offset)
+      toError(t)
     }
 
     it
   }
 
-  def isValid(t: ParserAnnotation): Boolean = {
-    val text = t.annotationType.tokens.foldLeft("")((x, y) => x + y.text)
-    t.annotationType.tokens.nonEmpty && invalidTokens.contains(text)
-  }
+  private def matches(t: Mod.Annot): Boolean = invalidTokens.contains(t.init.tpe.toString)
 }
 
 class DeprecatedJavaChecker extends JavaAnnotationChecker {
