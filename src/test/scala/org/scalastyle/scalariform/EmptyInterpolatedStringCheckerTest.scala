@@ -57,7 +57,7 @@ class Foobar {
   val foo = s"foo"
 }
 """
-    assertErrors(List(columnError(5, 13)), source)
+    assertErrors(List(columnError(5, 12)), source)
   }
 
   @Test def testMultiple(): Unit = {
@@ -70,7 +70,7 @@ class Foobar {
   val baz = s"   baz     "
 }
 """
-    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13)), source)
+    assertErrors(List(columnError(5, 12), columnError(6, 12), columnError(7, 12)), source)
   }
 
   @Test def testMix(): Unit = {
@@ -84,7 +84,7 @@ class Foobar {
   val baz = s"   baz     "
 }
 """
-    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(8, 13)), source)
+    assertErrors(List(columnError(5, 12), columnError(6, 12), columnError(8, 12)), source)
   }
 
   @Test def testRaw(): Unit = {
@@ -96,7 +96,7 @@ class Foobar {
   val bar = raw"test"
 }
 """
-    assertErrors(List(columnError(5, 13)), source)
+    assertErrors(List(columnError(5, 12)), source)
 
   }
 }

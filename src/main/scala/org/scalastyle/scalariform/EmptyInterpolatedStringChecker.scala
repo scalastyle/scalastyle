@@ -16,25 +16,26 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.{PositionError, ScalariformChecker, ScalastyleError}
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
+import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Tokens.INTERPOLATION_ID
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Term
 
-class EmptyInterpolatedStringChecker extends ScalariformChecker {
+class EmptyInterpolatedStringChecker extends CombinedMetaChecker {
   val errorKey = "empty.interpolated.strings"
-  val interpolationRegex = """.*\$""".r
-  val typesSupportingVariables = Set("s", "f")
+  private val typesSupportingVariables = Set("s", "f")
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for {
-        List(left, right) <- ast.tokens.sliding(2)
-        if left.tokenType == INTERPOLATION_ID && typesSupportingVariables.contains(left.text) &&
-          interpolationRegex.findFirstIn(right.text).isEmpty
-      } yield {
-        PositionError(right.offset)
-      }
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    for {
+      i <- SmVisitor.getAll[Term.Interpolate](ast.tree)
+      if matches(i)
+    } yield {
+      toError(i)
+    }
+  }
 
-    it.toList
+  private def matches(i: Term.Interpolate): Boolean = {
+    i.args.isEmpty && typesSupportingVariables.contains(i.prefix.toString)
   }
 }
