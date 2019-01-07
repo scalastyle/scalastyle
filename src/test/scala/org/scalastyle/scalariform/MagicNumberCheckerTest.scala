@@ -144,6 +144,7 @@ class Foobar {
 
   var fooOk: Long = 1
   var fooFail: Long = 100L
+  var fooFail2: Long = +100L
 }
                  """
 

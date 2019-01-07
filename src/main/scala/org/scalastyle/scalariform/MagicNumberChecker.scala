@@ -16,107 +16,43 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.Clazz
 
-import scala.Option.option2Iterable
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.INTEGER_LITERAL
-import _root_.scalariform.lexer.Tokens.VAL
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.Expr
-import _root_.scalariform.parser.ExprElement
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.PatDefOrDcl
-import _root_.scalariform.parser.PrefixExprElement
+import scala.meta.Defn
+import scala.meta.Lit
+import scala.meta.Term
 
-class MagicNumberChecker extends ScalariformChecker {
+class MagicNumberChecker extends CombinedMetaChecker {
   val DefaultIgnore = "-1,0,1,2"
   val errorKey = "magic.number"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").map(_.trim).toSet
 
-    val intList = for {
-      t <- localvisit(ast.immediateChildren.head)
-      f <- traverse(t)
-      if matches(f, ignores)
-    } yield {
-      f
-    }
+    // get unary pluses
+    val unaryList: List[Term.ApplyUnary] = SmVisitor.getAll[Term.ApplyUnary](ast.tree).filter(isUnaryPlus(ignores))
+    val litsFromUnaryList = unaryList.map(_.arg).toSet
 
-    val valList = (for {
-      t <- localvisitVal(ast.immediateChildren.head)
-      f <- traverseVal(t)
-      g <- toOption(f)
-    } yield {
-      g
-    }).map {
-      case Expr(List(t: Expr)) => t
-      case d: Any => d
-    }
+    // get int & long literals, but remove ignored ones & ones which appear in unary pluses above
+    val intList: List[Lit] = SmVisitor.getAll[Lit.Int](ast.tree).filterNot(ignoredLit(ignores, litsFromUnaryList))
+    val longList: List[Lit] = SmVisitor.getAll[Lit.Long](ast.tree).filterNot(ignoredLit(ignores, litsFromUnaryList))
 
-    intList.filter(t => !valList.contains(t.t)).map(t => PositionError(t.position))
+    val all = (intList ::: longList ::: unaryList).sortBy(_.pos.start)
+
+    // all rhs of vals
+    val valRhsSet = SmVisitor.getAll[Defn.Val](ast.tree).map(_.rhs).toSet
+
+    // remove all terms which appear in rhs of val decl
+    all.filterNot(t => valRhsSet.contains(t)).map(toError)
   }
 
-  case class ExprVisit(t: Expr, position: Int, contents: List[ExprVisit]) extends Clazz[Expr]()
+  private def ignoredLit(ignores: Set[String], unaryLits: Set[Term])(l: Lit): Boolean = ignores.contains(l.value.toString) || unaryLits.contains(l)
 
-  private def traverse(t: ExprVisit): List[ExprVisit] = t :: t.contents.flatMap(traverse)
-
-  private def matches(t: ExprVisit, ignores: Set[String]) = {
-    toIntegerLiteralExprElement(t.t.contents) match {
-      case Some(x) => !ignores.contains(x)
-      case None => false
-    }
-  }
-
-  private def toIntegerLiteralExprElement(list: List[ExprElement]): Option[String] = {
-    list match {
-      case List(Expr(List(PrefixExprElement(t), GeneralTokens(gtList)))) => toIntegerLiteral(t, toIntegerLiteralToken(gtList))
-      case List(PrefixExprElement(t), GeneralTokens(gtList)) => toIntegerLiteral(t, toIntegerLiteralToken(gtList))
-      case List(GeneralTokens(gtList)) => toIntegerLiteralToken(gtList)
-      case _ => None
-    }
-  }
-
-  private def toIntegerLiteral(prefixExpr: Token, intLiteral: Option[String]): Option[String] = {
-    (prefixExpr.text, intLiteral) match {
-      case ("+", Some(i)) => Some(i)
-      case ("-", Some(i)) => Some("-" + i)
-      case _ => None
-    }
-  }
-
-  private def toIntegerLiteralToken(list: List[Token]): Option[String] = {
-    list match {
-      case List(Token(tokenType, text, start, end)) if tokenType == INTEGER_LITERAL => Some(text.replaceAll("[Ll]", ""))
-      case _ => None
-    }
-  }
-
-  private def localvisit(ast: Any): List[ExprVisit] = ast match {
-    case Expr(List(t: Expr)) => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
-    case t: Expr => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
-    case t: Any => VisitorHelper.visit(t, localvisit)
-  }
-
-  case class PatDefOrDclVisit(t: PatDefOrDcl, valOrVarToken: Token, pattern: List[PatDefOrDclVisit], otherPatterns: List[PatDefOrDclVisit],
-                              equalsClauseOption: List[PatDefOrDclVisit])
-
-  private def localvisitVal(ast: Any): List[PatDefOrDclVisit] = ast match {
-    case t: PatDefOrDcl => List(PatDefOrDclVisit(t, t.valOrVarToken, localvisitVal(t.pattern),
-                                    localvisitVal(t.otherPatterns), localvisitVal(t.equalsClauseOption)))
-    case t: Any => VisitorHelper.visit(t, localvisitVal)
-  }
-
-  private def traverseVal(t: PatDefOrDclVisit): List[PatDefOrDclVisit] = t :: t.equalsClauseOption.flatMap(traverseVal)
-
-  private def toOption(t: PatDefOrDclVisit): Option[Expr] = {
-    t.t.equalsClauseOption match {
-      case Some((equals: Token, expr: Expr)) if t.t.valOrVarToken.tokenType == VAL && toIntegerLiteralExprElement(expr.contents).isDefined => Some(expr)
-      case _ => None
-    }
+  private def isUnaryPlus(ignores: Set[String])(au: Term.ApplyUnary): Boolean = au match {
+    case Term.ApplyUnary(Term.Name("+"), i: Lit.Int) => !ignores.contains("" + i.value)
+    case Term.ApplyUnary(Term.Name("+"), i: Lit.Long) => !ignores.contains("" + i.value)
+    case _ => false
   }
 }
