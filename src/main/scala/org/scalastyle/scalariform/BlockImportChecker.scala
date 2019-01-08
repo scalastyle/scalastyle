@@ -16,53 +16,58 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.ARROW
-import _root_.scalariform.lexer.Tokens.USCORE
-import _root_.scalariform.parser.AstNode
-import _root_.scalariform.parser.BlockImportExpr
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.Expr
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.ImportClause
-import _root_.scalariform.parser.ImportSelectors
+import scala.meta.Import
+import scala.meta.Importee
 
-class BlockImportChecker extends ScalariformChecker {
-
+class BlockImportChecker extends CombinedMetaChecker {
   val errorKey = "block.import"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] =
-    findBlockImports(ast)
-
-  private def findBlockImports(in: AstNode): List[PositionError] = in match {
-
-    // comma separated import
-    case ImportClause(_, firstImport, otherImports) if otherImports.nonEmpty =>
-      List(PositionError(firstImport.firstToken.offset))
-
-    // rename or hide import
-    case BlockImportExpr(prefix, ImportSelectors(_, Expr(
-          List(_, GeneralTokens(List(Token(ARROW, "=>", _, _))), _)
-        ), otherImports, _)) =>
-
-      val blockImportFound = otherImports exists {
-        case (_, Expr(List(GeneralTokens(List(Token(tokenType, _, _, _)))))) =>
-          tokenType != USCORE
-        case _ =>
-          false
-      }
-
-      if (blockImportFound) List(PositionError(prefix.firstToken.offset)) else Nil
-
-    // other block imports
-    case b: BlockImportExpr => List(PositionError(b.firstToken.offset))
-
-    // remaining nodes
-    case a: AstNode => a.immediateChildren flatMap findBlockImports
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    SmVisitor.getAll[Import](ast.tree).filter(isBlockImport).map(_.importers.head).map(toError)
   }
 
+  private def isBlockImport(i: Import): Boolean = {
+    val count = countTypes(i)
+
+    if (count.wildcard > 0) {
+      // only wildcard is not a block import
+      if (count.rename + count.name + count.unimport == 0) {
+        false
+      } else if (count.rename > 0) {
+        // wildcard with rename is block import if there is a name as well
+        count.name > 0
+      } else {
+        // otherwise block import
+        true
+      }
+    } else {
+      // if there are multiple imports, we have a block import
+      count.name > 1
+    }
+  }
+
+  case class Counts(name: Int, rename: Int, unimport: Int, wildcard: Int)
+
+  private def countTypes(i: Import): Counts = {
+    var name = 0
+    var rename = 0
+    var unimport = 0
+    var wildcard = 0
+
+    i.importers.foreach { importer =>
+      importer.importees.foreach {
+        case i: Importee.Name     => name = name + 1
+        case i: Importee.Rename   => rename = rename + 1
+        case i: Importee.Unimport => unimport = unimport + 1
+        case i: Importee.Wildcard => wildcard = wildcard + 1
+        case _                    => // nothing
+      }
+    }
+
+    Counts(name, rename, unimport, wildcard)
+  }
 }
