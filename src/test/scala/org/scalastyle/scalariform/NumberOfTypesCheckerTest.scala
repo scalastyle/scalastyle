@@ -51,6 +51,7 @@ case class F3()
 case class F4()
 case class F5()
 case class F6()
+trait T1
 """
 
     assertErrors(List(fileError(List("5"))), source, Map("maxTypes" -> "5"))
@@ -67,8 +68,10 @@ case class F4()
 class F5() {
   class Foobar {
   }
+  trait T1
 }
 case class F6()
+trait T2
 """
 
     assertErrors(List(fileError(List("6"))), source, Map("maxTypes" -> "6"))

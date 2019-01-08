@@ -16,32 +16,22 @@
 
 package org.scalastyle.scalariform
 
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.FileError
-import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.TmplDef
+import scala.meta.Defn
 
-class NumberOfTypesChecker extends ScalariformChecker {
+class NumberOfTypesChecker extends CombinedMetaChecker {
   val errorKey = "number.of.types"
   val DefaultMaximumTypes = 30
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val maximumTypes = getInt("maxTypes", DefaultMaximumTypes)
 
-    val it = for {
-      f <- localvisit(ast.immediateChildren(0))
-    } yield {
-      f
-    }
+    val it = SmVisitor.getAll[Defn.Class](ast.tree)
 
-    if (it.size > maximumTypes) List(FileError(List(maximumTypes.toString))) else List()
-  }
-
-  private def localvisit(ast: Any): List[TmplDef] = ast match {
-    case t: TmplDef => List(t) ::: localvisit(t.templateBodyOption)
-    case t: Any => visit(t, localvisit)
+    if (it.size > maximumTypes) List(FileError(List(maximumTypes.toString))) else Nil
   }
 }
