@@ -44,7 +44,7 @@ package foobar
 class Foobar [T] {
 }
 """
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(4, 13)), source)
   }
 
   @Test def testTwoSpaces(): Unit = {
@@ -55,7 +55,7 @@ class Foobar [ Barbar [T]] {
 }
 """
 
-    assertErrors(List(columnError(4, 6), columnError(4, 15)), source)
+    assertErrors(List(columnError(4, 13), columnError(4, 22)), source)
   }
 }
 

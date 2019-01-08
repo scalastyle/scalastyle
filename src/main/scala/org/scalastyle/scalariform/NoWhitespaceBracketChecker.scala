@@ -16,53 +16,51 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Tokens.LBRACKET
-import _root_.scalariform.lexer.Tokens.RBRACKET
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.tokens.Token
 
-class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
+class NoWhitespaceBeforeLeftBracketChecker extends CombinedMetaChecker {
   val errorKey = "no.whitespace.before.left.bracket"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      List(left, right) <- ast.tokens.sliding(2)
-      if right.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0
+      (left, right) <- SmVisitor.sliding2(ast.tree)
+      if left.getClass.isAssignableFrom(classOf[Token.Space]) && right.getClass.isAssignableFrom(classOf[Token.LeftBracket])
     } yield {
-      PositionError(left.offset)
+      toError(right)
     }
 
     it.toList
   }
 }
 
-class NoWhitespaceAfterLeftBracketChecker extends ScalariformChecker {
+class NoWhitespaceAfterLeftBracketChecker extends CombinedMetaChecker {
   val errorKey = "no.whitespace.after.left.bracket"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      List(left, right) <- ast.tokens.sliding(2)
-      if left.tokenType == LBRACKET && charsBetweenTokens(left, right) > 0
+      (left, right) <- SmVisitor.sliding2(ast.tree)
+      if left.getClass.isAssignableFrom(classOf[Token.LeftBracket]) && right.getClass.isAssignableFrom(classOf[Token.Space])
     } yield {
-      PositionError(left.offset)
+      toError(left)
     }
 
     it.toList
   }
 }
 
-class NoWhitespaceBeforeRightBracketChecker extends ScalariformChecker {
+class NoWhitespaceBeforeRightBracketChecker extends CombinedMetaChecker {
   val errorKey = "no.whitespace.before.right.bracket"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      List(left, right) <- ast.tokens.sliding(2)
-      if right.tokenType == RBRACKET && charsBetweenTokens(left, right) > 0
+      (left, right) <- SmVisitor.sliding2(ast.tree)
+      if left.getClass.isAssignableFrom(classOf[Token.Space]) && right.getClass.isAssignableFrom(classOf[Token.RightBracket])
     } yield {
-      PositionError(right.offset)
+      toError(right)
     }
 
     it.toList
