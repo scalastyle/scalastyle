@@ -16,43 +16,29 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.scalariform.VisitorHelper.visit
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.lexer.Tokens.LBRACKET
-import _root_.scalariform.lexer.Tokens.NEWLINE
-import _root_.scalariform.lexer.Tokens.PLUS
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.InfixExpr
+import scala.meta.Term
 
-class SpacesAfterPlusChecker extends ScalariformChecker {
+class SpacesAfterPlusChecker extends CombinedMetaChecker {
   val errorKey = "spaces.after.plus"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = for {
-      t <- localVisit(ast.immediateChildren(0))
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    for {
+      t <- SmVisitor.getAll[Term.ApplyInfix](ast.tree)
       if isInvalidPlusInfix(t)
     } yield {
-      PositionError(t.infixId.offset)
+      toError(t.op)
     }
-
-    it.toList
   }
 
-  private def isInvalidPlusInfix(infix: InfixExpr): Boolean = {
-    if (infix.infixId.tokenType == PLUS) {
-      val isLBracket = infix.left.lastOption.exists(_.tokens.lastOption.exists(_.tokenType == LBRACKET))
-      val newLineExists = infix.newlineOption.exists(_.tokenType == NEWLINE)
-      !isLBracket && !newLineExists && charsBetweenTokens(infix.infixId, infix.right.head.tokens.head) == 0
+  private def isInvalidPlusInfix(infix: Term.ApplyInfix): Boolean = {
+    if (infix.op.value == "+") {
+      infix.op.pos.end - infix.args.head.pos.start == 0
     } else {
       false
     }
-  }
-
-  private def localVisit(ast: Any): List[InfixExpr] = ast match {
-    case expr: InfixExpr => List(expr)
-    case other: Any => visit(other, localVisit)
   }
 }
