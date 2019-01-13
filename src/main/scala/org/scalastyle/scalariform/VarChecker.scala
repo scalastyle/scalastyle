@@ -16,37 +16,32 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.lexer.Tokens.VAR
-import _root_.scalariform.parser.AnonymousFunction
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.FunBody
-import _root_.scalariform.parser.PatDefOrDcl
-import _root_.scalariform.parser.TemplateBody
+import scala.meta.Defn
+import scala.meta.Term
+import scala.meta.Tree
 
-abstract class VarChecker extends ScalariformChecker {
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+abstract class VarChecker extends CombinedMetaChecker {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val it = for {
-      f <- localvisit(false)(ast.immediateChildren(0))
+      f <- localvisit(false)(ast.tree)
     } yield {
-      PositionError(f.firstToken.offset)
+      toError(f)
     }
 
-    it.toList
+    it
   }
 
   protected def matches(enclosingFunction: Boolean): Boolean
 
-  private def localvisit(enclosingFunction: Boolean)(ast: Any): List[PatDefOrDcl] = ast match {
-    case t: PatDefOrDcl if t.valOrVarToken.tokenType == VAR && matches(enclosingFunction) => List(t) ::: visit(t, localvisit(enclosingFunction))
-    case t: TemplateBody => visit(t, localvisit(false))
-    case t: FunBody => visit(t, localvisit(true))
-    case t: AnonymousFunction => visit(t, localvisit(true))
-    case t: Any => visit(t, localvisit(enclosingFunction))
+  private def localvisit(enclosingFunction: Boolean)(ast: Any): List[Tree] = ast match {
+    case t: Defn.Var if matches(enclosingFunction) => List(t) ::: SmVisitor.visit(t, localvisit(enclosingFunction))
+    case t: Defn.Def                               => SmVisitor.visit(t, localvisit(true))
+    case t: Term.Function                          => SmVisitor.visit(t, localvisit(true))
+    case t: Any                                    => SmVisitor.visit(t, localvisit(enclosingFunction))
   }
 }
 
