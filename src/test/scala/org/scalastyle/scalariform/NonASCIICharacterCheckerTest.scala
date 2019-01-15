@@ -70,7 +70,7 @@ class NonASCIICharacterCheckerTest extends AssertionsForJUnit with CheckerTest {
                    |}
                    | """.stripMargin
 
-    assertErrors(List(columnError(2, 14), columnError(5, 6), columnError(6, 6)), source)
+    assertErrors(List(columnError(3, 0), columnError(5, 6), columnError(6, 6)), source)
   }
 
   @Test def testStringNotOK(): Unit = {
