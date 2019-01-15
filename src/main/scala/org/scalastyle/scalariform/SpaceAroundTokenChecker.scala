@@ -16,42 +16,64 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
 
 import scala.Array.fallbackCanBuildFrom
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.TokenType
-import _root_.scalariform.lexer.Tokens
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.tokens.Token
 
-trait SpaceAroundTokenChecker extends ScalariformChecker {
+trait SpaceAroundTokenChecker extends CombinedMetaChecker {
   val DefaultTokens: String
   val disallowSpace: Boolean
   val beforeToken: Boolean
 
-  private def checkSpaces(left: Token, middle: Token, right: Token) =
-    if (beforeToken) {
-      charsBetweenTokens(left, middle) != (if (disallowSpace) 0 else 1)
-    } else {
-      charsBetweenTokens(middle, right) != (if (disallowSpace) 0 else 1)
-    }
+  // support old Scalariform token names, for backward compatibility
+  private val map = Map(
+    "LBRACKET" -> "[",
+    "RBRACKET" -> "]",
+    "LPAREN" -> "(",
+    "RPAREN" -> ")",
+    "LBRACE" -> "{",
+    "RBRACE" -> "}",
+    "EXCLAMATION" -> "!",
+    "USCORE" -> "_",
+    "COMMA" -> ",",
+    "PLUS" -> "+",
+    "DOT" -> ".",
+    "HASH" -> "#",
+    "MINUS" -> "-",
+    "SEMI" -> ";",
+    "COLON" -> ":",
+    "IF" -> "if"
+  )
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val tokens: Seq[TokenType] = getString("tokens", DefaultTokens).split(",").map(x => TokenType(x.trim))
-    (for {
-      l @ List(left, middle, right) <- ast.tokens.sliding(3)
-      if (l.forall(x => x.tokenType != Tokens.NEWLINE && x.tokenType != Tokens.NEWLINES)
-        && tokens.contains(middle.tokenType)
-        && !(middle.associatedWhitespaceAndComments.containsNewline && beforeToken)
-        && (!right.associatedWhitespaceAndComments.containsNewline || beforeToken)
-        && checkSpaces(left, middle, right))
-    } yield {
-      PositionError(middle.offset, List(middle.text))
-    }).toList
+  private def checkSpaces(t1: Token, t2: Token, t3: Token): Boolean = {
+    // t1, t2, t3 are reversed if beforeToken is true
+    // so we can have the same logic for both cases
+    if (disallowSpace) {
+      // the token directly after/before t1 cannot be a space
+      SmVisitor.isA(t2, classOf[Token.Space])
+    } else {
+      // the token directly after/before t1 must be a space, but the token before/after that cannot be a space
+      !SmVisitor.isA(t2, classOf[Token.Space]) || SmVisitor.isA(t3, classOf[Token.Space])
+    }
   }
 
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    val tokens: Set[String] = getString("tokens", DefaultTokens).split(",").map(s => map.getOrElse(s.trim, s.trim)).toSet
+
+    val it = for {
+      (t1, t2, t3) <- SmVisitor.sliding3(ast.tree, reverse = beforeToken)
+      if tokensContains(tokens, t1) && checkSpaces(t1, t2, t3)
+    } yield {
+      toError(t1, List(t1.text))
+    }
+
+    it.toList
+  }
+
+  private def tokensContains(tokens: Set[String], token: Token): Boolean = tokens.contains(token.text)
 }
 
 class EnsureSingleSpaceAfterTokenChecker extends SpaceAroundTokenChecker {

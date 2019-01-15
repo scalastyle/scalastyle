@@ -76,7 +76,6 @@ object SmVisitor {
   }
 
   def charsBetweenTokens(left: Token, right: Token): Int = {
-    println("right=" + right.pos + " left=" + left.pos + " " + (right.start ) + " " + left.end)
     right.start - left.end
   }
 
@@ -84,11 +83,15 @@ object SmVisitor {
     tree.tokens.sliding(2).map(l => (l(0), l(1)))
   }
 
-  def sliding3(tree: Tree)(implicit dialect: Dialect): Iterator[(Token, Token, Token)] = {
-    tree.tokens.sliding(3).map(l => (l(0), l(1), l(2)))
+  def sliding3(tree: Tree, reverse: Boolean = false)(implicit dialect: Dialect): Iterator[(Token, Token, Token)] = {
+    tree.tokens.sliding(3).map(l => if (reverse) (l(2), l(1), l(0)) else (l(0), l(1), l(2)))
   }
 
   def sliding5(tree: Tree)(implicit dialect: Dialect): Iterator[(Token, Token, Token, Token, Token)] = {
     tree.tokens.sliding(5).map(l => (l(0), l(1), l(2), l(3), l(4))) // scalastyle:ignore magic.number
+  }
+
+  def isA[T, U](o: T, cls: Class[U]): Boolean = {
+    o.getClass.isAssignableFrom(cls)
   }
 }
