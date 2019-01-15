@@ -16,66 +16,38 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.Clazz
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.parser.AstNode
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.InfixExpr
-import _root_.scalariform.parser.PrefixExprElement
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.FALSE
-import _root_.scalariform.lexer.Tokens.TRUE
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.CompilationUnit
+import scala.meta.Lit
+import scala.meta.Term
 
-class SimplifyBooleanExpressionChecker extends ScalariformChecker {
+class SimplifyBooleanExpressionChecker extends CombinedMetaChecker {
   val errorKey = "simplify.boolean.expression"
+  private val infixOps = Set("!=", "==", "&&", "||")
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it1 = for {
-      List(left, right) <- ast.tokens.sliding(2);
-      if (left.text == "!" && isBoolean(right))
-    } yield {
-      PositionError(left.offset)
-    }
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    val it1: List[Term] = SmVisitor.getAll[Term.ApplyUnary](ast.tree)
 
-    val it2 = for {
-      t <- localvisit(ast);
-      if (matches(t))
-    } yield {
-      PositionError(t.position.get)
-    }
+    val it2 = SmVisitor.getAll[Term.ApplyInfix](ast.tree)
 
-    (it1.toList ::: it2.toList).sortWith((a, b) => a.position < b.position)
+    (it1 ::: it2).filter(matches).sortWith((a, b) => a.pos.start < b.pos.start).map(toError)
   }
 
-  private def matches[T <: AstNode](t: Clazz[T]): Boolean = {
+  private def matches(t: Term): Boolean = {
     t match {
-      case t: InfixExprClazz => matchesInfixOp(t.id) && (boolean(t.left) || boolean(t.right))
-      case _ => false
+      case t: Term.ApplyInfix => matchesInfixOp(t) && (boolean(t.lhs) || boolean(t.args.head))
+      case t: Term.ApplyUnary => matchesUnaryOp(t) && boolean(t.arg)
+      case _                  => false
     }
   }
 
-  private def matchesInfixOp(t: Token) = t.tokenType == VARID && Set("!=", "==", "&&", "||").contains(t.text)
+  private def matchesInfixOp(t: Term.ApplyInfix) = infixOps.contains(t.op.value)
+  private def matchesUnaryOp(t: Term.ApplyUnary) = t.op.value == "!"
 
-  class BaseClazz[+T <: AstNode](val position: Option[Int]) extends Clazz[T]
-
-  case class InfixExprClazz(_position: Option[Int], id: Token, left: List[Clazz[_]], right: List[Clazz[_]]) extends BaseClazz[InfixExpr](_position)
-  case class PrefixExprElementClazz(_position: Option[Int], id: Token, expr: List[Clazz[_]]) extends BaseClazz[PrefixExprElement](_position)
-  case class GeneralTokensClazz(_position: Option[Int], bool: Boolean) extends BaseClazz[GeneralTokens](_position)
-
-  private def localvisit(ast: Any): List[BaseClazz[AstNode]] = ast match {
-    case t: InfixExpr => List(InfixExprClazz(Some(t.firstToken.offset), t.infixId, localvisit(t.left), localvisit(t.right)))
-    case t: GeneralTokens => List(GeneralTokensClazz(Some(t.firstToken.offset), isBoolean(t)))
-    case t: Any => visit(t, localvisit)
+  private def boolean(t: Term) = t match {
+    case b: Lit.Boolean => true
+    case _              => false
   }
-
-  private def boolean(expr: List[Clazz[_]]) = expr.size == 1 && expr(0).isInstanceOf[GeneralTokensClazz] && expr(0).asInstanceOf[GeneralTokensClazz].bool
-
-  private def isBoolean(t: GeneralTokens): Boolean = t.tokens.size == 1 && isBoolean(t.tokens(0))
-  private def isBoolean(t: Token): Boolean = Set(TRUE, FALSE).contains(t.tokenType)
 }

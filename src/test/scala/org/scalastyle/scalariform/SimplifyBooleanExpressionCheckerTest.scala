@@ -38,7 +38,7 @@ object Foobar {
   val foo04 = (b != false)
 }"""
 
-    assertErrors(List(columnError(6, 15), columnError(7, 15), columnError(8, 15), columnError(9, 15)), source)
+    assertErrors(List(columnError(6, 14), columnError(7, 14), columnError(8, 14), columnError(9, 14)), source)
   }
 
 
@@ -53,7 +53,7 @@ object Foobar {
   val foo03 = !true
 }"""
 
-    assertErrors(List(columnError(6, 15), columnError(7, 14), columnError(8, 14)), source)
+    assertErrors(List(columnError(6, 14), columnError(7, 14), columnError(8, 14)), source)
   }
 
   @Test def testErrors2(): Unit = {
