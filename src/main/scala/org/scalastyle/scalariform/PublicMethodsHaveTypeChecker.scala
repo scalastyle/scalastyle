@@ -16,8 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.ProcFunBody
-
 case class PublicMethodsHaveTypeParameters(ignoreOverride: Boolean)
 
 class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMethodsHaveTypeParameters] {
@@ -26,15 +24,15 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMet
   protected def matchParameters() = PublicMethodsHaveTypeParameters(getBoolean("ignoreOverride", false))
 
   protected def matches(t: FullDefOrDclVisit, p: PublicMethodsHaveTypeParameters) = {
-    t.funDefOrDcl.funBodyOpt match {
-      case Some(ProcFunBody(newlineOpt, bodyBlock)) => false
-      case None =>
-        // When funBodyOpt is None, it is assumed to be a declaration of a procedure.
-        // Unit return type is not required.
+    t match {
+      case d: DefnDefVisit => {
+        !t.insideDefOrValOrVar &&
+          d.defnDef.decltpe.isEmpty &&
+          !privateOrProtected(d.defnDef.mods) &&
+          !(p.ignoreOverride && isOverride(t))
+      }
+      case d: DeclDefVisit =>
         false
-      case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
-                           !isConstructor(t.fullDefOrDcl.defOrDcl) &&
-                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDefOrValOrVar
     }
   }
 }

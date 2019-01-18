@@ -46,7 +46,7 @@ abstract class OK {
   val foo: Unit = new scala.collection.mutable.HashMap {def foobar() = {}}
   def bar() = { new scala.collection.mutable.HashMap {def foobar() = {}} }
   def bar2() = new scala.collection.mutable.HashMap {def foobar2() = {}}
-  val bar3
+  val bar3 = ""
 }
 """
 

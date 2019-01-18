@@ -25,6 +25,7 @@ import org.scalastyle.scalariform.SmVisitor.sliding3
 import org.scalastyle.scalariform.SmVisitor.sliding5
 
 import scala.meta.Defn
+import scala.meta.Name
 import scala.meta.Pat
 import scala.meta.Term
 import scala.meta.Tree
@@ -161,10 +162,10 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   }
 
   protected def matches(t: FullDefOrDclVisit, p: MethodNamesCheckerParameters): Boolean = {
-    if (p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) {
+    if (p.ignoreOverride && isOverride(t)) {
       false
     } else {
-      val name = t.funDefOrDcl.nameToken.text
+      val name = t.name.value
       !matches(p.regex(), name) && !matches(p.ignoreRegex(), name)
     }
   }
@@ -184,18 +185,14 @@ class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgum
   }
 
   def matches(t: FullDefOrDclVisit, p: MethodArgumentNamesCheckerParameters): Boolean = {
-    getParams(t.funDefOrDcl.paramClauses) match {
+    params(t).flatten match {
       case Nil => false
-      case params: List[Param] =>
+      case params: List[Term.Param] =>
         params.exists { pc =>
-          val name = pc.id.text
+          val name = pc.name.value
           !matches(p.ignoreRegex(), name) && !matches(p.regex(), name)
         }
     }
-  }
-
-  private def getParams(p: ParamClauses): List[Param] = {
-    p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
   }
 
   protected override def describeParameters(p: MethodArgumentNamesCheckerParameters) = List("" + p.regex)

@@ -16,7 +16,9 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.lexer.Tokens
+import scala.meta.Tree
+import scala.meta.Type
+import scala.meta.tokens.Token
 
 class ProcedureDeclarationChecker extends AbstractSingleMethodChecker[Unit] {
   val errorKey = "procedure.declaration"
@@ -24,13 +26,24 @@ class ProcedureDeclarationChecker extends AbstractSingleMethodChecker[Unit] {
   protected def matchParameters(): Unit = Unit
 
   protected def matches(t: FullDefOrDclVisit, p: Unit): Boolean = {
-    (t.funDefOrDcl.nameToken.text != "this") && (t.funDefOrDcl.funBodyOpt match {
-      // match if we don't have a body, and there is no return type
-      case None => t.funDefOrDcl.returnTypeOpt.isEmpty
-      // match if we do have a body, and the first character is not equals
-      case Some(x) => x.tokens.nonEmpty && x.tokens.head.tokenType != Tokens.EQUALS
-      case _ => false
-    })
+    t match {
+      case d: DefnDefVisit => !isEqualsBeforeBody(d.defnDef.body)
+      case d: DeclDefVisit => {
+        d.declDef.decltpe match {
+          case t: Type.Name => t.toString == ""
+          case _ => false
+        }
+      }
+    }
+  }
+
+  private def isEqualsBeforeBody(body: Tree): Boolean = {
+    var start = body.tokens.start - 1
+    while (SmVisitor.isA(body.tokens.tokens(start), classOf[Token.Space])) {
+      start = start -1
+    }
+
+    SmVisitor.isA(body.tokens.tokens(start), classOf[Token.Equals])
   }
 }
 

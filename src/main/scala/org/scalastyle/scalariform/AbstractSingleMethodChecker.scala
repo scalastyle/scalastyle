@@ -16,72 +16,79 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.Clazz
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.lexer.Tokens
-import _root_.scalariform.parser.AccessModifier
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.DefOrDcl
-import _root_.scalariform.parser.FullDefOrDcl
-import _root_.scalariform.parser.FunDefOrDcl
-import _root_.scalariform.parser.Modifier
-import _root_.scalariform.parser.PatDefOrDcl
-import _root_.scalariform.parser.SimpleModifier
+import scala.meta.Decl
+import scala.meta.Defn
+import scala.meta.Mod
+import scala.meta.Stat
+import scala.meta.Term
+import scala.meta.Tree
 
-abstract class AbstractSingleMethodChecker[T] extends ScalariformChecker {
+sealed trait FullDefOrDclVisit {
+  def fullDefOrDcl: Stat
+  def name: Term.Name
+  def insideDefOrValOrVar: Boolean
+}
 
+case class DefnDefVisit(d: Defn.Def, name: Term.Name, insideDefOrValOrVar: Boolean) extends FullDefOrDclVisit {
+  def fullDefOrDcl: Stat = d
+  def defnDef: Defn.Def = d
+}
 
-  case class FullDefOrDclVisit(fullDefOrDcl: FullDefOrDcl, funDefOrDcl: FunDefOrDcl,
-      subs: List[FullDefOrDclVisit], insideDefOrValOrVar: Boolean) extends Clazz[FullDefOrDcl]()
+case class DeclDefVisit(d: Decl.Def, name: Term.Name, insideDefOrValOrVar: Boolean) extends FullDefOrDclVisit {
+  def fullDefOrDcl: Stat = d
+  def declDef: Decl.Def = d
+}
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+abstract class AbstractSingleMethodChecker[T] extends CombinedMetaChecker {
+
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val p = matchParameters()
 
-    val it = for {
-      t <- localvisit(insideDefOrValOrVar = false)(ast.immediateChildren.head)
-      f <- traverse(t)
-      if matches(f, p)
-    } yield {
-      PositionError(f.funDefOrDcl.nameToken.offset, describeParameters(p))
-    }
+    val defns = SmVisitor.getAll[Defn.Def](ast.tree).map(v => DefnDefVisit(v, v.name, inside(v.parent)))
+    val decls = SmVisitor.getAll[Decl.Def](ast.tree).map(v => DeclDefVisit(v, v.name, inside(v.parent)))
 
-    it
+    val fs: List[FullDefOrDclVisit] = (defns ::: decls).sortBy(_.name.pos.start)
+
+    fs.filter(t => matches(t, p)).map(t => toError(t.name, describeParameters(p)))
   }
-
-  private def traverse(t: FullDefOrDclVisit): List[FullDefOrDclVisit] = t :: t.subs.flatMap(traverse)
 
   protected def matchParameters(): T
   protected def matches(t: FullDefOrDclVisit, parameters: T): Boolean
   protected def describeParameters(parameters: T): List[String] = Nil
 
-  private def localvisit(insideDefOrValOrVar: Boolean)(ast: Any): List[FullDefOrDclVisit] = ast match {
-    case t: FullDefOrDcl => {
-      t.defOrDcl match {
-        case f: FunDefOrDcl => List(FullDefOrDclVisit(t, f, localvisit(true)(f), insideDefOrValOrVar))
-        case f: PatDefOrDcl => localvisit(true)(f.equalsClauseOption)
-        case _ => localvisit(insideDefOrValOrVar)(t.defOrDcl)
-      }
+  private def inside(parent: Option[Tree]): Boolean = {
+    parent.map {
+      case f: Defn.Def => true
+      case f: Defn.Var => true
+      case f: Defn.Val => true
+      case t: Tree        => inside(t.parent)
+    }.getOrElse(false)
+  }
+
+  protected def isOverride(fullDefOrDclVisit: FullDefOrDclVisit): Boolean = {
+    val mods = fullDefOrDclVisit match {
+      case d: DeclDefVisit => d.d.mods
+      case d: DefnDefVisit => d.d.mods
     }
-    case t: FunDefOrDcl => localvisit(true)(t.funBodyOpt)
-    case t: Any => visit(t, localvisit(insideDefOrValOrVar))
+    mods.exists {
+      case sm: Mod.Override => true
+      case _ => false
+    }
   }
 
-  protected def isOverride(modifiers: List[Modifier]) = modifiers.exists {
-    case sm: SimpleModifier if sm.token.text == "override" => true
+  protected def privateOrProtected(modifiers: List[Mod]): Boolean = modifiers.exists {
+    case am: Mod.Private => true
+    case am: Mod.Protected => true
     case _ => false
   }
 
-  protected def privateOrProtected(modifiers: List[Modifier]) = modifiers.exists {
-    case am: AccessModifier => true
-    case _ => false
+  protected def params(t: FullDefOrDclVisit): List[List[Term.Param]] = t match {
+    case d: DefnDefVisit => d.d.paramss
+    case d: DeclDefVisit => d.d.paramss
   }
 
-  protected def isConstructor(defOrDcl: DefOrDcl) = defOrDcl match {
-    case fun: FunDefOrDcl => fun.nameToken.tokenType == Tokens.THIS
-    case _ => false
-  }
 }
