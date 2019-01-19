@@ -18,15 +18,7 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
-
-import scala.Array.canBuildFrom
-import scala.collection.mutable.ListBuffer
 import _root_.scalariform.lexer.MultiLineComment
-import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Whitespace
 import _root_.scalariform.parser.AstNode
 import _root_.scalariform.parser.BlockImportExpr
@@ -36,58 +28,30 @@ import _root_.scalariform.parser.ExprElement
 import _root_.scalariform.parser.GeneralTokens
 import _root_.scalariform.parser.ImportClause
 import _root_.scalariform.parser.ImportSelectors
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+
+import scala.Array.canBuildFrom
+import scala.collection.mutable.ListBuffer
+import scala.meta.Import
+import scala.meta.Importee
 import scala.util.matching.Regex
 
 // scalastyle:off multiple.string.literals
 
-abstract class AbstractImportChecker extends ScalariformChecker {
-  case class ImportClauseVisit(t: ImportClause, importExpr: List[ImportClauseVisit], otherImportExprs: List[ImportClauseVisit])
-
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
+abstract class AbstractImportChecker extends CombinedMetaChecker {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     init()
 
-    val it = for {
-      t <- localvisit(ast.immediateChildren)
-      f <- traverse(t)
-    } yield {
-      PositionError(t.t.firstToken.offset)
-    }
-
-    it
+    SmVisitor.getAll[Import](ast.tree).filter(matches).map(toError)
   }
 
   protected def init(): Unit = {}
 
-  private[this] def traverse(t: ImportClauseVisit): List[ImportClauseVisit] = {
-    val l = t.importExpr.flatMap(traverse) ::: t.otherImportExprs.flatMap(traverse)
-    if (matches(t)) t :: l else l
-  }
-
-  private[this] def imports(tokens: List[Token]): String = {
-    tokens.foldLeft("")((a, b) => a + b.text)
-  }
-
-  private[this] def imports(t: BlockImportExpr): List[String] = {
-    val is = t.importSelectors
-
-    val firsts = is.firstImportSelector.firstToken.text ::
-            is.otherImportSelectors.map(_._2).map(is => is.firstToken.text)
-    firsts.map(f => imports(t.prefixExpr.tokens) + f)
-  }
-
-  protected final def imports(t: ImportClauseVisit): List[String] = {
-    t.t.importExpr match {
-      case t: BlockImportExpr => imports(t)
-      case _ => List(imports(t.t.importExpr.tokens))
-    }
-  }
-
-  def matches(t: ImportClauseVisit): Boolean
-
-  private[this] def localvisit(ast: Any): List[ImportClauseVisit] = ast match {
-    case t: ImportClause => List(ImportClauseVisit(t, localvisit(t.importExpr), localvisit(t.otherImportExprs)))
-    case t: Any => visit(t, localvisit)
-  }
+  def matches(t: Import): Boolean
 }
 
 class IllegalImportsChecker extends AbstractImportChecker {
@@ -103,15 +67,24 @@ class IllegalImportsChecker extends AbstractImportChecker {
     s.trim().split(" *, *").map(s => s.replaceAll("_$", "")).toList
   }
 
-  override protected def init() = {
+  override protected def init(): Unit = {
     illegalImportsList = toMatchList(getString("illegalImports", DefaultIllegalImports))
     exemptImportsList = toMatchList(getString("exemptImports", ""))
   }
 
-  def matches(t: ImportClauseVisit): Boolean = {
-    val list = imports(t)
-    val revisedList = list diff exemptImportsList
+  def matches(t: Import): Boolean = {
+    val stringList: Seq[String] = t.importers.flatMap(i => i.importees.flatMap(toUnrenamedString).map(ie => i.ref + "." + ie))
+    val revisedList = stringList.diff(exemptImportsList)
     illegalImportsList.exists(ill => revisedList.exists(_.startsWith(ill)))
+  }
+
+  private def toUnrenamedString(ie: Importee): Option[String] = {
+    ie match {
+      case i: Importee.Wildcard => Some(i.toString)
+      case i: Importee.Name => Some(i.toString)
+      case i: Importee.Rename => Some(i.name.toString)
+      case _ => None
+    }
   }
 }
 
@@ -125,9 +98,20 @@ class UnderscoreImportChecker extends AbstractImportChecker {
     ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
   }
 
-  def matches(t: ImportClauseVisit): Boolean = imports(t)
-      .filterNot((importStatement) => ignoreRegex.findFirstIn(importStatement).isDefined)
+  def matches(t: Import): Boolean = {
+    val stringList: Seq[String] = t.importers.flatMap(i => i.importees.flatMap(stringIfWildcard).map(ie => i.ref + "." + ie))
+
+    stringList
+      .filterNot(is => ignoreRegex.findFirstIn(is).isDefined)
       .exists(_.endsWith("._"))
+  }
+
+  private def stringIfWildcard(ie: Importee): Option[String] = {
+    ie match {
+      case i: Importee.Wildcard => Some(i.toString)
+      case _ => None
+    }
+  }
 }
 
 class ImportGroupingChecker extends ScalariformChecker {
