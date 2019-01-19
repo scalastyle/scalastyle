@@ -160,7 +160,7 @@ package foobar
 
 import java.util.List;
 import java.util._ // here is a comment
-import java.util._
+import<<TAB>>java.util._
 
 object Foobar {
   import java.util.Map
@@ -171,7 +171,7 @@ import java.util.Collection
 object Barbar {
   import java.util.HashMap
 }
-"""
+""".replaceAll("<<TAB>>", "\t")
 
     assertErrors(List(columnError(9, 2), columnError(12, 0), columnError(15, 2)), source)
   }

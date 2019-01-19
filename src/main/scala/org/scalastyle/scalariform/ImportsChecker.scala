@@ -38,6 +38,7 @@ import scala.Array.canBuildFrom
 import scala.collection.mutable.ListBuffer
 import scala.meta.Import
 import scala.meta.Importee
+import scala.meta.tokens.Token
 import scala.util.matching.Regex
 
 // scalastyle:off multiple.string.literals
@@ -114,24 +115,37 @@ class UnderscoreImportChecker extends AbstractImportChecker {
   }
 }
 
-class ImportGroupingChecker extends ScalariformChecker {
+class ImportGroupingChecker extends CombinedMetaChecker {
   val errorKey = "import.grouping"
 
-  def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val it = VisitorHelper.getAll[ImportClause](ast.immediateChildren)
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    val it = SmVisitor.getAll[Import](ast.tree)
 
     if (it.isEmpty) {
-      List()
+      Nil
     } else {
       val importTokens = it.flatMap(_.tokens)
-      val (min, max) = (importTokens.head.offset, importTokens.last.offset)
+      val (min, max) = (importTokens.head.pos.start, importTokens.last.pos.end)
 
-      val s = ast.tokens.find(t => t.offset >= min && t.offset <= max && !t.isNewline && !(t.text == ";") && !importTokens.contains(t))
+      val s = ast.tree.tokens.find(t => t.pos.start >= min && t.pos.start <= max && !isSpace(t) && !importTokens.contains(t))
 
       s match {
-        case Some(x) => it.dropWhile(ic => ic.firstToken.offset <= x.offset).map(ic => PositionError(ic.firstToken.offset))
-        case None => List()
+        case Some(x) => it.dropWhile(ic => ic.tokens.head.pos.start <= x.pos.start).map(ic => toError(ic))
+        case None => Nil
       }
+    }
+  }
+
+  private def isSpace(t: Token): Boolean = {
+    t match {
+      case t: Token.CR => true
+      case t: Token.LF => true
+      case t: Token.Space => true
+      case t: Token.Comment => true
+      case t: Token.FF => true
+      case t: Token.Tab => true
+      case t: Token.Semicolon => true
+      case _ => false
     }
   }
 }
