@@ -16,39 +16,45 @@
 
 package org.scalastyle.scalariform
 
-import _root_.scalariform.lexer.Tokens
-import _root_.scalariform.parser.ForExpr
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.Lines
-import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 
-class ForBraceChecker extends CombinedChecker {
+import scala.meta.Term
+import scala.meta.tokens.Token
+import scala.meta.tokens.Tokens
+
+class ForBraceChecker extends CombinedMetaChecker {
   val errorKey = "for.brace"
 
   val defaultSingleLineAllowed = false
   lazy val singleLineAllowed: Boolean = getBoolean("singleLineAllowed", defaultSingleLineAllowed)
 
-  final def verify(ast: CombinedAst): List[ScalastyleError] = {
-    for {
-      t <- VisitorHelper.getAll[ForExpr](ast.compilationUnit.immediateChildren.head)
-      if !validSingleLine(t, ast.lines) && (
-        Tokens.LPAREN == t.lParenOrBrace.tokenType ||
-        Tokens.LPAREN == t.rParenOrBrace.tokenType
-      )
-    } yield PositionError(t.lParenOrBrace.offset)
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    SmVisitor
+      .getAll[Term.ForYield](ast.tree)
+      .filter(t => !validSingleLine(t, ast.lines))
+      .flatMap(t => hasBrace(t.tokens))
+      .map(toError)
   }
 
-  private def validSingleLine(t: ForExpr, lines: Lines) = {
-    singleLineAllowed && {
-      val singleLine = for {
-        start <- lines.toLineColumn(t.forToken.offset)
-        end <- lines.toLineColumn(t.tokens.last.offset)
-        if start.line == end.line
-      } yield ()
+  private def toIgnore(t: Token): Boolean = t match {
+    case t: Token.Space   => true
+    case t: Token.Tab     => true
+    case t: Token.CR      => true
+    case t: Token.LF      => true
+    case t: Token.FF      => true
+    case t: Token.Comment => true
+    case t: Token.KwFor   => true
+    case _                => false
+  }
 
-      singleLine.isDefined
-    }
+  private def hasBrace(ts: Tokens): Option[Token] = {
+    ts.dropWhile(toIgnore).headOption.filterNot(t => SmVisitor.isA(t, classOf[Token.LeftBrace]))
+  }
+
+  private def validSingleLine(t: Term.ForYield, lines: Lines): Boolean = {
+    singleLineAllowed && t.pos.startLine == t.pos.endLine
   }
 }
