@@ -47,7 +47,31 @@ class CloneKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(5, 2)), source)
+  }
+
+  @Test def testTraitNotImplmentedOK(): Unit = {
+    val source = """
+package foobar
+
+trait OK {
+  def clone(o: java.lang.Integer): Any
+}
+"""
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testTraitCovariantEqualsNoObjectNotImplmentedKO(): Unit = {
+    val source = """
+package foobar
+
+trait CloneKO {
+  def clone(): Any
+}
+"""
+
+    assertErrors(List(columnError(5, 2)), source)
   }
 
   @Test def testObjectOK(): Unit = {
@@ -71,6 +95,6 @@ object CloneKO {
 }
 """
 
-    assertErrors(List(columnError(4, 7)), source)
+    assertErrors(List(columnError(5, 2)), source)
   }
 }

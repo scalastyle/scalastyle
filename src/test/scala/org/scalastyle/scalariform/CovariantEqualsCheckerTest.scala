@@ -48,7 +48,7 @@ class CovariantEqualsNoObjectKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(4, 0)), source)
   }
 
   @Test def testObjectOK(): Unit = {
@@ -73,6 +73,6 @@ object CovariantEqualsNoObjectKO {
 }
 """
 
-    assertErrors(List(columnError(4, 7)), source)
+    assertErrors(List(columnError(4, 0)), source)
   }
 }

@@ -48,7 +48,7 @@ class HashCodeOnlyKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(4, 0)), source)
   }
 
   @Test def testEqualsOnlyKO(): Unit = {
@@ -60,7 +60,7 @@ class EqualsOnlyKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(4, 0)), source)
   }
 
   @Test def testEqualsOnlyAnyKO(): Unit = {
@@ -72,7 +72,7 @@ class EqualsOnlyKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(4, 0)), source)
   }
 
   @Test def testEqualsWrongSignatureOK(): Unit = {
@@ -112,7 +112,7 @@ class OuterKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6), columnError(6, 8)), source)
+    assertErrors(List(columnError(4, 0), columnError(6, 2)), source)
   }
 
   @Test def testOuterOKInnerKO(): Unit = {
@@ -128,7 +128,7 @@ class OuterOK {
 }
 """
 
-    assertErrors(List(columnError(6, 8)), source)
+    assertErrors(List(columnError(6, 2)), source)
   }
 
   @Test def testObjectInnerKO(): Unit = {
@@ -142,7 +142,7 @@ object Object {
 }
 """
 
-    assertErrors(List(columnError(5, 8)), source)
+    assertErrors(List(columnError(5, 2)), source)
   }
 
   @Test def testMultipleClasses(): Unit = {
@@ -158,6 +158,6 @@ class Class2 {
 }
 """
 
-    assertErrors(List(columnError(4, 6), columnError(8, 6)), source)
+    assertErrors(List(columnError(4, 0), columnError(8, 0)), source)
   }
 }

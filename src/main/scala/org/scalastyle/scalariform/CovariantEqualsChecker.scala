@@ -17,19 +17,40 @@
 package org.scalastyle.scalariform
 
 import org.scalastyle.Checker
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
+import org.scalastyle.ScalastyleError
 
-import scalariform.parser.AstNode
-import scalariform.parser.FunDefOrDcl
+import scala.meta.Defn
+import scala.meta.Tree
 
-class CovariantEqualsChecker extends AbstractMethodChecker {
+class CovariantEqualsChecker extends CombinedMetaChecker {
   val errorKey = "covariant.equals"
 
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    val equalsObject = t.subs.exists(matchFunDefOrDcl(_, isEqualsObject))
-    val equalsOther = t.subs.exists(matchFunDefOrDcl(_, isEqualsOther))
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    val classes = SmVisitor.getAll[Defn.Class](ast.tree)
+    val objects = SmVisitor.getAll[Defn.Object](ast.tree)
+    val traits = SmVisitor.getAll[Defn.Trait](ast.tree)
+
+    val fs: List[Tree] = (classes ::: objects ::: traits).filter(matches).sortBy(_.pos.start)
+
+    fs.map(d => toError(d))
+  }
+
+  private def matches(t: Tree): Boolean = {
+    val equalsObject = exists(t, SmVisitor.isEqualsObject)
+    val equalsOther = exists(t, isEqualsOther)
 
     !equalsObject && equalsOther
   }
 
-  private def isEqualsOther(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(Checker.isNotObject) _)(t)
+  def exists(t: Tree, fn: Tree => Boolean): Boolean = {
+    t match {
+      case c: Defn.Class  => c.templ.children.exists(fn)
+      case c: Defn.Object => c.templ.children.exists(fn)
+      case c: Defn.Trait  => c.templ.children.exists(fn)
+    }
+  }
+
+  private def isEqualsOther(t: Tree): Boolean = SmVisitor.matchMethod("equals", SmVisitor.singleParameter(Checker.isNotObject))(t)
 }

@@ -16,18 +16,40 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.AstNode
-import scalariform.parser.FunDefOrDcl
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
+import org.scalastyle.ScalastyleError
 
-class EqualsHashCodeChecker extends AbstractMethodChecker {
+import scala.meta.Defn
+import scala.meta.Tree
+
+class EqualsHashCodeChecker extends CombinedMetaChecker {
   val errorKey = "equals.hash.code"
 
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    val hc = t.subs.exists(matchFunDefOrDcl(_, isHashCode))
-    val eq = t.subs.exists(matchFunDefOrDcl(_, isEqualsObject))
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    val classes = SmVisitor.getAll[Defn.Class](ast.tree)
+    val objects = SmVisitor.getAll[Defn.Object](ast.tree)
+    val traits = SmVisitor.getAll[Defn.Trait](ast.tree)
+
+    val fs: List[Tree] = (classes ::: objects ::: traits).filter(matches).sortBy(_.pos.start)
+
+    fs.map(d => toError(d))
+  }
+
+  private def matches(t: Tree): Boolean = {
+    val eq = exists(t, SmVisitor.isEqualsObject)
+    val hc = exists(t, isHashCode)
 
     (hc && !eq) || (!hc && eq)
   }
 
-  private def isHashCode(t: FunDefOrDcl): Boolean = methodMatch("hashCode", noParameter() _)(t)
+  def exists(t: Tree, fn: Tree => Boolean): Boolean = {
+    t match {
+      case c: Defn.Class  => c.templ.children.exists(fn)
+      case c: Defn.Object => c.templ.children.exists(fn)
+      case c: Defn.Trait  => c.templ.children.exists(fn)
+    }
+  }
+
+  private def isHashCode(t: Tree): Boolean = SmVisitor.matchMethod("hashCode", SmVisitor.noParameter())(t)
 }

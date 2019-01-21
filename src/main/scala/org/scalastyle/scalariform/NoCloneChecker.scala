@@ -16,15 +16,10 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.AstNode
-import scalariform.parser.FunDefOrDcl
+import scala.meta.Tree
 
 class NoCloneChecker extends AbstractMethodChecker {
   val errorKey = "no.clone"
 
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    t.subs.exists(matchFunDefOrDcl(_, isClone))
-  }
-
-  private def isClone(t: FunDefOrDcl): Boolean = methodMatch("clone", noParameter() _)(t)
+  override def matches(t: Tree): Boolean = SmVisitor.matchMethod("clone", SmVisitor.noParameter())(t)
 }

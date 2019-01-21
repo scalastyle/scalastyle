@@ -40,7 +40,7 @@ class F1() {
 
 class F2() {
   def method1() = {
-    def foobar() = 6
+    def foobar() = 6 // inside a method, should not be counted
     5
   }
   def method2() = 1
@@ -49,6 +49,6 @@ class F2() {
 }
 """
 
-    assertErrors(List(columnError(4, 6, List("4"))), source, Map("maxMethods" -> "4"))
+    assertErrors(List(columnError(4, 0, List("4"))), source, Map("maxMethods" -> "4"))
   }
 }

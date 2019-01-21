@@ -47,7 +47,55 @@ class CloneKO {
 }
 """
 
-    assertErrors(List(columnError(4, 6)), source)
+    assertErrors(List(columnError(5, 2)), source)
+  }
+
+  @Test def testTraitOK(): Unit = {
+    val source = """
+package foobar
+
+trait OK {
+  def finalize(o: java.lang.Integer): Unit = {}
+}
+"""
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testTraitOKUnimplemented(): Unit = {
+    val source = """
+package foobar
+
+trait OK {
+  def finalize(o: java.lang.Integer): Unit
+}
+"""
+
+    assertErrors(List(), source)
+  }
+
+  @Test def testTraitCovariantEqualsNoObjectKO(): Unit = {
+    val source = """
+package foobar
+
+trait CloneKO {
+  def finalize(): Unit = {}
+}
+"""
+
+    assertErrors(List(columnError(5, 2)), source)
+  }
+
+  @Test def testTraitCovariantEqualsNoUnimplementedKO(): Unit = {
+    val source = """
+package foobar
+
+trait CloneKO {
+  def finalize(): Unit
+}
+"""
+
+    assertErrors(List(columnError(5, 2)), source)
   }
 
   @Test def testObjectOK(): Unit = {
@@ -71,6 +119,6 @@ object CloneKO {
 }
 """
 
-    assertErrors(List(columnError(4, 7)), source)
+    assertErrors(List(columnError(5, 2)), source)
   }
 }

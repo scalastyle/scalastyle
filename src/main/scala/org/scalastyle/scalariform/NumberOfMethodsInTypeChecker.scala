@@ -16,16 +16,44 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.AstNode
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
+import org.scalastyle.ScalastyleError
 
-class NumberOfMethodsInTypeChecker extends AbstractMethodChecker {
+import scala.meta.Decl
+import scala.meta.Defn
+import scala.meta.Tree
+
+class NumberOfMethodsInTypeChecker extends CombinedMetaChecker {
   val errorKey = "number.of.methods"
   val DefaultMaxMethods = 30
+  lazy val maxMethods = getInt("maxMethods", DefaultMaxMethods)
 
-  override def params(t: BaseClazz[AstNode]): List[String] = List("" + getInt("maxMethods", DefaultMaxMethods))
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    val classes = SmVisitor.getAll[Defn.Class](ast.tree)
+    val objects = SmVisitor.getAll[Defn.Object](ast.tree)
+    val traits = SmVisitor.getAll[Defn.Trait](ast.tree)
 
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    val maxMethods = getInt("maxMethods", DefaultMaxMethods)
-    t.subs.size > maxMethods
+    val fs: List[Tree] = (classes ::: objects ::: traits).filter(matches).sortBy(_.pos.start)
+
+    fs.map(d => toError(d, List("" + maxMethods)))
+  }
+
+  def matches(t: Tree): Boolean = {
+    val count = t match {
+      case c: Defn.Class  => c.templ.children.count(isMethod)
+      case c: Defn.Object => c.templ.children.count(isMethod)
+      case c: Defn.Trait  => c.templ.children.count(isMethod)
+    }
+
+    count > maxMethods
+  }
+
+  private def isMethod(t: Tree): Boolean = {
+    t match {
+      case df: Defn.Def => true
+      case dc: Decl.Def => true
+      case _            => false
+    }
   }
 }

@@ -16,15 +16,10 @@
 
 package org.scalastyle.scalariform
 
-import scalariform.parser.AstNode
-import scalariform.parser.FunDefOrDcl
+import scala.meta.Tree
 
 class NoFinalizeChecker extends AbstractMethodChecker {
   val errorKey = "no.finalize"
 
-  def matches(t: BaseClazz[AstNode]): Boolean = {
-    t.subs.exists(matchFunDefOrDcl(_, isFinalize))
-  }
-
-  private def isFinalize(t: FunDefOrDcl): Boolean = methodMatch("finalize", noParameter() _)(t)
+  override def matches(t: Tree): Boolean = SmVisitor.matchMethod("finalize", SmVisitor.noParameter())(t)
 }

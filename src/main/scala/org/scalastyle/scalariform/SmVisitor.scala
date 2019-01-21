@@ -16,9 +16,12 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.CombinedMeta
+import org.scalastyle.Checker
 
+import scala.meta.Decl
+import scala.meta.Defn
 import scala.meta.Dialect
+import scala.meta.Term
 import scala.meta.Tree
 import scala.meta.tokens.Token
 import scala.meta.tokens.Tokens
@@ -94,4 +97,30 @@ object SmVisitor {
   def isA[T, U](o: T, cls: Class[U]): Boolean = {
     o.getClass.isAssignableFrom(cls)
   }
+
+  def matchMethod(name: String, paramTypesMatch: List[String] => Boolean)(t: Tree): Boolean = {
+    t match {
+      case d: Defn.Def => methodDefnMatch(name, paramTypesMatch)(d)
+      case d: Decl.Def => methodDeclMatch(name, paramTypesMatch)(d)
+      case _ => false
+    }
+  }
+
+  private def methodDefnMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: Defn.Def): Boolean = {
+    t.name.value == name && paramTypesMatch(getParamTypes(t.paramss))
+  }
+
+  private def methodDeclMatch(name: String, paramTypesMatch: List[String] => Boolean)(t: Decl.Def): Boolean = {
+    t.name.value == name && paramTypesMatch(getParamTypes(t.paramss))
+  }
+
+  def singleParameter(fn: String => Boolean)(params: List[String]): Boolean = params.size == 1 && fn(params(0))
+  def noParameter()(params: List[String]): Boolean = params.isEmpty
+  def isEqualsObject(t: Tree): Boolean = matchMethod("equals", singleParameter(Checker.isObject))(t)
+
+  def getParams(p: List[List[Term.Param]]): List[Term.Param] = {
+    p.flatten
+  }
+  def getParamTypes(pc: List[List[Term.Param]]): List[String] = getParams(pc).map(p => typename(p.decltpe.get))
+  def typename(t: scala.meta.Type): String = t.toString
 }
