@@ -262,17 +262,18 @@ trait FileChecker extends Checker[Lines]
 trait ScalariformChecker extends Checker[CompilationUnit]
 
 trait PositionErrorTrait {
-  protected def toError(p: Position, args: List[String]): ColumnError = {
+  protected def toError(p: Position, args: List[String], errorKey: Option[String]): ColumnError = {
     p match {
       case Position.None => ???
-      case r: Position.Range => ColumnError(r.startLine + 1, r.startColumn, args)
+      case r: Position.Range => ColumnError(r.startLine + 1, r.startColumn, args, errorKey)
     }
   }
 
-  protected def toError(t: scala.meta.Tree, args: List[String]): ColumnError = toError(t.pos, args)
-  protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos, Nil)
-  protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos, Nil)
-  protected def toError(t: scala.meta.tokens.Token, args: List[String]): ScalastyleError = toError(t.pos, args)
+  protected def toError(t: scala.meta.Tree, args: List[String], errorKey: Option[String] = None): ColumnError = toError(t.pos, args, errorKey)
+  protected def toError(t: scala.meta.Tree, args: List[String]): ColumnError = toError(t.pos, args, None)
+  protected def toError(t: scala.meta.Tree): ScalastyleError = toError(t.pos, Nil, None)
+  protected def toError(t: scala.meta.tokens.Token): ScalastyleError = toError(t.pos, Nil, None)
+  protected def toError(t: scala.meta.tokens.Token, args: List[String]): ScalastyleError = toError(t.pos, args, None)
 
   protected def getAllTokens[T <: scala.meta.tokens.Token](tree: Tree)(implicit manifest: Manifest[T]): Seq[T] = {
     for {
