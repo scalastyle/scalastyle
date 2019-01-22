@@ -37,7 +37,7 @@ object foo {
   }
 }"""
 
-    assertErrors(List(columnError(7, 11)), source)
+    assertErrors(List(columnError(5, 2)), source)
   }
 
 
@@ -69,7 +69,7 @@ object foo {
   }
 }"""
 
-    assertErrors(List(columnError(8, 14)), source)
+    assertErrors(List(columnError(6, 20)), source)
   }
 
 }

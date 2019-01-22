@@ -16,35 +16,27 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
-import org.scalastyle.Lines
-import org.scalastyle.PositionError
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.getAllRecursive
 
-import _root_.scalariform.parser.BlockExpr
-import _root_.scalariform.parser.CaseClauses
+import scala.meta.Term
 
-class PatternMatchAlignChecker extends CombinedChecker {
+class PatternMatchAlignChecker extends CombinedMetaChecker {
   val errorKey = "pattern.match.align"
 
-  final def verify(ast: CombinedAst): List[ScalastyleError] = {
-    val allBlockExprs = getAllRecursive[BlockExpr](ast.compilationUnit)
-    val unaligned = allBlockExprs.filter(matches(_, ast.lines))
-    unaligned.map { badBlock =>
-      PositionError(badBlock.caseClausesOrStatSeq.left.get.caseClauses(1).casePattern.arrow.offset)
+  final def verify(ast: CombinedMeta): List[ScalastyleError] = {
+    SmVisitor.getAll[Term.Match](ast.tree).filterNot(matches).map(toError)
+  }
+
+  private def matches(t: Term.Match): Boolean = {
+    if (t.cases.isEmpty) {
+      true
+    } else {
+      val columns = t.cases.map(_.body.pos.startColumn)
+      val head = columns.head
+      columns.forall(_ == head)
     }
-  }
-
-  def allAlign(clauses: CaseClauses, lines: Lines): Boolean = {
-    val arrowPositions = clauses.caseClauses.map(clause => lines.toLineColumn(clause.casePattern.arrow.offset).map(_.column).getOrElse(-1))
-    arrowPositions.forall(_ == arrowPositions.head)
-  }
-
-  private def matches(t: BlockExpr, lines: Lines) = {
-    val isCaseClauses = t.caseClausesOrStatSeq.isLeft
-    isCaseClauses && !allAlign(t.caseClausesOrStatSeq.left.get, lines)
   }
 
 }
