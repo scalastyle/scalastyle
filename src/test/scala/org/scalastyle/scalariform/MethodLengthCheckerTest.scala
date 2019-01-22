@@ -91,7 +91,7 @@ class F2() {
 }
 """
 
-    assertErrors(List(), source, Map("maxLength" -> "5", "ignoreComments" -> "true"))
+    assertErrors(List(), source, Map("maxLength" -> "6", "ignoreComments" -> "true"))
   }
 
   @Test def testNotIgnoreComments(): Unit = {
@@ -149,13 +149,16 @@ class F3() {
     4     (6)
     5     (7)
     6     (8)
+
+
+
   }
 }
 """
     assertErrors(
-      List(columnError(14, 6, List("5"))),
+      List(columnError(14, 6, List("8"))),
       source,
-      Map("maxLength" -> "5", "ignoreComments" -> "true")
+      Map("maxLength" -> "8", "ignoreComments" -> "true")
     )
   }
 }

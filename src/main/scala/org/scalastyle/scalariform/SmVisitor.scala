@@ -123,4 +123,38 @@ object SmVisitor {
   }
   def getParamTypes(pc: List[List[Term.Param]]): List[String] = getParams(pc).map(p => typename(p.decltpe.get))
   def typename(t: scala.meta.Type): String = t.toString
+
+  /**
+    * Counts the number of new lines between for the tree, adjusted for comments.
+    */
+  def countNewLines(t: Tree): Int = {
+    var minus = 0
+    val startLine = t.pos.startLine
+    val endLine = t.pos.endLine
+
+    for (line <- startLine to endLine) {
+      val list = t.tokens.filter(_.pos.startLine == line)
+
+      if (list.isEmpty) {
+        // we are in a multi-line comment
+        minus = minus + 1
+      } else if (list.exists(t => SmVisitor.isA(t, classOf[Token.Comment])) && list.forall(onlyCommentsAndSpace)) {
+        // we have a comment but everthing else is just whitespace or comments, so we can ignore this line
+        minus = minus + 1
+      }
+    }
+
+    endLine - startLine - minus - 1 //  don't count first line
+  }
+
+  private def onlyCommentsAndSpace(t: Token): Boolean = t match {
+    case t: Token.Comment => true
+    case t: Token.Space => true
+    case t: Token.LF => true
+    case t: Token.Tab => true
+    case t: Token.CR => true
+    case _ => false
+  }
+
+
 }

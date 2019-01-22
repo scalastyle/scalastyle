@@ -16,88 +16,33 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
-import org.scalastyle.Lines
-import org.scalastyle.PositionError
+import org.scalastyle.CombinedMeta
+import org.scalastyle.CombinedMetaChecker
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.Clazz
-import org.scalastyle.scalariform.VisitorHelper.visit
 
-import _root_.scalariform.parser.FunDefOrDcl
+import scala.meta.Defn
 
-class MethodLengthChecker extends CombinedChecker {
+class MethodLengthChecker extends CombinedMetaChecker {
   val errorKey = "method.length"
   val DefaultMaximumLength = 50
   val DefaultIgnoreComments = false
 
-  private val SinglelineComment = "//"
-  private val MultilineCommentsOpener = "/*"
-  private val MultilineCommentsCloser = "*/"
-
-  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
-
-  def verify(ast: CombinedAst): List[ScalastyleError] = {
+  def verify(ast: CombinedMeta): List[ScalastyleError] = {
     val maxLength = getInt("maxLength", DefaultMaximumLength)
     val ignoreComments = getBoolean("ignoreComments", DefaultIgnoreComments)
 
-    val it = for {
-      t <- localvisit(ast.compilationUnit.immediateChildren.head)
-      f <- traverse(t)
-      if matches(f, ast.lines, maxLength, ignoreComments)
-    } yield {
-      PositionError(t.position.get, List("" + maxLength))
-    }
+    val defs = SmVisitor.getAll[Defn.Def](ast.tree).filter(newMatches(maxLength, ignoreComments))
 
-    it
+    defs.map(d => toError(d.name, List("" + maxLength)))
   }
 
-  private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
-
-  private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int, ignoreComments: Boolean) = {
+  private def newMatches(maxLines: Int, ignoreComments: Boolean)(d: Defn.Def): Boolean = {
     if (ignoreComments) {
-      val count = for {
-        (_, start) <- lines.findLineAndIndex(t.t.defToken.offset)
-        (_, end) <- lines.findLineAndIndex(t.t.tokens.last.offset)
-      } yield {
-        var count = 0
-        var multilineComment = false
+      val count = SmVisitor.countNewLines(d)
 
-        // do not count deftoken line and end block line
-        for (i <- (start + 1) until (end - 1)) {
-          val lineText = lines.lines(i).text.trim
-          if (lineText.startsWith(SinglelineComment)) {
-            // do nothing
-          } else {
-            if (lineText.contains(MultilineCommentsOpener)) {
-              // multiline comment start /*
-              // this line won't be counted even if
-              // there exists any token before /*
-              multilineComment = true
-            }
-            if (!multilineComment) {
-              count = count + 1
-            }
-            if (lineText.contains(MultilineCommentsCloser)) {
-              // multiline comment end */
-              // this line won't be counted even if
-              // there exists any token after */
-              multilineComment = false
-            }
-          }
-        }
-        count
-      }
-      count.get > maxLines
+      count > maxLines
     } else {
-      val head = lines.toLineColumn(t.t.defToken.offset)
-      val tail = lines.toLineColumn(t.t.tokens.last.offset)
-      tail.get.line - head.get.line > maxLines
+      d.pos.endLine - d.pos.startLine > maxLines
     }
-  }
-
-  private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
-    case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), localvisit(t.localDef)))
-    case t: Any => visit(t, localvisit)
   }
 }
