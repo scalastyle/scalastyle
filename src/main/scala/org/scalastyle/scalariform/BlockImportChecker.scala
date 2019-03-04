@@ -41,7 +41,7 @@ class BlockImportChecker extends ScalariformChecker {
   private def findBlockImports(in: AstNode): List[PositionError] = in match {
 
     // comma separated import
-    case ImportClause(_, firstImport, otherImports) if otherImports.nonEmpty =>
+    case ImportClause(_, firstImport, otherImports, _) if otherImports.nonEmpty =>
       List(PositionError(firstImport.firstToken.offset))
 
     // rename or hide import

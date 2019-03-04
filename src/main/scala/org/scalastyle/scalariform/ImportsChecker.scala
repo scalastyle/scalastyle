@@ -209,11 +209,11 @@ class ImportOrderChecker extends ScalariformChecker {
     val CompilationUnit(statements, _) = ast
     statements.immediateChildren.flatMap { n =>
       val result = n match {
-        case ImportClause(_, BlockImportExpr(prefix, selectors), _) =>
+        case ImportClause(_, BlockImportExpr(prefix, selectors), _, _) =>
           val text = exprToText(prefix.contents)
           checkImport(text, n.firstToken.offset) ++ checkSelectors(selectors)
 
-        case ImportClause(_, Expr(contents), _) =>
+        case ImportClause(_, Expr(contents), _, _) =>
           val text = exprToText(contents)
           checkImport(text, n.firstToken.offset)
 
