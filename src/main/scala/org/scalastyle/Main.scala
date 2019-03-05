@@ -105,7 +105,7 @@ object Main {
 
   private[this] def now(): Long = System.currentTimeMillis()
 
-  private[this] def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
+  def execute(mc: MainConfig)(implicit codec: Codec): Boolean = {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
     val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
