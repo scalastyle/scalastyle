@@ -150,4 +150,40 @@ class Foobar {
     assertErrors(List(), source, params = Map("ignore" -> "-1,0,1,2,100 "))
   }
 
+  @Test def testIgnoreNamedParams(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  var foo6 = 4
+  var foo7 = +4
+  var foo8 = -4
+  var bar1 = fn(i=7L, -5L)
+  var bar2 = fn(1L, j= -5L)
+
+  def fn(i: Int, j: Int) = i + j
+}
+"""
+
+    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 22)), source, params = Map("allowNamedArguments" -> "true"))
+  }
+
+  @Test def testFailOnNamedParams(): Unit = {
+    val source = """
+package foobar
+
+class Foobar {
+  var foo6 = 4
+  var foo7 = +4
+  var foo8 = -4
+  var bar1 = fn(i=7L, -5L)
+  var bar2 = fn(1L, j= -5L)
+
+  def fn(i: Int, j: Int) = i + j
+}
+"""
+
+    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 18), columnError(8, 22), columnError(9, 23)), source)
+  }
+
 }

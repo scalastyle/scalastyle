@@ -23,9 +23,13 @@ import org.scalastyle.scalariform.VisitorHelper.Clazz
 
 import scala.Option.option2Iterable
 import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.lexer.Tokens.INTEGER_LITERAL
 import _root_.scalariform.lexer.Tokens.VAL
+import _root_.scalariform.parser.Argument
+import _root_.scalariform.parser.CallExpr
 import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.EqualsExpr
 import _root_.scalariform.parser.Expr
 import _root_.scalariform.parser.ExprElement
 import _root_.scalariform.parser.GeneralTokens
@@ -34,10 +38,12 @@ import _root_.scalariform.parser.PrefixExprElement
 
 class MagicNumberChecker extends ScalariformChecker {
   val DefaultIgnore = "-1,0,1,2"
+  val DefaultAllowNamedArguments = false
   val errorKey = "magic.number"
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
     val ignores = getString("ignore", DefaultIgnore).split(",").map(_.trim).toSet
+    val allowNamedArguments = getBoolean("allowNamedArguments", DefaultAllowNamedArguments)
 
     val intList = for {
       t <- localvisit(ast.immediateChildren.head)
@@ -45,6 +51,16 @@ class MagicNumberChecker extends ScalariformChecker {
       if matches(f, ignores)
     } yield {
       f
+    }
+
+    lazy val namedParamList = (for {
+      t <- localvisitNamedArgs(ast.immediateChildren.head)
+      f <- traverse(t)
+    } yield {
+      f.t
+    }).map {
+      case Expr(List(t: Expr)) => t
+      case d: Any => d
     }
 
     val valList = (for {
@@ -58,7 +74,7 @@ class MagicNumberChecker extends ScalariformChecker {
       case d: Any => d
     }
 
-    intList.filter(t => !valList.contains(t.t)).map(t => PositionError(t.position))
+    intList.filter(t => !valList.contains(t.t) && (!allowNamedArguments || !namedParamList.contains(t.t))).map(t => PositionError(t.position))
   }
 
   case class ExprVisit(t: Expr, position: Int, contents: List[ExprVisit]) extends Clazz[Expr]()
@@ -100,6 +116,13 @@ class MagicNumberChecker extends ScalariformChecker {
     case Expr(List(t: Expr)) => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
     case t: Expr => List(ExprVisit(t, t.firstToken.offset, localvisit(t.contents)))
     case t: Any => VisitorHelper.visit(t, localvisit)
+  }
+
+  private def localvisitNamedArgs(ast: Any): List[ExprVisit] = ast match {
+    case EqualsExpr(List(CallExpr(_,Token(Tokens.VARID,_,_,_),_,_,_)), _, expr) =>
+      List(ExprVisit(expr, expr.firstToken.offset, localvisitNamedArgs(expr.contents)))
+
+    case t: Any => VisitorHelper.visit(t, localvisitNamedArgs)
   }
 
   case class PatDefOrDclVisit(t: PatDefOrDcl, valOrVarToken: Token, pattern: List[PatDefOrDclVisit], otherPatterns: List[PatDefOrDclVisit],
