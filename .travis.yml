@@ -15,6 +15,6 @@ notifications:
 before_install:
   - pip install --user codecov
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION coverage test
+  - sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
 after_success:
   - codecov
