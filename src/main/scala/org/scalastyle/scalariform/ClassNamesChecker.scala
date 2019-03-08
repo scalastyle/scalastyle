@@ -81,7 +81,7 @@ class ObjectNamesChecker extends ScalariformChecker {
 }
 
 class PackageNamesChecker extends ScalariformChecker {
-  val DefaultRegex = "^[a-z][A-Za-z]*$"
+  val DefaultRegex = "^[a-z]+$"
   val errorKey = "package.name"
 
   def verify(ast: CompilationUnit): List[PositionError] = {

@@ -39,7 +39,7 @@
     </checker>
     <checker class="org.scalastyle.scalariform.PackageNamesChecker" id="package.name" defaultLevel="warning">
         <parameters>
-            <parameter name="regex" type="string" default="^[a-z][A-Za-z]*$" />
+            <parameter name="regex" type="string" default="^[a-z]+$" />
         </parameters>
     </checker>
     <checker class="org.scalastyle.scalariform.PackageObjectNamesChecker" id="package.object.name" defaultLevel="warning">

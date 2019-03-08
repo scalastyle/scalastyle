@@ -50,7 +50,7 @@
  </check>
  <check level="warning" class="org.scalastyle.scalariform.PackageNamesChecker" enabled="true">
   <parameters>
-   <parameter name="regex"><![CDATA[^[a-z][A-Za-z]*$]]></parameter>
+   <parameter name="regex"><![CDATA[^[a-z]+$]]></parameter>
   </parameters>
  </check>
  <check level="warning" class="org.scalastyle.scalariform.PackageObjectNamesChecker" enabled="true">

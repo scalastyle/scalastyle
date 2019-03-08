@@ -693,7 +693,7 @@ To bring consistency with how comments should be formatted, leave a space right 
  <![CDATA[
     <check level="warning" class="org.scalastyle.scalariform.PackageNamesChecker" enabled="true">
       <parameters>
-        <parameter name="regex">^[a-z][A-Za-z]*$</parameter>
+        <parameter name="regex">^[a-z]+$</parameter>
       </parameters>
     </check>
  ]]>
