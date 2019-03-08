@@ -1,5 +1,3 @@
-import AssemblyKeys._
-
 name := "scalastyle"
 
 organization := "org.scalastyle"
@@ -51,8 +49,6 @@ pomExtra := <url>http://www.scalastyle.org</url>
     </developer>
   </developers>
 
-assemblySettings
-
 artifact in (Compile, assembly) ~= { art =>
   art.copy(`classifier` = Some("batch"))
 }
@@ -62,9 +58,7 @@ addArtifact(artifact in (Compile, assembly), assembly)
 mainClass in assembly := Some("org.scalastyle.Main")
 mainClass in (Compile, run) := Some("org.scalastyle.Main")
 
-buildInfoSettings
-
-sourceGenerators in Compile += buildInfo
+enablePlugins(BuildInfoPlugin)
 
 buildInfoKeys := Seq[BuildInfoKey](organization, name, version, scalaVersion, sbtVersion)
 
@@ -82,9 +76,7 @@ aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
 
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
 
-releaseSettings
-
-ReleaseKeys.crossBuild := true
+releaseCrossBuild := true
 
 val dynamicPublish = Def.taskDyn {
   if (version.value.trim.endsWith("SNAPSHOT")) {
@@ -94,7 +86,7 @@ val dynamicPublish = Def.taskDyn {
   }
 }
 
-ReleaseKeys.publishArtifactsAction := dynamicPublish.value
+releasePublishArtifactsAction := dynamicPublish.value
 
 val createRulesMarkdown = taskKey[Unit]("deploy to a server")
 
