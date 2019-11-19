@@ -191,8 +191,7 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
       Some(c)
     } catch {
       case e: Exception =>
-        // TODO log something here
-        None
+        throw new RuntimeException(s"Failed to run checker $name", e)
       }
     }
   }
