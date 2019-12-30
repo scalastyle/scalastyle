@@ -20,7 +20,7 @@ package org.scalastyle.util
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class CreateRulesMarkdownTest extends AssertionsForJUnit {
   @Test def testMarkdownGeneration(): Unit = {

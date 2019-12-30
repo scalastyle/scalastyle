@@ -21,7 +21,7 @@ import java.lang.reflect.Modifier
 import com.google.common.reflect.ClassPath
 import com.typesafe.config.ConfigFactory
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 import scala.collection.convert.WrapAsScala.asScalaBuffer
 import scala.xml.Elem

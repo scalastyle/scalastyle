@@ -17,7 +17,7 @@
 package org.scalastyle
 
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class CheckerObjectTest extends AssertionsForJUnit {
   @Test def testIsObject(): Unit = {

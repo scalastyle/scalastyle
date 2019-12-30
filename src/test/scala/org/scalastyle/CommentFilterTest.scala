@@ -20,7 +20,7 @@ package org.scalastyle
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class CommentFilterTest extends AssertionsForJUnit {
   @Test def testTokens(): Unit = {

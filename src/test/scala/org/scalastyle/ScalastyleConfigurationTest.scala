@@ -19,7 +19,7 @@ package org.scalastyle
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val filename = "src/test/resources/config/scalastyle_config.xml"
