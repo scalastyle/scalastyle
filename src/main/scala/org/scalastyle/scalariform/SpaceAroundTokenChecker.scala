@@ -20,7 +20,6 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
-import scala.Array.fallbackCanBuildFrom
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.TokenType
 import _root_.scalariform.lexer.Tokens

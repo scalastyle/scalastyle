@@ -21,8 +21,6 @@ import org.scalastyle.FileChecker
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
-import scala.Array.canBuildFrom
-
 class WhitespaceEndOfLineChecker extends FileChecker {
   val errorKey = "whitespace.end.of.line"
   lazy val ignoreWhitespaceLines = getBoolean("ignoreWhitespaceLines", false)

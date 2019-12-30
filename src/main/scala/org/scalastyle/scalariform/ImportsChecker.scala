@@ -23,7 +23,6 @@ import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.visit
 
-import scala.Array.canBuildFrom
 import scala.collection.mutable.ListBuffer
 import _root_.scalariform.lexer.MultiLineComment
 import _root_.scalariform.lexer.Token
