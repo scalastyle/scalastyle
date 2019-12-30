@@ -21,8 +21,6 @@ import org.scalastyle.FileChecker
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
-import scala.Array.canBuildFrom
-
 class FileTabChecker extends FileChecker {
   val errorKey = "line.contains.tab"
 

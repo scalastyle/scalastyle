@@ -17,7 +17,7 @@
 package org.scalastyle.file
 
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off multiple.string.literals
 

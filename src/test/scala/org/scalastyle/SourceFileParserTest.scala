@@ -20,7 +20,7 @@ import java.io.File
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class SourceFileParserTest extends AssertionsForJUnit {
 
