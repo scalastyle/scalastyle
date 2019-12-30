@@ -271,7 +271,7 @@ class ImportOrderChecker extends ScalariformChecker {
     }
 
     lastImportInGroup = Some(str)
-    errors
+    errors.toSeq
   }
 
   /**
@@ -292,7 +292,7 @@ class ImportOrderChecker extends ScalariformChecker {
       }
     }
 
-    errors
+    errors.toSeq
   }
 
   /**
