@@ -20,8 +20,6 @@ import org.scalastyle.FileChecker
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
 
-import scala.Array.canBuildFrom
-
 class FileLineLengthChecker extends FileChecker {
   val DefaultMaxLineLength = 160
   val DefaultTabSize = 4

@@ -18,7 +18,7 @@ package org.scalastyle
 
 import com.typesafe.config.Config
 
-import scala.collection.JavaConversions.collectionAsScalaIterable
+import scala.collection.JavaConverters._
 import scala.xml.Elem
 
 object Output {
@@ -38,7 +38,7 @@ trait Output[T <: FileSpec] {
 
   def output(messages: Seq[Message[T]]): OutputResult = privateOutput(messages)
 
-  def output(messages: java.util.List[Message[T]]): OutputResult = privateOutput(collectionAsScalaIterable(messages))
+  def output(messages: java.util.List[Message[T]]): OutputResult = privateOutput(messages.asScala)
 
   private[this] def privateOutput(messages: Iterable[Message[T]]): OutputResult = {
     messages.foreach(m => {
@@ -96,7 +96,7 @@ object XmlOutput {
                       save(config, new java.io.File(target), encoding, messages)
 
   def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
-    save(config, new java.io.File(target), encoding, scala.collection.JavaConversions.collectionAsScalaIterable(messages))
+    save(config, new java.io.File(target), encoding, messages.asScala)
 
   def save[T <: FileSpec](config: Config, target: java.io.File, encoding: String, messages: Iterable[Message[T]]): Unit = {
     val width = 1000

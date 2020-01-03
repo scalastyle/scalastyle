@@ -21,9 +21,9 @@ import java.lang.reflect.Modifier
 import com.google.common.reflect.ClassPath
 import com.typesafe.config.ConfigFactory
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
-import scala.collection.convert.WrapAsScala.asScalaBuffer
+import scala.collection.JavaConverters._
 import scala.xml.Elem
 import scala.xml.NodeSeq
 import scala.xml.XML
@@ -46,7 +46,7 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
     val config = ConfigFactory.load()
 
     val cp = ClassPath.from(this.getClass.getClassLoader)
-    val subTypes = asScalaBuffer(cp.getAllClasses.asList()).filter(isChecker)
+    val subTypes = cp.getAllClasses.asList().asScala.filter(isChecker)
     val definition = ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))
     val messageHelper = new MessageHelper(config)
 

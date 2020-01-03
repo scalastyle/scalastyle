@@ -25,8 +25,7 @@ import _root_.scalariform.lexer.Token
 import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.ScalaParser
 import scala.annotation.tailrec
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import scala.collection.JavaConversions.seqAsJavaList
+import scala.collection.JavaConverters._
 import scala.io.Codec
 import scala.io.Source
 
@@ -65,7 +64,7 @@ class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) 
   }
 
   def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
-    seqAsJavaList(privateCheckFiles(configuration, collectionAsScalaIterable(files)))
+    privateCheckFiles(configuration, files.asScala).asJava
   }
 
   private[this] def privateCheckFiles(configuration: ScalastyleConfiguration, files: Iterable[T]): Seq[Message[T]] = {

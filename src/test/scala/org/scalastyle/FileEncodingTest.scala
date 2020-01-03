@@ -22,7 +22,7 @@ import java.io.OutputStreamWriter
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class FileEncodingTest extends AssertionsForJUnit {
   val TestString = "foobar\u00E9\u00A8\u00E0$\u00E9\u00E8\u00E8\u00A8\u00E8\u00A8"
