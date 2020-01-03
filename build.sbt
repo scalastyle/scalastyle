@@ -4,21 +4,22 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-scalaVersion := "2.10.7"
+scalaVersion := "2.12.10"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
 
-crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.8")
+crossScalaVersions := Seq("2.11.12", "2.12.10")
 
 description := "Scalastyle style checker for Scala"
 
 libraryDependencies ++= Seq(
-                        "org.scalariform" %% "scalariform" % "0.2.7",
-                        "com.typesafe" % "config" % "1.2.0",
-                        "junit" % "junit" % "4.11" % "test",
-                        "com.novocode" % "junit-interface" % "0.10" % "test",
-                        "com.google.guava" % "guava" % "17.0" % "test",
-                        "org.scalatest" %% "scalatest" % "3.0.3" % "test")
+  "org.scalariform" %% "scalariform" % "0.2.7",
+  "com.typesafe" % "config" % "1.2.0",
+  "junit" % "junit" % "4.11" % "test",
+  "com.novocode" % "junit-interface" % "0.10" % "test",
+  "com.google.guava" % "guava" % "17.0" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.3" % "test"
+)
 
 fork in (Test, run) := true
 
@@ -31,12 +32,14 @@ publishMavenStyle := true
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
-  else Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
-pomIncludeRepository := { _ => false }
+pomIncludeRepository := { _ =>
+  false
+}
 
 pomExtra := <url>http://www.scalastyle.org</url>
   <scm>
@@ -74,7 +77,7 @@ filterSettings
 
 if (System.getProperty("scalastyle.publish-ivy-only") == "true") {
   Seq()
-}  else {
+} else {
   Seq(aetherPublishBothSettings: _*)
 }
 
