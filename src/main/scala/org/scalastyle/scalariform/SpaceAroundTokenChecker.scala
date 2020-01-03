@@ -38,7 +38,7 @@ trait SpaceAroundTokenChecker extends ScalariformChecker {
     }
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val tokens: Seq[TokenType] = getString("tokens", DefaultTokens).split(",").map(x => TokenType(x.trim))
+    val tokens: Seq[TokenType] = getString("tokens", DefaultTokens).split(",").toSeq.map(x => TokenType(x.trim))
     (for {
       l @ List(left, middle, right) <- ast.tokens.sliding(3)
       if (l.forall(x => x.tokenType != Tokens.NEWLINE && x.tokenType != Tokens.NEWLINES)

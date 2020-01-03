@@ -17,3 +17,5 @@ addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.5.0")
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "0.8.5")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0")
+
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.11")

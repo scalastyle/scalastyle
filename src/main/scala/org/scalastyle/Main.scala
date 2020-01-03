@@ -23,7 +23,8 @@ import com.typesafe.config.ConfigFactory
 
 import scala.io.Codec
 
-case class MainConfig(error: Boolean,
+case class MainConfig(
+    error: Boolean,
     config: Option[String] = None,
     directories: List[String] = List(),
     verbose: Boolean = false,
@@ -33,7 +34,8 @@ case class MainConfig(error: Boolean,
     xmlEncoding: Option[String] = None,
     inputEncoding: Option[String] = None,
     externalJar: Option[String] = None,
-    excludedFiles: Seq[String] = Nil)
+    excludedFiles: Seq[String] = Nil
+)
 
 object Main {
   // scalastyle:off regex
@@ -62,16 +64,16 @@ object Main {
     while (i < args.length) {
       if (args(i).startsWith("-") && i < args.length - 1) {
         args(i) match {
-          case ("-c" | "--config") => config = config.copy(config = Some(args(i + 1)))
-          case ("-v" | "--verbose") => config = config.copy(verbose = isTrue(args(i + 1)))
-          case ("-q" | "--quiet") => config = config.copy(quiet = isTrue(args(i + 1)))
-          case ("-w" | "--warnings") => config = config.copy(warningsaserrors = isTrue(args(i + 1)))
-          case ("--xmlOutput") => config = config.copy(xmlFile = Some(args(i + 1)))
-          case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
-          case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
-          case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
-          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
-          case _ => config = config.copy(error = true)
+          case ("-c" | "--config")        => config = config.copy(config = Some(args(i + 1)))
+          case ("-v" | "--verbose")       => config = config.copy(verbose = isTrue(args(i + 1)))
+          case ("-q" | "--quiet")         => config = config.copy(quiet = isTrue(args(i + 1)))
+          case ("-w" | "--warnings")      => config = config.copy(warningsaserrors = isTrue(args(i + 1)))
+          case ("--xmlOutput")            => config = config.copy(xmlFile = Some(args(i + 1)))
+          case ("--xmlEncoding")          => config = config.copy(xmlEncoding = Some(args(i + 1)))
+          case ("--inputEncoding")        => config = config.copy(inputEncoding = Some(args(i + 1)))
+          case ("-e" | "--externalJar")   => config = config.copy(externalJar = Some(args(i + 1)))
+          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";").toSeq)
+          case _                          => config = config.copy(error = true)
         }
         i = i + 2
       } else {

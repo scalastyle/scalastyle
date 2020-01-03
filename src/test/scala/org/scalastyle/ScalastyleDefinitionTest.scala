@@ -23,7 +23,7 @@ import com.typesafe.config.ConfigFactory
 import org.junit.Test
 import org.scalatestplus.junit.AssertionsForJUnit
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.xml.Elem
 import scala.xml.NodeSeq
 import scala.xml.XML
@@ -85,7 +85,7 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
         val params = ns \\ "parameters"
         if (params.nonEmpty) {
           val list = ns \\ "parameters" \\ "parameter"
-          assert (list.size > 0, "if we have parameters, then we should have a list of parameter")
+          assert(list.size > 0, "if we have parameters, then we should have a list of parameter")
         }
       }
     }

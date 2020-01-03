@@ -70,14 +70,14 @@ abstract class AbstractImportChecker extends ScalariformChecker {
     val is = t.importSelectors
 
     val firsts = is.firstImportSelector.firstToken.text ::
-            is.otherImportSelectors.map(_._2).map(is => is.firstToken.text)
+      is.otherImportSelectors.map(_._2).map(is => is.firstToken.text)
     firsts.map(f => imports(t.prefixExpr.tokens) + f)
   }
 
   protected final def imports(t: ImportClauseVisit): List[String] = {
     t.t.importExpr match {
       case t: BlockImportExpr => imports(t)
-      case _ => List(imports(t.t.importExpr.tokens))
+      case _                  => List(imports(t.t.importExpr.tokens))
     }
   }
 
@@ -85,7 +85,7 @@ abstract class AbstractImportChecker extends ScalariformChecker {
 
   private[this] def localvisit(ast: Any): List[ImportClauseVisit] = ast match {
     case t: ImportClause => List(ImportClauseVisit(t, localvisit(t.importExpr), localvisit(t.otherImportExprs)))
-    case t: Any => visit(t, localvisit)
+    case t: Any          => visit(t, localvisit)
   }
 }
 
@@ -124,7 +124,8 @@ class UnderscoreImportChecker extends AbstractImportChecker {
     ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
   }
 
-  def matches(t: ImportClauseVisit): Boolean = imports(t)
+  def matches(t: ImportClauseVisit): Boolean =
+    imports(t)
       .filterNot((importStatement) => ignoreRegex.findFirstIn(importStatement).isDefined)
       .exists(_.endsWith("._"))
 }
@@ -145,40 +146,40 @@ class ImportGroupingChecker extends ScalariformChecker {
 
       s match {
         case Some(x) => it.dropWhile(ic => ic.firstToken.offset <= x.offset).map(ic => PositionError(ic.firstToken.offset))
-        case None => List()
+        case None    => List()
       }
     }
   }
 }
 
 /**
- * Style checker that enforces import ordering. The following configuration parameters are
- * available:
- *
- *  - groups: a comma-separated list of group names to consider.
- *  - maxBlankLines: maximum number of blank lines to allow between groups. The default is "1".
- *                   A value less than 1 disables the blank line limit.
- *  - group.[groupName]: a regular expression that matches imports that should be in the given
- *                       group.
- *  - lexicographic: if true, imports are ordered lexicographically (classes, wildcards, then
- *                   packages; case-sensitive ordering within); if false, apply the original
- *                   case-insensitive ordering (with wildcards coming first, before classes).
- *
- * For example, to check that "java" and "javax" imports are in a separate group at the top of the
- * import list, you'd use this config:
- *
- *  <parameter name="groups">java,others</parameter>
- *  <parameter name="group.java">javax?\..+</parameter>
- *  <parameter name="group.other">.+</parameter>
- *
- * Other non-configurable rules:
- * - Within each group, import clauses are ordered alphabetically if 'lexicographic' is
- *   specified; else puts wildcards, then classes and packages, with case-insensitive sort.
- * - In multi-import statements, entries are ordered alphabetically, with method / packages
- *   (assumed to be any string starting with a lower case letter) coming before classes.
- *
- * Currently, this checker only looks at the top-level list of imports.
- */
+  * Style checker that enforces import ordering. The following configuration parameters are
+  * available:
+  *
+  *  - groups: a comma-separated list of group names to consider.
+  *  - maxBlankLines: maximum number of blank lines to allow between groups. The default is "1".
+  *                   A value less than 1 disables the blank line limit.
+  *  - group.[groupName]: a regular expression that matches imports that should be in the given
+  *                       group.
+  *  - lexicographic: if true, imports are ordered lexicographically (classes, wildcards, then
+  *                   packages; case-sensitive ordering within); if false, apply the original
+  *                   case-insensitive ordering (with wildcards coming first, before classes).
+  *
+  * For example, to check that "java" and "javax" imports are in a separate group at the top of the
+  * import list, you'd use this config:
+  *
+  *  <parameter name="groups">java,others</parameter>
+  *  <parameter name="group.java">javax?\..+</parameter>
+  *  <parameter name="group.other">.+</parameter>
+  *
+  * Other non-configurable rules:
+  * - Within each group, import clauses are ordered alphabetically if 'lexicographic' is
+  *   specified; else puts wildcards, then classes and packages, with case-insensitive sort.
+  * - In multi-import statements, entries are ordered alphabetically, with method / packages
+  *   (assumed to be any string starting with a lower case letter) coming before classes.
+  *
+  * Currently, this checker only looks at the top-level list of imports.
+  */
 class ImportOrderChecker extends ScalariformChecker {
   val errorKey: String = "import.ordering"
 
@@ -195,7 +196,7 @@ class ImportOrderChecker extends ScalariformChecker {
   override def setParameters(parameters: Map[String, String]): Unit = {
     // Note that any exceptions thrown here are swallowed by CheckerUtils and ignored...
     require(parameters.contains("groups"))
-    groups = parameters("groups").split(",").map { name =>
+    groups = parameters("groups").split(",").toSeq.map { name =>
       name -> Pattern.compile(parameters(s"group.${name}"))
     }
     maxBlankLines = parameters.getOrElse("maxBlankLines", "1").toInt
@@ -225,15 +226,17 @@ class ImportOrderChecker extends ScalariformChecker {
   }
 
   private def exprToText(contents: List[ExprElement]): String = {
-    contents.flatMap {
-      case GeneralTokens(toks) => toks.map(_.text)
-      case n: Any => throw new IllegalStateException(s"FIXME: unexpected expr child node $n")
-    }.mkString("")
+    contents
+      .flatMap {
+        case GeneralTokens(toks) => toks.map(_.text)
+        case n: Any              => throw new IllegalStateException(s"FIXME: unexpected expr child node $n")
+      }
+      .mkString("")
   }
 
   /**
-   * Check that the given import belongs to the current group and is ordered correctly within it.
-   */
+    * Check that the given import belongs to the current group and is ordered correctly within it.
+    */
   private def checkImport(str: String, offset: Int): Seq[ScalastyleError] = {
     val errors = new ListBuffer[ScalastyleError]()
 
@@ -275,20 +278,21 @@ class ImportOrderChecker extends ScalariformChecker {
   }
 
   /**
-   * Check that the imports inside a multi-import block are ordered.
-   */
+    * Check that the imports inside a multi-import block are ordered.
+    */
   private def checkSelectors(selectors: ImportSelectors): Seq[ScalastyleError] = {
     val ImportSelectors(_, first, others, _) = selectors
 
     val errors = new ListBuffer[ScalastyleError]()
     val names = Seq(first.contents.head.tokens.head.text) ++
-      others.map( _._2.contents.head.tokens.head.text)
+      others.map(_._2.contents.head.tokens.head.text)
 
     if (names.size > 1) {
-      names.sliding(2).foreach { case Seq(left, right) =>
-        if (compareNames(left, right, isImport = false) > 0) {
-          errors += newError(selectors.firstToken.offset, "wrongOrderInSelector", right, left)
-        }
+      names.sliding(2).foreach {
+        case Seq(left, right) =>
+          if (compareNames(left, right, isImport = false) > 0) {
+            errors += newError(selectors.firstToken.offset, "wrongOrderInSelector", right, left)
+          }
       }
     }
 
@@ -296,13 +300,10 @@ class ImportOrderChecker extends ScalariformChecker {
   }
 
   /**
-   * When the current import group changes, checks that there is a single empty line between
-   * the last import statement in the previous group and the first statement in the new one.
-   */
-  private def checkGroupSeparation(
-      lastGroup: Int,
-      nextGroup: Int,
-      nextGroupOffset: Int): Option[ScalastyleError] = {
+    * When the current import group changes, checks that there is a single empty line between
+    * the last import statement in the previous group and the first statement in the new one.
+    */
+  private def checkGroupSeparation(lastGroup: Int, nextGroup: Int, nextGroupOffset: Int): Option[ScalastyleError] = {
     if (lastGroup != nextGroup && lastImport.isDefined) {
       val start = lastImport.get.lastToken.offset + lastImport.get.lastToken.length
       val separatorLines = countNewLines(start, nextGroupOffset) - 1
@@ -319,8 +320,8 @@ class ImportOrderChecker extends ScalariformChecker {
   }
 
   /**
-   * Check that there are no empty lines between imports in the same group.
-   */
+    * Check that there are no empty lines between imports in the same group.
+    */
   private def checkNoSeparator(offset: Int): Option[ScalastyleError] = {
     if (lastImportInGroup.isDefined) {
       val start = lastImport.get.lastToken.offset + lastImport.get.lastToken.length
@@ -332,38 +333,42 @@ class ImportOrderChecker extends ScalariformChecker {
   }
 
   /**
-   * Counts the number of new lines between the given offsets, adjusted for comments.
-   */
+    * Counts the number of new lines between the given offsets, adjusted for comments.
+    */
   private def countNewLines(start: Int, end: Int): Int = {
     var count = 0
-    ast.tokens.filter { t => t.offset >= start && t.offset < end }.foreach { t =>
-      val commentsToken = t.associatedWhitespaceAndComments
-      if (commentsToken != null) { // scalastyle:ignore null
-        var ignoreNext = false
-        commentsToken.tokens.foreach {
-          case c: MultiLineComment =>
-            // Do not count a new line after a multi-line comment.
-            ignoreNext = true
-          case w: Whitespace =>
-            if (!ignoreNext) {
-              // Assumes "\n" only used for new lines.
-              count += w.text.count(_ == '\n')
-            }
-            ignoreNext = true
-          case _ =>
+    ast.tokens
+      .filter { t =>
+        t.offset >= start && t.offset < end
+      }
+      .foreach { t =>
+        val commentsToken = t.associatedWhitespaceAndComments
+        if (commentsToken != null) { // scalastyle:ignore null
+          var ignoreNext = false
+          commentsToken.tokens.foreach {
+            case c: MultiLineComment =>
+              // Do not count a new line after a multi-line comment.
+              ignoreNext = true
+            case w: Whitespace =>
+              if (!ignoreNext) {
+                // Assumes "\n" only used for new lines.
+                count += w.text.count(_ == '\n')
+              }
+              ignoreNext = true
+            case _ =>
             // Nothing to do.
+          }
         }
       }
-    }
     count
   }
 
   /**
-   * Compares two import statements, comparing each component of the import separately.
-   *
-   * The import statements can end with a dangling `.`, meaning they're the start of a
-   * multi-import block.
-   */
+    * Compares two import statements, comparing each component of the import separately.
+    *
+    * The import statements can end with a dangling `.`, meaning they're the start of a
+    * multi-import block.
+    */
   private[scalariform] def compareImports(imp1: String, imp2: String): Int = {
     val imp1Components = imp1.split("[.]")
     val imp2Components = imp2.split("[.]")
@@ -391,16 +396,16 @@ class ImportOrderChecker extends ScalariformChecker {
   }
 
   /**
-   * Compares two strings that represent a single imported artifact; this considers lower-case
-   * names as being "lower" than upper case ones.
-   *
-   * @param name1 First name.
-   * @param name2 Second name.
-   * @param isImport If true, orders names according to the import statement rules:
-   *                 "_" should come before other names, and capital letters should come
-   *                 before lower case ones. Otherwise, do the opposite, which are the ordering
-   *                 rules for names within a selector.
-   */
+    * Compares two strings that represent a single imported artifact; this considers lower-case
+    * names as being "lower" than upper case ones.
+    *
+    * @param name1 First name.
+    * @param name2 Second name.
+    * @param isImport If true, orders names according to the import statement rules:
+    *                 "_" should come before other names, and capital letters should come
+    *                 before lower case ones. Otherwise, do the opposite, which are the ordering
+    *                 rules for names within a selector.
+    */
   private[scalariform] def compareNames(name1: String, name2: String, isImport: Boolean): Int = {
     if (lexicographic && isImport) {
       name1.compareTo(name2)

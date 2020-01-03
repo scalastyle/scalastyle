@@ -4,15 +4,21 @@ name := "scalastyle"
 
 organization := "org.scalastyle"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.13.1"
 
-scalacOptions ++= Seq("-deprecation", "-feature")
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-feature",
+  "-Yrangepos",
+  "-P:semanticdb:synthetics:on"
+)
 
 crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1")
 
 description := "Scalastyle style checker for Scala"
 
 libraryDependencies ++= Seq(
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3",
   "org.scalariform" %% "scalariform" % "0.2.10",
   "com.typesafe" % "config" % "1.2.0",
   "junit" % "junit" % "4.11" % "test",
@@ -20,6 +26,8 @@ libraryDependencies ++= Seq(
   "com.google.guava" % "guava" % "17.0" % "test",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 )
+scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3"
+addCompilerPlugin(scalafixSemanticdb)
 
 fork in (Test, run) := true
 

@@ -19,7 +19,7 @@ package org.scalastyle
 import java.io.File
 import java.io.FileFilter
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class Directory
 
@@ -56,16 +56,18 @@ object Directory {
   }
 
   private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File], excludeFilter: Option[FileFilter] = None): Seq[FileSpec] = {
-    files.flatMap(f => {
-      if (excludeFilter.exists(_.accept(f))) {
-        Nil
-      } else if (f.isDirectory) {
-        privateGetFiles(encoding, f.listFiles, excludeFilter)
-      } else if (scalaFileFilter.accept(f)) {
-        Seq(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
-      } else {
-        Nil
-      }
-    }).toSeq
+    files
+      .flatMap(f => {
+        if (excludeFilter.exists(_.accept(f))) {
+          Nil
+        } else if (f.isDirectory) {
+          privateGetFiles(encoding, f.listFiles, excludeFilter)
+        } else if (scalaFileFilter.accept(f)) {
+          Seq(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
+        } else {
+          Nil
+        }
+      })
+      .toSeq
   }
 }

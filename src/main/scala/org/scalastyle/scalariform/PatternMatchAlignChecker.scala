@@ -32,8 +32,9 @@ class PatternMatchAlignChecker extends CombinedChecker {
   final def verify(ast: CombinedAst): List[ScalastyleError] = {
     val allBlockExprs = VisitorHelper.getAll[BlockExpr](ast.compilationUnit)
     val unaligned = allBlockExprs.filter(matches(_, ast.lines))
-    unaligned.map { badBlock =>
-      PositionError(badBlock.caseClausesOrStatSeq.left.get.caseClauses(1).casePattern.arrow.offset)
+    unaligned.flatMap { badBlock =>
+      badBlock.caseClausesOrStatSeq.left.toOption
+        .map(clauses => PositionError(clauses.caseClauses(1).casePattern.arrow.offset))
     }
   }
 
@@ -42,9 +43,7 @@ class PatternMatchAlignChecker extends CombinedChecker {
     arrowPositions.forall(_ == arrowPositions.head)
   }
 
-  private def matches(t: BlockExpr, lines: Lines) = {
-    val isCaseClauses = t.caseClausesOrStatSeq.isLeft
-    isCaseClauses && !allAlign(t.caseClausesOrStatSeq.left.get, lines)
+  private def matches(t: BlockExpr, lines: Lines): Boolean = {
+    t.caseClausesOrStatSeq.left.toOption.exists(!allAlign(_, lines))
   }
-
 }

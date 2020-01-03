@@ -21,6 +21,7 @@ import org.scalastyle.Line
 import org.scalastyle.LineError
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
+import scala.collection.compat._
 
 object NormalizedLine {
   def normalize(lines: Lines, tabSize: Int): Array[NormalizedLine] =
@@ -34,7 +35,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
   lazy val length = normalizedText.length
   lazy val body = normalizedText dropWhile { _.isWhitespace }
   lazy val isBlank = { body.length == 0 }
-  lazy val indentDepth = normalizedText prefixLength { _ == ' ' }
+  lazy val indentDepth = normalizedText segmentLength (_ == ' ', 0)
 
   def mkError(args: List[String] = Nil): LineError = LineError(lineNumber, args)
 
@@ -58,7 +59,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
     }
 
     if (sb.endsWith("\r")) {
-      sb.setLength(sb.length-1)
+      sb.setLength(sb.length - 1)
     }
 
     sb.toString
@@ -87,8 +88,8 @@ class IndentationChecker extends FileChecker {
     for { line <- lines if !isTabAlligned(line) } yield line.mkError()
 
   /**
-   * Verfiy single indent EXCLUDING class and method parameter lists
-   */
+    * Verfiy single indent EXCLUDING class and method parameter lists
+    */
   private def verifySingleIndent(lines: Seq[NormalizedLine]) = {
     def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
       isSingleIndent(l2, l1) && !startsParamList(l1) && !startsMethodDef(l1)
@@ -98,8 +99,8 @@ class IndentationChecker extends FileChecker {
   }
 
   /**
-   * Verify parameter indentation in class/object/trait parameter lists
-   */
+    * Verify parameter indentation in class/object/trait parameter lists
+    */
   private def verifyClassIndent(lines: Seq[NormalizedLine], classParamIndentSize: Int) = {
     def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
       if (startsParamList(l1) && !l1.normalizedText.contains(" extends ")) {
@@ -113,8 +114,8 @@ class IndentationChecker extends FileChecker {
   }
 
   /**
-   * Verify parameter indentation in method parameter lists
-   */
+    * Verify parameter indentation in method parameter lists
+    */
   private def verifyMethodIndent(lines: Seq[NormalizedLine], methodParamIndentSize: Int) = {
     def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
       if (startsMethodDef(l1)) {
@@ -132,7 +133,7 @@ class IndentationChecker extends FileChecker {
     val classParamIndentSize = getInt("classParamIndentSize", DefaultClassParamTabSize)
     val methodParamIndentSize = getInt("methodParamIndentSize", tabSize)
 
-    val normalizedLines = NormalizedLine.normalize(lines, tabSize) filterNot { _.isBlank }
+    val normalizedLines = NormalizedLine.normalize(lines, tabSize).filterNot(_.isBlank).toSeq
 
     val tabErrors = verifyTabStop(normalizedLines)
     val indentErrors = verifySingleIndent(normalizedLines)
