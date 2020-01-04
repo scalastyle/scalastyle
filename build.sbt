@@ -3,9 +3,30 @@ import sbt._
 enablePlugins(BuildInfoPlugin)
 
 name := "scalastyle"
-organization := "org.scalastyle"
+organization := "com.beautiful-scala"
 description := "Scalastyle style checker for Scala"
+homepage := Some(url("https://github.com/beautiful-scala/scalastyle"))
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/beautiful-scala/scalastyle"),
+    "git@github.com:beautiful-scala/scalastyle.git"
+  )
+)
+developers := List(
+  Developer(
+    "mwz",
+    "Michael Wizner",
+    "@mwz",
+    url("https://github.com/mwz")
+  ),
+  Developer(
+    "matthewfarwell",
+    "Matthew Farwell",
+    "@matthewfarwell",
+    url("http://www.farwell.co.uk")
+  )
+)
 
 // Compile options
 scalaVersion := "2.13.1"
@@ -80,7 +101,7 @@ mainClass in (Compile, run) := Some("org.scalastyle.Main")
 
 // build info
 buildInfoKeys := Seq[BuildInfoKey](organization, name, version, scalaVersion, sbtVersion)
-buildInfoPackage := organization.value
+buildInfoPackage := "org.scalastyle"
 
 // create rules
 val createRulesMarkdown = taskKey[Unit]("deploy to a server")
