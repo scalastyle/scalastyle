@@ -1,119 +1,83 @@
-import AssemblyKeys._
+import sbt._
 
 name := "scalastyle"
-
 organization := "org.scalastyle"
-
-scalaVersion := "2.13.1"
-
-scalacOptions ++= Seq(
-  "-deprecation",
-  "-feature",
-  "-Yrangepos",
-  "-P:semanticdb:synthetics:on"
-)
-
-crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1")
-
 description := "Scalastyle style checker for Scala"
-
-libraryDependencies ++= Seq(
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3",
-  "org.scalariform" %% "scalariform" % "0.2.10",
-  "com.typesafe" % "config" % "1.2.0",
-  "junit" % "junit" % "4.11" % "test",
-  "com.novocode" % "junit-interface" % "0.10" % "test",
-  "com.google.guava" % "guava" % "17.0" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test"
-)
-scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3"
-addCompilerPlugin(scalafixSemanticdb)
-
-fork in (Test, run) := true
-
-javaOptions in Test += "-Dfile.encoding=UTF-8"
-
-coverageHighlighting := scalaBinaryVersion.value != "2.10"
-
-publishMavenStyle := true
-
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (version.value.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots")
-  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
-
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"))
 
-pomIncludeRepository := { _ =>
-  false
+// Compile options
+scalaVersion := "2.13.1"
+crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1")
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-encoding",
+  "utf8",
+  "-feature",
+  "-language:reflectiveCalls",
+  "-Yrangepos",
+  "-Yno-adapted-args",
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Ywarn-value-discard",
+  "-Ywarn-unused",
+  "-P:semanticdb:synthetics:on"
+).filter {
+  case ("-Yno-adapted-args") if scalaVersion.value.startsWith("2.13") =>
+    false
+  case _ =>
+    true
 }
+javacOptions := Seq("-Xlint:deprecation")
+javaOptions in Test += "-Dfile.encoding=UTF-8"
+cancelable in Global := true
 
-pomExtra := <url>http://www.scalastyle.org</url>
-  <scm>
-    <url>scm:git:git@github.com:scalastyle/scalastyle.git</url>
-    <connection>scm:git:git@github.com:scalastyle/scalastyle.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>matthewfarwell</id>
-      <name>Matthew Farwell</name>
-      <url>http://www.farwell.co.uk</url>
-    </developer>
-  </developers>
+// Lib dependencies
+libraryDependencies ++= Seq(
+  "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3",
+  "org.scalariform"        %% "scalariform"             % "0.2.10",
+  "com.typesafe"           % "config"                   % "1.2.0",
+  "junit"                  % "junit"                    % "4.11" % "test",
+  "com.novocode"           % "junit-interface"          % "0.10" % "test",
+  "com.google.guava"       % "guava"                    % "17.0" % "test",
+  "org.scalatest"          %% "scalatest"               % "3.0.8" % "test"
+)
 
-assemblySettings
+// Test
+fork in (Test, run) := true
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDTF")
 
-artifact in (Compile, assembly) ~= { art =>
-  art.copy(`classifier` = Some("batch"))
+// scalafix & scalafmt
+scalafixDependencies in ThisBuild ++= Seq(
+  "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3",
+  "com.nequissimus"        %% "sort-imports"                % "0.3.1"
+)
+addCommandAlias("fix", "all compile:scalafix test:scalafix")
+addCommandAlias("fixCheck", ";compile:scalafix --check ;test:scalafix --check")
+scalafmtOnCompile in ThisBuild :=
+  sys.env
+    .get("DISABLE_SCALAFMT")
+    .forall(_.toLowerCase == "false")
+
+// assembly
+test in assembly := {}
+artifact in (Compile, assembly) := {
+  val art = (artifact in (Compile, assembly)).value
+  art.withClassifier(Some("assembly"))
 }
-
 addArtifact(artifact in (Compile, assembly), assembly)
-
 mainClass in assembly := Some("org.scalastyle.Main")
 mainClass in (Compile, run) := Some("org.scalastyle.Main")
 
-buildInfoSettings
-
-sourceGenerators in Compile += buildInfo
-
-buildInfoKeys := Seq[BuildInfoKey](organization, name, version, scalaVersion, sbtVersion)
-
-buildInfoPackage := "org.scalastyle"
-
-filterSettings
-
-if (System.getProperty("scalastyle.publish-ivy-only") == "true") {
-  Seq()
-} else {
-  Seq(aetherPublishBothSettings: _*)
-}
-
-aether.Aether.aetherLocalRepo := Path.userHome / "dev" / "repo"
-
-EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Managed
-
-releaseSettings
-
-ReleaseKeys.crossBuild := true
-
-val dynamicPublish = Def.taskDyn {
-  if (version.value.trim.endsWith("SNAPSHOT")) {
-    Def.task { publish.value }
-  } else {
-    Def.task { PgpKeys.publishSigned.value }
-  }
-}
-
-ReleaseKeys.publishArtifactsAction := dynamicPublish.value
-
+// create rules
 val createRulesMarkdown = taskKey[Unit]("deploy to a server")
-
 val createRulesMarkdownDyn = Def.taskDyn {
   val t = (target.value / "rules-dev.markdown").getAbsolutePath
   Def.task {
     (runMain in Compile).toTask(" org.scalastyle.util.CreateRulesMarkdown " + t).value
   }
 }
-
 createRulesMarkdown := createRulesMarkdownDyn.value
+
+// plugins
+addCompilerPlugin(scalafixSemanticdb)
