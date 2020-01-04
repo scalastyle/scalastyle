@@ -16,17 +16,15 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.Refinement
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.Refinement
-
 class StructuralTypeChecker extends ScalariformChecker {
   val errorKey = "structural.type"
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  final def verify(ast: CompilationUnit): List[ScalastyleError] =
     VisitorHelper.getAll[Refinement](ast.immediateChildren(0)).map(t => PositionError(t.firstToken.offset))
-  }
 }

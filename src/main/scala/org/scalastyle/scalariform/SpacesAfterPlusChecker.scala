@@ -16,16 +16,15 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.scalariform.VisitorHelper.visit
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-
 import _root_.scalariform.lexer.Tokens.LBRACKET
 import _root_.scalariform.lexer.Tokens.NEWLINE
 import _root_.scalariform.lexer.Tokens.PLUS
 import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.InfixExpr
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
 class SpacesAfterPlusChecker extends ScalariformChecker {
   val errorKey = "spaces.after.plus"
@@ -53,6 +52,6 @@ class SpacesAfterPlusChecker extends ScalariformChecker {
 
   private def localVisit(ast: Any): List[InfixExpr] = ast match {
     case expr: InfixExpr => List(expr)
-    case other: Any => visit(other, localVisit)
+    case other: Any      => visit(other, localVisit)
   }
 }

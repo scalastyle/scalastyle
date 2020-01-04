@@ -1,9 +1,8 @@
 package org.scalastyle.scalariform
 
-import org.scalastyle.{CombinedAst, CombinedChecker, Lines, PositionError, ScalastyleError}
-
 import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.parser.ForExpr
+import org.scalastyle.{CombinedAst, CombinedChecker, PositionError, ScalastyleError}
 
 class ForLoopChecker extends CombinedChecker {
   val errorKey = "for.loop"

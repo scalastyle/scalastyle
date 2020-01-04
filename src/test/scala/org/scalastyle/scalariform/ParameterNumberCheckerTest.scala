@@ -39,7 +39,8 @@ class OK {
   }
 
   @Test def testKO(): Unit = {
-    val source = """
+    val source =
+      """
 package foobar
 
 class OK {
@@ -51,7 +52,8 @@ class OK {
   }
 
   @Test def testOuterKOInnerKO(): Unit = {
-    val source = """
+    val source =
+      """
 package foobar
 
 class Outer {

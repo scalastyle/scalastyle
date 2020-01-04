@@ -48,8 +48,14 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 10, List(""""foobar"""", "7", "3")), columnError(12, 11, List(""""bar"""", "4", "3"))), source,
-                    Map("allowed" -> "3", "ignoreRegex" -> "1"))
+    assertErrors(
+      List(
+        columnError(5, 10, List(""""foobar"""", "7", "3")),
+        columnError(12, 11, List(""""bar"""", "4", "3"))
+      ),
+      source,
+      Map("allowed" -> "3", "ignoreRegex" -> "1")
+    )
   }
 
   @Test def testDefaultParameters(): Unit = {

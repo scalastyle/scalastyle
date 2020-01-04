@@ -16,15 +16,13 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.BlockExpr
+import _root_.scalariform.parser.CaseClauses
 import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.Lines
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.getAllRecursive
-
-import _root_.scalariform.parser.BlockExpr
-import _root_.scalariform.parser.CaseClauses
 
 class PatternMatchAlignChecker extends CombinedChecker {
   val errorKey = "pattern.match.align"
@@ -39,11 +37,12 @@ class PatternMatchAlignChecker extends CombinedChecker {
   }
 
   def allAlign(clauses: CaseClauses, lines: Lines): Boolean = {
-    val arrowPositions = clauses.caseClauses.map(clause => lines.toLineColumn(clause.casePattern.arrow.offset).map(_.column).getOrElse(-1))
+    val arrowPositions = clauses.caseClauses.map(clause =>
+      lines.toLineColumn(clause.casePattern.arrow.offset).map(_.column).getOrElse(-1)
+    )
     arrowPositions.forall(_ == arrowPositions.head)
   }
 
-  private def matches(t: BlockExpr, lines: Lines): Boolean = {
+  private def matches(t: BlockExpr, lines: Lines): Boolean =
     t.caseClausesOrStatSeq.left.toOption.exists(!allAlign(_, lines))
-  }
 }

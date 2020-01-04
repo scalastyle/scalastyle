@@ -16,15 +16,14 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.TmplDef
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.TreeVisit
 import org.scalastyle.scalariform.VisitorHelper.traverse
 import org.scalastyle.scalariform.VisitorHelper.visit
-
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.TmplDef
 
 abstract class AbstractClassChecker extends ScalariformChecker {
   case class TmplClazz(t: TmplDef, subs: List[TmplClazz]) extends TreeVisit[TmplClazz]

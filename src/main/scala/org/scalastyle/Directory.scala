@@ -23,7 +23,8 @@ import scala.jdk.CollectionConverters._
 
 class Directory
 
-class DirectoryFileSpec(name: String, encoding: Option[String], val file: java.io.File) extends RealFileSpec(name, encoding) {
+class DirectoryFileSpec(name: String, encoding: Option[String], val file: java.io.File)
+    extends RealFileSpec(name, encoding) {
   override def toString: String = file.getAbsolutePath
 }
 
@@ -32,11 +33,14 @@ object Directory {
     def accept(file: File): Boolean = file.getAbsolutePath.endsWith(".scala")
   }
 
-  def getFilesAsJava(encoding: Option[String], files: java.util.List[File]): java.util.List[FileSpec] = {
+  def getFilesAsJava(encoding: Option[String], files: java.util.List[File]): java.util.List[FileSpec] =
     privateGetFiles(encoding, files.asScala).asJava
-  }
 
-  def getFiles(encoding: Option[String], files: Iterable[File], excludedFiles: Seq[String] = Nil): List[FileSpec] = {
+  def getFiles(
+    encoding: Option[String],
+    files: Iterable[File],
+    excludedFiles: Seq[String] = Nil
+  ): List[FileSpec] = {
     val excludeFilter = createFileExclusionFilter(excludedFiles)
     privateGetFiles(encoding, files, excludeFilter).toList
   }
@@ -55,19 +59,21 @@ object Directory {
     }
   }
 
-  private[this] def privateGetFiles(encoding: Option[String], files: Iterable[File], excludeFilter: Option[FileFilter] = None): Seq[FileSpec] = {
-    files
-      .flatMap(f => {
-        if (excludeFilter.exists(_.accept(f))) {
-          Nil
-        } else if (f.isDirectory) {
-          privateGetFiles(encoding, f.listFiles, excludeFilter)
-        } else if (scalaFileFilter.accept(f)) {
-          Seq(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
-        } else {
-          Nil
-        }
-      })
-      .toSeq
+  private[this] def privateGetFiles(
+    encoding: Option[String],
+    files: Iterable[File],
+    excludeFilter: Option[FileFilter] = None
+  ): Seq[FileSpec] = {
+    files.flatMap { f =>
+      if (excludeFilter.exists(_.accept(f))) {
+        Nil
+      } else if (f.isDirectory) {
+        privateGetFiles(encoding, f.listFiles, excludeFilter)
+      } else if (scalaFileFilter.accept(f)) {
+        Seq(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
+      } else {
+        Nil
+      }
+    }.toSeq
   }
 }

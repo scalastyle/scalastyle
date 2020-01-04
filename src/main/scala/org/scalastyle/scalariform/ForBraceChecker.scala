@@ -16,10 +16,9 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.{CombinedAst, CombinedChecker, Lines, PositionError, ScalastyleError}
-
 import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.parser.ForExpr
+import org.scalastyle.{CombinedAst, CombinedChecker, Lines, PositionError, ScalastyleError}
 
 class ForBraceChecker extends CombinedChecker {
   val errorKey = "for.brace"
@@ -39,15 +38,15 @@ class ForBraceChecker extends CombinedChecker {
 
   private def requireBraces(t: ForExpr, lines: Lines) = {
     t.yieldOption.nonEmpty && (
-      t.enumerators.tokens.exists(_.tokenType == Tokens.SEMI ) || !validSingleLine(t, lines)
-      )
+      t.enumerators.tokens.exists(_.tokenType == Tokens.SEMI) || !validSingleLine(t, lines)
+    )
   }
 
   private def validSingleLine(t: ForExpr, lines: Lines) = {
     singleLineAllowed && {
       val singleLine = for {
         start <- lines.toLineColumn(t.forToken.offset)
-        end <- lines.toLineColumn(t.tokens.last.offset)
+        end   <- lines.toLineColumn(t.tokens.last.offset)
         if start.line == end.line
       } yield ()
 

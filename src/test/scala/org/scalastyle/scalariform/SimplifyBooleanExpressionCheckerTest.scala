@@ -40,8 +40,6 @@ object Foobar {
 
     assertErrors(List(columnError(6, 15), columnError(7, 15), columnError(8, 15), columnError(9, 15)), source)
   }
-
-
   @Test def testErrors(): Unit = {
     val source = """
 package foobar

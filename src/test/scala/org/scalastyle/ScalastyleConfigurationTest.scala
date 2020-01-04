@@ -27,9 +27,8 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val step = 1
 
   // just check we can read it
-  @Test def readXml(): Unit = {
-    val config = ScalastyleConfiguration.readFromXml(filename)
-  }
+  @Test def readXml(): Unit =
+    ScalastyleConfiguration.readFromXml(filename)
 
   @Ignore
   @Test def writeXml(): Unit = {
@@ -42,7 +41,8 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   def clean(s: String): String = s.replace("\u000d", "")
 
   @Test def readXmlStringWithCustom(): Unit = {
-    val xml = """<scalastyle commentFilter="enabled">
+    val xml =
+      """<scalastyle commentFilter="enabled">
     <name>name</name>
  <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
   <parameters>

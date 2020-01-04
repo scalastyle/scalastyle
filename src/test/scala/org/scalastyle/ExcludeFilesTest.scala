@@ -29,34 +29,28 @@ class ExcludeFilesTest extends AssertionsForJUnit {
   private def toFile(s: String) = new File(base + s)
 
   @Test
-  def specifyExcludedDirectory(): Unit = {
+  def specifyExcludedDirectory(): Unit =
     assertFiles(List("dirB/Y.scala", "dirB/Z.scala"), List(""), List(""".*dirA.*"""))
-  }
 
   @Test
-  def specifyExcludedFile(): Unit = {
+  def specifyExcludedFile(): Unit =
     assertFiles(List("dirA/X.scala", "dirB/Y.scala"), List(""), List(""".*Z\.scala"""))
-  }
 
   @Test
-  def specifyExcludedFileWithMultipleSources(): Unit = {
+  def specifyExcludedFileWithMultipleSources(): Unit =
     assertFiles(List("dirA/X.scala", "dirB/Y.scala"), List("dirA", "dirB"), List(""".*Z\.scala"""))
-  }
 
   @Test
-  def specifyMultipleExclusionRules(): Unit = {
+  def specifyMultipleExclusionRules(): Unit =
     assertFiles(List("dirB/Y.scala"), List("dirA", "dirB"), List(""".*Z\.scala""", """.*X\.scala"""))
-  }
 
   @Test
-  def noExclusion(): Unit = {
+  def noExclusion(): Unit =
     assertFiles(List("dirA/X.scala", "dirB/Y.scala", "dirB/Z.scala"), List("dirA", "dirB"), Nil)
-  }
 
   @Test
-  def noExclusion2(): Unit = {
+  def noExclusion2(): Unit =
     assertFiles(List("dirA/X.scala", "dirB/Y.scala", "dirB/Z.scala"), List(""), Nil)
-  }
 
   private def assertFiles(expected: List[String], files: List[String], exclude: List[String]): Unit = {
     val list = Directory.getFiles(None, files.map(f => toFile(f)), exclude)

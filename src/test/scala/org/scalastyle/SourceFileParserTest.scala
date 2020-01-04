@@ -30,7 +30,8 @@ class SourceFileParserTest extends AssertionsForJUnit {
     val config = ScalastyleConfiguration.readFromXml(configPath)
     val checks = config.checks.filter(_.enabled)
     val sourcePath = new File("src/test/resources/testfiles/EmptyClass.scala")
-    val sourceFile = new DirectoryFileSpec(sourcePath.getAbsolutePath(), encoding = None, sourcePath.getAbsoluteFile())
+    val sourceFile =
+      new DirectoryFileSpec(sourcePath.getAbsolutePath(), encoding = None, sourcePath.getAbsoluteFile())
     val msgs = new CheckerUtils().verifyFile(config, checks, sourceFile)
     assertEquals(Nil, msgs)
   }

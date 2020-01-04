@@ -59,8 +59,7 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(6, 6), columnError(9, 6)),
-      source, Map("singleLineAllowed" -> "true"))
+    assertErrors(List(columnError(6, 6), columnError(9, 6)), source, Map("singleLineAllowed" -> "true"))
   }
 
   @Test def testKODisabled(): Unit = {
@@ -92,7 +91,6 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 6)),
-      source, Map("singleLineAllowed" -> "true"))
+    assertErrors(List(columnError(5, 6)), source, Map("singleLineAllowed" -> "true"))
   }
 }

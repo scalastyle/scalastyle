@@ -16,22 +16,21 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.ELSE
+import _root_.scalariform.lexer.Tokens.FALSE
+import _root_.scalariform.lexer.Tokens.TRUE
+import _root_.scalariform.parser.BlockExpr
+import _root_.scalariform.parser.ElseClause
+import _root_.scalariform.parser.Expr
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.IfExpr
+import _root_.scalariform.parser.StatSeq
 import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.visit
-
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.ELSE
-import _root_.scalariform.lexer.Tokens.FALSE
-import _root_.scalariform.lexer.Tokens.TRUE
-import _root_.scalariform.parser.ElseClause
-import _root_.scalariform.parser.Expr
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.IfExpr
-import _root_.scalariform.parser.BlockExpr
-import _root_.scalariform.parser.StatSeq
 
 class RedundantIfChecker extends CombinedChecker {
   val errorKey = "if.redundant"
@@ -52,17 +51,20 @@ class RedundantIfChecker extends CombinedChecker {
 
   private def isBoolean(t: Option[ElseClause]): Boolean = t match {
     case Some(ElseClause(None, tok, expr)) => tok.tokenType == ELSE && isBoolean(expr)
-    case _ => false
+    case _                                 => false
   }
   private def isBoolean(t: Expr): Boolean = t match {
     case Expr(List(GeneralTokens(List(a)))) => isBoolean(a)
-    case Expr(List(BlockExpr(_, Right(StatSeq(None, Some(Expr(List(GeneralTokens(List(a))))) , List())), _))) => isBoolean(a)
+    case Expr(
+        List(BlockExpr(_, Right(StatSeq(None, Some(Expr(List(GeneralTokens(List(a))))), List())), _))
+        ) =>
+      isBoolean(a)
     case _ => false
   }
   private def isBoolean(t: Token): Boolean = Set(TRUE, FALSE).contains(t.tokenType)
 
   private def localvisit(ast: Any): List[IfExpr] = ast match {
     case t: IfExpr => List(t) ++ localvisit(t.body) ++ localvisit(t.elseClause.map(_.elseBody))
-    case t: Any => visit(t, localvisit)
+    case t: Any    => visit(t, localvisit)
   }
 }

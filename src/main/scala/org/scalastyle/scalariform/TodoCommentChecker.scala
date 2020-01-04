@@ -18,12 +18,11 @@ package org.scalastyle.scalariform
 
 import java.util.regex.Pattern
 
+import _root_.scalariform.lexer.Tokens
 import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
-
-import _root_.scalariform.lexer.Tokens
 
 /**
  * comment check for line comment style TODO or FIXME
@@ -38,7 +37,7 @@ class TodoCommentChecker extends CombinedChecker {
     val regex = ("""(?i)(//|/\*|/\*\*|\*)\s?(""" + split + """)(:?)\s+""").r
 
     for {
-      t <- ast.compilationUnit.tokens
+      t  <- ast.compilationUnit.tokens
       at <- t.associatedWhitespaceAndComments
       if Tokens.COMMENTS.contains(at.token.tokenType)
       if at.text.split("\n").exists(s => regex.findFirstIn(s).isDefined)

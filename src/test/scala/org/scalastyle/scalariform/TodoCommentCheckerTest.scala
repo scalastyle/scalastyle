@@ -103,10 +103,9 @@ class TodoCommentCheckerTest extends AssertionsForJUnit with CheckerTest {
         columnError(26, 3, List(text)),
         columnError(27, 3, List(text))
       ),
-      source)
+      source
+    )
   }
-
-
   @Test def testSourceWithoutFixmeComments(): Unit = {
     val source =
       """
@@ -181,7 +180,8 @@ class TodoCommentCheckerTest extends AssertionsForJUnit with CheckerTest {
         columnError(26, 3, List(text)),
         columnError(27, 3, List(text))
       ),
-      source)
+      source
+    )
   }
 
   @Test def testSourceWithAlternativeComments(): Unit = {
@@ -214,6 +214,8 @@ class TodoCommentCheckerTest extends AssertionsForJUnit with CheckerTest {
         columnError(12, 2, List(words)),
         columnError(17, 3, List(words))
       ),
-      source, params = Map("words" -> words))
+      source,
+      params = Map("words" -> words)
+    )
   }
 }

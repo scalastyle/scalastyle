@@ -16,10 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens.ARROW
 import _root_.scalariform.lexer.Tokens.USCORE
@@ -30,6 +26,9 @@ import _root_.scalariform.parser.Expr
 import _root_.scalariform.parser.GeneralTokens
 import _root_.scalariform.parser.ImportClause
 import _root_.scalariform.parser.ImportSelectors
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 
 class BlockImportChecker extends ScalariformChecker {
 
@@ -45,16 +44,23 @@ class BlockImportChecker extends ScalariformChecker {
       List(PositionError(firstImport.firstToken.offset))
 
     // rename or hide import
-    case BlockImportExpr(prefix, ImportSelectors(_, Expr(
-          List(_, GeneralTokens(List(Token(ARROW, "=>", _, _))), _)
-        ), otherImports, _)) =>
-
+    case BlockImportExpr(
+        prefix,
+        ImportSelectors(
+          _,
+          Expr(
+            List(_, GeneralTokens(List(Token(ARROW, "=>", _, _))), _)
+          ),
+          otherImports,
+          _
+        )
+        ) =>
       val blockImportFound = otherImports exists {
-        case (_, Expr(List(GeneralTokens(List(Token(tokenType, _, _, _)))))) =>
-          tokenType != USCORE
-        case _ =>
-          false
-      }
+          case (_, Expr(List(GeneralTokens(List(Token(tokenType, _, _, _)))))) =>
+            tokenType != USCORE
+          case _ =>
+            false
+        }
 
       if (blockImportFound) List(PositionError(prefix.firstToken.offset)) else Nil
 

@@ -16,13 +16,13 @@
 
 package org.scalastyle.scalariform
 
+import scala.util.matching.Regex
+
+import _root_.scalariform.lexer.Tokens.STRING_LITERAL
+import _root_.scalariform.parser.CompilationUnit
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-
-import scala.util.matching.Regex
-import _root_.scalariform.lexer.Tokens.STRING_LITERAL
-import _root_.scalariform.parser.CompilationUnit
 
 class MultipleStringLiteralsChecker extends ScalariformChecker {
   private val DefaultAllowed = 1
@@ -36,15 +36,21 @@ class MultipleStringLiteralsChecker extends ScalariformChecker {
     val allowed = getInt("allowed", DefaultAllowed)
     val ignoreRegex = getString("ignoreRegex", DefaultIgnoreRegex).r
 
-    val ts = ast.tokens.filter(t => t.tokenType == STRING_LITERAL).groupBy(t => strip(t.text)).filter(g => !matches(g._1, ignoreRegex))
-    ts.filter(g => g._2.size > allowed).map(g => PositionError(g._2(0).offset, List(g._1, "" + g._2.size, "" + allowed))).toList.sortBy(_.position)
+    val ts = ast.tokens
+      .filter(t => t.tokenType == STRING_LITERAL)
+      .groupBy(t => strip(t.text))
+      .filter(g => !matches(g._1, ignoreRegex))
+    ts.filter(g => g._2.size > allowed)
+      .map(g => PositionError(g._2(0).offset, List(g._1, "" + g._2.size, "" + allowed)))
+      .toList
+      .sortBy(_.position)
   }
 
   private def matches(s: String, regex: Regex) = (regex findAllIn (s)).size == 1
 
   private def strip(s: String) = {
-    if (s.length() > MultiQuoteLength*2 && startsAndEndsWith(s, MultiQuote)) {
-      Quote + s.substring(MultiQuoteLength,s.length()-MultiQuoteLength) + Quote
+    if (s.length() > MultiQuoteLength * 2 && startsAndEndsWith(s, MultiQuote)) {
+      Quote + s.substring(MultiQuoteLength, s.length() - MultiQuoteLength) + Quote
     } else {
       s
     }

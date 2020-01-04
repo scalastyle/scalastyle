@@ -16,17 +16,15 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.XmlExpr
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.XmlExpr
-
 class XmlLiteralChecker extends ScalariformChecker {
   val errorKey = "xml.literal"
 
-  final def verify(ast: CompilationUnit): List[ScalastyleError] = {
+  final def verify(ast: CompilationUnit): List[ScalastyleError] =
     VisitorHelper.getAll[XmlExpr](ast.immediateChildren(0)).map(t => PositionError(t.firstToken.offset))
-  }
 }

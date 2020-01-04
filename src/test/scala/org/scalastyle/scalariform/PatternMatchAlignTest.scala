@@ -39,8 +39,6 @@ object foo {
 
     assertErrors(List(columnError(7, 11)), source)
   }
-
-
   @Test def testOk(): Unit = {
     val source = """
 object foo {

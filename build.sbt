@@ -1,5 +1,7 @@
 import sbt._
 
+enablePlugins(BuildInfoPlugin)
+
 name := "scalastyle"
 organization := "org.scalastyle"
 description := "Scalastyle style checker for Scala"
@@ -45,7 +47,14 @@ libraryDependencies ++= Seq(
 
 // Test
 fork in (Test, run) := true
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oDTF")
+logBuffered in Test := false
+
+// ScalaTest reporter config:
+// -o - standard output,
+// D - show all durations,
+// T - show reminder of failed and cancelled tests with short stack traces,
+// F - show full stack traces.
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oTFNCO")
 
 // scalafix & scalafmt
 scalafixDependencies in ThisBuild ++= Seq(
@@ -68,6 +77,10 @@ artifact in (Compile, assembly) := {
 addArtifact(artifact in (Compile, assembly), assembly)
 mainClass in assembly := Some("org.scalastyle.Main")
 mainClass in (Compile, run) := Some("org.scalastyle.Main")
+
+// build info
+buildInfoKeys := Seq[BuildInfoKey](organization, name, version, scalaVersion, sbtVersion)
+buildInfoPackage := organization.value
 
 // create rules
 val createRulesMarkdown = taskKey[Unit]("deploy to a server")

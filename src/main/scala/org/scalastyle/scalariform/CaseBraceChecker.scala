@@ -18,7 +18,6 @@ package org.scalastyle.scalariform
 
 import org.scalastyle.scalariform.VisitorHelper.getAll
 import org.scalastyle.{CombinedAst, CombinedChecker, PositionError, ScalastyleError}
-
 import scalariform.parser.{BlockExpr, CaseClause, Expr}
 
 class CaseBraceChecker extends CombinedChecker {
@@ -27,21 +26,21 @@ class CaseBraceChecker extends CombinedChecker {
 
   override def verify(ast: CombinedAst): List[ScalastyleError] = {
     for {
-      clause <- getAll[CaseClause](ast.compilationUnit)
+      clause        <- getAll[CaseClause](ast.compilationUnit)
       blockPosition <- justBlockPosition(clause)
     } yield PositionError(blockPosition)
   }
 
   /**
-    * Checks, if given case clause contains just block expression, without anything else.
-    * @param clause case clause to check
-    * @return position of block's left brace, if block found; None otherwise.
-    */
+   * Checks, if given case clause contains just block expression, without anything else.
+   * @param clause case clause to check
+   * @return position of block's left brace, if block found; None otherwise.
+   */
   private def justBlockPosition(clause: CaseClause) = {
     import clause.statSeq._
     (firstStatOpt, otherStats.flatMap(_._2)) match {
       case (Some(Expr(List(block: BlockExpr))), Nil) => Some(block.lbrace.offset)
-      case _ => None
+      case _                                         => None
     }
   }
 }

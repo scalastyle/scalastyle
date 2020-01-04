@@ -84,7 +84,10 @@ object Foobar {
 }
 """
 
-    assertErrors(List(columnError(6, 13), columnError(7, 18), columnError(10, 8), columnError(11, 13)), source,
-      Map("allowNullChecks" -> "false"))
+    assertErrors(
+      List(columnError(6, 13), columnError(7, 18), columnError(10, 8), columnError(11, 13)),
+      source,
+      Map("allowNullChecks" -> "false")
+    )
   }
 }

@@ -25,10 +25,13 @@ class ParameterNumberChecker extends AbstractSingleMethodChecker[Int] {
 
   protected def matchParameters() = getInt("maxParameters", DefaultMaximumParameters)
 
-  protected def matches(t: FullDefOrDclVisit, maxParameters: Int) = getParams(t.funDefOrDcl.paramClauses).size > maxParameters
+  protected def matches(t: FullDefOrDclVisit, maxParameters: Int) =
+    getParams(t.funDefOrDcl.paramClauses).size > maxParameters
   protected override def describeParameters(maxParameters: Int) = List("" + maxParameters)
 
-  private def getParams(p: ParamClauses): List[Param] = {
-    p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
-  }
+  private def getParams(p: ParamClauses): List[Param] =
+    p.paramClausesAndNewlines
+      .map(_._1)
+      .flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2)))
+      .flatten
 }

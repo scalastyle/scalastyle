@@ -16,13 +16,12 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-
 import _root_.scalariform.lexer.Tokens.LBRACKET
 import _root_.scalariform.lexer.Tokens.RBRACKET
 import _root_.scalariform.parser.CompilationUnit
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 
 class NoWhitespaceBeforeLeftBracketChecker extends ScalariformChecker {
   val errorKey = "no.whitespace.before.left.bracket"

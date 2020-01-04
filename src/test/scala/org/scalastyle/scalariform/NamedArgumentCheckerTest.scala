@@ -25,13 +25,17 @@ class NamedArgumentCheckerTest extends AssertionsForJUnit with CheckerTest {
                     """.stripMargin
 
     assertErrors(List.empty, source)
-    assertErrors(List(
-      columnError(1, 2),
-      columnError(2, 2),
-      columnError(3, 2),
-      columnError(4, 2),
-      columnError(5, 2),
-      columnError(6, 2)), badSource)
+    assertErrors(
+      List(
+        columnError(1, 2),
+        columnError(2, 2),
+        columnError(3, 2),
+        columnError(4, 2),
+        columnError(5, 2),
+        columnError(6, 2)
+      ),
+      badSource
+    )
   }
 
   @Test def testString(): Unit = {
@@ -43,9 +47,7 @@ class NamedArgumentCheckerTest extends AssertionsForJUnit with CheckerTest {
                     """.stripMargin
 
     assertErrors(List.empty, source, Map("checkString" -> "true"))
-    assertErrors(List(
-      columnError(1, 3),
-      columnError(2, 3)), badSource, Map("checkString" -> "true"))
+    assertErrors(List(columnError(1, 3), columnError(2, 3)), badSource, Map("checkString" -> "true"))
   }
 
   @Test def testIgnore(): Unit = {

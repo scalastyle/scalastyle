@@ -71,7 +71,11 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 6, List("12", "11")), columnError(24, 6, List("12", "11"))), source, Map("maximum" -> "11"))
+    assertErrors(
+      List(columnError(5, 6, List("12", "11")), columnError(24, 6, List("12", "11"))),
+      source,
+      Map("maximum" -> "11")
+    )
   }
 
   @Test def testEmbeddedMethods(): Unit = {
@@ -113,7 +117,11 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 6, List("4", "3")), columnError(21, 6, List("4", "3"))), source, Map("maximum" -> "3"))
+    assertErrors(
+      List(columnError(5, 6, List("4", "3")), columnError(21, 6, List("4", "3"))),
+      source,
+      Map("maximum" -> "3")
+    )
   }
 
   @Test def testEmbeddedClasses(): Unit = {
@@ -168,11 +176,11 @@ class Foobar {
 }
 """
 
-    assertErrors(
-      List.empty,
-      source, Map("maximum" -> "3", "countCases" -> "false"))
+    assertErrors(List.empty, source, Map("maximum" -> "3", "countCases" -> "false"))
     assertErrors(
       List(columnError(5, 6, List("4", "3"))),
-      source, Map("maximum" -> "3", "countCases" -> "true"))
+      source,
+      Map("maximum" -> "3", "countCases" -> "true")
+    )
   }
 }

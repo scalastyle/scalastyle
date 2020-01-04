@@ -16,10 +16,10 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.{CombinedAst, PositionError, ScalariformChecker, ScalastyleError}
-import org.scalastyle.scalariform.VisitorHelper.getAll
-
 import scala.util.matching.Regex
+
+import org.scalastyle.scalariform.VisitorHelper.getAll
+import org.scalastyle.{PositionError, ScalariformChecker, ScalastyleError}
 import scalariform.lexer.Tokens.LBRACE
 import scalariform.lexer.Tokens.RBRACE
 import scalariform.parser._
@@ -34,13 +34,12 @@ class EmptyClassChecker extends ScalariformChecker {
     } yield PositionError(cls.name.offset)
   }
 
-  private def isEmptyBlock(ast: AstNode): Boolean = {
+  private def isEmptyBlock(ast: AstNode): Boolean =
     ast.tokens.size == 2 && ast.tokens(0).tokenType == LBRACE && ast.tokens(1).tokenType == RBRACE
-  }
 
   def matches(t: TmplDef): Boolean = {
     t.templateBodyOption match {
-      case None => false
+      case None      => false
       case Some(tbo) => isEmptyBlock(tbo)
     }
   }
@@ -63,12 +62,12 @@ class ClassTypeParameterChecker extends AbstractClassChecker {
     ast match {
       case typeParam: TypeParam => {
         typeParam.contents match {
-          case List(GeneralTokens(list)) => Some(list.head.text)
-          case List(GeneralTokens(list), TypeParamClause(x)) => innermostName(x(1))
-          case VarianceTypeElement(_) :: GeneralTokens(list) :: Nil => Some(list.head.text)
-          case GeneralTokens(list) :: tail => Some(list.head.text)
+          case List(GeneralTokens(list))                             => Some(list.head.text)
+          case List(GeneralTokens(list), TypeParamClause(x))         => innermostName(x(1))
+          case VarianceTypeElement(_) :: GeneralTokens(list) :: Nil  => Some(list.head.text)
+          case GeneralTokens(list) :: tail                           => Some(list.head.text)
           case VarianceTypeElement(_) :: GeneralTokens(list) :: tail => Some(list.head.text)
-          case _ => None
+          case _                                                     => None
         }
       }
       case _ => None
@@ -77,7 +76,7 @@ class ClassTypeParameterChecker extends AbstractClassChecker {
 
   def matches(t: TmplClazz): Boolean = {
     t.t.typeParamClauseOpt match {
-      case None => false
+      case None      => false
       case Some(tbo) => matches(tbo)
     }
   }

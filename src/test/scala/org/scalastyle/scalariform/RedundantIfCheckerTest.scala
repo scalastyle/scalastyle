@@ -52,7 +52,17 @@ object Foobar {
       }
 }"""
 
-    assertErrors(List(columnError(6, 11), columnError(7, 11), columnError(9, 6), columnError(12, 20), columnError(15, 11), columnError(18, 6)), source)
+    assertErrors(
+      List(
+        columnError(6, 11),
+        columnError(7, 11),
+        columnError(9, 6),
+        columnError(12, 20),
+        columnError(15, 11),
+        columnError(18, 6)
+      ),
+      source
+    )
   }
 
   @Test def testOk(): Unit = {

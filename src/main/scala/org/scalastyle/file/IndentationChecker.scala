@@ -21,7 +21,6 @@ import org.scalastyle.Line
 import org.scalastyle.LineError
 import org.scalastyle.Lines
 import org.scalastyle.ScalastyleError
-import scala.collection.compat._
 
 object NormalizedLine {
   def normalize(lines: Lines, tabSize: Int): Array[NormalizedLine] =
@@ -73,7 +72,8 @@ class IndentationChecker extends FileChecker {
 
   private def multiLineComment(line: NormalizedLine) = line.body.startsWith("*")
 
-  private def startsParamList(line: NormalizedLine) = line.body.matches(""".*(class|object|trait) .*\([^\)]*""")
+  private def startsParamList(line: NormalizedLine) =
+    line.body.matches(""".*(class|object|trait) .*\([^\)]*""")
 
   private def startsMethodDef(line: NormalizedLine) = line.body.matches(""".*def .*\([^\)]*""")
 
@@ -88,19 +88,18 @@ class IndentationChecker extends FileChecker {
     for { line <- lines if !isTabAlligned(line) } yield line.mkError()
 
   /**
-    * Verfiy single indent EXCLUDING class and method parameter lists
-    */
+   * Verfiy single indent EXCLUDING class and method parameter lists
+   */
   private def verifySingleIndent(lines: Seq[NormalizedLine]) = {
-    def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
+    def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean =
       isSingleIndent(l2, l1) && !startsParamList(l1) && !startsMethodDef(l1)
-    }
 
     for { Seq(l1, l2) <- lines.sliding(2) if isInvalid(l1, l2) } yield l2.mkError()
   }
 
   /**
-    * Verify parameter indentation in class/object/trait parameter lists
-    */
+   * Verify parameter indentation in class/object/trait parameter lists
+   */
   private def verifyClassIndent(lines: Seq[NormalizedLine], classParamIndentSize: Int) = {
     def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
       if (startsParamList(l1) && !l1.normalizedText.contains(" extends ")) {
@@ -114,8 +113,8 @@ class IndentationChecker extends FileChecker {
   }
 
   /**
-    * Verify parameter indentation in method parameter lists
-    */
+   * Verify parameter indentation in method parameter lists
+   */
   private def verifyMethodIndent(lines: Seq[NormalizedLine], methodParamIndentSize: Int) = {
     def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
       if (startsMethodDef(l1)) {

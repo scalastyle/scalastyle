@@ -16,13 +16,18 @@
 
 package org.scalastyle
 
-import com.typesafe.config.Config
-
 import scala.jdk.CollectionConverters._
 import scala.xml.Elem
 
+import com.typesafe.config.Config
+
 object Output {
-  def findMessage(messageHelper: MessageHelper, key: String, args: List[String], customMessage: Option[String]): String = {
+  def findMessage(
+    messageHelper: MessageHelper,
+    key: String,
+    args: List[String],
+    customMessage: Option[String]
+  ): String = {
     customMessage match {
       case Some(s) => s
       case None    => messageHelper.message(key, args)
@@ -41,9 +46,9 @@ trait Output[T <: FileSpec] {
   def output(messages: java.util.List[Message[T]]): OutputResult = privateOutput(messages.asScala)
 
   private[this] def privateOutput(messages: Iterable[Message[T]]): OutputResult = {
-    messages.foreach(m => {
+    messages.foreach { m =>
       eachMessage(m); message(m)
-    })
+    }
     OutputResult(files, errors, warnings, infos)
   }
 
@@ -66,7 +71,8 @@ trait Output[T <: FileSpec] {
 
 case class OutputResult(files: Int, errors: Int, warnings: Int, infos: Int)
 
-class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet: Boolean = false) extends Output[T] {
+class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet: Boolean = false)
+    extends Output[T] {
   private val messageHelper = new MessageHelper(config)
 
   // scalastyle:off regex multiple.string.literals
@@ -79,13 +85,18 @@ class TextOutput[T <: FileSpec](config: Config, verbose: Boolean = false, quiet:
       if (!quiet || verbose) {
         println(
           messageHelper.text(level.name) + print("file", file.name) +
-            print("message", Output.findMessage(messageHelper, key, args, customMessage)) +
-            print("line", line) + print("column", column)
+          print("message", Output.findMessage(messageHelper, key, args, customMessage)) +
+          print("line", line) + print("column", column)
         )
       }
     case StyleException(file, clazz, message, stacktrace, line, column) =>
       if (!quiet || verbose) {
-        println("error" + print("file", file.name) + print("message", message) + print("line", line) + print("column", column))
+        println(
+          "error" + print("file", file.name) + print("message", message) + print("line", line) + print(
+            "column",
+            column
+          )
+        )
       }
   }
 
@@ -100,10 +111,20 @@ object XmlOutput {
   def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: Seq[Message[T]]): Unit =
     save(config, new java.io.File(target), encoding, messages)
 
-  def save[T <: FileSpec](config: Config, target: String, encoding: String, messages: java.util.List[Message[T]]): Unit =
+  def save[T <: FileSpec](
+    config: Config,
+    target: String,
+    encoding: String,
+    messages: java.util.List[Message[T]]
+  ): Unit =
     save(config, new java.io.File(target), encoding, messages.asScala)
 
-  def save[T <: FileSpec](config: Config, target: java.io.File, encoding: String, messages: Iterable[Message[T]]): Unit = {
+  def save[T <: FileSpec](
+    config: Config,
+    target: java.io.File,
+    encoding: String,
+    messages: Iterable[Message[T]]
+  ): Unit = {
     val width = 1000
     val step = 1
     val messageHelper = new MessageHelper(config)
@@ -134,15 +155,32 @@ object XmlOutput {
     }
   }
 
-  case class Alert(filename: String, severity: String, message: String, source: Option[Class[_]], line: Option[Int], column: Option[Int])
+  case class Alert(
+    filename: String,
+    severity: String,
+    message: String,
+    source: Option[Class[_]],
+    line: Option[Int],
+    column: Option[Int]
+  )
 
-  private[this] def toCheckstyleFormat[T <: FileSpec](messageHelper: MessageHelper, messages: Iterable[Message[T]]): Elem = {
+  private[this] def toCheckstyleFormat[T <: FileSpec](
+    messageHelper: MessageHelper,
+    messages: Iterable[Message[T]]
+  ): Elem = {
     <checkstyle version="5.0">
       {
       messages
         .collect {
           case StyleError(file, clazz, key, level, args, line, column, customMessage) =>
-            Alert(file.name, messageHelper.text(level.name), Output.findMessage(messageHelper, key, args, customMessage), Some(clazz), line, column)
+            Alert(
+              file.name,
+              messageHelper.text(level.name),
+              Output.findMessage(messageHelper, key, args, customMessage),
+              Some(clazz),
+              line,
+              column
+            )
           case StyleException(file, clazz, message, stacktrace, line, column) =>
             Alert(file.name, "error", message, clazz, line, column)
         }
@@ -158,7 +196,10 @@ object XmlOutput {
                   val s = source.collect {
                     case x: Class[_] => x.getName
                   }
-                  <error severity={severity} message={message}/> % attr("source", s) % attr("line", line) % attr("column", column)
+                  <error severity={severity} message={message}/> % attr("source", s) % attr("line", line) % attr(
+                    "column",
+                    column
+                  )
                 }
               }
             }

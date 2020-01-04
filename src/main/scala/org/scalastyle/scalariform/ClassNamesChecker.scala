@@ -16,9 +16,7 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
+import scala.util.matching.Regex
 
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens.CLASS
@@ -37,7 +35,9 @@ import _root_.scalariform.parser.ParamClauses
 import _root_.scalariform.parser.PatDefOrDcl
 import _root_.scalariform.parser.TemplateBody
 import _root_.scalariform.parser.TmplDef
-import scala.util.matching.Regex
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 import scalariform.parser.TypeExprElement
 
 // scalastyle:off multiple.string.literals
@@ -92,17 +92,18 @@ class PackageNamesChecker extends ScalariformChecker {
 
     @annotation.tailrec
     def getNextPackageName(tokens: List[Token]): (List[Token], List[Token]) = tokens match {
-      case Nil => (Nil, Nil)
+      case Nil                                   => (Nil, Nil)
       case hd :: tail if hd.tokenType == PACKAGE => tail.span(isPartOfPackageName)
-      case l: Any => getNextPackageName(l.dropWhile(tok => tok.tokenType != PACKAGE))
+      case l: Any                                => getNextPackageName(l.dropWhile(tok => tok.tokenType != PACKAGE))
     }
 
     @annotation.tailrec
     def getPackageNameLoop(tokens: List[Token], myAccumulator: List[List[Token]]): List[List[Token]] =
       getNextPackageName(tokens) match {
-        case (Nil, Nil) => myAccumulator.reverse  // Return the result, but reverse since we gathered backward
-        case (Nil, remainder) => getPackageNameLoop(remainder, myAccumulator) // Found package object - try again
-        case (l, remainder) =>  // add match to results, go look again
+        case (Nil, Nil) => myAccumulator.reverse // Return the result, but reverse since we gathered backward
+        case (Nil, remainder) =>
+          getPackageNameLoop(remainder, myAccumulator) // Found package object - try again
+        case (l, remainder) => // add match to results, go look again
           val pkgName = l.filter(tok => tok.tokenType != DOT) // Strip out the dots between varids
           getPackageNameLoop(remainder, pkgName :: myAccumulator)
       }
@@ -139,7 +140,11 @@ class PackageObjectNamesChecker extends ScalariformChecker {
   }
 }
 
-case class MethodNamesCheckerParameters(regexString: String, ignoreRegexString: String, ignoreOverride: Boolean) {
+case class MethodNamesCheckerParameters(
+  regexString: String,
+  ignoreRegexString: String,
+  ignoreOverride: Boolean
+) {
   private val regexR = regexString.r
   private val ignoreRegexR = ignoreRegexString.r
 
@@ -161,10 +166,12 @@ class MethodNamesChecker extends AbstractSingleMethodChecker[MethodNamesCheckerP
   private val DefaultIgnoreOverride = false
   val errorKey = "method.name"
 
-  protected def matchParameters(): MethodNamesCheckerParameters = {
-    MethodNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex),
-        getBoolean("ignoreOverride", DefaultIgnoreOverride))
-  }
+  protected def matchParameters(): MethodNamesCheckerParameters =
+    MethodNamesCheckerParameters(
+      getString("regex", DefaultRegex),
+      getString("ignoreRegex", DefaultIgnoreRegex),
+      getBoolean("ignoreOverride", DefaultIgnoreOverride)
+    )
 
   protected def matches(t: FullDefOrDclVisit, p: MethodNamesCheckerParameters): Boolean = {
     if (p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) {
@@ -185,23 +192,28 @@ class MethodArgumentNamesChecker extends AbstractSingleMethodChecker[MethodArgum
   private val DefaultIgnoreRegex = "^$"
   val errorKey: String = "method.argument.name"
 
-  def matchParameters(): MethodArgumentNamesCheckerParameters = {
-    MethodArgumentNamesCheckerParameters(getString("regex", DefaultRegex), getString("ignoreRegex", DefaultIgnoreRegex))
-  }
+  def matchParameters(): MethodArgumentNamesCheckerParameters =
+    MethodArgumentNamesCheckerParameters(
+      getString("regex", DefaultRegex),
+      getString("ignoreRegex", DefaultIgnoreRegex)
+    )
 
   def matches(t: FullDefOrDclVisit, p: MethodArgumentNamesCheckerParameters): Boolean = {
     getParams(t.funDefOrDcl.paramClauses) match {
       case Nil => false
-      case params: List[Param] => params.exists { pc =>
-        val name = pc.id.text
-        !matches(p.ignoreRegex(), name) && !matches(p.regex(), name)
-      }
+      case params: List[Param] =>
+        params.exists { pc =>
+          val name = pc.id.text
+          !matches(p.ignoreRegex(), name) && !matches(p.regex(), name)
+        }
     }
   }
 
-  private def getParams(p: ParamClauses): List[Param] = {
-    p.paramClausesAndNewlines.map(_._1).flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2))).flatten
-  }
+  private def getParams(p: ParamClauses): List[Param] =
+    p.paramClausesAndNewlines
+      .map(_._1)
+      .flatMap(pc => pc.firstParamOption :: pc.otherParams.map(p => Some(p._2)))
+      .flatten
 
   protected override def describeParameters(p: MethodArgumentNamesCheckerParameters) = List("" + p.regex)
 
@@ -220,18 +232,22 @@ class FieldNamesChecker extends ScalariformChecker {
     localVisit(regex, objectFieldRegex, inValDef = false)(ast.immediateChildren.head)
   }
 
-  private def localVisit(regex: Regex, objectFieldRegex: Regex, inValDef: Boolean)
-                        (ast: Any): List[ScalastyleError] = {
+  private def localVisit(regex: Regex, objectFieldRegex: Regex, inValDef: Boolean)(
+    ast: Any
+  ): List[ScalastyleError] = {
     ast match {
       //object Name { ... }
       case TmplDef(List(Token(OBJECT, _, _, _)), _, _, _, _, _, _, Some(TemplateBody(_, _, stats, _))) =>
         //go through all first-level val declarations and apply objectFieldRegex
-        stats.immediateChildren.flatMap(stat => stat match {
-          case FullDefOrDcl(_, _, PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _)) if tokenType == VAL || tokenType == VAR =>
-            VisitorHelper.visit(expr, localVisit(objectFieldRegex, objectFieldRegex, inValDef = true))
-          case t =>
-            VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
-        })
+        stats.immediateChildren.flatMap(stat =>
+          stat match {
+            case FullDefOrDcl(_, _, PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _))
+                if tokenType == VAL || tokenType == VAR =>
+              VisitorHelper.visit(expr, localVisit(objectFieldRegex, objectFieldRegex, inValDef = true))
+            case t =>
+              VisitorHelper.visit(t, localVisit(regex, objectFieldRegex, inValDef))
+          }
+        )
 
       //val ... =
       case PatDefOrDcl(Token(tokenType, _, _, _), expr, _, _, _) if tokenType == VAL || tokenType == VAR =>

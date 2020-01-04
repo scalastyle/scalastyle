@@ -16,21 +16,20 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.lexer.Token
+import _root_.scalariform.lexer.Tokens.FALSE
+import _root_.scalariform.lexer.Tokens.TRUE
+import _root_.scalariform.lexer.Tokens.VARID
+import _root_.scalariform.parser.AstNode
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.GeneralTokens
+import _root_.scalariform.parser.InfixExpr
+import _root_.scalariform.parser.PrefixExprElement
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.scalariform.VisitorHelper.visit
-
-import _root_.scalariform.parser.AstNode
-import _root_.scalariform.parser.GeneralTokens
-import _root_.scalariform.parser.InfixExpr
-import _root_.scalariform.parser.PrefixExprElement
-import _root_.scalariform.lexer.Token
-import _root_.scalariform.lexer.Tokens.FALSE
-import _root_.scalariform.lexer.Tokens.TRUE
-import _root_.scalariform.lexer.Tokens.VARID
-import _root_.scalariform.parser.CompilationUnit
 
 class SimplifyBooleanExpressionChecker extends ScalariformChecker {
   val errorKey = "simplify.boolean.expression"
@@ -56,7 +55,7 @@ class SimplifyBooleanExpressionChecker extends ScalariformChecker {
   private def matches[T <: AstNode](t: Clazz[T]): Boolean = {
     t match {
       case t: InfixExprClazz => matchesInfixOp(t.id) && (boolean(t.left) || boolean(t.right))
-      case _ => false
+      case _                 => false
     }
   }
 
@@ -64,17 +63,23 @@ class SimplifyBooleanExpressionChecker extends ScalariformChecker {
 
   class BaseClazz[+T <: AstNode](val position: Option[Int]) extends Clazz[T]
 
-  case class InfixExprClazz(_position: Option[Int], id: Token, left: List[Clazz[_]], right: List[Clazz[_]]) extends BaseClazz[InfixExpr](_position)
-  case class PrefixExprElementClazz(_position: Option[Int], id: Token, expr: List[Clazz[_]]) extends BaseClazz[PrefixExprElement](_position)
-  case class GeneralTokensClazz(_position: Option[Int], bool: Boolean) extends BaseClazz[GeneralTokens](_position)
+  case class InfixExprClazz(_position: Option[Int], id: Token, left: List[Clazz[_]], right: List[Clazz[_]])
+      extends BaseClazz[InfixExpr](_position)
+  case class PrefixExprElementClazz(_position: Option[Int], id: Token, expr: List[Clazz[_]])
+      extends BaseClazz[PrefixExprElement](_position)
+  case class GeneralTokensClazz(_position: Option[Int], bool: Boolean)
+      extends BaseClazz[GeneralTokens](_position)
 
   private def localvisit(ast: Any): List[BaseClazz[AstNode]] = ast match {
-    case t: InfixExpr => List(InfixExprClazz(Some(t.firstToken.offset), t.infixId, localvisit(t.left), localvisit(t.right)))
+    case t: InfixExpr =>
+      List(InfixExprClazz(Some(t.firstToken.offset), t.infixId, localvisit(t.left), localvisit(t.right)))
     case t: GeneralTokens => List(GeneralTokensClazz(Some(t.firstToken.offset), isBoolean(t)))
-    case t: Any => visit(t, localvisit)
+    case t: Any           => visit(t, localvisit)
   }
 
-  private def boolean(expr: List[Clazz[_]]) = expr.size == 1 && expr(0).isInstanceOf[GeneralTokensClazz] && expr(0).asInstanceOf[GeneralTokensClazz].bool
+  private def boolean(expr: List[Clazz[_]]) =
+    expr.size == 1 && expr(0)
+      .isInstanceOf[GeneralTokensClazz] && expr(0).asInstanceOf[GeneralTokensClazz].bool
 
   private def isBoolean(t: GeneralTokens): Boolean = t.tokens.size == 1 && isBoolean(t.tokens(0))
   private def isBoolean(t: Token): Boolean = Set(TRUE, FALSE).contains(t.tokenType)

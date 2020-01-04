@@ -60,15 +60,15 @@ import org.scalastyle.file.SuperLongImportClass
     assertErrors(
       List(lineError(5, List("15"))),
       source,
-      Map("maxLineLength" -> "15", "ignoreImports" -> "true"))
+      Map("maxLineLength" -> "15", "ignoreImports" -> "true")
+    )
 
     assertErrors(
       List(lineError(3, List("15")), lineError(5, List("15")), lineError(6, List("15"))),
       source,
-      Map("maxLineLength" -> "15"))
+      Map("maxLineLength" -> "15")
+    )
   }
-
-
   @Test def testWithTwoMax(): Unit = {
     val source = """
 package foobar
@@ -79,7 +79,11 @@ package foobar
 }
 """
 
-    assertErrors(List(lineError(4, List("15")), lineError(6, List("15"))), source, Map("maxLineLength" -> "15"))
+    assertErrors(
+      List(lineError(4, List("15")), lineError(6, List("15"))),
+      source,
+      Map("maxLineLength" -> "15")
+    )
   }
 
   @Test def testWithSpacesTabs(): Unit = {
@@ -89,8 +93,12 @@ package foobar
 import# #java.lang._
 object Barbar {
 }
-""".replaceAll("#","\t")
+""".replaceAll("#", "\t")
 
-    assertErrors(List(lineError(4, List("14")), lineError(5, List("14"))), source, Map("maxLineLength" -> "14"))
+    assertErrors(
+      List(lineError(4, List("14")), lineError(5, List("14"))),
+      source,
+      Map("maxLineLength" -> "14")
+    )
   }
 }

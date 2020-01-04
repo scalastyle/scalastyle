@@ -18,15 +18,15 @@ package org.scalastyle
 
 import java.lang.reflect.Modifier
 
-import com.google.common.reflect.ClassPath
-import com.typesafe.config.ConfigFactory
-import org.junit.Test
-import org.scalatestplus.junit.AssertionsForJUnit
-
 import scala.jdk.CollectionConverters._
 import scala.xml.Elem
 import scala.xml.NodeSeq
 import scala.xml.XML
+
+import com.google.common.reflect.ClassPath
+import com.typesafe.config.ConfigFactory
+import org.junit.Test
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off multiple.string.literals
 
@@ -47,8 +47,9 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
 
     val cp = ClassPath.from(this.getClass.getClassLoader)
     val subTypes = cp.getAllClasses.asList().asScala.filter(isChecker)
-    val definition = ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))
-    val messageHelper = new MessageHelper(config)
+    val definition =
+      ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))
+    new MessageHelper(config)
 
     val checkers = definition.checkers
 
@@ -59,7 +60,11 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
     val docXml = XML.load(this.getClass.getClassLoader.getResource("scalastyle_documentation.xml"))
 
     val scalastyleDocumentation: Map[String, Documentation] = (docXml \\ "check").map { ns =>
-      val doc = Documentation(toText(ns \\ "justification"), toText(ns \\ "extra-description"), toList(ns \\ "example-configuration"))
+      val doc = Documentation(
+        toText(ns \\ "justification"),
+        toText(ns \\ "extra-description"),
+        toList(ns \\ "example-configuration")
+      )
       (ns.attribute("id").get.text, doc)
     }.toMap
 
@@ -94,5 +99,9 @@ class ScalastyleDefinitionTest extends AssertionsForJUnit {
   private def toText(elem: NodeSeq) = if (elem.isEmpty) None else Some(elem.text.trim)
   private def toList(elem: NodeSeq) = elem.map(_.text.trim)
 
-  case class Documentation(justification: Option[String], extraDescription: Option[String], example: Seq[String])
+  case class Documentation(
+    justification: Option[String],
+    extraDescription: Option[String],
+    example: Seq[String]
+  )
 }
