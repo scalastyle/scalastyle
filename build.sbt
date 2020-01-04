@@ -10,7 +10,8 @@ licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html"
 scmInfo := Some(
   ScmInfo(
     url("https://github.com/beautiful-scala/scalastyle"),
-    "git@github.com:beautiful-scala/scalastyle.git"
+    "scm:git:https://github.com/beautiful-scala/scalastyle.git",
+    Some("scm:git:git@github.com:beautiful-scala/scalastyle.git")
   )
 )
 developers := List(
