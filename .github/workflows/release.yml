@@ -15,9 +15,7 @@ jobs:
           java-version: adopt@1.8
       - run: |
           sudo apt-get update && sudo apt-get -y install gnupg2
-          gpg --version
-          mkdir ~/.gnupg
-          chmod 700 ~/.gnupg
+          mkdir ~/.gnupg && chmod 700 ~/.gnupg
           echo use-agent >> ~/.gnupg/gpg.conf
           echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
           echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
