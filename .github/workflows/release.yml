@@ -13,7 +13,15 @@ jobs:
       - uses: olafurpg/setup-scala@v7
         with:
           java-version: adopt@1.8
-      - run: sudo apt-get update && sudo apt-get -y install gnupg2
+      - run: |
+          sudo apt-get update && sudo apt-get -y install gnupg2
+          echo use-agent >> ~/.gnupg/gpg.conf
+          echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
+          echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
+          echo RELOADAGENT | gpg-connect-agent
+          echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes
+        env:
+          PGP_SECRET: ${{secrets.PGP_SECRET}}
       - uses: actions/cache@v1
         with:
           path: ~/.ivy2/cache
