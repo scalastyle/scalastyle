@@ -10,7 +10,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 100
-      - run: git fetch --tags
       - uses: olafurpg/setup-scala@v7
         with:
           java-version: adopt@1.8
