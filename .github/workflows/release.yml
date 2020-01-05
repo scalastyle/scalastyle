@@ -13,11 +13,23 @@ jobs:
       - run: git fetch --tags
       - uses: olafurpg/setup-scala@v7
         with:
-          java-version: "adopt@1.8"
+          java-version: adopt@1.8
       - run: sudo apt-get update && sudo apt-get -y install gnupg2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.ivy2/cache
+          key: ivy-${{hashFiles('**/*.sbt')}}
+          restore-keys: |
+            ivy-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: sbt-${{hashFiles('**/*.sbt')}}-${{hashFiles('project/build.properties')}}
+          restore-keys: |
+            sbt-
       - run: sbt ci-release
         env:
-          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          PGP_SECRET: ${{ secrets.PGP_SECRET }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          PGP_PASSPHRASE: ${{secrets.PGP_PASSPHRASE}}
+          PGP_SECRET: ${{secrets.PGP_SECRET}}
+          SONATYPE_PASSWORD: ${{secrets.SONATYPE_PASSWORD}}
+          SONATYPE_USERNAME: ${{secrets.SONATYPE_USERNAME}}

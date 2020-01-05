@@ -1,0 +1,29 @@
+name: Test
+on:
+  pull_request:
+jobs:
+  test:
+    name: Test using jdk-${{matrix.java}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 11]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v7
+        with:
+          java-version: adopt@1.${{matrix.java}}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.ivy2/cache
+          key: ivy-${{hashFiles('**/*.sbt')}}
+          restore-keys: |
+            ivy-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: sbt-${{hashFiles('**/*.sbt')}}-${{hashFiles('project/build.properties')}}
+          restore-keys: |
+            sbt-
+      - run: sbt +test

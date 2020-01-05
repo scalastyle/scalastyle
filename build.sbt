@@ -87,7 +87,7 @@ addCommandAlias("fix", "all compile:scalafix test:scalafix")
 addCommandAlias("fixCheck", ";compile:scalafix --check ;test:scalafix --check")
 scalafmtOnCompile in ThisBuild :=
   sys.env
-    .get("DISABLE_SCALAFMT")
+    .get("CI")
     .forall(_.toLowerCase == "false")
 
 // assembly
