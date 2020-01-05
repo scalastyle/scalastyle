@@ -16,9 +16,9 @@ jobs:
       - run: |
           sudo apt-get update && sudo apt-get -y install gnupg2
           gpg --version
-          echo use-agent >> ~/.gnupg/gpg.conf
-          echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
-          echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
+          echo use-agent >> /home/runner/.gnupg/gpg.conf
+          echo pinentry-mode loopback >> /home/runner/.gnupg/gpg.conf
+          echo allow-loopback-pinentry >> /home/runner/.gnupg/gpg-agent.conf
           echo RELOADAGENT | gpg-connect-agent
           echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes
         env:
