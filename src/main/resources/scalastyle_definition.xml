@@ -161,6 +161,7 @@
     <checker class="org.scalastyle.scalariform.ImportGroupingChecker" id="import.grouping" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.NotImplementedErrorUsage" id="not.implemented.error.usage" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.BlockImportChecker" id="block.import" defaultLevel="warning"/>
+    <checker class="org.scalastyle.scalariform.CurliesImportChecker" id="curlies.import" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ProcedureDeclarationChecker" id="procedure.declaration" defaultLevel="warning"/>
     <checker class="org.scalastyle.scalariform.ForBraceChecker" id="for.brace" defaultLevel="warning">
         <parameters>

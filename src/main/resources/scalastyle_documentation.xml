@@ -452,6 +452,16 @@ Note: If you intend to enable only if expressions in the format below, disable t
  ]]>
  </example-configuration>
  </check>
+ <check id="curlies.import">
+ <justification>
+  Curlies imports (e.g. `import a.{b, c}`) can lead to annoying merge errors in large code bases that are maintained by lot of developers. This rule allows to ensure that only single imports, no renaming and no hiding imports are used in order to minimize merge errors in import declarations.
+ </justification>
+ <example-configuration>
+ <![CDATA[
+    <check level="warning" class="org.scalastyle.scalariform.CurliesImportChecker" enabled="true"/>
+ ]]>
+ </example-configuration>
+ </check>
 
  <check id="procedure.declaration">
  <justification>
