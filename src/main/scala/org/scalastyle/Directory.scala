@@ -64,16 +64,27 @@ object Directory {
     files: Iterable[File],
     excludeFilter: Option[FileFilter] = None
   ): Seq[FileSpec] = {
-    files.flatMap { f =>
-      if (excludeFilter.exists(_.accept(f))) {
-        Nil
-      } else if (f.isDirectory) {
-        privateGetFiles(encoding, f.listFiles, excludeFilter)
-      } else if (scalaFileFilter.accept(f)) {
-        Seq(new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
-      } else {
-        Nil
+
+    def getFilesHelper(currentFiles: Iterable[File], acc: Set[File]): Set[File] = {
+      currentFiles.headOption match {
+        case Some(f) =>
+          if (excludeFilter.exists(_.accept(f))) {
+            getFilesHelper(currentFiles.tail, acc)
+          } else if (f.isDirectory) {
+            val newCurrentFiles = currentFiles.tail ++ f.listFiles
+            getFilesHelper(newCurrentFiles, acc)
+          } else if (scalaFileFilter.accept(f) && !acc(f)) {
+            val newAcc = acc + f
+            getFilesHelper(currentFiles.tail, newAcc)
+          } else {
+            getFilesHelper(currentFiles.tail, acc)
+          }
+        case None => acc
       }
-    }.toSeq
+    }
+
+    val uniqueFiles = getFilesHelper(files, Set.empty)
+    uniqueFiles.toSeq.map(f => new DirectoryFileSpec(f.getAbsolutePath, encoding, f.getAbsoluteFile))
   }
+
 }
