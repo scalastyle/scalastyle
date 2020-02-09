@@ -60,7 +60,7 @@ cancelable in Global := true
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3",
   "org.scalariform"        %% "scalariform"             % "0.2.10",
-  "com.typesafe"           % "config"                   % "1.2.0",
+  "com.typesafe"           % "config"                   % "1.2.1",
   "junit"                  % "junit"                    % "4.13" % "test",
   "com.novocode"           % "junit-interface"          % "0.10" % "test",
   "com.google.guava"       % "guava"                    % "17.0" % "test",
