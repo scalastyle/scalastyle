@@ -10,7 +10,9 @@ target
 .classpath
 .project
 .settings
-/bin
-/project/
-.bloop/
-.metals/
+bin
+project/project
+
+.bloop
+.metals
+metals.sbt

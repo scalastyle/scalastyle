@@ -122,7 +122,7 @@ object ScalastyleConfiguration {
       enabled,
       (node \\ "parameters" \\ "parameter").map { e =>
         val attributeValue = e.attribute("value")
-        val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
+        val value = attributeValue.map(_.text).getOrElse(e.text).trim
         (e.attribute(Name).head.text -> value)
       }.toMap,
       customMessage,

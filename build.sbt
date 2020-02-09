@@ -1,4 +1,5 @@
 import sbt._
+import sbt.Keys.streams
 
 enablePlugins(BuildInfoPlugin)
 
@@ -83,8 +84,10 @@ scalafixDependencies in ThisBuild ++= Seq(
   "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3",
   "com.nequissimus"        %% "sort-imports"                % "0.3.1"
 )
-addCommandAlias("fix", "all compile:scalafix test:scalafix")
-addCommandAlias("fixCheck", ";compile:scalafix --check ;test:scalafix --check")
+addCommandAlias("fix", "all compile:scalafix test:scalafix; fixImports")
+addCommandAlias("fixImports", "compile:scalafix SortImports; test:scalafix SortImports")
+addCommandAlias("fixCheck", "compile:scalafix --check; test:scalafix --check; fixCheckImports")
+addCommandAlias("fixCheckImports", "compile:scalafix --check SortImports; test:scalafix --check SortImports")
 scalafmtOnCompile in ThisBuild :=
   sys.env
     .get("CI")

@@ -18,12 +18,14 @@ jobs:
         with:
           path: ~/.ivy2/cache
           key: ivy-${{hashFiles('**/*.sbt')}}
-          restore-keys: |
-            ivy-
+          restore-keys: ivy-
       - uses: actions/cache@v1
         with:
           path: ~/.sbt
           key: sbt-${{hashFiles('**/*.sbt')}}-${{hashFiles('project/build.properties')}}
-          restore-keys: |
-            sbt-
+          restore-keys: sbt-
       - run: sbt +test
+      - name: Run scalastyle using a snapshot version
+        run: |
+          sbt 'set version := "99-SNAPSHOT"; ++2.12.10; publishLocal'
+          sbt -Dscalastyle.version=99-SNAPSHOT scalastyle

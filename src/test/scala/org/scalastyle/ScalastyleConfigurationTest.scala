@@ -43,14 +43,16 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   @Test def readXmlStringWithCustom(): Unit = {
     val xml =
       """<scalastyle commentFilter="enabled">
-    <name>name</name>
- <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
-  <parameters>
-   <parameter name="maxFileLength"><![CDATA[800]]></parameter>
-  </parameters>
-  <customMessage>customMessage</customMessage>
- </check>
-</scalastyle>"""
+        |  <name>name</name>
+        |  <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
+        |   <parameters>
+        |      <parameter name="maxFileLength">
+        |        <![CDATA[800]]>
+        |      </parameter>
+        |    </parameters>
+        |    <customMessage>customMessage</customMessage>
+        |  </check>
+        |</scalastyle>""".stripMargin
 
     val config = ScalastyleConfiguration.readFromString(xml)
 
@@ -70,10 +72,11 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   }
 
   @Test def readXmlString(): Unit = {
-    val xml = """<scalastyle>
-    <name>name</name>
- <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="false"/>
-</scalastyle>"""
+    val xml =
+      """<scalastyle>
+        |  <name>name</name>
+        |  <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="false"/>
+        |</scalastyle>""".stripMargin
 
     val config = ScalastyleConfiguration.readFromString(xml)
 

@@ -30,7 +30,6 @@ class DirectoryTest extends AssertionsForJUnit {
     assertGetFiles(2, duplicatedFileInDir)
   }
 
-
   private def assertGetFiles(nrExpectedFiles: Int, inputFiles: Seq[String]): Unit = {
     val files = Directory.getFiles(None, inputFiles.map(toFile))
     Assert.assertEquals(nrExpectedFiles, files.size)
