@@ -62,7 +62,7 @@ libraryDependencies ++= Seq(
   "org.scalariform"        %% "scalariform"             % "0.2.10",
   "com.typesafe"           % "config"                   % "1.2.1",
   "junit"                  % "junit"                    % "4.13" % "test",
-  "com.novocode"           % "junit-interface"          % "0.10" % "test",
+  "com.novocode"           % "junit-interface"          % "0.11" % "test",
   "com.google.guava"       % "guava"                    % "23.0" % "test",
   "org.scalatest"          %% "scalatest"               % "3.0.8" % "test"
 )
