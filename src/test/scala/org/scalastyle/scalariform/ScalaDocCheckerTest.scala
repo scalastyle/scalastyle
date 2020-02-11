@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals method.length
 
@@ -59,7 +59,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     val classSource = "%sclass Foo(a: Int, b: Int)"
     val caseClassSource = "%scase class Foo(a: Int, b: Int)"
     val annotatedCaseClassSource = "%scase class Foo @JpaAbomination() (@Field a: Int, @Field b: Int)"
-    val annotatedCaseClassSource2 = """%scase class Foo @JpaAbomination(me) (@Field(a = 4, b = "foo") a: Int, @Field() b: Int)"""
+    val annotatedCaseClassSource2 =
+      """%scase class Foo @JpaAbomination(me) (@Field(a = 4, b = "foo") a: Int, @Field() b: Int)"""
     val missingParamDoc =
       """
         |/**
@@ -76,10 +77,14 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
         | */
       """.stripMargin
 
-    List(classSource, caseClassSource, annotatedCaseClassSource, annotatedCaseClassSource2).foreach { source =>
-      assertErrors(Nil, source format doc)
-      assertErrors(List(lineError(1, List(Missing))), source format "")
-      assertErrors(List(lineError(5, List(missingParam("a"))), lineError(5, List(missingParam("b")))), source format missingParamDoc)
+    List(classSource, caseClassSource, annotatedCaseClassSource, annotatedCaseClassSource2).foreach {
+      source =>
+        assertErrors(Nil, source format doc)
+        assertErrors(List(lineError(1, List(Missing))), source format "")
+        assertErrors(
+          List(lineError(5, List(missingParam("a"))), lineError(5, List(missingParam("b")))),
+          source format missingParamDoc
+        )
     }
   }
 
@@ -157,39 +162,39 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
     def al(access: String = "", checked: Boolean): Unit = {
       val fun =
         s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B): U = ???
-          |}
+           |/**
+           | * XXX
+           | */
+           |trait X {
+           |  %s${access} def foo[A, B, U](a: A, b: B): U = ???
+           |}
         """.stripMargin
       val annotatedFun =
         s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[@unchecked A, @annotated B, U](@Field() a: A, @Field("b") b: B): U = ???
-          |}
+           |/**
+           | * XXX
+           | */
+           |trait X {
+           |  %s${access} def foo[@unchecked A, @annotated B, U](@Field() a: A, @Field("b") b: B): U = ???
+           |}
         """.stripMargin
       val proc1 =
         s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B): Unit = ()
-          |}
+           |/**
+           | * XXX
+           | */
+           |trait X {
+           |  %s${access} def foo[A, B, U](a: A, b: B): Unit = ()
+           |}
         """.stripMargin
       val proc2 =
         s"""
-          |/**
-          | * XXX
-          | */
-          |trait X {
-          |  %s${access} def foo[A, B, U](a: A, b: B) {}
-          |}
+           |/**
+           | * XXX
+           | */
+           |trait X {
+           |  %s${access} def foo[A, B, U](a: A, b: B) {}
+           |}
         """.stripMargin
       def doc(proc: Boolean) =
         """
@@ -240,16 +245,31 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
       List(fun, annotatedFun).foreach { source =>
         assertErrors(Nil, source format doc(false))
         assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, source format "")
-        assertErrors(if (checked) List(lineError(15, List(missingParam("b")))) else Nil, source format missingParamsDoc(false))
-        assertErrors(if (checked) List(lineError(15, List(MalformedTypeParams))) else Nil, source format missingTypeParamsDoc(false))
-        assertErrors(if (checked) List(lineError(15, List(MalformedReturn))) else Nil, source format missingReturnDoc)
+        assertErrors(
+          if (checked) List(lineError(15, List(missingParam("b")))) else Nil,
+          source format missingParamsDoc(false)
+        )
+        assertErrors(
+          if (checked) List(lineError(15, List(MalformedTypeParams))) else Nil,
+          source format missingTypeParamsDoc(false)
+        )
+        assertErrors(
+          if (checked) List(lineError(15, List(MalformedReturn))) else Nil,
+          source format missingReturnDoc
+        )
       }
 
       List(proc1, proc2).foreach { source =>
         assertErrors(Nil, source format doc(false))
         assertErrors(if (checked) List(lineError(6, List(Missing))) else Nil, source format "")
-        assertErrors(if (checked) List(lineError(14, List(missingParam("b")))) else Nil, source format missingParamsDoc(true))
-        assertErrors(if (checked) List(lineError(14, List(MalformedTypeParams))) else Nil, source format missingTypeParamsDoc(true))
+        assertErrors(
+          if (checked) List(lineError(14, List(missingParam("b")))) else Nil,
+          source format missingParamsDoc(true)
+        )
+        assertErrors(
+          if (checked) List(lineError(14, List(MalformedTypeParams))) else Nil,
+          source format missingTypeParamsDoc(true)
+        )
       }
     }
 
@@ -399,13 +419,17 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
 
   @Test def ignoreTokenTypes(): Unit = {
 
-    val cases = Seq(Seq("val a = 1", "var a = 2") -> "PatDefOrDcl",
+    val cases = Seq(
+      Seq("val a = 1", "var a = 2") -> "PatDefOrDcl",
       Seq("class A", "case class A", "object A", "trait A") -> "TmplDef",
       Seq("type B = A") -> "TypeDefOrDcl",
-      Seq("def A(): Unit") -> "FunDefOrDcl")
+      Seq("def A(): Unit") -> "FunDefOrDcl"
+    )
 
-    for ((declerations, ignoreTokenType) <- cases;
-         decleration <- declerations) {
+    for {
+      (declerations, ignoreTokenType) <- cases
+      decleration                     <- declerations
+    } {
       assertErrors(Nil, decleration, Map("ignoreTokenTypes" -> ignoreTokenType))
     }
   }
@@ -418,10 +442,12 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
         |  override val v = 1
         |}""".stripMargin
 
-    assertErrors(List.empty, source,
-      Map("ignoreOverride" -> "true"))
-    assertErrors(List(lineError(3, List(Missing)), lineError(4, List(Missing))), source,
-      Map("ignoreOverride" -> "false"))
+    assertErrors(List.empty, source, Map("ignoreOverride" -> "true"))
+    assertErrors(
+      List(lineError(3, List(Missing)), lineError(4, List(Missing))),
+      source,
+      Map("ignoreOverride" -> "false")
+    )
   }
 
   @Test def indentStyleUndefined(): Unit = {
@@ -432,10 +458,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
    class c"""
 
     assertErrors(List.empty, source)
-    assertErrors(List(lineError(5, List(InvalidDocStyle))), source,
-      Map("indentStyle" -> "scaladoc"))
-    assertErrors(List(lineError(5, List(InvalidDocStyle))), source,
-      Map("indentStyle" -> "javadoc"))
+    assertErrors(List(lineError(5, List(InvalidDocStyle))), source, Map("indentStyle" -> "scaladoc"))
+    assertErrors(List(lineError(5, List(InvalidDocStyle))), source, Map("indentStyle" -> "javadoc"))
   }
 
   @Test def indentStyleScaladoc(): Unit = {
@@ -446,10 +470,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
    class c"""
 
     assertErrors(List.empty, source)
-    assertErrors(List.empty, source,
-      Map("indentStyle" -> "scaladoc"))
-    assertErrors(List(lineError(5, List(InvalidDocStyle))), source,
-      Map("indentStyle" -> "javadoc"))
+    assertErrors(List.empty, source, Map("indentStyle" -> "scaladoc"))
+    assertErrors(List(lineError(5, List(InvalidDocStyle))), source, Map("indentStyle" -> "javadoc"))
   }
 
   @Test def indentStyleJavadoc(): Unit = {
@@ -460,10 +482,8 @@ class ScalaDocCheckerTest extends AssertionsForJUnit with CheckerTest {
    class c"""
 
     assertErrors(List.empty, source)
-    assertErrors(List(lineError(5, List(InvalidDocStyle))), source,
-      Map("indentStyle" -> "scaladoc"))
-    assertErrors(List.empty, source,
-      Map("indentStyle" -> "javadoc"))
+    assertErrors(List(lineError(5, List(InvalidDocStyle))), source, Map("indentStyle" -> "scaladoc"))
+    assertErrors(List.empty, source, Map("indentStyle" -> "javadoc"))
   }
 
   @Test def indentImplicitDefScalaOrJavaDoc(): Unit = {

@@ -16,13 +16,12 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.TmplDef
 import org.scalastyle.FileError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.visit
-
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.TmplDef
 
 class NumberOfTypesChecker extends ScalariformChecker {
   val errorKey = "number.of.types"
@@ -42,6 +41,6 @@ class NumberOfTypesChecker extends ScalariformChecker {
 
   private def localvisit(ast: Any): List[TmplDef] = ast match {
     case t: TmplDef => List(t) ::: localvisit(t.templateBodyOption)
-    case t: Any => visit(t, localvisit)
+    case t: Any     => visit(t, localvisit)
   }
 }

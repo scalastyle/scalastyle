@@ -16,15 +16,14 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
-
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens.VARID
 import _root_.scalariform.parser.CasePattern
 import _root_.scalariform.parser.CompilationUnit
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
 class LowercasePatternMatchChecker extends ScalariformChecker {
   val errorKey = "lowercase.pattern.match"
@@ -43,9 +42,10 @@ class LowercasePatternMatchChecker extends ScalariformChecker {
   private def matches(t: CasePattern) = {
     t.pattern.tokens match {
       case List(t: Token) => t.tokenType == VARID && t.text.length() > 0 && t.text(0).isLower
-      case _ => false
+      case _              => false
     }
   }
 
-  private def map(t: CasePattern): List[CasePattern] = List(t) ::: visit(map)(t.pattern) ::: visit(map)(t.guardOption)
+  private def map(t: CasePattern): List[CasePattern] =
+    List(t) ::: visit(map)(t.pattern) ::: visit(map)(t.guardOption)
 }

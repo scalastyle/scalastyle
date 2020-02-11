@@ -37,6 +37,12 @@ object Foobar {
 }
 """
 
-    assertErrors(List(fileError(List("5"), message)), source, Map("maxFileLength" -> "5"), message, customId = Some("this.is.custom"))
+    assertErrors(
+      List(fileError(List("5"), message)),
+      source,
+      Map("maxFileLength" -> "5"),
+      message,
+      customId = Some("this.is.custom")
+    )
   }
 }

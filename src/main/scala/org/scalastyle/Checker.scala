@@ -18,17 +18,17 @@ package org.scalastyle
 
 import java.nio.charset.MalformedInputException
 
+import scala.annotation.tailrec
+import scala.io.Codec
+import scala.io.Source
+import scala.jdk.CollectionConverters._
+
 import _root_.scalariform.lexer.Comment
 import _root_.scalariform.lexer.HiddenToken
 import _root_.scalariform.lexer.ScalaLexer
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.ScalaParser
-import scala.annotation.tailrec
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import scala.collection.JavaConversions.seqAsJavaList
-import scala.io.Codec
-import scala.io.Source
 
 case class Line(text: String, start: Int, end: Int)
 
@@ -38,41 +38,49 @@ case class LineColumn(line: Int, column: Int)
 
 case class Lines(lines: Array[Line], lastChar: Char) {
 
-  def findLineAndIndex(position:Int): Option[(Line, Int)] = {
+  def findLineAndIndex(position: Int): Option[(Line, Int)] = {
     var i = 0
 
-    lines.foreach(l => {
+    lines.foreach { l =>
       i = i + 1
       if (position >= l.start && position < l.end) {
         return Some((l, i))
       }
-    })
+    }
 
     None
   }
 
   def toLineColumn(position: Int): Option[LineColumn] =
-    findLineAndIndex(position) map {case (line, index) => LineColumn(index, position - line.start)}
+    findLineAndIndex(position) map { case (line, index) => LineColumn(index, position - line.start) }
 
   def toFullLineTuple(position: Int): Option[(LineColumn, LineColumn)] =
-    findLineAndIndex(position) map {case (line, index) =>  (LineColumn( index, 0 ), LineColumn(index + 1, 0)) }
+    findLineAndIndex(position) map { case (line, index) => (LineColumn(index, 0), LineColumn(index + 1, 0)) }
 
 }
 
 class ScalastyleChecker[T <: FileSpec](classLoader: Option[ClassLoader] = None) {
-  def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] = {
+  def checkFiles(configuration: ScalastyleConfiguration, files: Seq[T]): List[Message[T]] =
     privateCheckFiles(configuration, files).toList
-  }
 
-  def checkFilesAsJava(configuration: ScalastyleConfiguration, files: java.util.List[T]): java.util.List[Message[T]] = {
-    seqAsJavaList(privateCheckFiles(configuration, collectionAsScalaIterable(files)))
-  }
+  def checkFilesAsJava(
+    configuration: ScalastyleConfiguration,
+    files: java.util.List[T]
+  ): java.util.List[Message[T]] =
+    privateCheckFiles(configuration, files.asScala).asJava
 
-  private[this] def privateCheckFiles(configuration: ScalastyleConfiguration, files: Iterable[T]): Seq[Message[T]] = {
+  private[this] def privateCheckFiles(
+    configuration: ScalastyleConfiguration,
+    files: Iterable[T]
+  ): Seq[Message[T]] = {
     val checks = configuration.checks.filter(_.enabled)
     val checkerUtils = new CheckerUtils(classLoader)
-    StartWork() :: files.flatMap(file => StartFile(file) :: checkerUtils.verifyFile(configuration, checks, file) :::
-        List(EndFile(file))).toList ::: List(EndWork())
+    StartWork() :: files
+      .flatMap(file =>
+        StartFile(file) :: checkerUtils.verifyFile(configuration, checks, file) :::
+        List(EndFile(file))
+      )
+      .toList ::: List(EndWork())
   }
 
 }
@@ -86,21 +94,29 @@ object Checker {
     // linefeed ("\n"), while Unix/Linux/BSD/etc. text files use just a linefeed. Other EOL sequences are currently
     // unsupported. Note that split removes the matching regular expression, so that the array of lines excludes EOL
     // sequences.
-    Lines(source.split("\n").scanLeft(Line("", 0, 0)) {
-      case (pl, t) =>
-        val text = if (t.endsWith("\r")) t.init else t
-        Line(text, pl.end, pl.end + t.length + 1)
-    }.tail, source.charAt(source.length()-1))
+    Lines(
+      source
+        .split("\n")
+        .scanLeft(Line("", 0, 0)) {
+          case (pl, t) =>
+            val text = if (t.endsWith("\r")) t.init else t
+            Line(text, pl.end, pl.end + t.length + 1)
+        }
+        .tail,
+      source.charAt(source.length() - 1)
+    )
   }
 
-  def isObject(s: String): Boolean = s == "java.lang.Object" || s == "Any" || s == "scala.Any" || s == "Object"
+  def isObject(s: String): Boolean =
+    s == "java.lang.Object" || s == "Any" || s == "scala.Any" || s == "Object"
   def isNotObject(s: String): Boolean = !isObject(s)
 }
 
 class CheckerUtils(classLoader: Option[ClassLoader] = None) {
-  private def comments(tokens: List[Token]): List[Comment] = tokens.flatMap(t => {
-    if (t.associatedWhitespaceAndComments == null) Nil else t.associatedWhitespaceAndComments.comments // scalastyle:ignore null
-  })
+  private def comments(tokens: List[Token]): List[Comment] =
+    tokens.flatMap { t =>
+      if (t.associatedWhitespaceAndComments == null) Nil else t.associatedWhitespaceAndComments.comments // scalastyle:ignore null
+    }
 
   def parseScalariform(source: String): ScalariformAst = {
     val tokens = ScalaLexer.tokenise(source, forgiveErrors = true, "2.11.0")
@@ -108,7 +124,12 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
     ScalariformAst(new ScalaParser(tokens.toArray).compilationUnitOrScript(), comments(tokens))
   }
 
-  def verifySource[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T, source: String): List[Message[T]] = {
+  def verifySource[T <: FileSpec](
+    configuration: ScalastyleConfiguration,
+    classes: List[ConfigurationChecker],
+    file: T,
+    source: String
+  ): List[Message[T]] = {
     if (source.isEmpty) {
       Nil
     } else {
@@ -121,24 +142,41 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
         Nil
       }
 
-      classes.flatMap(cc => newInstance(cc.className, cc.level, cc.parameters, cc.customMessage, cc.customId)).flatMap(c => c match {
-        case c: FileChecker => c.verify(file, c.level, lines, lines)
-        case c: ScalariformChecker => c.verify(file, c.level, scalariformAst.ast, lines)
-        case c: CombinedChecker => c.verify(file, c.level, CombinedAst(scalariformAst.ast, lines), lines)
-        case _ => Nil
-      }).filter(m => CommentFilter.filterApplies(m, commentFilters))
+      classes
+        .flatMap(cc => newInstance(cc.className, cc.level, cc.parameters, cc.customMessage, cc.customId))
+        .flatMap(c =>
+          c match {
+            case c: FileChecker        => c.verify(file, c.level, lines, lines)
+            case c: ScalariformChecker => c.verify(file, c.level, scalariformAst.ast, lines)
+            case c: CombinedChecker    => c.verify(file, c.level, CombinedAst(scalariformAst.ast, lines), lines)
+            case _                     => Nil
+          }
+        )
+        .filter(m => CommentFilter.filterApplies(m, commentFilters))
     }
   }
 
-  def verifyFile[T <: FileSpec](configuration: ScalastyleConfiguration, classes: List[ConfigurationChecker], file: T): List[Message[T]] = {
+  def verifyFile[T <: FileSpec](
+    configuration: ScalastyleConfiguration,
+    classes: List[ConfigurationChecker],
+    file: T
+  ): List[Message[T]] = {
     try {
       val s = file match {
         case fs: RealFileSpec => readFile(fs.name, fs.encoding)
-        case ss: SourceSpec => ss.contents
+        case ss: SourceSpec   => ss.contents
       }
       verifySource(configuration, classes, file, s)
     } catch {
-      case e: Exception => List(StyleException(file: T, None, message = e.getMessage, stacktrace = e.getStackTrace.mkString("", "\n", "\n")))
+      case e: Exception =>
+        List(
+          StyleException(
+            file: T,
+            None,
+            message = e.getMessage,
+            stacktrace = e.getStackTrace.mkString("", "\n", "\n")
+          )
+        )
     }
   }
 
@@ -165,20 +203,25 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
 
     val encodings = encoding match {
       case Some(x) => List(x)
-      case None => List(codec.charSet.toString, "UTF-8", "UTF-16", "ISO-8859-1")
+      case None    => List(codec.charSet.toString, "UTF-8", "UTF-16", "ISO-8859-1")
     }
 
     // as far as I can tell, most files should be readable with ISO-8859-1 (though obviously it won't
     // return the correct characters), so I don't know under what circumstances we can get
     // the MalformedInputException (and therefore) RuntimeException here.
     readFileWithEncoding(file, encodings) match {
-      case None => throw new RuntimeException("Could not read file, caught MalformedInputException")
+      case None         => throw new RuntimeException("Could not read file, caught MalformedInputException")
       case Some(source) => source
     }
   }
 
-  private def newInstance(name: String, level: Level, parameters: Map[String, String], customMessage: Option[String],
-      customId: Option[String]): Option[Checker[_]] = {
+  private def newInstance(
+    name: String,
+    level: Level,
+    parameters: Map[String, String],
+    customMessage: Option[String],
+    customId: Option[String]
+  ): Option[Checker[_]] = {
     try {
       val cl: ClassLoader = classLoader.getOrElse(this.getClass.getClassLoader)
 
@@ -193,9 +236,9 @@ class CheckerUtils(classLoader: Option[ClassLoader] = None) {
       case e: Exception =>
         // TODO log something here
         None
-      }
     }
   }
+}
 
 trait Checker[A] {
   protected val errorKey: String
@@ -208,16 +251,24 @@ trait Checker[A] {
   def setLevel(level: Level): Unit = this.level = level
   def setCustomErrorKey(customErrorKey: Option[String]): Unit = this.customErrorKey = customErrorKey
   def setCustomMessage(customMessage: Option[String]): Unit = this.customMessage = customMessage
-  protected def getInt(parameter: String, defaultValue: Int): Int = Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
-  protected def getString(parameter: String, defaultValue: String): String = parameters.getOrElse(parameter, defaultValue)
-  protected def getBoolean(parameter: String, defaultValue: Boolean): Boolean = parameters.getOrElse(parameter, "" + defaultValue) == "true"
+  protected def getInt(parameter: String, defaultValue: Int): Int =
+    Integer.parseInt(parameters.getOrElse(parameter, "" + defaultValue))
+  protected def getString(parameter: String, defaultValue: String): String =
+    parameters.getOrElse(parameter, defaultValue)
+  protected def getBoolean(parameter: String, defaultValue: Boolean): Boolean =
+    parameters.getOrElse(parameter, "" + defaultValue) == "true"
 
-  protected def toStyleError[T <: FileSpec](file: T, p: ScalastyleError, level: Level, lines: Lines): Message[T] = {
+  protected def toStyleError[T <: FileSpec](
+    file: T,
+    p: ScalastyleError,
+    level: Level,
+    lines: Lines
+  ): Message[T] = {
     val p2 = p match {
       case PositionError(position, args, key) =>
         lines.toLineColumn(position) match {
           case Some(LineColumn(line, column)) => ColumnError(line, column, args, key)
-          case None => FileError
+          case None                           => FileError
         }
       case _ => p
     }
@@ -225,18 +276,39 @@ trait Checker[A] {
     val sErrorKey = customErrorKey.getOrElse(errorKey)
 
     p2 match {
-      case PositionError(position, args, key) => StyleError(file, this.getClass, key.getOrElse(sErrorKey), level, args, customMessage = customMessage)
-      case FileError(args, key) => StyleError(file, this.getClass, key.getOrElse(sErrorKey), level, args, None, None, customMessage)
-      case LineError(line, args, key) => StyleError(file, this.getClass, key.getOrElse(sErrorKey), level, args, Some(line), None, customMessage)
-      case ColumnError(line, column, args, key) => StyleError(file, this.getClass, key.getOrElse(sErrorKey), level, args, Some(line), Some(column), customMessage)
+      case PositionError(position, args, key) =>
+        StyleError(file, this.getClass, key.getOrElse(sErrorKey), level, args, customMessage = customMessage)
+      case FileError(args, key) =>
+        StyleError(file, this.getClass, key.getOrElse(sErrorKey), level, args, None, None, customMessage)
+      case LineError(line, args, key) =>
+        StyleError(
+          file,
+          this.getClass,
+          key.getOrElse(sErrorKey),
+          level,
+          args,
+          Some(line),
+          None,
+          customMessage
+        )
+      case ColumnError(line, column, args, key) =>
+        StyleError(
+          file,
+          this.getClass,
+          key.getOrElse(sErrorKey),
+          level,
+          args,
+          Some(line),
+          Some(column),
+          customMessage
+        )
     }
   }
 
   def charsBetweenTokens(left: Token, right: Token): Int = right.offset - (left.offset + left.length)
 
-  def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] = {
+  def verify[T <: FileSpec](file: T, level: Level, ast: A, lines: Lines): List[Message[T]] =
     verify(ast).map(p => toStyleError(file, p, level, lines))
-  }
 
   def verify(ast: A): List[ScalastyleError]
 }

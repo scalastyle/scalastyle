@@ -16,17 +16,16 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.visit
-
 import _root_.scalariform.lexer.Tokens.VAR
 import _root_.scalariform.parser.AnonymousFunction
 import _root_.scalariform.parser.CompilationUnit
 import _root_.scalariform.parser.FunBody
 import _root_.scalariform.parser.PatDefOrDcl
 import _root_.scalariform.parser.TemplateBody
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.visit
 
 abstract class VarChecker extends ScalariformChecker {
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
@@ -42,11 +41,12 @@ abstract class VarChecker extends ScalariformChecker {
   protected def matches(enclosingFunction: Boolean): Boolean
 
   private def localvisit(enclosingFunction: Boolean)(ast: Any): List[PatDefOrDcl] = ast match {
-    case t: PatDefOrDcl if t.valOrVarToken.tokenType == VAR && matches(enclosingFunction) => List(t) ::: visit(t, localvisit(enclosingFunction))
-    case t: TemplateBody => visit(t, localvisit(false))
-    case t: FunBody => visit(t, localvisit(true))
+    case t: PatDefOrDcl if t.valOrVarToken.tokenType == VAR && matches(enclosingFunction) =>
+      List(t) ::: visit(t, localvisit(enclosingFunction))
+    case t: TemplateBody      => visit(t, localvisit(false))
+    case t: FunBody           => visit(t, localvisit(true))
     case t: AnonymousFunction => visit(t, localvisit(true))
-    case t: Any => visit(t, localvisit(enclosingFunction))
+    case t: Any               => visit(t, localvisit(enclosingFunction))
   }
 }
 

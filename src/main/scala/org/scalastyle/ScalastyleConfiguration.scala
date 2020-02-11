@@ -41,9 +41,9 @@ object Level {
 
   def apply(s: String): Level = s match {
     case Warning => WarningLevel
-    case Error => ErrorLevel
-    case Info => InfoLevel
-    case _ => WarningLevel
+    case Error   => ErrorLevel
+    case Info    => InfoLevel
+    case _       => WarningLevel
   }
 }
 sealed abstract class Level(val name: String)
@@ -58,9 +58,9 @@ object ParameterType {
 
   def apply(s: String): ParameterType = s match {
     case Integer => IntegerType
-    case String => StringType
+    case String  => StringType
     case Boolean => BooleanType
-    case _ => StringType
+    case _       => StringType
   }
 }
 sealed abstract class ParameterType(val name: String)
@@ -68,8 +68,14 @@ case object IntegerType extends ParameterType(ParameterType.Integer)
 case object StringType extends ParameterType(ParameterType.String)
 case object BooleanType extends ParameterType(ParameterType.Boolean)
 
-case class ConfigurationChecker(className: String, level: Level, enabled: Boolean, parameters: Map[String, String],
-                                customMessage: Option[String], customId: Option[String])
+case class ConfigurationChecker(
+  className: String,
+  level: Level,
+  enabled: Boolean,
+  parameters: Map[String, String],
+  customMessage: Option[String],
+  customId: Option[String]
+)
 
 object ScalastyleConfiguration {
   val DefaultConfiguration: String = "/default_config.xml"
@@ -88,7 +94,11 @@ object ScalastyleConfiguration {
   def readFromString(s: String): ScalastyleConfiguration = fromXml(XML.loadString(s))
 
   private[this] def fromXml(elem: Elem) = {
-    val commentFilter = elem.attribute("commentFilter").getOrElse(scala.xml.Text(Enabled)).text.toLowerCase() != Disabled
+    val commentFilter = elem
+        .attribute("commentFilter")
+        .getOrElse(scala.xml.Text(Enabled))
+        .text
+        .toLowerCase() != Disabled
     val name = (elem \\ Name).text
 
     ScalastyleConfiguration(name, commentFilter, (elem \\ "check").map(toCheck).toList)
@@ -106,22 +116,29 @@ object ScalastyleConfiguration {
     val customMessage = contentsOf(node, "customMessage")
     val customId = node.attribute("customId").flatMap(x => Some(x.text))
 
-    ConfigurationChecker(className, level, enabled, (node \\ "parameters" \\ "parameter").map(e => {
-      val attributeValue = e.attribute("value")
-      val value = if (attributeValue.isDefined) attributeValue.get.text else e.text
-      (e.attribute(Name).head.text -> value)
-    }).toMap, customMessage, customId)
+    ConfigurationChecker(
+      className,
+      level,
+      enabled,
+      (node \\ "parameters" \\ "parameter").map { e =>
+        val attributeValue = e.attribute("value")
+        val value = attributeValue.map(_.text).getOrElse(e.text).trim
+        (e.attribute(Name).head.text -> value)
+      }.toMap,
+      customMessage,
+      customId
+    )
   }
 
   private[this] def toCDATA(s: String) = scala.xml.Unparsed("<![CDATA[" + s + "]]>")
 
   def toXml(scalastyleConfiguration: ScalastyleConfiguration): scala.xml.Elem = {
-    val elements = scalastyleConfiguration.checks.map(c => {
+    val elements = scalastyleConfiguration.checks.map { c =>
       val parameters = if (c.parameters.size > 0) {
-        val ps = c.parameters.map(p => {
+        val ps = c.parameters.map { p =>
           val text = toCDATA(p._2)
           <parameter name={p._1}>{text}</parameter>
-        })
+        }
         <parameters>{ps}</parameters>
       } else {
         scala.xml.Null
@@ -133,12 +150,14 @@ object ScalastyleConfiguration {
         }
         case None => scala.xml.Null
       }
-      val check = <check class={c.className} level={c.level.name} enabled={if (c.enabled) True else False}>{customMessage}{parameters}</check>
+      val check = <check class={c.className} level={c.level.name} enabled={if (c.enabled) True else False}>{
+        customMessage
+      }{parameters}</check>
       c.customId match {
         case Some(x) => check % Attribute(None, "customId", Text(x), scala.xml.Null)
-        case None => check
+        case None    => check
       }
-    })
+    }
 
     <scalastyle commentFilter={if (scalastyleConfiguration.commentFilter) Enabled else Disabled}>
       <name>{scalastyleConfiguration.name}</name>
@@ -147,7 +166,7 @@ object ScalastyleConfiguration {
   }
 
   def toXmlString(scalastyleConfiguration: ScalastyleConfiguration, width: Int, step: Int): String =
-               new XmlPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
+    new XmlPrettyPrinter(width, step).format(toXml(scalastyleConfiguration))
 }
 
 case class ScalastyleConfiguration(name: String, commentFilter: Boolean, checks: List[ConfigurationChecker])
@@ -155,7 +174,12 @@ case class ScalastyleConfiguration(name: String, commentFilter: Boolean, checks:
 // definition
 
 case class DefinitionParameter(name: String, typeName: ParameterType, multiple: Boolean, defaultValue: String)
-case class DefinitionChecker(className: String, id: String, level: Level, parameters: Map[String, DefinitionParameter])
+case class DefinitionChecker(
+  className: String,
+  id: String,
+  level: Level,
+  parameters: Map[String, DefinitionParameter]
+)
 
 object ScalastyleDefinition {
   def readFromXml(stream: java.io.InputStream): ScalastyleDefinition = {
@@ -169,35 +193,44 @@ object ScalastyleDefinition {
     val id = stringAttr(node, "id")
     val defaultLevel = levelAttr(node, "defaultLevel")
 
-    DefinitionChecker(className, id, defaultLevel, (node \\ "parameters" \\ "parameter").map(e => {
-      val parameterName = stringAttr(e, "name")
-      val parameterType = typeAttr(e, "type")
-      val multiple = booleanAttr(e, "multiple")
-      val defaultValue = stringAttr(e, "default")
-      (parameterName -> DefinitionParameter(parameterName, parameterType, multiple, defaultValue))
-    }).toMap)
+    DefinitionChecker(
+      className,
+      id,
+      defaultLevel,
+      (node \\ "parameters" \\ "parameter").map { e =>
+        val parameterName = stringAttr(e, "name")
+        val parameterType = typeAttr(e, "type")
+        val multiple = booleanAttr(e, "multiple")
+        val defaultValue = stringAttr(e, "default")
+        (parameterName -> DefinitionParameter(parameterName, parameterType, multiple, defaultValue))
+      }.toMap
+    )
   }
 
-  def stringAttr(node: Node, id: String): String = {
-    attr(node, id, "", {s => s})
-  }
+  def stringAttr(node: Node, id: String): String =
+    attr(node, id, "", { s =>
+      s
+    })
 
-  def levelAttr(node: Node, id: String): Level = {
-    attr(node, id, Level.Warning, {s => Level(s)})
-  }
+  def levelAttr(node: Node, id: String): Level =
+    attr(node, id, Level.Warning, { s =>
+      Level(s)
+    })
 
-  def typeAttr(node: Node, id: String): ParameterType = {
-    attr(node, id, "string", {s => ParameterType(s)})
-  }
+  def typeAttr(node: Node, id: String): ParameterType =
+    attr(node, id, "string", { s =>
+      ParameterType(s)
+    })
 
-  def booleanAttr(node: Node, id: String): Boolean = {
-    attr(node, id, "false", {s => "true" == s.toLowerCase()})
-  }
+  def booleanAttr(node: Node, id: String): Boolean =
+    attr(node, id, "false", { s =>
+      "true" == s.toLowerCase()
+    })
 
   def attr[T](node: Node, id: String, defaultValue: String, fn: (String) => T): T = {
     node.attribute(id) match {
       case Some(x) => fn(x.text)
-      case _ => fn(defaultValue)
+      case _       => fn(defaultValue)
     }
   }
 }
@@ -214,44 +247,44 @@ class XmlPrettyPrinter(width: Int, step: Int) extends PrettyPrinter(width, step)
   private def doPreserve(node: Node) = true
 
   // This is just a copy of what's in scala.xml.PrettyPrinter
-    /** @param tail: what we'd like to squeeze in */
-  protected override def traverse(node: Node, pscope: NamespaceBinding, ind: Int): Unit =  node match {
+  /** @param tail: what we'd like to squeeze in */
+  protected override def traverse(node: Node, pscope: NamespaceBinding, ind: Int): Unit = node match {
 
-      case Text(s) if s.trim() == "" =>
-        ;
-      case _:Atom[_] | _:Comment | _:EntityRef | _:ProcInstr =>
-        makeBox(ind, node.toString().trim() )
-      case g @ Group(xs) =>
-        traverse(xs.iterator, pscope, ind)
-      case _ =>
-        val test = {
-          val sb = new StringBuilder()
-          Utility.serialize(node, pscope, sb, false, minimizeTags = MinimizeMode.Default)
-          if (doPreserve(node)) sb.toString else TextBuffer.fromString(sb.toString()).toText(0).data
-        }
-        if (childrenAreLeaves(node) && fits(test)) {
+    case Text(s) if s.trim() == "" =>
+      ;
+    case _: Atom[_] | _: Comment | _: EntityRef | _: ProcInstr =>
+      makeBox(ind, node.toString().trim())
+    case g @ Group(xs) =>
+      traverse(xs.iterator, pscope, ind)
+    case _ =>
+      val test = {
+        val sb = new StringBuilder()
+        Utility.serialize(node, pscope, sb, false, minimizeTags = MinimizeMode.Default)
+        if (doPreserve(node)) sb.toString else TextBuffer.fromString(sb.toString()).toText(0).data
+      }
+      if (childrenAreLeaves(node) && fits(test)) {
+        makeBox(ind, test)
+      } else {
+        val (stg, len2) = startTag(node, pscope)
+        val etg = endTag(node)
+        if (stg.length < width - cur) { // start tag fits
+          makeBox(ind, stg)
+          makeBreak()
+          traverse(node.child.iterator, node.scope, ind + step)
+          makeBox(ind, etg)
+        } else if (len2 < width - cur) {
+          // <start label + attrs + tag + content + end tag
+          makeBox(ind, stg.substring(0, len2))
+          makeBreak() // todo: break the rest in pieces
+          makeBox(ind, stg.substring(len2, stg.length))
+          makeBreak()
+          traverse(node.child.iterator, node.scope, ind + step)
+          makeBox(cur, etg)
+          makeBreak()
+        } else { // give up
           makeBox(ind, test)
-        } else {
-          val (stg, len2) = startTag(node, pscope)
-          val etg = endTag(node)
-          if (stg.length < width - cur) { // start tag fits
-            makeBox(ind, stg)
-            makeBreak()
-            traverse(node.child.iterator, node.scope, ind + step)
-            makeBox(ind, etg)
-          } else if (len2 < width - cur) {
-            // <start label + attrs + tag + content + end tag
-            makeBox(ind, stg.substring(0, len2))
-            makeBreak() // todo: break the rest in pieces
-            makeBox(ind, stg.substring(len2, stg.length))
-            makeBreak()
-            traverse(node.child.iterator, node.scope, ind + step)
-            makeBox(cur, etg)
-            makeBreak()
-          } else { // give up
-            makeBox(ind, test)
-            makeBreak()
-          }
+          makeBreak()
         }
+      }
   }
 }

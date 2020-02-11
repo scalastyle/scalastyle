@@ -47,10 +47,9 @@ class MessageHelper(config: Config) {
     }
   }
 
-  def message(key: String, args: List[String]): String = {
+  def message(key: String, args: List[String]): String =
     // Use ClassLoader of the class from which the message came
     getMessage(key + ".message", args)
-  }
 }
 
 sealed abstract class Message[+T <: FileSpec]()
@@ -61,18 +60,39 @@ case class EndWork[+T <: FileSpec]() extends Message[T]
 case class StartFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 case class EndFile[+T <: FileSpec](fileSpec: T) extends Message[T]
 
-case class StyleError[+T <: FileSpec](fileSpec: T, clazz: Class[_ <: Checker[_]], key: String,
-                                      level: Level, args: List[String], lineNumber: Option[Int] = None,
-                                      column: Option[Int] = None, customMessage: Option[String] = None) extends Message[T] {
-  override def toString(): String = "StyleError key=" + key + " args=" + args + " lineNumber=" + lineNumber +
-                                          " column=" + column + " customMessage=" + customMessage
+case class StyleError[+T <: FileSpec](
+  fileSpec: T,
+  clazz: Class[_ <: Checker[_]],
+  key: String,
+  level: Level,
+  args: List[String],
+  lineNumber: Option[Int]       = None,
+  column: Option[Int]           = None,
+  customMessage: Option[String] = None
+) extends Message[T] {
+  override def toString(): String =
+    "StyleError key=" + key + " args=" + args + " lineNumber=" + lineNumber +
+    " column=" + column + " customMessage=" + customMessage
 }
-case class StyleException[+T <: FileSpec](fileSpec: T, clazz: Option[Class[_ <: Checker[_]]], message: String,
-                                          stacktrace: String, lineNumber: Option[Int] = None, column: Option[Int] = None) extends Message[T]
+case class StyleException[+T <: FileSpec](
+  fileSpec: T,
+  clazz: Option[Class[_ <: Checker[_]]],
+  message: String,
+  stacktrace: String,
+  lineNumber: Option[Int] = None,
+  column: Option[Int]     = None
+) extends Message[T]
 
 sealed abstract class ScalastyleError
-case class PositionError(position: Int, args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
-case class FileError(args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
-case class LineError(line: Int, args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
-case class ColumnError(line: Int, column: Int, args: List[String] = List[String](), errorKey: Option[String] = None) extends ScalastyleError
-
+case class PositionError(position: Int, args: List[String] = List[String](), errorKey: Option[String] = None)
+    extends ScalastyleError
+case class FileError(args: List[String] = List[String](), errorKey: Option[String] = None)
+    extends ScalastyleError
+case class LineError(line: Int, args: List[String] = List[String](), errorKey: Option[String] = None)
+    extends ScalastyleError
+case class ColumnError(
+  line: Int,
+  column: Int,
+  args: List[String]       = List[String](),
+  errorKey: Option[String] = None
+) extends ScalastyleError

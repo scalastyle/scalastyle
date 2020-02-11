@@ -1,14 +1,17 @@
 <scalastyle commentFilter="enabled">
- <name>Scalastyle standard configuration</name>
- <check level="warning" class="org.scalastyle.file.FileTabChecker" enabled="false"></check>
- <check level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
-  <parameters>
-   <parameter name="maxFileLength"><![CDATA[800]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
-  <parameters>
-   <parameter name="header"><![CDATA[// Copyright (C) 2011-2012 the original author or authors.
+  <name>Scalastyle standard configuration</name>
+  <check level="warning" class="org.scalastyle.file.FileTabChecker" enabled="false"></check>
+  <check level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
+    <parameters>
+      <parameter name="maxFileLength">
+        <![CDATA[800]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.file.HeaderMatchesChecker" enabled="true">
+    <parameters>
+      <parameter name="header">
+        <![CDATA[// Copyright (C) 2011-2012 the original author or authors.
 // See the LICENCE.txt file distributed with this work for additional
 // information regarding copyright ownership.
 //
@@ -22,53 +25,68 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true">
-   <parameters>
-    <parameter name="ignoreWhitespaceLines"><![CDATA[false]]></parameter>
-   </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
-  <parameters>
-   <parameter name="maxLineLength"><![CDATA[160]]></parameter>
-   <parameter name="tabSize"><![CDATA[4]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="true">
-  <parameters>
-   <parameter name="illegalImports"><![CDATA[sun._,java.awt._]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
-  <parameters>
-   <parameter name="maxParameters"><![CDATA[8]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
-  <parameters>
-   <parameter name="ignore"><![CDATA[-1,0,1,2]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.ReturnChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true">
-  <parameters>
-   <parameter name="allowNullChecks"><![CDATA[true]]></parameter>
-  </parameters>
- </check>
- <check level="warning" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.MethodArgumentNamesChecker" enabled="true"></check>
- <check level="warning" class="org.scalastyle.scalariform.TodoCommentChecker" enabled="true"></check>
+// limitations under the License.]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.SpacesAfterPlusChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.file.WhitespaceEndOfLineChecker" enabled="true">
+    <parameters>
+      <parameter name="ignoreWhitespaceLines">
+        <![CDATA[false]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.SpacesBeforePlusChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
+    <parameters>
+      <parameter name="maxLineLength">
+        <![CDATA[160]]>
+      </parameter>
+      <parameter name="tabSize">
+        <![CDATA[4]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.EqualsHashCodeChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.IllegalImportsChecker" enabled="true">
+    <parameters>
+      <parameter name="illegalImports">
+        <![CDATA[sun._,java.awt._]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
+    <parameters>
+      <parameter name="maxParameters">
+        <![CDATA[8]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.MagicNumberChecker" enabled="true">
+    <parameters>
+      <parameter name="ignore">
+        <![CDATA[-1,0,1,2]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeLeftBracketChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceAfterLeftBracketChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.NoWhitespaceBeforeRightBracketChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.ReturnChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.NullChecker" enabled="true">
+    <parameters>
+      <parameter name="allowNullChecks">
+        <![CDATA[true]]>
+      </parameter>
+    </parameters>
+  </check>
+  <check level="warning" class="org.scalastyle.scalariform.NoCloneChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.CovariantEqualsChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.FieldNamesChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.MethodArgumentNamesChecker" enabled="true"></check>
+  <check level="warning" class="org.scalastyle.scalariform.TodoCommentChecker" enabled="true"></check>
 </scalastyle>

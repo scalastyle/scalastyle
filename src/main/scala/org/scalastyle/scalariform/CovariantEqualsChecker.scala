@@ -17,7 +17,6 @@
 package org.scalastyle.scalariform
 
 import org.scalastyle.Checker
-
 import scalariform.parser.AstNode
 import scalariform.parser.FunDefOrDcl
 
@@ -31,5 +30,6 @@ class CovariantEqualsChecker extends AbstractMethodChecker {
     !equalsObject && equalsOther
   }
 
-  private def isEqualsOther(t: FunDefOrDcl): Boolean = methodMatch("equals", singleParameter(Checker.isNotObject) _)(t)
+  private def isEqualsOther(t: FunDefOrDcl): Boolean =
+    methodMatch("equals", singleParameter(Checker.isNotObject) _)(t)
 }

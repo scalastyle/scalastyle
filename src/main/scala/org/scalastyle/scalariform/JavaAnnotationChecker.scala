@@ -16,12 +16,11 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.CompilationUnit
+import _root_.scalariform.parser.{Annotation => ParserAnnotation}
 import org.scalastyle.PositionError
 import org.scalastyle.ScalariformChecker
 import org.scalastyle.ScalastyleError
-
-import _root_.scalariform.parser.CompilationUnit
-import _root_.scalariform.parser.{Annotation => ParserAnnotation}
 
 abstract class JavaAnnotationChecker extends ScalariformChecker {
   val invalidTokens: List[String]

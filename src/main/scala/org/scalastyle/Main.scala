@@ -19,21 +19,23 @@ package org.scalastyle
 import java.io.File
 import java.net.URLClassLoader
 
-import com.typesafe.config.ConfigFactory
-
 import scala.io.Codec
 
-case class MainConfig(error: Boolean,
-    config: Option[String] = None,
-    directories: List[String] = List(),
-    verbose: Boolean = false,
-    quiet: Boolean = false,
-    warningsaserrors: Boolean = false,
-    xmlFile: Option[String] = None,
-    xmlEncoding: Option[String] = None,
-    inputEncoding: Option[String] = None,
-    externalJar: Option[String] = None,
-    excludedFiles: Seq[String] = Nil)
+import com.typesafe.config.ConfigFactory
+
+case class MainConfig(
+  error: Boolean,
+  config: Option[String]        = None,
+  directories: List[String]     = List(),
+  verbose: Boolean              = false,
+  quiet: Boolean                = false,
+  warningsaserrors: Boolean     = false,
+  xmlFile: Option[String]       = None,
+  xmlEncoding: Option[String]   = None,
+  inputEncoding: Option[String] = None,
+  externalJar: Option[String]   = None,
+  excludedFiles: Seq[String]    = Nil
+)
 
 object Main {
   // scalastyle:off regex
@@ -48,7 +50,9 @@ object Main {
     println("     --inputEncoding STRING      encoding for the source files")
     println(" -w, --warnings true|false       fail if there are warnings")
     println(" -e, --externalJar FILE          jar containing custom rules")
-    println(" -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)")
+    println(
+      " -x, --excludedFiles STRING      regular expressions to exclude file paths (delimitted by semicolons)"
+    )
 
     System.exit(1)
   }
@@ -62,15 +66,16 @@ object Main {
     while (i < args.length) {
       if (args(i).startsWith("-") && i < args.length - 1) {
         args(i) match {
-          case ("-c" | "--config") => config = config.copy(config = Some(args(i + 1)))
-          case ("-v" | "--verbose") => config = config.copy(verbose = isTrue(args(i + 1)))
-          case ("-q" | "--quiet") => config = config.copy(quiet = isTrue(args(i + 1)))
-          case ("-w" | "--warnings") => config = config.copy(warningsaserrors = isTrue(args(i + 1)))
-          case ("--xmlOutput") => config = config.copy(xmlFile = Some(args(i + 1)))
-          case ("--xmlEncoding") => config = config.copy(xmlEncoding = Some(args(i + 1)))
-          case ("--inputEncoding") => config = config.copy(inputEncoding = Some(args(i + 1)))
+          case ("-c" | "--config")      => config = config.copy(config = Some(args(i + 1)))
+          case ("-v" | "--verbose")     => config = config.copy(verbose = isTrue(args(i + 1)))
+          case ("-q" | "--quiet")       => config = config.copy(quiet = isTrue(args(i + 1)))
+          case ("-w" | "--warnings")    => config = config.copy(warningsaserrors = isTrue(args(i + 1)))
+          case ("--xmlOutput")          => config = config.copy(xmlFile = Some(args(i + 1)))
+          case ("--xmlEncoding")        => config = config.copy(xmlEncoding = Some(args(i + 1)))
+          case ("--inputEncoding")      => config = config.copy(inputEncoding = Some(args(i + 1)))
           case ("-e" | "--externalJar") => config = config.copy(externalJar = Some(args(i + 1)))
-          case ("-x" | "--excludedFiles") => config = config.copy(excludedFiles = args(i + 1).split(";"))
+          case ("-x" | "--excludedFiles") =>
+            config = config.copy(excludedFiles = args(i + 1).split(";").toSeq)
           case _ => config = config.copy(error = true)
         }
         i = i + 2
@@ -109,7 +114,8 @@ object Main {
     val start = now()
     val configuration = ScalastyleConfiguration.readFromXml(mc.config.get)
     val cl = mc.externalJar.flatMap(j => Some(new URLClassLoader(Array(new java.io.File(j).toURI.toURL))))
-    val files = Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)), excludedFiles = mc.excludedFiles)
+    val files =
+      Directory.getFiles(mc.inputEncoding, mc.directories.map(new File(_)), excludedFiles = mc.excludedFiles)
     val messages = new ScalastyleChecker(cl).checkFiles(configuration, files)
 
     // scalastyle:off regex

@@ -18,14 +18,15 @@ package org.scalastyle
 
 import com.typesafe.config.ConfigFactory
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off multiple.string.literals
 
 class MessageHelperTest extends AssertionsForJUnit {
   val classLoader = this.getClass().getClassLoader()
   val config = ConfigFactory.load()
-  val definition = ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))
+  val definition =
+    ScalastyleDefinition.readFromXml(classLoader.getResourceAsStream("scalastyle_definition.xml"))
   val messageHelper = new MessageHelper(config)
 
   // tests that for each class specified in scalastyle_definitions.xml
@@ -33,17 +34,17 @@ class MessageHelperTest extends AssertionsForJUnit {
   // i.e. label, message, description
   // depends upon MessageHelper returning the key if there isn't a key in scalastyle_messages
   @Test def testMessages(): Unit = {
-    definition.checkers.foreach(c => {
+    definition.checkers.foreach { c =>
       assertMessage(c.id, "message", messageHelper.message _)
       assertMessage(c.id, "label", messageHelper.label _)
       assertMessage(c.id, "description", messageHelper.description _)
 
-      c.parameters.foreach(p => {
+      c.parameters.foreach { p =>
         val key = c.id + "." + p._1
         assertMessage(key, "label", messageHelper.description _)
         assertMessage(key, "description", messageHelper.description _)
-      })
-    })
+      }
+    }
   }
 
   private[this] def assertMessage(id: String, suffix: String, fn: (String, List[String]) => String) = {

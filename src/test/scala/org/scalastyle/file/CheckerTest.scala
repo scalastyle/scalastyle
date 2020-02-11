@@ -36,17 +36,41 @@ trait CheckerTest {
     def name(): String = ""
   }
 
-  protected def assertErrors[T <: FileSpec](expected: List[Message[T]], source: String, params: Map[String, String] = Map(),
-                                            customMessage: Option[String] = None, commentFilter: Boolean = true, customId: Option[String] = None) = {
-    val classes =  List(ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params, customMessage, customId))
+  protected def assertErrors[T <: FileSpec](
+    expected: List[Message[T]],
+    source: String,
+    params: Map[String, String]   = Map(),
+    customMessage: Option[String] = None,
+    commentFilter: Boolean        = true,
+    customId: Option[String]      = None
+  ) = {
+    val classes = List(
+      ConfigurationChecker(classUnderTest.getName(), WarningLevel, true, params, customMessage, customId)
+    )
     val configuration = ScalastyleConfiguration("", commentFilter, classes)
-    assertEquals(expected.mkString("\n"), new CheckerUtils().verifySource(configuration, classes, NullFileSpec, source).mkString("\n"))
+    assertEquals(
+      expected.mkString("\n"),
+      new CheckerUtils().verifySource(configuration, classes, NullFileSpec, source).mkString("\n")
+    )
   }
 
   protected def fileError(args: List[String] = List(), customMessage: Option[String] = None) =
-          StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, None, None, customMessage)
-  protected def lineError(line: Int, args: List[String] = List()) = StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, Some(line), None)
-  protected def columnError(line: Int, column: Int, args: List[String] = List(), errorKey: Option[String] = None) =
-                StyleError(NullFileSpec, classUnderTest, errorKey.getOrElse(key), WarningLevel, args, Some(line), Some(column))
+    StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, None, None, customMessage)
+  protected def lineError(line: Int, args: List[String] = List()) =
+    StyleError(NullFileSpec, classUnderTest, key, WarningLevel, args, Some(line), None)
+  protected def columnError(
+    line: Int,
+    column: Int,
+    args: List[String]       = List(),
+    errorKey: Option[String] = None
+  ) =
+    StyleError(
+      NullFileSpec,
+      classUnderTest,
+      errorKey.getOrElse(key),
+      WarningLevel,
+      args,
+      Some(line),
+      Some(column)
+    )
 }
-

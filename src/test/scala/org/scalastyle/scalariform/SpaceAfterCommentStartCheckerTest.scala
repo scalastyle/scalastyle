@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
@@ -77,8 +77,6 @@ object Foobar {
 
     assertErrors(List(columnError(5, 2), columnError(9, 2), columnError(10, 12)), source)
   }
-
-
   @Test def testScaladocsComments(): Unit = {
     val source = """
 package foobar

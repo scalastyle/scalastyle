@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -44,7 +44,10 @@ class Foobar6 {
 class Foobar7
 """
 
-    assertErrors(List(columnError(4, 6), columnError(5, 6), columnError(6, 6), columnError(9, 6), columnError(10, 6)), source)
+    assertErrors(
+      List(columnError(4, 6), columnError(5, 6), columnError(6, 6), columnError(9, 6), columnError(10, 6)),
+      source
+    )
   }
 
   @Test def testInnerClass(): Unit = {
@@ -85,7 +88,11 @@ class Foobar8[List[T], List[T], List[Foo]]
 class Foobar9[Foo <: Any]
 class Foobar0[+Foo]
 """
-    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
+    assertErrors(
+      List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)),
+      source,
+      Map("regex" -> "^[A-Z]$")
+    )
   }
 
   @Test def testTrait(): Unit = {
@@ -107,6 +114,10 @@ trait Foobar8[List[T], List[T], List[Foo]]
 trait Foobar9[Foo <: Any]
 trait Foobar0[+Foo]
 """
-    assertErrors(List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)), source, Map("regex" -> "^[A-Z]$"))
+    assertErrors(
+      List(columnError(6, 6), columnError(14, 6), columnError(15, 6), columnError(16, 6), columnError(17, 6)),
+      source,
+      Map("regex" -> "^[A-Z]$")
+    )
   }
 }

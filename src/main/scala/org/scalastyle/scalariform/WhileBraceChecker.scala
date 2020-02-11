@@ -18,7 +18,6 @@ package org.scalastyle.scalariform
 
 import org.scalastyle.scalariform.VisitorHelper.getAll
 import org.scalastyle.{CombinedAst, CombinedChecker, PositionError, ScalastyleError}
-
 import scalariform.parser.{BlockExpr, Expr, WhileExpr}
 
 class WhileBraceChecker extends CombinedChecker {
@@ -35,7 +34,7 @@ class WhileBraceChecker extends CombinedChecker {
   private def hasBraces(expr: WhileExpr) = {
     expr.body match {
       case Expr(List(_: BlockExpr)) => true
-      case _ => false
+      case _                        => false
     }
   }
 }

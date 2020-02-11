@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
@@ -64,7 +64,8 @@ class ConstructorOK(a: Int) {
   }
 
   @Test def testConstructorWithBody(): Unit = {
-    val source = """
+    val source =
+      """
 package im.tox.tox4j
 
 final case class DhtNode(ipv4: String, ipv6: String, udpPort: Int, tcpPort: Int, dhtId: Array[Byte]) {
@@ -82,5 +83,3 @@ final case class DhtNode(ipv4: String, ipv6: String, udpPort: Int, tcpPort: Int,
     assertErrors(List(), source)
   }
 }
-
-

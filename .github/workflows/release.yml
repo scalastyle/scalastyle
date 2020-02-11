@@ -1,0 +1,44 @@
+name: Release
+on:
+  push:
+    branches: [master]
+    tags: ["*"]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
+      - uses: olafurpg/setup-scala@v7
+        with:
+          java-version: adopt@1.8
+      - run: |
+          sudo apt-get update && sudo apt-get -y install gnupg2
+          mkdir ~/.gnupg && chmod 700 ~/.gnupg
+          echo use-agent >> ~/.gnupg/gpg.conf
+          echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
+          echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
+          chmod 600 ~/.gnupg/*
+          echo RELOADAGENT | gpg-connect-agent
+          echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes
+        env:
+          PGP_SECRET: ${{secrets.PGP_SECRET}}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.ivy2/cache
+          key: ivy-${{hashFiles('**/*.sbt')}}
+          restore-keys: |
+            ivy-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.sbt
+          key: sbt-${{hashFiles('**/*.sbt')}}-${{hashFiles('project/build.properties')}}
+          restore-keys: |
+            sbt-
+      - run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{secrets.PGP_PASSPHRASE}}
+          PGP_SECRET: ${{secrets.PGP_SECRET}}
+          SONATYPE_PASSWORD: ${{secrets.SONATYPE_PASSWORD}}
+          SONATYPE_USERNAME: ${{secrets.SONATYPE_USERNAME}}

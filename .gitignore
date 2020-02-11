@@ -5,9 +5,14 @@ target
 .idea
 .worksheet
 *.sc
+*.orig
 .cache
 .classpath
 .project
 .settings
-/bin
-/project/
+bin
+project/project
+
+.bloop
+.metals
+metals.sbt

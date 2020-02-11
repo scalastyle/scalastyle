@@ -16,15 +16,12 @@
 
 package org.scalastyle.util
 
-// scalastyle:off magic.number multiple.string.literals
-
-import org.junit.Assert.assertEquals
+// scalastyle:off magic.number multiple.string.literalsimport org.junit.Assert.assertEquals
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class CreateRulesMarkdownTest extends AssertionsForJUnit {
-  @Test def testMarkdownGeneration(): Unit = {
+  @Test def testMarkdownGeneration(): Unit =
     CreateRulesMarkdown.generate()
-  }
 
 }

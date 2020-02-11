@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -39,8 +39,6 @@ object foo {
 
     assertErrors(List(columnError(7, 11)), source)
   }
-
-
   @Test def testOk(): Unit = {
     val source = """
 object foo {

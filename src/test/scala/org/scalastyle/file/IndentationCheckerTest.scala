@@ -17,7 +17,7 @@
 package org.scalastyle.file
 
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -26,7 +26,7 @@ class IndentationCheckerTest extends AssertionsForJUnit with CheckerTest {
   val classUnderTest = classOf[IndentationChecker]
 
   val cleanSource =
-"""
+    """
 /**
  * Scaladoc comments should pass
  */
@@ -55,13 +55,12 @@ class B(
     isAlsoOk: Boolean): Unit = {}
 }
 """
-  @Test def testNoErrorsDefaultTabSize(): Unit = {
+  @Test def testNoErrorsDefaultTabSize(): Unit =
     assertErrors(List(), cleanSource)
-  }
 
   @Test def forExpression(): Unit = {
     val source =
-"""
+      """
 val id = 50
 for {
   a <- findA(id)
@@ -76,35 +75,33 @@ for {
 
   @Test def dsl(): Unit = {
     val source =
-"""
-  |val id = 123
-  |val (m, g) = (GroupMember.syntax("m"), Group.syntax("g"))
-  |val groupMember = withSQL {
-  |  select
-  |    .from(GroupMember as m)
-  |    .leftJoin(Group as g)
-  |    .on(m.groupId, g.id)
-  |    .where.eq(m.id, id)
-  |}.map(GroupMember(m, g)).single.apply()
+      """
+        |val id = 123
+        |val (m, g) = (GroupMember.syntax("m"), Group.syntax("g"))
+        |val groupMember = withSQL {
+        |  select
+        |    .from(GroupMember as m)
+        |    .leftJoin(Group as g)
+        |    .on(m.groupId, g.id)
+        |    .where.eq(m.id, id)
+        |}.map(GroupMember(m, g)).single.apply()
 """.stripMargin
 
     assertErrors(Nil, source)
   }
-
-
   @Test def testNoErrorsSetTabSize(): Unit = {
-    val source = cleanSource replaceAll("  ", "    ")
+    val source = cleanSource replaceAll ("  ", "    ")
     assertErrors(List(), source, Map("tabSize" -> "4", "classParamIndentSize" -> "8"))
   }
 
   @Test def testNoErrorsWithTabs(): Unit = {
-    val source = cleanSource replaceAll("  ", "\t")
+    val source = cleanSource replaceAll ("  ", "\t")
     assertErrors(List(), source)
   }
 
   @Test def testErrorsIncorrectTabSize(): Unit = {
     val source =
-"""
+      """
 class A {
  val foo = 1
    def bar(a: String) = {
@@ -117,7 +114,7 @@ class A {
 
   @Test def testExtraIndent(): Unit = {
     val source =
-"""
+      """
 class A {
   val foo = 1
   def bar(a: String) = {
@@ -130,7 +127,7 @@ class A {
 
   @Test def testCorrectMethodParamIndent(): Unit = {
     val source =
-"""
+      """
 class A {
   def longMethodWithCorrectIndentParams(
       paramDoubleIndent: Boolean,
@@ -145,7 +142,7 @@ class A {
 
   @Test def testMethodParamUnderIndent(): Unit = {
     val source =
-"""
+      """
 class A {
   def longMethodWithUnderIndentedParams(
     paramDoubleIndent: Boolean,
@@ -160,7 +157,7 @@ class A {
 
   @Test def testMethodParamOverIndent(): Unit = {
     val source =
-"""
+      """
 class A {
   def longMethodWithOverIndentedParams(
         paramDoubleIndent: Boolean,
@@ -179,7 +176,7 @@ class A {
    */
   @Test def testValNotConsideredMethod(): Unit = {
     val source =
-"""
+      """
 class A {
   val defSomething = Map(
     "ehllo" -> "world"
@@ -192,7 +189,7 @@ class A {
 
   @Test def testExtendNotConsideredClassIndent(): Unit = {
     val source =
-"""
+      """
 object A extends B(
   a, b, c, d) {
 

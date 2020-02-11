@@ -43,7 +43,9 @@ class HeaderMatchesChecker extends FileChecker {
       }
     } else {
       val header = Checker.parseLines(headerParameter)
-      val found = (0 until scala.math.min(ast.lines.length, header.lines.length)).find(i => !ast.lines(i).text.equals(header.lines(i).text))
+      val found = (0 until scala.math.min(ast.lines.length, header.lines.length)).find(i =>
+        !ast.lines(i).text.equals(header.lines(i).text)
+      )
 
       found match {
         case Some(x) => List(LineError(x + 1))

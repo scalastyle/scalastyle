@@ -16,14 +16,6 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.CombinedAst
-import org.scalastyle.CombinedChecker
-import org.scalastyle.Lines
-import org.scalastyle.PositionError
-import org.scalastyle.ScalastyleError
-import org.scalastyle.scalariform.VisitorHelper.Clazz
-import org.scalastyle.scalariform.VisitorHelper.visit
-
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.Tokens.CASE
 import _root_.scalariform.lexer.Tokens.DO
@@ -33,6 +25,13 @@ import _root_.scalariform.lexer.Tokens.MATCH
 import _root_.scalariform.lexer.Tokens.VARID
 import _root_.scalariform.lexer.Tokens.WHILE
 import _root_.scalariform.parser.FunDefOrDcl
+import org.scalastyle.CombinedAst
+import org.scalastyle.CombinedChecker
+import org.scalastyle.Lines
+import org.scalastyle.PositionError
+import org.scalastyle.ScalastyleError
+import org.scalastyle.scalariform.VisitorHelper.Clazz
+import org.scalastyle.scalariform.VisitorHelper.visit
 
 class CyclomaticComplexityChecker extends CombinedChecker {
   val errorKey = "cyclomatic.complexity"
@@ -42,7 +41,8 @@ class CyclomaticComplexityChecker extends CombinedChecker {
   private lazy val countCases = getBoolean("countCases", DefaultCountCases)
   private val defaultTokens = Set(IF, WHILE, DO, FOR)
 
-  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
+  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz])
+      extends Clazz[FunDefOrDcl]()
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val it = for {
@@ -75,6 +75,6 @@ class CyclomaticComplexityChecker extends CombinedChecker {
 
   private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
     case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), visit(t, localvisit)))
-    case t: Any => visit(t, localvisit)
+    case t: Any         => visit(t, localvisit)
   }
 }

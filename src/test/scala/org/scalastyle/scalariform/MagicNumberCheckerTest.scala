@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number
 
@@ -78,7 +78,17 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 19), columnError(9, 19)), source)
+    assertErrors(
+      List(
+        columnError(5, 13),
+        columnError(6, 13),
+        columnError(7, 13),
+        columnError(8, 16),
+        columnError(8, 19),
+        columnError(9, 19)
+      ),
+      source
+    )
   }
 
   @Test def testValLong(): Unit = {
@@ -133,7 +143,17 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(5, 13), columnError(6, 13), columnError(7, 13), columnError(8, 16), columnError(8, 20), columnError(9, 20)), source)
+    assertErrors(
+      List(
+        columnError(5, 13),
+        columnError(6, 13),
+        columnError(7, 13),
+        columnError(8, 16),
+        columnError(8, 20),
+        columnError(9, 20)
+      ),
+      source
+    )
   }
 
   @Test def testIgnoreParamShouldTolerateSpaces(): Unit = {

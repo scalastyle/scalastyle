@@ -34,7 +34,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
   lazy val length = normalizedText.length
   lazy val body = normalizedText dropWhile { _.isWhitespace }
   lazy val isBlank = { body.length == 0 }
-  lazy val indentDepth = normalizedText prefixLength { _ == ' ' }
+  lazy val indentDepth = normalizedText segmentLength (_ == ' ', 0)
 
   def mkError(args: List[String] = Nil): LineError = LineError(lineNumber, args)
 
@@ -58,7 +58,7 @@ case class NormalizedLine(lineNumber: Int, line: Line, tabSize: Int) {
     }
 
     if (sb.endsWith("\r")) {
-      sb.setLength(sb.length-1)
+      sb.setLength(sb.length - 1)
     }
 
     sb.toString
@@ -72,7 +72,8 @@ class IndentationChecker extends FileChecker {
 
   private def multiLineComment(line: NormalizedLine) = line.body.startsWith("*")
 
-  private def startsParamList(line: NormalizedLine) = line.body.matches(""".*(class|object|trait) .*\([^\)]*""")
+  private def startsParamList(line: NormalizedLine) =
+    line.body.matches(""".*(class|object|trait) .*\([^\)]*""")
 
   private def startsMethodDef(line: NormalizedLine) = line.body.matches(""".*def .*\([^\)]*""")
 
@@ -90,9 +91,8 @@ class IndentationChecker extends FileChecker {
    * Verfiy single indent EXCLUDING class and method parameter lists
    */
   private def verifySingleIndent(lines: Seq[NormalizedLine]) = {
-    def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean = {
+    def isInvalid(l1: NormalizedLine, l2: NormalizedLine): Boolean =
       isSingleIndent(l2, l1) && !startsParamList(l1) && !startsMethodDef(l1)
-    }
 
     for { Seq(l1, l2) <- lines.sliding(2) if isInvalid(l1, l2) } yield l2.mkError()
   }
@@ -132,7 +132,7 @@ class IndentationChecker extends FileChecker {
     val classParamIndentSize = getInt("classParamIndentSize", DefaultClassParamTabSize)
     val methodParamIndentSize = getInt("methodParamIndentSize", tabSize)
 
-    val normalizedLines = NormalizedLine.normalize(lines, tabSize) filterNot { _.isBlank }
+    val normalizedLines = NormalizedLine.normalize(lines, tabSize).filterNot(_.isBlank).toSeq
 
     val tabErrors = verifyTabStop(normalizedLines)
     val indentErrors = verifySingleIndent(normalizedLines)

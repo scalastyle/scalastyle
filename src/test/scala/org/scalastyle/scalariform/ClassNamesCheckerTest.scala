@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -48,7 +48,10 @@ class foobar {
 }
 """
 
-    assertErrors(List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(5, 8, List("^[A-Z][A-Za-z]*$"))), source)
+    assertErrors(
+      List(columnError(4, 6, List("^[A-Z][A-Za-z]*$")), columnError(5, 8, List("^[A-Z][A-Za-z]*$"))),
+      source
+    )
   }
 }
 
@@ -78,7 +81,10 @@ object foobar {
 }
 """
 
-    assertErrors(List(columnError(4, 7, List("^[A-Z][A-Za-z]*$")), columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
+    assertErrors(
+      List(columnError(4, 7, List("^[A-Z][A-Za-z]*$")), columnError(5, 9, List("^[A-Z][A-Za-z]*$"))),
+      source
+    )
   }
 
   @Test def testPackageObject(): Unit = {
@@ -94,7 +100,6 @@ package object foobar {
     assertErrors(List(columnError(5, 9, List("^[A-Z][A-Za-z]*$"))), source)
   }
 }
-
 
 class PackageNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
   val key = "package.name"
@@ -166,7 +171,10 @@ package Foo
 package Bar
 """
 
-    assertErrors(List(columnError(2, 8, List("^[a-z][A-Za-z]*$")), columnError(3, 8, List("^[a-z][A-Za-z]*$"))), source)
+    assertErrors(
+      List(columnError(2, 8, List("^[a-z][A-Za-z]*$")), columnError(3, 8, List("^[a-z][A-Za-z]*$"))),
+      source
+    )
   }
 
   @Test def testPackageAndPackageObjectNoError(): Unit = {
@@ -206,7 +214,10 @@ package object Barbar {
 }
 """
 
-    assertErrors(List(columnError(4, 15, List("^[a-z][A-Za-z]*$")), columnError(6, 15, List("^[a-z][A-Za-z]*$"))), source)
+    assertErrors(
+      List(columnError(4, 15, List("^[a-z][A-Za-z]*$")), columnError(6, 15, List("^[a-z][A-Za-z]*$"))),
+      source
+    )
   }
 
   @Test def testPackageObject(): Unit = {
@@ -333,7 +344,11 @@ class Foobar {
 }
 """
 
-    assertErrors(List(columnError(6, 6, List(providedRegex)), columnError(7, 6, List(providedRegex))), source, Map("regex" -> providedRegex))
+    assertErrors(
+      List(columnError(6, 6, List(providedRegex)), columnError(7, 6, List(providedRegex))),
+      source,
+      Map("regex" -> providedRegex)
+    )
   }
 
   @Test
@@ -399,8 +414,10 @@ class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
         columnError(7, 6, List("^[a-z][A-Za-z0-9]*$")),
         columnError(8, 6, List("^[a-z][A-Za-z0-9]*$")),
         columnError(9, 21, List("^[a-z][A-Za-z0-9]*$")),
-        columnError(10, 21, List("^[a-z][A-Za-z0-9]*$"))),
-      source)
+        columnError(10, 21, List("^[a-z][A-Za-z0-9]*$"))
+      ),
+      source
+    )
   }
 
   @Test def testDestructuring(): Unit = {
@@ -412,10 +429,14 @@ class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
                     """.stripMargin
 
     assertErrors(List(), source)
-    assertErrors(List(
-      columnError(1, 8, List("^[a-z][A-Za-z0-9]*$")),
-      columnError(2, 9, List("^[a-z][A-Za-z0-9]*$")),
-      columnError(2, 18, List("^[a-z][A-Za-z0-9]*$"))), badSource)
+    assertErrors(
+      List(
+        columnError(1, 8, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(2, 9, List("^[a-z][A-Za-z0-9]*$")),
+        columnError(2, 18, List("^[a-z][A-Za-z0-9]*$"))
+      ),
+      badSource
+    )
   }
 
   @Test def testDestructuringWithTypesOK(): Unit = {
@@ -431,9 +452,10 @@ class FieldNamesCheckerTest extends AssertionsForJUnit with CheckerTest {
       """val (BBB: Foo, AAA: Bar) = baz
         |""".stripMargin
 
-    assertErrors(List(
-      columnError(1, 5, List("^[a-z][A-Za-z0-9]*$")),
-      columnError(1, 15, List("^[a-z][A-Za-z0-9]*$"))), source)
+    assertErrors(
+      List(columnError(1, 5, List("^[a-z][A-Za-z0-9]*$")), columnError(1, 15, List("^[a-z][A-Za-z0-9]*$"))),
+      source
+    )
   }
 
   @Test def testObjectConst(): Unit = {

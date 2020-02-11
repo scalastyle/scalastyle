@@ -16,6 +16,7 @@
 
 package org.scalastyle.scalariform
 
+import _root_.scalariform.parser.FunDefOrDcl
 import org.scalastyle.CombinedAst
 import org.scalastyle.CombinedChecker
 import org.scalastyle.Lines
@@ -23,8 +24,6 @@ import org.scalastyle.PositionError
 import org.scalastyle.ScalastyleError
 import org.scalastyle.scalariform.VisitorHelper.Clazz
 import org.scalastyle.scalariform.VisitorHelper.visit
-
-import _root_.scalariform.parser.FunDefOrDcl
 
 class MethodLengthChecker extends CombinedChecker {
   val errorKey = "method.length"
@@ -36,7 +35,8 @@ class MethodLengthChecker extends CombinedChecker {
   private val MultilineCommentsOpener = "/*"
   private val MultilineCommentsCloser = "*/"
 
-  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz]) extends Clazz[FunDefOrDcl]()
+  case class FunDefOrDclClazz(t: FunDefOrDcl, position: Option[Int], subs: List[FunDefOrDclClazz])
+      extends Clazz[FunDefOrDcl]()
 
   def verify(ast: CombinedAst): List[ScalastyleError] = {
     val maxLength = getInt("maxLength", DefaultMaximumLength)
@@ -56,18 +56,24 @@ class MethodLengthChecker extends CombinedChecker {
 
   private def traverse(t: FunDefOrDclClazz): List[FunDefOrDclClazz] = t :: t.subs.flatMap(traverse)
 
-  private def matches(t: FunDefOrDclClazz, lines: Lines, maxLines: Int, ignoreComments: Boolean, ignoreEmpty: Boolean) = {
+  private def matches(
+    t: FunDefOrDclClazz,
+    lines: Lines,
+    maxLines: Int,
+    ignoreComments: Boolean,
+    ignoreEmpty: Boolean
+  ) = {
     if (ignoreComments) {
       val count = for {
         (_, start) <- lines.findLineAndIndex(t.t.defToken.offset)
-        (_, end) <- lines.findLineAndIndex(t.t.tokens.last.offset)
+        (_, end)   <- lines.findLineAndIndex(t.t.tokens.last.offset)
       } yield {
         var count = 0
         var multilineComment = false
 
         // do not count deftoken line and end block line
         for (i <- (start + 1) until end) {
-          val lineText = lines.lines(i - 1).text.trim     // zero based index, therefore "-1" when accessing the line
+          val lineText = lines.lines(i - 1).text.trim // zero based index, therefore "-1" when accessing the line
           if (ignoreEmpty && lineText.isEmpty) {
             // do nothing
           } else if (lineText.startsWith(SinglelineComment)) {
@@ -97,8 +103,9 @@ class MethodLengthChecker extends CombinedChecker {
       val head = lines.toLineColumn(t.t.defToken.offset).get.line + 1
       val tail = lines.toLineColumn(t.t.tokens.last.offset).get.line - 1
       val emptyLines = if (ignoreEmpty) {
-        lines.lines.slice(head - 1, tail)   // extract actual method content
-          .count(_.text.isEmpty)            // count empty lines
+        lines.lines
+          .slice(head - 1, tail) // extract actual method content
+          .count(_.text.isEmpty) // count empty lines
       } else {
         0
       }
@@ -108,6 +115,6 @@ class MethodLengthChecker extends CombinedChecker {
 
   private def localvisit(ast: Any): List[FunDefOrDclClazz] = ast match {
     case t: FunDefOrDcl => List(FunDefOrDclClazz(t, Some(t.nameToken.offset), localvisit(t.localDef)))
-    case t: Any => visit(t, localvisit)
+    case t: Any         => visit(t, localvisit)
   }
 }

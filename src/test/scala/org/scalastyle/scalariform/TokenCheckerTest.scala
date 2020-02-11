@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -42,7 +42,11 @@ object foo {
   def bar(x: Any) = new ArrayList[Int]()
 }"""
 
-    assertErrors(List(columnError(2, 18), columnError(4, 24)), source, Map("regex" -> "^ArrayList|ArrayBuffer|mutable$"))
+    assertErrors(
+      List(columnError(2, 18), columnError(4, 24)),
+      source,
+      Map("regex" -> "^ArrayList|ArrayBuffer|mutable$")
+    )
   }
 
   @Test def testOk(): Unit = {

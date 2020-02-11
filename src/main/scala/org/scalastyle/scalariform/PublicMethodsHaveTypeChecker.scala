@@ -28,13 +28,14 @@ class PublicMethodsHaveTypeChecker extends AbstractSingleMethodChecker[PublicMet
   protected def matches(t: FullDefOrDclVisit, p: PublicMethodsHaveTypeParameters) = {
     t.funDefOrDcl.funBodyOpt match {
       case Some(ProcFunBody(newlineOpt, bodyBlock)) => false
-      case None =>
+      case None                                     =>
         // When funBodyOpt is None, it is assumed to be a declaration of a procedure.
         // Unit return type is not required.
         false
-      case _ => t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
-                           !isConstructor(t.fullDefOrDcl.defOrDcl) &&
-                           !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDefOrValOrVar
+      case _ =>
+        t.funDefOrDcl.returnTypeOpt.isEmpty && !privateOrProtected(t.fullDefOrDcl.modifiers) &&
+        !isConstructor(t.fullDefOrDcl.defOrDcl) &&
+        !(p.ignoreOverride && isOverride(t.fullDefOrDcl.modifiers)) && !t.insideDefOrValOrVar
     }
   }
 }

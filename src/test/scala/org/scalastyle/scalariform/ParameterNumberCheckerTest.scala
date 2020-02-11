@@ -18,7 +18,7 @@ package org.scalastyle.scalariform
 
 import org.junit.Test
 import org.scalastyle.file.CheckerTest
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals
 
@@ -39,7 +39,8 @@ class OK {
   }
 
   @Test def testKO(): Unit = {
-    val source = """
+    val source =
+      """
 package foobar
 
 class OK {
@@ -51,7 +52,8 @@ class OK {
   }
 
   @Test def testOuterKOInnerKO(): Unit = {
-    val source = """
+    val source =
+      """
 package foobar
 
 class Outer {

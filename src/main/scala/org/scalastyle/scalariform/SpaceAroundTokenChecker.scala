@@ -16,15 +16,13 @@
 
 package org.scalastyle.scalariform
 
-import org.scalastyle.PositionError
-import org.scalastyle.ScalariformChecker
-import org.scalastyle.ScalastyleError
-
-import scala.Array.fallbackCanBuildFrom
 import _root_.scalariform.lexer.Token
 import _root_.scalariform.lexer.TokenType
 import _root_.scalariform.lexer.Tokens
 import _root_.scalariform.parser.CompilationUnit
+import org.scalastyle.PositionError
+import org.scalastyle.ScalariformChecker
+import org.scalastyle.ScalastyleError
 
 trait SpaceAroundTokenChecker extends ScalariformChecker {
   val DefaultTokens: String
@@ -39,14 +37,15 @@ trait SpaceAroundTokenChecker extends ScalariformChecker {
     }
 
   def verify(ast: CompilationUnit): List[ScalastyleError] = {
-    val tokens: Seq[TokenType] = getString("tokens", DefaultTokens).split(",").map(x => TokenType(x.trim))
+    val tokens: Seq[TokenType] =
+      getString("tokens", DefaultTokens).split(",").toSeq.map(x => TokenType(x.trim))
     (for {
       l @ List(left, middle, right) <- ast.tokens.sliding(3)
       if (l.forall(x => x.tokenType != Tokens.NEWLINE && x.tokenType != Tokens.NEWLINES)
-        && tokens.contains(middle.tokenType)
-        && !(middle.associatedWhitespaceAndComments.containsNewline && beforeToken)
-        && (!right.associatedWhitespaceAndComments.containsNewline || beforeToken)
-        && checkSpaces(left, middle, right))
+      && tokens.contains(middle.tokenType)
+      && !(middle.associatedWhitespaceAndComments.containsNewline && beforeToken)
+      && (!right.associatedWhitespaceAndComments.containsNewline || beforeToken)
+      && checkSpaces(left, middle, right))
     } yield {
       PositionError(middle.offset, List(middle.text))
     }).toList

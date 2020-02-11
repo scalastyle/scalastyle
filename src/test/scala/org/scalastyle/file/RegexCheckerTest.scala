@@ -17,7 +17,7 @@
 package org.scalastyle.file
 
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 // scalastyle:off magic.number multiple.string.literals regex
 
@@ -42,58 +42,54 @@ class foobar {
 """
 
   @Test
-  def testSimpleCheck(): Unit = {
-    assertErrors(List(columnError(7, 2, List("def"))), source,
-      Map("regex" -> "def"))
-  }
+  def testSimpleCheck(): Unit =
+    assertErrors(List(columnError(7, 2, List("def"))), source, Map("regex" -> "def"))
 
   @Test
-  def testNoSemiColon(): Unit = {
-    assertErrors(List(columnError(11, 17, List(";"))), source,
-      Map("regex" -> ";"))
-  }
+  def testNoSemiColon(): Unit =
+    assertErrors(List(columnError(11, 17, List(";"))), source, Map("regex" -> ";"))
 
   @Test
-  def testStartOfLineIsZeroColumn(): Unit = {
-    assertErrors(List(columnError(5, 0, List("class"))), source,
-      Map("regex" -> "class"))
-  }
+  def testStartOfLineIsZeroColumn(): Unit =
+    assertErrors(List(columnError(5, 0, List("class"))), source, Map("regex" -> "class"))
 
   @Test
-  def testCanMatchLastCharInFile(): Unit = {
+  def testCanMatchLastCharInFile(): Unit =
     assertErrors(List(columnError(14, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
-  }
 
   @Test
-  def testCanMatchFirstCharInFile(): Unit = {
+  def testCanMatchFirstCharInFile(): Unit =
     assertErrors(List(columnError(1, 0, List("(?m)^//$"))), source, Map("regex" -> "(?m)^//$"))
-  }
 
   @Test
-  def testNoDoubleBlankLines(): Unit = {
-    assertErrors(List(columnError(3, 0, List("(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))), source,
-      Map("regex" -> "(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))
-  }
+  def testNoDoubleBlankLines(): Unit =
+    assertErrors(
+      List(columnError(3, 0, List("(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n"))),
+      source,
+      Map("regex" -> "(?m)^\\s*$(\\r|)\\n^\\s*$(\\r|)\\n")
+    )
 
   @Test
-  def testMultipleMatchesReportMultipleErrors(): Unit = {
-    assertErrors(List(columnError(12, 2, List("}")), columnError(14, 0, List("}"))), source,
-      Map("regex" -> "}"))
-  }
+  def testMultipleMatchesReportMultipleErrors(): Unit =
+    assertErrors(
+      List(columnError(12, 2, List("}")), columnError(14, 0, List("}"))),
+      source,
+      Map("regex" -> "}")
+    )
 
   @Test
-  def testCannotFindMatch(): Unit = {
+  def testCannotFindMatch(): Unit =
     assertErrors(List(), source, Map("regex" -> "^SHOULD$"))
-  }
 
   @Test
-  def testSingleMatchWithBoundsCheck(): Unit = {
+  def testSingleMatchWithBoundsCheck(): Unit =
     assertErrors(List(columnError(14, 0, List("(?m)^}$"))), source, Map("regex" -> "(?m)^}$"))
-  }
 
   @Test
-  def testPerLine(): Unit = {
-    assertErrors(List(columnError(8, 0, List("^[^/]+println.*$"))), source,
-      Map("regex" -> "^[^/]+println.*$", "line" -> "true"))
-  }
+  def testPerLine(): Unit =
+    assertErrors(
+      List(columnError(8, 0, List("^[^/]+println.*$"))),
+      source,
+      Map("regex" -> "^[^/]+println.*$", "line" -> "true")
+    )
 }

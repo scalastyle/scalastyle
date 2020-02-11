@@ -19,7 +19,7 @@ package org.scalastyle
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val filename = "src/test/resources/config/scalastyle_config.xml"
@@ -27,9 +27,8 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   val step = 1
 
   // just check we can read it
-  @Test def readXml(): Unit = {
-    val config = ScalastyleConfiguration.readFromXml(filename)
-  }
+  @Test def readXml(): Unit =
+    ScalastyleConfiguration.readFromXml(filename)
 
   @Ignore
   @Test def writeXml(): Unit = {
@@ -42,15 +41,18 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   def clean(s: String): String = s.replace("\u000d", "")
 
   @Test def readXmlStringWithCustom(): Unit = {
-    val xml = """<scalastyle commentFilter="enabled">
-    <name>name</name>
- <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
-  <parameters>
-   <parameter name="maxFileLength"><![CDATA[800]]></parameter>
-  </parameters>
-  <customMessage>customMessage</customMessage>
- </check>
-</scalastyle>"""
+    val xml =
+      """<scalastyle commentFilter="enabled">
+        |  <name>name</name>
+        |  <check customId="custom.id" level="warning" class="org.scalastyle.file.FileLengthChecker" enabled="true">
+        |   <parameters>
+        |      <parameter name="maxFileLength">
+        |        <![CDATA[800]]>
+        |      </parameter>
+        |    </parameters>
+        |    <customMessage>customMessage</customMessage>
+        |  </check>
+        |</scalastyle>""".stripMargin
 
     val config = ScalastyleConfiguration.readFromString(xml)
 
@@ -70,10 +72,11 @@ class ScalastyleConfigurationTest extends AssertionsForJUnit {
   }
 
   @Test def readXmlString(): Unit = {
-    val xml = """<scalastyle>
-    <name>name</name>
- <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="false"/>
-</scalastyle>"""
+    val xml =
+      """<scalastyle>
+        |  <name>name</name>
+        |  <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="false"/>
+        |</scalastyle>""".stripMargin
 
     val config = ScalastyleConfiguration.readFromString(xml)
 
